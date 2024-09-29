@@ -30,13 +30,8 @@ app.get('/', (req, res) => {
 });
 
 
-// adding Activity Category Router
-const activityCategoryRouter = require('./src/routes/activityCategoryRouter');
-app.use('/activityCategory', activityCategoryRouter);
-
-// adding Preference Tag Router
-const preferenceTagRouter = require('./src/routes/preferenceTagRouter');
-app.use('/preferenceTag', preferenceTagRouter);
+const router = require('./src/routes/index');
+app.use('/api', router);
 
 // Export the app
 module.exports = app;
