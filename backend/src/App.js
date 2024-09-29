@@ -11,6 +11,8 @@ const { createTourist, getTourists, updateTourist, deleteTourist } = require("./
 const { registerGuestUser, getGuestUsers } = require("./controllers/userGuestController"); 
 const { registerGuestTourist, getGuestTourists } = require("./controllers/guestTouristController"); 
 
+//empty comment
+
 // Load environment variables
 dotenv.config();
 
