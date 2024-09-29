@@ -2,20 +2,41 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const advertSchema = new Schema({
-    Username: {
+    username: {
         type: String,
         required: true,
+        trim: true, // Ensures no extra spaces are stored
     },
-    Email: {
+    email: {
         type: String,
         required: true,
-        unique: true, // Optional: Prevent duplicate emails
+        unique: true, // Prevent duplicate emails
+        lowercase: true, // Store email in lowercase
+        trim: true, // Ensures no extra spaces are stored
     },
-    Password: {
-        type: String, // Changed from Number to String
+    password: {
+        type: String, // Ensure passwords are stored securely
         required: true,
+    },
+    website: {
+        type: String,
+        required: false,
+        trim: true, // Optional website URL
+    },
+    hotline: {
+        type: String, // String type for flexibility in formats
+        required: false,
+    },
+    companyProfile: {
+        type: String,
+        required: false,
+        trim: true, // Short description of the company
+    },
+    servicesOffered: {
+        type: [String], // Array to list services the company offers
+        required: false,
     },
 }, { timestamps: true });
 
-const adModel = mongoose.model('Advertiser', advertSchema);
-module.exports = adModel;
+const AdModel = mongoose.model('Advertiser', advertSchema);
+module.exports = AdModel;

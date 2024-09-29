@@ -1,72 +1,73 @@
-// #Task route solution
+const tourGuideModel = require('../models/Tour Guide'); // Updated import to match the schema file name
+const mongoose = require('mongoose');
 
-const tourguideModel = require('../Models/Tour Guide.js');
+// Create a new Tour Guide profile
+const createTourGuide = async (req, res) => {
+    const { username, email, password, mobileNumber, yearsOfExperience, previousWork, bio, languagesSpoken } = req.body;
+    try {
+        const tourGuide = await tourGuideModel.create({
+            username,
+            email,
+            password, // Ideally, this should be hashed before saving
+            mobileNumber,
+            yearsOfExperience,
+            previousWork,
+            bio,
+            languagesSpoken,
+        });
+        res.status(201).json({ message: 'Profile created successfully', tourGuide });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
-const { default: mongoose } = require('mongoose');
-
-const createTourGuide = async(req,res) => {
-   const{Username,Email,Password,Number,Years_Of_Experience,Previous_Work}= req.body;
-   try{
-      const tourguide= await tourguideModel.create({Username,Email,Password,Number,Years_Of_Experience,Previous_Work});
-      res.status(200).json(tourguide);
-
-
-   }catch{error}{
-      res.status(400).json({error:error.message})
-   }
-
-
-}
-
+// Get all Tour Guides profiles
 const getTourGuides = async (req, res) => {
-   try{
-    const tourguides=await tourguideModel.find({});
-    res.status(200).json(tourguides);
- 
-   
- }catch{error}{
-    res.status(400).json({error:error.message})
- }}
-
-
- const updateTourGuide = async (req, res) => {
-   const { Username,Email,Password,Number,Years_Of_Experience,Previous_Work } = req.body;
-
-   try {
-       const tourguide = await tourguideModel.findOneAndUpdate(
-           { Email: Email }, // Find by Email
-           { Username:Username, Password: Password,Number:Number,Years_Of_Experience:Years_Of_Experience,Previous_Work:Previous_Work }, // Update these fields
-           { new: true } // Return the updated document
-       );
-
-       if (!tourguide) {
-           return res.status(404).json({ error: 'Tour guide not found' });
-       }
-
-       res.status(200).json(tourguide);
-   } catch (error) { // Corrected catch syntax
-       res.status(400).json({ error: error.message });
-   }
+    try {
+        const tourGuides = await tourGuideModel.find({});
+        res.status(200).json(tourGuides);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };
 
+// Update a Tour Guide profile
+const updateTourGuide = async (req, res) => {
+    const { email } = req.params; // Extract email from URL parameters
+    const updates = req.body;
+
+    try {
+        const tourGuide = await tourGuideModel.findOneAndUpdate(
+            { email }, // Find by email
+            updates, // Update these fields
+            { new: true, runValidators: true } // Return the updated document and validate
+        );
+
+        if (!tourGuide) {
+            return res.status(404).json({ error: 'Tour guide not found' });
+        }
+
+        res.status(200).json({ message: 'Profile updated successfully', tourGuide });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Delete a Tour Guide profile
 const deleteTourGuide = async (req, res) => {
-   const { Username } = req.body; // Extract Username from the request body
+    const { email } = req.params; // Extract email from URL parameters
 
-   try {
-       // Attempt to delete the advertiser by Username
-       const tourguide = await tourguideModel.findOneAndDelete({ Username: Username });
+    try {
+        const tourGuide = await tourGuideModel.findOneAndDelete({ email });
 
-       // Check if the advertiser was found and deleted
-       if (!tourguide) {
-           return res.status(404).json({ error: 'No such Tour guide' });
-       }
+        if (!tourGuide) {
+            return res.status(404).json({ error: 'Tour guide not found' });
+        }
 
-       // Respond with a success message and the deleted advertiser's information
-       res.status(200).json({ message: 'Tour guide deleted successfully', tourguide });
-   } catch (error) {
-       res.status(400).json({ error: error.message });
-   }
+        res.status(200).json({ message: 'Tour guide deleted successfully', tourGuide });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };
 
-
-module.exports = {createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide};
+module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide };
