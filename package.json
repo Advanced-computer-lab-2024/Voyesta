@@ -1,0 +1,32 @@
+{
+  "name": "voyesta",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
+    "build": "npm run build --workspace=frontend",
+    "start": "npm run start --workspace=backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Advanced-computer-lab-2024/Voyeste.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Advanced-computer-lab-2024/Voyeste/issues"
+  },
+  "homepage": "https://github.com/Advanced-computer-lab-2024/Voyeste#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
+  }
+}
