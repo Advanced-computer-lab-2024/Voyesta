@@ -29,6 +29,11 @@ const touristSchema = new Schema({
     type:String,
     required:true
   },
+  Wallet:{
+    type:Number,
+    required:true,
+    default:0 // Default value of wallet is 0
+  },
   otp: {
     type: String,
     required: false,

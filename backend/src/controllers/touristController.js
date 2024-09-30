@@ -7,8 +7,8 @@ const{otpSender} = require('../services/generateOTPgenric');
 const createTourist = async(req,res) => {
    const{Email,Username,Password,Number,Nationality,Job}= req.body;
    try{
-      const tourguide= await touristModel.create({Email,Username,Password,Number,Nationality,Job});
-      res.status(200).json(tourguide);
+      const tourist= await touristModel.create({Email,Username,Password,Number,Nationality,Job});
+      res.status(200).json(tourist);
 
 
    }catch{error}{
@@ -20,23 +20,49 @@ const createTourist = async(req,res) => {
 
 const getTourists = async (req, res) => {
    try{
-    const tourguides=await touristModel.find({});
-    res.status(200).json(tourguides);
+    const tourist=await touristModel.find({});
+    res.status(200).json(tourist);
  
    
  }catch{error}{
     res.status(400).json({error:error.message})
- }}
+ }};
+
+
+// gets a tourist by username displaying all its information
+ const getTourist = async (req, res) => {
+    const { Username } = req.pram;
+    try{
+     const tourist=await touristModel.find({Username:Username});
+     if(!tourist){
+        return res.status(404).json({error:'Tourist not found'});
+     }  
+     
+     res.status(200).json(tourist);
+  
+    
+  }catch{error}{
+     res.status(400).json({error:error.message})
+  }};
 
 
  const updateTourist = async (req, res) => {
-   const { Username, Email, Password, Number, Nationality, Job } = req.body;
-
+   const { Email, Password, Number, Nationality, Job } = req.body;
+   const { Username } = req.params;
+   
+   // Create an object containing the fields to update
+   const updateFields = {};
+    if (Email) updateFields.Email = Email;
+    if (Password) updateFields.Password = Password;
+    if (Number) updateFields.Number = Number;
+    if (Nationality) updateFields.Nationality = Nationality;
+    if (Job) updateFields.Job = Job;
+   
    try {
        // Use findOneAndUpdate to update the tourist by Email
        const tourist = await touristModel.findOneAndUpdate(
-           { Email: Email }, // Find by Email
-           { Username: Username, Password: Password, Number: Number, Nationality: Nationality, Job: Job }, // Update these fields
+           { Username: Username}, // Find by Email
+           { $set: updateFields}, // Update these fields
            { new: true } // Return the updated document
        );
 
@@ -85,4 +111,4 @@ const sendOTPtourist = async (req, res) => {
    }
 };
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist,  sendOTPtourist}; // Export the controller functions
+module.exports = {createTourist, getTourists, updateTourist, deleteTourist,  sendOTPtourist , getTourist}; // Export the controller functions
