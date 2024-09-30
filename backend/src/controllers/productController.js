@@ -99,5 +99,95 @@ const updateProduct = async (req, res) => {
     }
 };
 
+const searchProductByName = async (req, res) => {
+    try {
+        const searchQuery = String(req.query.name); // Get the name from the query parameters
 
-module.exports = { getAllProducts, addProduct, updateProduct }
+        // Find products where the name contains the search query (case-insensitive)
+        const products = await Product.find({
+            name: { $regex: searchQuery, $options: 'i' } // 'i' makes it case-insensitive
+        });
+
+        if (products.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No products found matching the search query'
+            });
+        }
+
+        // Return the list of matching products
+        res.status(200).json({
+            success: true,
+            data: products
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error searching for products',
+            error: error.message
+        });
+    }
+};
+
+const filterProductsByPrice = async (req, res) => {
+    try {
+        // Get minPrice and maxPrice from query params (or use default values)
+        const minPrice = parseFloat(req.query.minPrice) || 0; // Default to 0 if not provided
+        const maxPrice = parseFloat(req.query.maxPrice) || Infinity; // Default to Infinity if not provided
+
+
+        // Find products within the price range
+        const products = await Product.find({
+            price: { $gte: minPrice, $lte: maxPrice }
+        });
+
+        if (products.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No products found in the specified price range'
+            });
+        }
+
+        // Return the filtered list of products
+        res.status(200).json({
+            success: true,
+            data: products
+        });
+    } catch (error) {
+        console.error(`Error filtering products by price: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            message: 'Error filtering products by price',
+            error: error.message
+        });
+    }
+};
+
+const sortProductsByRatings = async (req, res) => {
+    try {
+        // Retrieve products sorted by ratings in descending order (highest to lowest)
+        const products = await Product.find().sort({ ratings: -1 });
+
+        if (products.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No products found'
+            });
+        }
+
+        // Return the sorted products
+        res.status(200).json({
+            success: true,
+            data: products
+        });
+    } catch (error) {
+        console.error(`Error sorting products by ratings: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            message: 'Error sorting products by ratings',
+            error: error.message
+        });
+    }
+};
+
+module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings }

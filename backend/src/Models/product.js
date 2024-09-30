@@ -21,12 +21,11 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ratings: [
+    ratings:
         {
             user: String,
             rating: { type: Number, min: 0, max: 5 }
-        }
-    ],
+        },
     reviews: [
         {
             user: String,
