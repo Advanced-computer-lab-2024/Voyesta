@@ -52,5 +52,5 @@ const otpSender = async (model, email) => {
 };
 
 module.exports = {
-	forgotPassword,
+	otpSender,
 };
