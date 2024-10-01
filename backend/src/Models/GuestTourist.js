@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const touristSchema = new Schema({
+const guestTouristSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -39,7 +39,7 @@ const touristSchema = new Schema({
 }, { timestamps: true });
 
 // Age validation
-touristSchema.pre('save', function(next) {
+guestTouristSchema.pre('save', function(next) {
     const age = new Date().getFullYear() - this.dob.getFullYear();
     if (age < 18) {
         return next(new Error('You must be at least 18 years old to register.'));
@@ -47,5 +47,5 @@ touristSchema.pre('save', function(next) {
     next();
 });
 
-const Tourist = mongoose.model('Tourist', touristSchema);
-module.exports = Tourist;
+const GuestTourist = mongoose.model('GuestTourist', guestTouristSchema);
+module.exports = GuestTourist;
