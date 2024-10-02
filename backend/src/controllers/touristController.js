@@ -4,19 +4,30 @@ const touristModel = require('../Models/Tourist');
 
 const { default: mongoose } = require('mongoose');
 const{otpSender} = require('../services/generateOTPgenric');
-const createTourist = async(req,res) => {
-   const{Email,Username,Password,Number,Nationality,Job}= req.body;
-   try{
-      const tourist= await touristModel.create({Email,Username,Password,Number,Nationality,Job});
-      res.status(200).json(tourist);
+const createTourist = async (req, res) => {
+   const { Username, Email, Password, Number, Nationality, DOB, Job } = req.body;
 
+   try {
+       if (await Tourist.exists({ email })) {  // Check if a tourist profile with the email already exists
+           return res.status(400).json({ message: 'Tourist already exists' });
+       }
+       const tourist = new Tourist({
+           Username,
+           Email,
+           Password, // Remember to hash the password before saving
+           Number,
+           Nationality,
+           DOB,
+           Job,
+           Wallet
+       });
 
-   }catch{error}{
-      res.status(400).json({error:error.message})
+       await tourist.save();
+       res.status(201).json({ message: 'Tourist registered successfully', tourist });
+   } catch (error) {
+       res.status(400).json({ error: error.message });
    }
-
-
-}
+};
 
 const getTourists = async (req, res) => {
    try{
@@ -31,7 +42,7 @@ const getTourists = async (req, res) => {
 
 // gets a tourist by username displaying all its information
  const getTourist = async (req, res) => {
-    const { Username } = req.pram;
+    const { Username } = req.prams;
     try{
      const tourist=await touristModel.find({Username:Username});
      if(!tourist){

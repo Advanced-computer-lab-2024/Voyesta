@@ -12,7 +12,7 @@ const tagSchema = new Schema({
         required: true,
         validate: {
             validator: function(v) {
-                return /^\d{4} to \d{4}$/.test(v); // Regular expression to match YYYY-YYYY format
+                return /^\d{4} to \d{4}$/.test(v); // Regular expression to match YYYY to YYYY format
             },
             message: props => `${props.value} is not a valid historical period! It should be in the format YYYY-YYYY.`
         }

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const {otpSender} = require('../services/generateOTPgenric');
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
-    const { username, email, password, mobileNumber, yearsOfExperience, previousWork, bio, languagesSpoken } = req.body;
+    const { username, email, password, mobileNumber, yearsOfExperience, previousWork } = req.body;
     try {
         const tourGuide = await tourGuideModel.create({
             username,
@@ -12,8 +12,6 @@ const createTourGuide = async (req, res) => {
             mobileNumber,
             yearsOfExperience,
             previousWork,
-            bio,
-            languagesSpoken,
         });
         res.status(201).json({ message: 'Profile created successfully', tourGuide });
     } catch (error) {
@@ -34,12 +32,19 @@ const getTourGuides = async (req, res) => {
 // Update a Tour Guide profile
 const updateTourGuide = async (req, res) => {
     const { email } = req.params; // Extract email from URL parameters
-    const updates = req.body;
+    const {  mobileNumber,
+        yearsOfExperience,
+        previousWork,} = req.body;
+
+        const updates = {};
+        if (mobileNumber)  updates.mobileNumber = mobileNumber;
+        if (yearsOfExperience) updates.yearsOfExperience = yearsOfExperience;
+        if (previousWork) updates.previousWork = previousWork;
 
     try {
         const tourGuide = await tourGuideModel.findOneAndUpdate(
-            { email }, // Find by email
-            updates, // Update these fields
+            { email}, // Find by email
+            {$set:updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
 
