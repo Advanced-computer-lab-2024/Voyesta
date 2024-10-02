@@ -1,14 +1,16 @@
-import { useState } from 'react'
-import TestPage from './pages/TestPage'
+import React from 'react'
 import './css/index.css'
+import { Route, Routes } from 'react-router-dom'
+import AdminDashboard from './pages/admin/adminDashboard'
 import ActivityCategory from './pages/admin/ActivityCategory'
+import AdminNavbar from './components/adminNavbar'
 
 
 function App() {
 
   return (
-    <div className='bg-red-50 h-screen p-7' >
-        <ActivityCategory />
+    <div className="h-screen">
+      <AdminDashboard />
     </div>
   )
 }
