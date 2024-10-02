@@ -1,5 +1,6 @@
-const adModel = require('../models/Advertiser'); // Ensure this path is correct
+const adModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
+const Activity = require('../Models/Activity');
 // Create a new Advertiser profile
 const createAdvertiser = async (req, res) => {
     const { username, email, password, website, hotline, companyProfile, servicesOffered } = req.body;
@@ -35,13 +36,21 @@ const getAdvertisers = async (req, res) => {
 
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
-    const updates = req.body;
+    const { username } = req.params; // Extract email from URL parameters
+    const {email,password,website,hotline,companyProfile,servicesOffered}= req.body;
+    const updates = {};
+    if (email) updates.email = email;
+    if (password) updates.password = password;
+    if (website) updates.website = website;
+    if (hotline) updates.hotline = hotline;
+    if (companyProfile) updates.companyProfile = companyProfile;
+    if (servicesOffered) updates.servicesOffered = servicesOffer
+
 
     try {
         const advertiser = await adModel.findOneAndUpdate(
             { email }, // Find by email
-            updates, // Update these fields
+            { $set: updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
 
@@ -85,6 +94,128 @@ const sendOTPadvertiser = async (req, res) => {
     }
 }
 
+// Create a new Activity
+const createActivity = async (req, res) => {
+    // city and country are nested in location object
+    // lat and lng are nested in coordinates object
+    // as theres no frontend to send the google marker
+    
+    const { title, description, city, country,lat,lng, date, time, price, specialDiscount, category, tags} = req.body;
+    const  { id } = req.params;
+    
+    try {
+        const activity = new Activity({
+            title,
+            description,
+            date,
+            time,
+            location : {
+                city,
+                country,
+                coordinates:{
+                    lat,
+                    lng
+                }
+            },
+            price,
+            specialDiscount,
+            category,
+            tags,
+            advertiser: id
+        });
+
+        await activity.save();
+        res.status(201).json(activity);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+// Get an Activity
+const getActivity = async (req, res) => {
+    const { id } = req.params;
+    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+
+    try {
+        const activity = await Activity.findById(id).populate('category tags advertiser');
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        if (activity.advertiser.toString() !== advertiserId.toString()) {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        res.status(200).json(activity);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const getAllActivitiesByAdvertiser = async (req, res) => {  
+    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+
+    try {
+        const activities = await Activity.find({ advertiser: advertiserId }).populate('category tags advertiser');
+        res.status(200).json(activities);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+}
+
+
+// update an Activity
+const updateActivity = async (req, res) => {
+    const { id } = req.params;
+    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+
+    try {
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        if (activity.advertiser.toString() !== advertiserId.toString()) {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        Object.assign(activity, req.body);
+        await activity.save();
+        res.status(200).json(activity);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+// delete an Activity
+const deleteActivity = async (req, res) => {
+    const { id } = req.params;
+    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+
+    try {
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        if (activity.advertiser.toString() !== advertiserId.toString()) {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        await activity.remove();
+        res.status(200).json({ message: 'Activity deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+
+
+
+
 // update password
 // const updatePassword = async (req, res) => {
 //     const { email } = req.params; // Extract email from URL parameters
@@ -110,4 +241,4 @@ const sendOTPadvertiser = async (req, res) => {
 //     }
 // };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser }; // Export the functions
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser , createActivity, getActivity,updateActivity,deleteActivity , getAllActivitiesByAdvertiser}; // Export the functions
