@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { assets } from "../../assets/assets";
+import { assets } from "../assets/assets";
 
-function ActivityCategory(){
+function AdminListView(props){
 
-    const [activityCategories, setActivityCategories] = useState([]);
+    const [items, setItems] = useState([]);
     const [editing, setEditing] = useState({});
     const [adding, setAdding] = useState(false);
     const [newActivity, setNewActivity] = useState("");
 
-
     //fetch activity categories
-    const fetchActivityCategories = () =>{
-        axios.get('http://localhost:3000/api/activityCategory/get')
+    const fetchItems = () =>{
+        const url = props.baseUrl +"/get";
+        axios.get(url)
         .then(res => {
             // console.log(res.data);
-            setActivityCategories(res.data);
+            setItems(res.data);
         })
         .catch(err => console.log(err));
     }
@@ -23,39 +23,40 @@ function ActivityCategory(){
     // handle delete pressed
     const handleDelete = (e) =>{
         const parent = e.target.parentNode.parentNode.parentNode;
-        console.log(parent.id);
-        axios.delete('http://localhost:3000/api/activityCategory/delete',{
+        
+        const url = props.baseUrl +"/delete";
+        axios.delete(url,{
             data:{
                 Id: parent.id
             }
         })
         .then(res => {
             console.log(res.data);
-            fetchActivityCategories();
+            fetchItems();
         })
         .catch(err => console.log(err));
     }
 
     //handle edit icon pressed
-    const handleEditIcon = (e, activityCategory) => {
-        setEditing({ [activityCategory._id]: true });
+    const handleEditIcon = (e, item) => {
+        setEditing({ [item._id]: true });
       }
 
     //handle edit pressed
-    const handleEditSubmit = (e, activityCategory) =>   {
+    const handleEditSubmit = (e, item) =>   {
         e.preventDefault();
         const newName = e.target.elements[0].value;
-        console.log(newName, activityCategory._id);
-        axios.put('http://localhost:3000/api/activityCategory/update',{
+        const url = props.baseUrl +"/update";
+        axios.put(url,{
 
-                Id: activityCategory._id,
+                Id: item._id,
                 Name: newName
 
         })
         .then(res => {
             console.log(res.data);
             setEditing({});
-            fetchActivityCategories();
+            fetchItems();
         })
         .catch(err => console.log(err));
 
@@ -71,41 +72,42 @@ function ActivityCategory(){
     const handleAdd = (e) =>{
       e.preventDefault();
       // const Name = e.target.elements[0].value;
-      axios.post('http://localhost:3000/api/activityCategory/add', {
+      const url = props.baseUrl +"/add";
+      axios.post(url, {
           Name: newActivity
       })
         .then(res => {
           console.log(res.data);
           setNewActivity("");
           setAdding(false);
-          fetchActivityCategories();
+          fetchItems();
         })
         .catch(err => console.log(err));
     }
 
 
     useEffect( () =>{
-        fetchActivityCategories()
-    },[]);
+        fetchItems()
+    },[props.title]);
 
 
     return(
       <>
         <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Activity Categories</h1>
+        <h1 className="text-2xl text-gray-600 font-bold mb-3">{props.title}</h1>
           <ul className="text-center">
           
-            {activityCategories.map(activityCategory => (
-              <li key={activityCategory._id} id={activityCategory._id} className="border-b border-gray-200 last:border-0 p-2">
-                  {editing[activityCategory._id] ? (
+            {items.map(item => (
+              <li key={item._id} id={item._id} className="border-b border-gray-200 last:border-0 p-2">
+                  {editing[item._id] ? (
                     <div >
                       <form
                         className="flex justify-between text-lg font-medium text-gray-300"
-                        onSubmit={(e) => handleEditSubmit(e, activityCategory)}
+                        onSubmit={(e) => handleEditSubmit(e, item)}
                       >
                         <input
                           type="text"
-                          defaultValue={activityCategory.Name}
+                          defaultValue={item.Name}
                           className="bg-transparent border-2 border-solid border-black rounded-lg pl-2"
                           autoFocus={true}
                         />
@@ -116,10 +118,10 @@ function ActivityCategory(){
                     </div>
                   ) : (
                     <div className="flex justify-between text-lg font-medium text-gray-500">
-                        <span>{activityCategory.Name}</span>
+                        <span>{item.Name}</span>
                         <div className="flex gap-2">
-                            <img onClick={(e) => handleEditIcon(e, activityCategory)} src={assets.editIcon} className="w-6 h-6 cursor-pointer" />
                             <img onClick={handleDelete} src={assets.deleteIcon} className="w-6 h-6 cursor-pointer" />
+                            <img onClick={(e) => handleEditIcon(e, item)} src={assets.editIcon} className="w-6 h-6 cursor-pointer" />
                         </div>
                     </div>
                   )}
@@ -161,4 +163,4 @@ function ActivityCategory(){
     );
 }
 
-export default ActivityCategory;
+export default AdminListView;

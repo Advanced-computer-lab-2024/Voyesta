@@ -5,7 +5,7 @@ import { assets } from "../assets/assets";
 function AdminNavbar(){
     const [visible, setVisible] = useState(false);
     return(
-        <div className="flex items-center justify-between text-[#f5e1b4] bg-[#003366] px-5 py-5 font-medium">
+        <div className="flex items-center justify-between text-[#f5e1b4] bg-[#003366] px-5 py-5 font-medium mb-10">
 
         {/* <NavLink to="/"> */}
             {/* <img src={assets.logo} className="w-36" /> */}
@@ -19,29 +19,32 @@ function AdminNavbar(){
             </div> 
         </ul>
 
-        <ul className="hidden sm:flex gap-5 text-lg font-medium">
-
+        <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
             <NavLink to="/activity-category" className="flex flex-col items-center gap-1">
                 <p>Activity Category</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
-            <NavLink to="/prefrence-tag" className="flex flex-col items-center gap-1">
+            <div className="w-0  border-r border-[#f5e1b4]"/>
+            
+            <NavLink to="/preference-tag" className="flex flex-col items-center gap-1">
                 <p>Preference Tag</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
             
+            <div className="w-0  border-r border-[#f5e1b4]"/>
+
             <NavLink to="/products" className="flex flex-col items-center gap-1">
                 <p>Products</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
+            <div className="w-0  border-r border-[#f5e1b4]"/>
+
             <NavLink to="/account-management" className="flex flex-col items-center gap-1">
                 <p>Account Managment</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
-            </NavLink>
-
-            
+            </NavLink>        
 
         </ul>
 

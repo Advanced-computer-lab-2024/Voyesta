@@ -1,10 +1,8 @@
 import React from 'react'
 import './css/index.css'
-import { Route, Routes } from 'react-router-dom'
 import AdminDashboard from './pages/admin/adminDashboard'
-import ActivityCategory from './pages/admin/ActivityCategory'
-import AdminNavbar from './components/adminNavbar'
 
+// get hold of user and render the correct dashboard
 
 function App() {
 
