@@ -30,12 +30,12 @@ const getSellers = async (req, res) => {
 
 // Update a Seller profile
 const updateSeller = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract ID from URL parameters
     const updates = req.body;
 
     try {
-        const seller = await sellerModel.findOneAndUpdate(
-            { email }, // Find by email
+        const seller = await sellerModel.findByIdAndUpdate(
+            id, // Find by ID
             updates, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
@@ -52,10 +52,10 @@ const updateSeller = async (req, res) => {
 
 // Delete a Seller profile
 const deleteSeller = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract ID from URL parameters
 
     try {
-        const seller = await sellerModel.findOneAndDelete({ email });
+        const seller = await sellerModel.findByIdAndDelete(id); // Find and delete by ID
 
         if (!seller) {
             return res.status(404).json({ error: 'Seller not found' });

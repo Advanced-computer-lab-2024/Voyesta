@@ -30,48 +30,49 @@ const getTourists = async (req, res) => {
 
 
  const updateTourist = async (req, res) => {
-   const { Username, Email, Password, Number, Nationality, Job } = req.body;
+    const { id } = req.params; // Extract ID from URL parameters
+    const { Username, Email, Password, Number, Nationality, Job } = req.body;
 
-   try {
-       // Use findOneAndUpdate to update the tourist by Email
-       const tourist = await touristModel.findOneAndUpdate(
-           { Email: Email }, // Find by Email
-           { Username: Username, Password: Password, Number: Number, Nationality: Nationality, Job: Job }, // Update these fields
-           { new: true } // Return the updated document
-       );
+    try {
+        // Use findByIdAndUpdate to update the tourist by ID
+        const tourist = await touristModel.findByIdAndUpdate(
+            id, // Find by ID
+            { Username, Email, Password, Number, Nationality, Job }, // Update these fields
+            { new: true, runValidators: true } // Return the updated document and validate
+        );
 
-       // Check if the tourist was found
-       if (!tourist) {
-           return res.status(404).json({ error: 'Tourist not found' });
-       }
+        // Check if the tourist was found
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
 
-       // Respond with the updated tourist information
-       res.status(200).json(tourist);
-   } catch (error) {
-       // Handle any errors that may occur
-       res.status(400).json({ error: error.message });
-   }
+        // Respond with the updated tourist information
+        res.status(200).json(tourist);
+    } catch (error) {
+        // Handle any errors that may occur
+        res.status(400).json({ error: error.message });
+    }
 };
 
 
 const deleteTourist = async (req, res) => {
-   const { Email } = req.body; // Extract Email from the request body
+    const { id } = req.params; // Extract ID from URL parameters
 
-   try {
-       // Attempt to delete the tourist by Email
-       const tourist = await touristModel.findOneAndDelete({ Email: Email });
+    try {
+        // Attempt to delete the tourist by ID
+        const tourist = await touristModel.findByIdAndDelete(id); // Find and delete by ID
 
-       // Check if the tourist was found and deleted
-       if (!tourist) {
-           return res.status(404).json({ error: 'No such tourist' });
-       }
+        // Check if the tourist was found and deleted
+        if (!tourist) {
+            return res.status(404).json({ error: 'No such tourist' });
+        }
 
-       // Respond with the deleted tourist's information
-       res.status(200).json({ message: 'Tourist deleted successfully', tourist });
-   } catch (error) {
-       // Handle any errors that may occur
-       res.status(400).json({ error: error.message });
-   }
+        // Respond with the deleted tourist's information
+        res.status(200).json({ message: 'Tourist deleted successfully', tourist });
+    } catch (error) {
+        // Handle any errors that may occur
+        res.status(400).json({ error: error.message });
+    }
 };
 
 
