@@ -1,5 +1,7 @@
-const adModel = require('../models/Advertiser'); // Ensure this path is correct
+const adModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
+const Activity = require('../Models/Activity');
+const Museum = require('../Models/Museum');
 // Create a new Advertiser profile
 const createAdvertiser = async (req, res) => {
     const { username, email, password, website, hotline, companyProfile, servicesOffered } = req.body;
@@ -85,6 +87,24 @@ const sendOTPadvertiser = async (req, res) => {
     }
 }
 
+
+const getActivitysandadvertiser = async(req,res) =>{
+    const advertiserId = req.params._id
+    try {
+        const activities = await Activity.find({ createdBy: userId });
+        //const itineraries = await Itinerary.find({ createdBy: userId });
+        //const museums = await Museum.find({ createdBy: userId });
+    
+        res.status(200).json({
+          activities,
+          //itineraries,
+          museums
+        });
+      } catch (error) {
+        res.status(500).json({ error: 'Server error while fetching items' });
+      }
+}
+
 // update password
 // const updatePassword = async (req, res) => {
 //     const { email } = req.params; // Extract email from URL parameters
@@ -110,4 +130,4 @@ const sendOTPadvertiser = async (req, res) => {
 //     }
 // };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser }; // Export the functions
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser,getActivitysandadvertiser }; // Export the functions
