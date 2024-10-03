@@ -1,13 +1,22 @@
 const express = require('express');
+const router = express.Router();
 
-let _ = express.Router();
+// importing Routes
+const adminRouter = require('./adminRoutes');
+const productRouter = require('./productRoutes');
+const activityCategoryRouter = require('./activityCategoryRouter');
+const preferenceTagRouter = require('./preferenceTagRouter');
+
+// POST route for creating a new tourism governor
+router.use('/admin', adminRouter);
+// adding products routes
+router.use('/products', productRouter)
+
 
 // adding Activity Category Router
-const activityCategoryRouter = require('./activityCategoryRouter');
-_.use('/activityCategory', activityCategoryRouter);
+router.use('/activityCategory', activityCategoryRouter);
 
 // adding Preference Tag Router
-const preferenceTagRouter = require('./preferenceTagRouter');
-_.use('/preferenceTag', preferenceTagRouter);
+router.use('/preferenceTag', preferenceTagRouter);
 
-module.exports = _;
+module.exports = router;
