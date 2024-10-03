@@ -55,7 +55,13 @@ const museumsAndHistoricalPlacesSchema = new Schema({
             type: Number,
             required: true
         }
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'TourismGovernor',
+        required: true
     }
+
 });
 
 const MuseumsAndHistoricalPlaces = mongoose.model('MuseumsAndHistoricalPlaces', museumsAndHistoricalPlacesSchema);

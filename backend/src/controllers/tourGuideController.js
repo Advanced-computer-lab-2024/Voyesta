@@ -1,6 +1,7 @@
 const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 const {otpSender} = require('../services/generateOTPgenric');
+const Itinerary = require('../Models/itinerarySchema');
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
     const { username, email, password, mobileNumber, yearsOfExperience, previousWork } = req.body;
@@ -113,30 +114,78 @@ const createItinerary = async (req, res) => {
 };
 
 
+const getItinerary = async (req, res) => {
+    const { id } = req.params;
+    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+
+    try {
+        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId });
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
+        }
+        res.status(200).json(itinerary);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+};
+
+// Get all Itineraries created by a Tour Guide
+const getAllItinerariesByGuide = async (req, res) => {
+    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+
+    try {
+        const itineraries = await Itinerary.find({ createdBy: guideId });
+        res.status(200).json(itineraries);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+};
+
+// update an Itinerary
+const updateItinerary = async (req, res) => {
+    const { id } = req.params;
+    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const updates= req.body;
+
+    try {
+        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId });
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
+        }
+
+        Object.assign(itinerary, updates);
+        await itinerary.save();
+        res.status(200).json(itinerary);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+
+};
 
 
 
 
+// Delete an Itinerary
+
+const deleteItinerary = async (req, res) => {
+    const { id } = req.params;
+    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+
+    try {
+        const itinerary = await Itinerary.findOneAndDelete({ _id: id, createdBy: guideId });
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
+        }
+        res.status(200).json({ message: 'Itinerary deleted successfully', itinerary });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 
 
+};
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide,  createItinerary}; // Export the controller functions
+module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide,  createItinerary, getItinerary,getAllItinerariesByGuide,updateItinerary,deleteItinerary}; // Export the controller functions

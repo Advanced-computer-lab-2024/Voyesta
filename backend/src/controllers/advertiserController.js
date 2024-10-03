@@ -171,6 +171,8 @@ const updateActivity = async (req, res) => {
     const { id } = req.params;
     const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
 
+    const updates = req.body;
+
     try {
         const activity = await Activity.findById(id);
         if (!activity) {
@@ -181,7 +183,7 @@ const updateActivity = async (req, res) => {
             return res.status(403).json({ error: 'Unauthorized access' });
         }
 
-        Object.assign(activity, req.body);
+        Object.assign(activity, updates);
         await activity.save();
         res.status(200).json(activity);
     } catch (error) {
