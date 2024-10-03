@@ -30,3 +30,5 @@ const cleanupExpiredOTPs = async () => {
         console.error('Error cleaning up expired OTPs:', error);
     }
 };
+
+module.exports = cleanupExpiredOTPs;
