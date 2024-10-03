@@ -27,5 +27,9 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.use('/api', router);
 
+
+const router = require('./src/routes/index');
+app.use('/api', router);
+
 // Export the app
 module.exports = app;
