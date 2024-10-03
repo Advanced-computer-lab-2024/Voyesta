@@ -1,16 +1,4 @@
-// server.js
-<<<<<<< Updated upstream
 const app = require('./App');
-
-// Set the port from the environment variable or use 3000
-const PORT = process.env.PORT || 3000;
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
-=======
-const app = require('./src/App');
 const mongoose = require('mongoose');
 require('dotenv').config();
 // Set the port from the environment variable or use 3000
@@ -24,4 +12,3 @@ mongoose.connect(MongoURI)
     console.log(`Listening to requests on http://localhost:${port}`);
   })
 })
->>>>>>> Stashed changes
