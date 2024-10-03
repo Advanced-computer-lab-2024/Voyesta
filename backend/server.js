@@ -1,5 +1,5 @@
 // server.js
-<<<<<<< Updated upstream
+
 const app = require('./App');
 
 // Set the port from the environment variable or use 3000

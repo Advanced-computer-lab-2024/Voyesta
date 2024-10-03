@@ -86,4 +86,57 @@ const sendOTPtourGuide = async (req, res) => {
     }
 };
 
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide}; // Export the controller functions
+
+const createItinerary = async (req, res) => {
+    const { description, tags, locations, tourLanguage, tourPrice, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
+    const  { id } = req.params; 
+    try {
+        const itinerary = new Itinerary({
+            createdBy : id,
+            description,
+            tags,
+            locations,
+            tourLanguage,
+            tourPrice,
+            availableDatesAndTimes,
+            activities,
+            accessibility,
+            pickUpLocation,
+            dropOffLocation
+        });
+
+        await itinerary.save();
+        res.status(201).json(itinerary);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide,  createItinerary}; // Export the controller functions

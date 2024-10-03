@@ -100,7 +100,7 @@ const createActivity = async (req, res) => {
     // lat and lng are nested in coordinates object
     // as theres no frontend to send the google marker
     
-    const { title, description, city, country,lat,lng, date, time, price, specialDiscount, category, tags} = req.body;
+    const { title, description,date,time, city, country,lat,lng,duration, price, specialDiscount, category, tags} = req.body;
     const  { id } = req.params;
     
     try {
@@ -118,6 +118,7 @@ const createActivity = async (req, res) => {
                 }
             },
             price,
+            duration,
             specialDiscount,
             category,
             tags,

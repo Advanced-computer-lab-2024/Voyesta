@@ -2,6 +2,8 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const TagSchema = require('./PreferenceTag');
+
 const priceRangeSchema = new Schema({
   min: {
       type: Number,
@@ -27,7 +29,7 @@ const validatePriceType = (value) => {
 
 
 const activitySchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true
   },
@@ -67,7 +69,17 @@ time: {
   type: String,
   required: true
 },
-Price: {
+duration: {
+  type: String,
+  required: true,
+  validate: {
+    validator: function(v) {
+      return /^(\d+ (Hour|Hours)( \d+ min)?)$/.test(v);
+    },
+    message: props => `${props.value} is not a valid duration format!`
+  }
+},
+price: {
     type: Schema.Types.Mixed,
     required: true,
     validate : {
@@ -87,11 +99,7 @@ Price: {
     ref: 'ActivityCategory',
     required: true
   },
-  tags: [{
-    type: Schema.Types.ObjectId,
-    ref: 'PreferenceTag',
-    required: true
-}],
+  tags: [{type : Schema.Types.ObjectId, ref : 'PreferenceTag'}],
   advertiser: {
     type: Schema.Types.ObjectId,
     ref: 'Advertiser',
