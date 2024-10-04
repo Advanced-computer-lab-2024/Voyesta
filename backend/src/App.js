@@ -63,7 +63,7 @@ app.delete("/deleteTourGuide", deleteTourGuide);
 
 app.post("/addTourist", createTourist);
 app.get("/tourists", getTourists);
-app.get('/filterActivities', filterTouristActivities);
+app.get('/filterTouristActivities', filterTouristActivities);
 app.put("/updateTourist", updateTourist);
 app.delete("/deleteTourist", deleteTourist);
 

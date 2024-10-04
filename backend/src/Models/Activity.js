@@ -111,7 +111,6 @@ const activitySchema = new mongoose.Schema({
     type: Number,
     min: 1,
     max: 5,
-    default: 1 // Optional: Set a default rating if desired
   }
 
 }, { timestamps: true });
