@@ -6,9 +6,9 @@ const bodyParser = require('body-parser');
 const cron = require('node-cron');
 const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
 
-cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
+// cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
 
-const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("./controllers/advertiserController");
+const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser,getActivitysandadvertiser,createActivity } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
 const { createTourist, getTourists, updateTourist, deleteTourist } = require("./controllers/touristController");
@@ -31,24 +31,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Database connection
 const MongoURI = process.env.MONGO_URI;
 
-mongoose.connect(MongoURI)
-  .then(() => {
-    console.log("MongoDB is now connected!");
+// mongoose.connect(MongoURI)
+//   .then(() => {
+//     console.log("MongoDB is now connected!");
 
-    // Define the port
-    const port = process.env.PORT || 3000; // Use environment variable or default to 3000
+//     // Define the port
+//     const port = process.env.PORT || 3000; // Use environment variable or default to 3000
 
-    // Starting server
-    app.listen(port, () => {
-      console.log(`Listening to requests on http://localhost:${port}`);
-    });
-  })
-  .catch(err => console.log(err));
+//     // Starting server
+//     app.listen(port, () => {
+//       console.log(`Listening to requests on http://localhost:${port}`);
+//     });
+//   })
+//   .catch(err => console.log(err));
 
-// Define routes
-app.get('/', (req, res) => {
-  res.send('Welcome to the Node.js app connected to MongoDB!');
-});
+
 
 // Your existing routes...
 app.post("/addAdvertiser", createAdvertiser);
@@ -77,6 +74,11 @@ app.get("/guestTourists", getGuestTourists);
 
 app.post("/addGuestUser", registerGuestUser);
 app.get("/guestUsers", getGuestUsers);
+
+
+//activity routes
+app.get("/ListOfActivities/:id", getActivitysandadvertiser);
+app.post("/addactivity/:id",createActivity);
 
 // Export the app
 module.exports = app;
