@@ -3,14 +3,22 @@ const museumsAndHistoricalPlacesModel = require('../models/museumsAndHistoricalP
 
 // create a place of interest
 const createPlaceOfInterest = async (req, res) => {
-    const { name, description, pictures, location, openingHours, ticketPrices,createdBy } = req.body;
+    const { name, description, pictures,address,city,country,lat,lng, openingHours, ticketPrices} = req.body;
     const  { id } = req.params; 
     try {
         const placeOfInterest = await museumsAndHistoricalPlacesModel.create({
             name,
             description,
             pictures,
-            location,
+            location:{
+                address,
+                city,
+                country,
+                coordinates:{
+                    lat,
+                    lng
+                }
+            },
             openingHours,
             ticketPrices,
             createdBy: id
@@ -96,7 +104,7 @@ const createTagsForPlaceOfInterest = async (req, res) => {
     const { id } = req.params;
     const { tags } = req.body;
     try {
-        const placeOfInterest = await museumsAndHistoricalPlacesModel.findOneAndUpdate({ _id: id }, { tags }, { new: true });
+        const placeOfInterest = await museumsAndHistoricalPlacesModel.findOneAndUpdate({ _id: id }, { $set :{tags} }, { new: true });
         res.status(200).json({ message: 'Tags added successfully', placeOfInterest });
     }
     catch (error) {

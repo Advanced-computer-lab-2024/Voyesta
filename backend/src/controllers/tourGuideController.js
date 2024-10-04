@@ -89,14 +89,14 @@ const sendOTPtourGuide = async (req, res) => {
 
 
 const createItinerary = async (req, res) => {
-    const { description, tags, locations, tourLanguage, tourPrice, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
+    const { itineraryName,description, tags, tourLanguage, tourPrice, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
     const  { id } = req.params; 
     try {
         const itinerary = new Itinerary({
+            itineraryName,
             createdBy : id,
             description,
             tags,
-            locations,
             tourLanguage,
             tourPrice,
             availableDatesAndTimes,
@@ -119,7 +119,7 @@ const getItinerary = async (req, res) => {
     const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
 
     try {
-        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId });
+        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId }).populate('activities tags');
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }

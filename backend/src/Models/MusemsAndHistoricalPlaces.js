@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+
+
+
 const museumsAndHistoricalPlacesSchema = new Schema({
     name: {
         type: String,
@@ -62,8 +65,9 @@ const museumsAndHistoricalPlacesSchema = new Schema({
         required: true
     },
     tags: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'Tag',
+        required: false
     }
 
 });

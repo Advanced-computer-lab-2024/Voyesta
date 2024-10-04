@@ -41,13 +41,17 @@ const touristSchema = new Schema({
         type:Number,
         required:true,
         default:0 // Default value of wallet is 0
-      }
+      },
+      itinerary: [{ type: Schema.Types.ObjectId,
+        ref:'Itinerary',
+        required:false
+    }], // Array of itineraries
       // otp will be added next sprint forget its here for now
 }, { timestamps: true });
 
 // Age validation
 touristSchema.pre('save', function(next) {  
-    const age = new Date().getFullYear() - this.dob.getFullYear();
+    const age = new Date().getFullYear() - this.DOB.getFullYear();
     if (age < 18) {
         return next(new Error('You must be at least 18 years old to register.'));
     }

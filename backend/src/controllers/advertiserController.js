@@ -101,7 +101,7 @@ const createActivity = async (req, res) => {
     // lat and lng are nested in coordinates object
     // as theres no frontend to send the google marker
     
-    const { name, description,date,time, city, country,lat,lng,duration, price, specialDiscount, category, tags} = req.body;
+    const { name, description,date,time,address, city, country,lat,lng,duration, price, specialDiscount, category, tags} = req.body;
     const  { id } = req.params;
     
     try {
@@ -111,13 +111,7 @@ const createActivity = async (req, res) => {
             date,
             time,
             location : {
-                address,
-                city,
-                country,
-                coordinates:{
-                    lat,
-                    lng
-                }
+                  
             },
             price,
             duration,
@@ -140,7 +134,7 @@ const getActivity = async (req, res) => {
     const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
 
     try {
-        const activity = await Activity.findById(id).populate('category tags advertiser');
+        const activity = await Activity.findById({_id: id, advertiser: advertiserId }).populate('category tags advertiser');
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
         }
@@ -246,5 +240,5 @@ const deleteActivity = async (req, res) => {
 //     }
 // };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser, getActivity, createActivity, deleteActivity, updateActivity, getFilteredActivities }; // Export the functions
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser, getActivity, createActivity, deleteActivity, updateActivity , getAllActivitiesByAdvertiser }; // Export the functions
 

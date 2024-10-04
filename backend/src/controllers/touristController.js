@@ -8,10 +8,10 @@ const createTourist = async (req, res) => {
    const { Username, Email, Password, Number, Nationality, DOB, Job } = req.body;
 
    try {
-       if (await Tourist.exists({ email })) {  // Check if a tourist profile with the email already exists
+       if (await touristModel.exists({ Email })) {  // Check if a tourist profile with the email already exists
            return res.status(400).json({ message: 'Tourist already exists' });
        }
-       const tourist = new Tourist({
+       const tourist = new touristModel({
            Username,
            Email,
            Password, // Remember to hash the password before saving
@@ -19,7 +19,6 @@ const createTourist = async (req, res) => {
            Nationality,
            DOB,
            Job,
-           Wallet
        });
 
        await tourist.save();
