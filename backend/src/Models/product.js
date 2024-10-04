@@ -24,13 +24,13 @@ const productSchema = new mongoose.Schema({
     ratings:
         [
             {
-            user: ObjectId,
+            user: mongoose.Types.ObjectId,
             rating: { type: Number, min: 0, max: 5 }
         }
     ],
     reviews: [
         {
-            user: ObjectId,
+            user: mongoose.Types.ObjectId,
             comment: String,
             rating: { type: Number, min: 0, max: 5 }
         }

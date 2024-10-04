@@ -3,6 +3,8 @@ import AdminNavbar from "../../components/adminNavbar";
 import { Routes, Route } from "react-router-dom";
 import AdminListView from "../../components/adminListView";
 import AdminAccountManagement from "../../components/AdminAccountManagement";
+import AdminProductsView from "../../components/AdminProductsView";
+
 // import Admin from "../../../../backend/src/Models/Admin";
 
 function AdminDashboard(){

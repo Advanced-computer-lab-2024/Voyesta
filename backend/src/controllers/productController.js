@@ -36,7 +36,7 @@ const addProduct = async (req, res) => {
 // Function to fetch all products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find().select('name picture price description seller ratings reviews'); // Fetches all products
+        const products = await Product.find().select(); // Fetches all products
         if(products.length !== 0){
             res.status(200).json({
                 success: true,
