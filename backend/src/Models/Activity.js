@@ -104,6 +104,12 @@ price: {
     type: Schema.Types.ObjectId,
     ref: 'Advertiser',
     required: true
+},
+Rating: {
+  type: Number,
+  min: 1,
+  max: 5,
+
 }
 
 }, { timestamps: true });

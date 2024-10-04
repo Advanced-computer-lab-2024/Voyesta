@@ -2,6 +2,7 @@
 const adModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
 const Activity = require('../Models/Activity');
+const activityModel = require('../Models/Activity');
 // Create a new Advertiser profile
 const createAdvertiser = async (req, res) => {
     const { username, email, password, website, hotline, companyProfile, servicesOffered } = req.body;
@@ -215,11 +216,109 @@ const deleteActivity = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const sortactivitestsByPrice = async (req, res) => {
+    try {
+        
+        const activities = await Activity.find().sort({ price: 1 });
+
+        if (activities.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No activity found'
+            });
+        }
+
+        
+        res.status(200).json({
+            success: true,
+            data: activities
+        });
+    } catch (error) {
+        
+        res.status(500).json({
+            success: false,
+            message: 'Error sorting activity by price',
+            error: error.message
+        });
+    }}
+
+
+        const sortactivitestsByRatings = async (req, res) => {
+            try {
+                
+                const activities = await Activity.find().sort({ ratings: 1 });
+        
+                if (activities.length === 0) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'No activity found'
+                    });
+                }
+        
+                
+                res.status(200).json({
+                    success: true,
+                    data: activities
+                });
+            } catch (error) {
+                
+                res.status(500).json({
+                    success: false,
+                    message: 'Error sorting activity by ratings',
+                    error: error.message
+                });
+            }}
+                
 
 
 
 
 
+
+            const filterActivities = async (req, res) => {
+                const { minPrice, maxPrice, date, preferences, language } = req.body; // assuming these are passed in the request body
+            
+                const filter = {};
+            
+                // Filter by price (budget)
+                if (minPrice !== undefined && maxPrice !== undefined) {
+                    filter.price = { $gte: minPrice, $lte: maxPrice };
+                } else if (minPrice !== undefined) {
+                    filter.price = { $gte: minPrice };
+                } else if (maxPrice !== undefined) {
+                    filter.price = { $lte: maxPrice };
+                }
+            
+                // Filter by upcoming date
+                if (date) {
+                    filter.date = { $gte: new Date(date) }; // upcoming from the specified date
+                } else {
+                    filter.date = { $gte: new Date() }; // default to today for upcoming activities
+                }
+            
+                // Filter by preferences (tags)
+                if (preferences && preferences.length > 0) {
+                    filter.tags = { $in: preferences }; // assuming preferences are an array of tag IDs
+                }
+            
+                // Filter by language
+                if (language) {
+                    filter.language = language; // assuming a 'language' field exists in the schema
+                }
+            
+                try {
+                    const activities = await Activity.find(filter).populate('category tags advertiser');
+            
+                    if (activities.length === 0) {
+                        return res.status(404).json({ message: 'No activities found matching the criteria' });
+                    }
+            
+                    res.status(200).json(activities);
+                } catch (error) {
+                    res.status(400).json({ error: error.message });
+                }
+            };
+            
 
 // update password
 // const updatePassword = async (req, res) => {
@@ -246,5 +345,4 @@ const deleteActivity = async (req, res) => {
 //     }
 // };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser, getActivity, createActivity, deleteActivity, updateActivity, getFilteredActivities }; // Export the functions
-
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser, getActivity, createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities }; // Export the functions
