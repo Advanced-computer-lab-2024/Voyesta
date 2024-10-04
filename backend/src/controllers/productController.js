@@ -190,4 +190,41 @@ const sortProductsByRatings = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings }
+const getMinAndMaxPrices = async (req, res) => {
+    try {
+        // Find the minimum and maximum prices
+        const minAndMaxPrices = await Product.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    minPrice: { $min: "$price" },
+                    maxPrice: { $max: "$price" }
+                }
+            }
+        ]);
+
+        if (minAndMaxPrices.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No products found'
+            });
+        }
+
+        // Return the minimum and maximum prices
+        res.status(200).json({
+            success: true,
+            data: minAndMaxPrices[0]
+        });
+    } catch (error) {
+        console.error(`Error getting min and max prices: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            message: 'Error getting min and max prices',
+            error: error.message
+        });
+    }
+};
+
+
+
+module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings, getMinAndMaxPrices}

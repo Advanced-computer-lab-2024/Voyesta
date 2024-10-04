@@ -5,7 +5,7 @@ import { assets } from "../assets/assets";
 function AdminNavbar(){
     const [visible, setVisible] = useState(false);
     return(
-        <div className="flex items-center justify-between text-[#f5e1b4] bg-[#003366] px-5 py-5 font-medium mb-10">
+        <div className="flex items-center justify-between text-[#f5e1b4] bg-[#003366] px-5 py-5 font-medium">
 
         {/* <NavLink to="/"> */}
             {/* <img src={assets.logo} className="w-36" /> */}

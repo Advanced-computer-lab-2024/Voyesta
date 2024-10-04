@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const router = require('./src/routes');
+const router = require('./src/routes/index');
 
 // Load environment variables
 dotenv.config();
@@ -27,9 +27,6 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.use('/api', router);
 
-
-const router = require('./src/routes/index');
-app.use('/api', router);
 
 // Export the app
 module.exports = app;
