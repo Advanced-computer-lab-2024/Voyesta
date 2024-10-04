@@ -48,6 +48,7 @@ const filterTouristActivities = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving activities', error });
     }
 };
+
 const getTouristView = async (req, res) => {
     try {
         const currentDate = new Date();

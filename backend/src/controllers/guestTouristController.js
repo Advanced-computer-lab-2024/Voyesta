@@ -4,14 +4,10 @@ const registerGuestTourist = async (req, res) => {
     const { username, email, password, mobileNumber, nationality, dob, jobOrStudent } = req.body;
 
     try {
-<<<<<<< HEAD
-        const guestTourist = new GuestTourist({ // Ensure consistent variable naming
-=======
         if (await Tourist.exists({ email })) {  // Check if a tourist profile with the email already exists
             return res.status(400).json({ message: 'Tourist already exists' });
         }
         const tourist = new Tourist({
->>>>>>> d9374484166dc31a29bd53fd4e8c44bb5bf425d5
             username,
             email,
             password, // Remember to hash the password before saving
