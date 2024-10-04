@@ -1,4 +1,5 @@
-const {Schema} = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 // const activitySchema = require('./Activity');
 const itinerarySchema = new Schema({
     itineraryName: {
@@ -56,5 +57,5 @@ const itinerarySchema = new Schema({
     
 }, { timestamps: true });
 
-const ItineraryModel = mongoose.model('Itinerary', itinerarySchema);
-module.exports = Itineraryschema;
+const itineraryModel = mongoose.model('Itinerary', itinerarySchema);
+module.exports = itineraryModel;
