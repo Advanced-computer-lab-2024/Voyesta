@@ -20,7 +20,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['tourGuide', 'advertiser', 'seller'], // Specifying roles
+        enum: ['tourGuide', 'advertiser', 'seller','tourist','tourismGovernor','admin'], // Specifying roles
         required: true,
     }
 }, { timestamps: true });

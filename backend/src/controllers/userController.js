@@ -1,4 +1,4 @@
-const User = require('../Models/UserGuest'); // Adjust path as needed
+const User = require('../Models/User'); // Adjust path as needed
 
 const registerGuestUser = async (req, res) => {
     const { username, email, password, role } = req.body;
@@ -18,7 +18,7 @@ const registerGuestUser = async (req, res) => {
     }
 };
 
-const getGuestUsers = async (req, res) => {
+const getUsers = async (req, res) => {
     try {
         const users = await User.find({});
         res.status(200).json(users);
@@ -27,4 +27,4 @@ const getGuestUsers = async (req, res) => {
     }
 };
 
-module.exports = { registerGuestUser, getGuestUsers };
+module.exports = { registerGuestUser, getUsers };
