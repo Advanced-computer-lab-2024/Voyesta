@@ -1,4 +1,5 @@
-const adModel = require('../models/Advertiser'); // Ensure this path is correct
+
+const adModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
 const Activity = require('../Models/Activity');
 // Create a new Advertiser profile
@@ -36,13 +37,21 @@ const getAdvertisers = async (req, res) => {
 
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
-    const updates = req.body;
+    const { username } = req.params; // Extract email from URL parameters
+    const {email,password,website,hotline,companyProfile,servicesOffered}= req.body;
+    const updates = {};
+    if (email) updates.email = email;
+    if (password) updates.password = password;
+    if (website) updates.website = website;
+    if (hotline) updates.hotline = hotline;
+    if (companyProfile) updates.companyProfile = companyProfile;
+    if (servicesOffered) updates.servicesOffered = servicesOffer
+
 
     try {
         const advertiser = await adModel.findOneAndUpdate(
             { email }, // Find by email
-            updates, // Update these fields
+            { $set: updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
 
@@ -92,21 +101,7 @@ const createActivity = async (req, res) => {
     // lat and lng are nested in coordinates object
     // as theres no frontend to send the google marker
     
-    const {
-        name,            // String
-        description,     // String
-        date,            // Date
-        time,            // String
-        city,            // String
-        country,         // String
-        lat,             // Number (latitude)
-        lng,             // Number (longitude)
-        address,        // Number or String (for example, "2 hours")
-        Price,           // Number or object with min/max (based on schema)
-        specialDiscount, // Number (0 to 100)
-        category,        // ObjectId (reference to 'ActivityCat')
-        tags             // Array of ObjectId (references to 'PreferenceTag')
-      } = req.body;
+    const { name, description,date,time, city, country,lat,lng,duration, price, specialDiscount, category, tags} = req.body;
     const  { id } = req.params;
     
     try {
@@ -115,17 +110,18 @@ const createActivity = async (req, res) => {
             description,
             date,
             time,
-            location: {
+            location : {
                 address,
                 city,
                 country,
-                coordinates: {
+                coordinates:{
                     lat,
                     lng
                 }
             },
-            Price,
-            specialDiscount, // Setting default value
+            price,
+            duration,
+            specialDiscount,
             category,
             tags,
             advertiser: id
@@ -141,18 +137,17 @@ const createActivity = async (req, res) => {
 // Get an Activity
 const getActivity = async (req, res) => {
     const { id } = req.params;
-    // const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
 
     try {
-        const activity = await Activity.findById(id);
-        // const activity = await adModel.find();
+        const activity = await Activity.findById(id).populate('category tags advertiser');
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
         }
 
-        // if (activity.advertiser.toString() !== advertiserId.toString()) {
-        //     return res.status(403).json({ error: 'Unauthorized access' });
-        // }
+        if (activity.advertiser.toString() !== advertiserId.toString()) {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
 
         res.status(200).json(activity);
     } catch (error) {
@@ -160,35 +155,17 @@ const getActivity = async (req, res) => {
     }
 };
 
-// const getAllActivitiesByAdvertiser = async (req, res) => {  
-//     const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
-
-//     try {
-//         const activities = await Activity.find({ advertiser: advertiserId }).populate('category tags advertiser');
-//         res.status(200).json(activities);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-
-// }
-
-const getAllActivitiesByAdvertiser = async (req, res) => {
+const getAllActivitiesByAdvertiser = async (req, res) => {  
     const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
 
-    
-    const sortBy = req.query.sortBy || 'price';  
-    const order = req.query.order === 'desc' ? -1 : 1;  
-
     try {
-        const activities = await Activity.find({ advertiser: advertiserId })
-            .populate('category tags advertiser')
-            .sort({ [sortBy]: order }); 
-
+        const activities = await Activity.find({ advertiser: advertiserId }).populate('category tags advertiser');
         res.status(200).json(activities);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-};
+
+}
 
 
 // update an Activity
@@ -240,48 +217,9 @@ const deleteActivity = async (req, res) => {
 };
 
 
-const getFilteredActivities = async (req, res) => {
-    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
 
-    // Extract filters from query params
-    const { minBudget, maxBudget, date, preferences, language } = req.query;
 
-    // Build a filter object dynamically based on available query params
-    let filters = { advertiser: advertiserId };
 
-    // Filter by budget (price range)
-    if (minBudget && maxBudget) {
-        filters['price.min'] = { $gte: minBudget };
-        filters['price.max'] = { $lte: maxBudget };
-    } else if (minBudget) {
-        filters['price.min'] = { $gte: minBudget };
-    } else if (maxBudget) {
-        filters['price.max'] = { $lte: maxBudget };
-    }
-
-    if (date) {
-        filters.date = { $gte: new Date(date) };  
-    }
-
-    if (preferences) {
-        const preferenceArray = preferences.split(','); 
-        filters.tags = { $in: preferenceArray };  
-    }
-
-    if (language) {
-        filters.language = language;  
-    }
-
-    try {
-        const activities = await Activity.find(filters)
-            .populate('category tags advertiser')
-            .sort({ price: 1 });  
-
-        res.status(200).json(activities);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
 
 // update password
 // const updatePassword = async (req, res) => {
@@ -309,3 +247,4 @@ const getFilteredActivities = async (req, res) => {
 // };
 
 module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser, getActivity, createActivity, deleteActivity, updateActivity, getFilteredActivities }; // Export the functions
+

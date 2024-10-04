@@ -60,6 +60,10 @@ const museumsAndHistoricalPlacesSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'TourismGovernor',
         required: true
+    },
+    tags: {
+        type: String,
+        required: true
     }
 
 });
