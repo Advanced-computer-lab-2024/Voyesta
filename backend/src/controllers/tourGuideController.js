@@ -92,20 +92,6 @@ const getItneraryandadtourguide = async(req,res) =>{
         res.status(500).json({ error: 'Server error while fetching items' });
       }
 
-
-    //   const getmusuemsandplaces = async(req,res) =>{
-    //     const museumsAndHistoricalPlacesId = req.params._id
-    //     try {
-    //         const Itinerary = await Itinerary.find({museumsAndHistoricalPlacesId : museumsAndHistoricalPlacesId });
-    //         res.status(200).json({
-    //           itineraries
-    //         });
-    //       } catch (error) {
-    //         res.status(500).json({ error: 'Server error while fetching items' });
-    //       }
-     
-
-
       
 }
 module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide,getItneraryandadtourguide}; // Export the controller functions
