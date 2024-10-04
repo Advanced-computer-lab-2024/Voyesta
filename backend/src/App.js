@@ -11,8 +11,8 @@ const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
 const{createPlaceOfInterest,getAllPlacesOfInterest,getPlaceOfInterest,updatePlaceOfInterest,deletePlaceOfInterest}=require("./controllers/TourismGovernor");
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser,getActivitysandadvertiser,createActivity } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
-const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
-const { createTourist, getTourists, updateTourist, deleteTourist } = require("./controllers/touristController");
+const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide,createItinerary,getItinerary,getAllItinerariesByGuide,deleteItinerary } = require("./controllers/tourGuideController");
+const { createTourist, getTourists, updateTourist, deleteTourist,TouristSearch } = require("./controllers/touristController");
 const { registerGuestUser, getGuestUsers } = require("./controllers/userGuestController"); 
 const { registerGuestTourist, getGuestTourists } = require("./controllers/guestTouristController"); 
 
@@ -32,20 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Database connection
 const MongoURI = process.env.MONGO_URI;
 
-// mongoose.connect(MongoURI)
-//   .then(() => {
-//     console.log("MongoDB is now connected!");
-
-//     // Define the port
-//     const port = process.env.PORT || 3000; // Use environment variable or default to 3000
-
-//     // Starting server
-//     app.listen(port, () => {
-//       console.log(`Listening to requests on http://localhost:${port}`);
-//     });
-//   })
-//   .catch(err => console.log(err));
-
+app.patch("/touristSearch",TouristSearch);
 
 
 // Your existing routes...
@@ -69,14 +56,17 @@ app.get("/tourists", getTourists);
 app.put("/updateTourist", updateTourist);
 app.delete("/deleteTourist", deleteTourist);
 
-// User routes
-app.post("/addGuestTourist", registerGuestTourist);
-app.get("/guestTourists", getGuestTourists);
+// // User routes
+// app.post("/addGuestTourist", registerGuestTourist);
+// app.get("/guestTourists", getGuestTourists);
 
-app.post("/addGuestUser", registerGuestUser);
-app.get("/guestUsers", getGuestUsers);
+// app.post("/addGuestUser", registerGuestUser);
+// app.get("/guestUsers", getGuestUsers);
 
-
+//Itinerary
+app.post("/addItinerary",createItinerary);
+app.get("/getItinerary",getAllItinerariesByGuide);
+app.delete("/deleteItinerary",deleteItinerary);
 //activity routes
 app.get("/ListOfActivities/:id", getActivitysandadvertiser);
 app.post("/addactivity/:id",createActivity);
