@@ -116,7 +116,7 @@ const createItinerary = async (req, res) => {
 
 const getItinerary = async (req, res) => {
     const { id } = req.params;
-    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
 
     try {
         const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId }).populate('activities tags');
@@ -132,7 +132,7 @@ const getItinerary = async (req, res) => {
 
 // Get all Itineraries created by a Tour Guide
 const getAllItinerariesByGuide = async (req, res) => {
-    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
 
     try {
         const itineraries = await Itinerary.find({ createdBy: guideId });
@@ -146,7 +146,7 @@ const getAllItinerariesByGuide = async (req, res) => {
 // update an Itinerary
 const updateItinerary = async (req, res) => {
     const { id } = req.params;
-    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
     const updates= req.body;
 
     try {

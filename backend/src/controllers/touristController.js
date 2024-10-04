@@ -34,16 +34,17 @@ const getTourists = async (req, res) => {
     res.status(200).json(tourist);
  
    
- }catch{error}{
+ }catch(error){
     res.status(400).json({error:error.message})
  }};
 
 
 // gets a tourist by username displaying all its information
  const getTourist = async (req, res) => {
-    const { Username } = req.prams;
+    const {id} = req.params;
+
     try{
-     const tourist=await touristModel.find({Username:Username});
+     const tourist = await touristModel.findById(id);
      if(!tourist){
         return res.status(404).json({error:'Tourist not found'});
      }  
@@ -51,14 +52,14 @@ const getTourists = async (req, res) => {
      res.status(200).json(tourist);
   
     
-  }catch{error}{
+  }catch(error){
      res.status(400).json({error:error.message})
   }};
 
 
  const updateTourist = async (req, res) => {
    const { Email, Password, Number, Nationality, Job } = req.body;
-   const { Username } = req.params;
+   const { id } = req.params;
    
    // Create an object containing the fields to update
    const updateFields = {};
@@ -71,7 +72,7 @@ const getTourists = async (req, res) => {
    try {
        // Use findOneAndUpdate to update the tourist by Email
        const tourist = await touristModel.findOneAndUpdate(
-           { Username: Username}, // Find by Email
+           { _id: id}, // Find by Email
            { $set: updateFields}, // Update these fields
            { new: true } // Return the updated document
        );

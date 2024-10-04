@@ -7,8 +7,11 @@ advertiserRouter.post('/createAdvertiser', advertiserController.createAdvertiser
 // Get all advertisers
 advertiserRouter.get('/getAdvertisers', advertiserController.getAdvertisers);
 // Update an advertiser
-advertiserRouter.put('/updateAdvertiser/:email', advertiserController.updateAdvertiser);
+advertiserRouter.put('/updateAdvertiser/:id', advertiserController.updateAdvertiser);
 // Delete an advertiser
-advertiserRouter.delete('/deleteAdvertiser/:email', advertiserController.deleteAdvertiser);
+advertiserRouter.delete('/deleteAdvertiser/:id', advertiserController.deleteAdvertiser);
 
+advertiserRouter.put('/updateActivity/:id', advertiserController.updateActivity);
+
+advertiserRouter.post('/createActivity/:id', advertiserController.createActivity);
 module.exports = advertiserRouter;
