@@ -1,8 +1,5 @@
-
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
-const TagSchema = require('./PreferenceTag');
 
 const priceRangeSchema = new Schema({
   min: {
@@ -27,9 +24,8 @@ const validatePriceType = (value) => {
 };
 
 
-
 const activitySchema = new mongoose.Schema({
-  title: {
+  name: {
     type: String,
     required: true
   },
@@ -40,24 +36,24 @@ const activitySchema = new mongoose.Schema({
   location: {
     address: {
         type: String,
-        required: true
+        required: false
     },
     city: {
         type: String,
-        required: true
+        required: false
     },
     country: {
         type: String,
-        required: true
+        required: false
     },
     coordinates: {
         lat: {
             type: Number,
-            required: true
+            required: false
         },
         lng: {
             type: Number,
-            required: true
+            required: false
         }
     }
 },
@@ -69,17 +65,7 @@ time: {
   type: String,
   required: true
 },
-duration: {
-  type: String,
-  required: true,
-  validate: {
-    validator: function(v) {
-      return /^(\d+ (Hour|Hours)( \d+ min)?)$/.test(v);
-    },
-    message: props => `${props.value} is not a valid duration format!`
-  }
-},
-price: {
+Price: {
     type: Schema.Types.Mixed,
     required: true,
     validate : {
@@ -96,15 +82,20 @@ price: {
   },
   category: {
     type: Schema.Types.ObjectId,
-    ref: 'ActivityCategory',
+    ref: 'ActivityCat',
     required: true
   },
-  tags: [{type : Schema.Types.ObjectId, ref : 'PreferenceTag'}],
+  tags: [{
+    type: Schema.Types.ObjectId,
+    ref: 'PreferenceTag',
+    required: true
+}],
   advertiser: {
     type: Schema.Types.ObjectId,
     ref: 'Advertiser',
     required: true
-}
+},
+
 
 }, { timestamps: true });
 

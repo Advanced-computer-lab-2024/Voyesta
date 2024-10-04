@@ -11,7 +11,7 @@ const itinerarySchema = new Schema({
         trim: true, // Name of the itinerary
     },
     
-    activities: [ActivitySchema], // Array of activities in the itinerary
+    //activities: [ActivitySchema], // Array of activities in the itinerary
     createdBy: {
         type: Schema.Types.ObjectId,
         ref : 'TourismGovernor', // User/guide who created the itinerary
@@ -19,28 +19,28 @@ const itinerarySchema = new Schema({
     },
     description: { // timeline of the itinerary
         type: String,
-        required: True,
+        required: true,
         trim: true, // Optional description of the itinerary
     },
-    tags: {
-        type: [TagSchema], // Array of tags associated with the itinerary
-        required: True,
-    },
+    // tags: {
+    //     type: [TagSchema], // Array of tags associated with the itinerary
+    //     required: true,
+    // },
     TourLanguage: {
         type: [String], 
-        required: True,
+        required: true,
     },
     TourPrice: {
         type: Number, 
-        required: True,
+        required: true,
     },
     availableDatesAndTimes: {
         type: [String], 
-        required: True,
+        required: true,
     },
     accessibility: {
         type: Boolean, 
-        required: True,
+        required: true,
     },
     pickUpLocation: { // we can use nested jsons or the url of the location
         type: String,
