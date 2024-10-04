@@ -1,14 +1,15 @@
-const adModel = require('../models/Advertiser'); // Ensure this path is correct
+const advertiserModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
+
 // Create a new Advertiser profile
 const createAdvertiser = async (req, res) => {
     const { username, email, password, website, hotline, companyProfile, servicesOffered } = req.body;
 
     try {
-        if (await adModel.exists({ email })) {  // Check if an advertiser profile with the email already exists
+        if (await advertiserModel.exists({ email })) {  // Check if an advertiser profile with the email already exists
             return res.status(400).json({ message: 'Advertiser already exists' });
         }
-        const advertiser = await adModel.create({
+        const advertiser = await advertiserModel.create({
             username,
             email,
             password, // Remember to hash the password before saving in production
@@ -26,7 +27,7 @@ const createAdvertiser = async (req, res) => {
 // Get all Advertiser profiles
 const getAdvertisers = async (req, res) => {
     try {
-        const advertisers = await adModel.find({});
+        const advertisers = await advertiserModel.find({});
         res.status(200).json(advertisers);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -39,7 +40,7 @@ const updateAdvertiser = async (req, res) => {
     const updates = req.body;
 
     try {
-        const advertiser = await adModel.findByIdAndUpdate(
+        const advertiser = await advertiserModel.findByIdAndUpdate(
             id, // Find by ID
             updates, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
@@ -60,7 +61,7 @@ const deleteAdvertiser = async (req, res) => {
     const { id } = req.params; // Extract ID from URL parameters
 
     try {
-        const advertiser = await adModel.findByIdAndDelete(id); // Find and delete by ID
+        const advertiser = await advertiserModel.findByIdAndDelete(id); // Find and delete by ID
 
         if (!advertiser) {
             return res.status(404).json({ error: 'Advertiser not found' });
@@ -73,12 +74,11 @@ const deleteAdvertiser = async (req, res) => {
 };
 
 // Send OTP to email
-
 const sendOTPadvertiser = async (req, res) => {
     const { email } = req.body;
 
     try {
-        const response = await otpSender(adModel, email);
+        const response = await otpSender(advertiserModel, email);
         res.json(response);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -91,7 +91,7 @@ const sendOTPadvertiser = async (req, res) => {
 //     const { oldPassword, newPassword } = req.body; // Extract new password from request body
 
 //     try {
-//         const advertiser = await adModel.findOne({ email });
+//         const advertiser = await advertiserModel.findOne({ email });
 //         if (!advertiser) {
 //             return res.status(404).json({ message: 'Advertiser not found' });
 //         }

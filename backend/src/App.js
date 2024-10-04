@@ -8,11 +8,6 @@ const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
 
 cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
 
-const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("./controllers/advertiserController");
-const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
-const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
-const { createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities,getTouristView } = require("./controllers/touristController");
-
 
 //empty comment
 
@@ -33,14 +28,6 @@ const MongoURI = process.env.MONGO_URI;
 mongoose.connect(MongoURI)
   .then(() => {
     console.log("MongoDB is now connected!");
-
-    // Define the port
-    const port = process.env.PORT || 3000; // Use environment variable or default to 3000
-
-    // Starting server
-    app.listen(port, () => {
-      console.log(`Listening to requests on http://localhost:${port}`);
-    });
   })
   .catch(err => console.log(err));
 
@@ -50,34 +37,9 @@ app.get('/', (req, res) => {
 });
 
 // Your existing routes...
-app.post("/addAdvertiser", createAdvertiser);
-app.get("/advertisers", getAdvertisers);
-app.put("/updateAdvertiser", updateAdvertiser);
-app.delete("/deleteAdvertiser", deleteAdvertiser);
 
-app.post("/addSeller", createSeller);
-app.get("/sellers", getSellers);
-app.put("/updateSeller", updateSeller);
-app.delete("/deleteSeller", deleteSeller);
-
-app.post("/addTourGuide", createTourGuide);
-app.get("/tourGuides", getTourGuides);
-app.put("/updateTourGuide", updateTourGuide);
-app.delete("/deleteTourGuide", deleteTourGuide);
-
-app.post("/addTourist", createTourist);
-app.get("/tourists", getTourists);
-app.get('/filterTouristActivities', filterTouristActivities);
-app.get('/viewUpcomingTouristAttractions', getTouristView);
-app.put("/updateTourist", updateTourist);
-app.delete("/deleteTourist", deleteTourist);
-
-
-app.get('/filterGuestActivities', filterTouristActivities);
-app.get('/viewUpcomingGuestAttractions', getTouristView);
-
-
-// User routes
+// app.get('/filterGuestActivities', filterTouristActivities);
+// app.get('/viewUpcomingGuestAttractions', getTouristView);
 
 
 // Export the app

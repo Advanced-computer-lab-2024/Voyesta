@@ -1,6 +1,7 @@
 const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
-const mongoose = require('mongoose');
 const {otpSender} = require('../services/generateOTPgenric');
+
+
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
     const { username, email, password, mobileNumber, yearsOfExperience, previousWork, bio, languagesSpoken } = req.body;
