@@ -61,10 +61,10 @@ const museumsAndHistoricalPlacesSchema = new Schema({
         ref: 'TourismGovernor',
         required: true
     },
-    tags: [{
+    tags: {
         type: String,
         required: true
-    }]
+    }
 
 });
 
