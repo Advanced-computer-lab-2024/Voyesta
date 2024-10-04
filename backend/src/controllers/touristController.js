@@ -3,7 +3,7 @@
 const touristModel = require('../Models/Tourist');
 
 const { default: mongoose } = require('mongoose');
-const{otpSender} = require('../services/generateOTPgenric');
+
 const createTourist = async(req,res) => {
    const{Email,Username,Password,Number,Nationality,Job}= req.body;
    try{
@@ -86,4 +86,4 @@ const sendOTPtourist = async (req, res) => {
    }
 };
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist,  sendOTPtourist}; // Export the controller functions
+module.exports = {createTourist, getTourists, updateTourist, deleteTourist};

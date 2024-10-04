@@ -11,9 +11,8 @@ cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clea
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
-const { createTourist, getTourists, updateTourist, deleteTourist } = require("./controllers/touristController");
-const { registerGuestUser, getGuestUsers } = require("./controllers/userGuestController"); 
-const { registerGuestTourist, getGuestTourists } = require("./controllers/guestTouristController"); 
+const { createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities,getTouristView } = require("./controllers/touristController");
+
 
 //empty comment
 
@@ -68,15 +67,18 @@ app.delete("/deleteTourGuide", deleteTourGuide);
 
 app.post("/addTourist", createTourist);
 app.get("/tourists", getTourists);
+app.get('/filterTouristActivities', filterTouristActivities);
+app.get('/viewUpcomingTouristAttractions', getTouristView);
 app.put("/updateTourist", updateTourist);
 app.delete("/deleteTourist", deleteTourist);
 
-// User routes
-app.post("/addGuestTourist", registerGuestTourist);
-app.get("/guestTourists", getGuestTourists);
 
-app.post("/addGuestUser", registerGuestUser);
-app.get("/guestUsers", getGuestUsers);
+app.get('/filterGuestActivities', filterTouristActivities);
+app.get('/viewUpcomingGuestAttractions', getTouristView);
+
+
+// User routes
+
 
 // Export the app
 module.exports = app;
