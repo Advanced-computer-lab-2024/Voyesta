@@ -8,6 +8,7 @@ const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
 
 // cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
 
+const{createPlaceOfInterest,getAllPlacesOfInterest,getPlaceOfInterest,updatePlaceOfInterest,deletePlaceOfInterest}=require("./controllers/TourismGovernor");
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser,getActivitysandadvertiser,createActivity } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
@@ -79,6 +80,12 @@ app.get("/guestUsers", getGuestUsers);
 //activity routes
 app.get("/ListOfActivities/:id", getActivitysandadvertiser);
 app.post("/addactivity/:id",createActivity);
+//Tourism Governor routes
+app.post("/addplace/:id", createPlaceOfInterest);
+app.get("/getallPlaces", getAllPlacesOfInterest);
+app.get("/getonePlace/:id", getPlaceOfInterest);
+app.put("/updateplace", updatePlaceOfInterest);
+app.delete("/deleteplace", deletePlaceOfInterest);
 
 // Export the app
 module.exports = app;
