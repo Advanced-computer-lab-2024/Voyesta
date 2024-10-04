@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Activity = require('./path/to/activityModel'); // Update with the correct path to your activity model
+const Activity = require('../Models/Activity');
 
-const filterActivities = async (req, res) => {
+const filterTouristActivities = async (req, res) => {
     const { minPrice, maxPrice, date, category, rating } = req.query;
 
     const query = {};
@@ -41,4 +41,4 @@ const filterActivities = async (req, res) => {
     }
 };
 
-module.exports = filterActivities;
+module.exports = filterTouristActivities;

@@ -1,6 +1,8 @@
 // #Task route solution
 
 const touristModel = require('../Models/tourist.js');
+const Activity = require('../Models/Activity'); // Update with the correct path to your activity model
+
 
 const { default: mongoose } = require('mongoose');
 
@@ -75,10 +77,8 @@ const deleteTourist = async (req, res) => {
     }
 };
 
-const mongoose = require('mongoose');
-const Activity = require('./path/to/activityModel'); // Update with the correct path to your activity model
 
-const filterActivities = async (req, res) => {
+const filterTouristActivities = async (req, res) => {
     const { minPrice, maxPrice, date, category, rating } = req.query;
 
     const query = {};
@@ -123,4 +123,4 @@ const filterActivities = async (req, res) => {
 
 
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist,filterActivities};
+module.exports = {createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities};
