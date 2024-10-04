@@ -16,7 +16,7 @@ const tourGuideSchema = new Schema({
   password: {
     type: String, // Password should be hashed
     required: true,
-    minlength: 6 // Minimum length for security
+    minlength: 8 // Minimum length for security
   },
   mobileNumber: {
     type: String, // Change to String to handle various formats
