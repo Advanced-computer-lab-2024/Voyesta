@@ -1,5 +1,5 @@
 
-const mongoose = require('mongoose');
+const mongoose = require ('mongoose');
 const { Schema } = mongoose;
 
 const TagSchema = require('./PreferenceTag');
@@ -29,7 +29,7 @@ const validatePriceType = (value) => {
 
 
 const activitySchema = new mongoose.Schema({
-  title: {
+  name: {
     type: String,
     required: true
   },
