@@ -1,7 +1,7 @@
 const adModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
 const Activity = require('../Models/Activity');
-const Museum = require('../Models/Museum');
+// const Museum = require('../Models/Museum');
 // Create a new Advertiser profile
 const createAdvertiser = async (req, res) => {
     const { username, email, password, website, hotline, companyProfile, servicesOffered } = req.body;
@@ -86,48 +86,64 @@ const sendOTPadvertiser = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
-
+// .populate('category tags advertiser');
 
 const getActivitysandadvertiser = async(req,res) =>{
-    const advertiserId = req.params._id
-    try {
-        const activities = await Activity.find({ createdBy: userId });
-        //const itineraries = await Itinerary.find({ createdBy: userId });
-        //const museums = await Museum.find({ createdBy: userId });
+    const advertiserId = req.params.id
     
+    try {
+        const activities = await Activity.find({ advertiser: advertiserId })
         res.status(200).json({
-          activities,
-          //itineraries,
-          museums
+          activities
         });
       } catch (error) {
         res.status(500).json({ error: 'Server error while fetching items' });
       }
 }
+const createActivity = async (req, res) => {
+    // city and country are nested in location object
+    // lat and lng are nested in coordinates object
+    // as theres no frontend to send the google marker
+    
+    const { name, description, address,city, country,lat,lng, date, time, Price, specialDiscount, category, tags} = req.body;
+    const  { id } = req.params;
+    
+    try {
+        const activity = new Activity({
+            name,
+            description,
+            date,
+            time,
+            location : {
+                address,
+                city,
+                country,
+                coordinates:{
+                    lat,
+                    lng
+                }
+            },
+            Price,
+            specialDiscount,
+            category,
+            tags,
+            advertiser: id
+        });
 
-// update password
-// const updatePassword = async (req, res) => {
-//     const { email } = req.params; // Extract email from URL parameters
-//     const { oldPassword, newPassword } = req.body; // Extract new password from request body
+        await activity.save();
+        res.status(201).json(activity);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser,getActivitysandadvertiser,createActivity }; // Export the functions
 
-//     try {
-//         const advertiser = await adModel.findOne({ email });
-//         if (!advertiser) {
-//             return res.status(404).json({ message: 'Advertiser not found' });
-//         }
 
-//         // Check if the old password matches the one in the database
-//         if (oldPassword !== advertiser.password) {
-//             return res.status(400).json({ message: 'Old password is incorrect' });
-//         }
 
-//         advertiser.password = newPassword; // Update the password
-//         await advertiser.save(); // Save the updated advertiser profile
-//         res.json({ message: 'Password updated successfully', advertiser });
 
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser,getActivitysandadvertiser }; // Export the functions
+
+
+
+
+
