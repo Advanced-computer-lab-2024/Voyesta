@@ -2,7 +2,8 @@
 
 const touristModel = require('../Models/tourist.js');
 const Activity = require('../Models/Activity'); // Update with the correct path to your activity model
-const mongoose = require('mongoose');
+const Itinerary = require('../Models/itinerarySchema'); // Adjust path as needed
+const MuseumsandHistoricalPlaces = require('../Models/MusemsAndHistoricalPlaces.js');
 
 
 
@@ -136,7 +137,36 @@ const filterTouristActivities = async (req, res) => {
     }
 };
 
+const getTouristView = async (req, res) => {
+    try {
+        const currentDate = new Date();
+
+        // Fetch upcoming activities
+        const upcomingActivities = await Activity.find({ date: { $gte: currentDate } });
+
+        // Fetch itineraries (you might want to filter by available dates as well)
+        const upcomingItineraries = await Itinerary.find({
+            availableDatesAndTimes: { $elemMatch: { $gte: currentDate.toISOString() } }
+        });
+
+        // Fetch museums and historical places
+        const museums = await MuseumsandHistoricalPlaces.find();
+
+        // Combine results into a structured format
+        const result = {
+            upcomingActivities,
+            upcomingItineraries,
+            museums
+        };
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error retrieving tourist information:", error);
+        res.status(500).json({ message: 'Error retrieving information', error: error.message });
+    }
+};
 
 
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities};
+
+module.exports = {createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities,getTouristView};

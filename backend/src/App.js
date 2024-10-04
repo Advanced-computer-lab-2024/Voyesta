@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
-const { createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities } = require("./controllers/touristController");
+const { createTourist, getTourists, updateTourist, deleteTourist,filterTouristActivities,getTouristView } = require("./controllers/touristController");
 
 
 //empty comment
@@ -64,11 +64,13 @@ app.delete("/deleteTourGuide", deleteTourGuide);
 app.post("/addTourist", createTourist);
 app.get("/tourists", getTourists);
 app.get('/filterTouristActivities', filterTouristActivities);
+app.get('/viewUpcomingTouristAttractions', getTouristView);
 app.put("/updateTourist", updateTourist);
 app.delete("/deleteTourist", deleteTourist);
 
 
 app.get('/filterGuestActivities', filterTouristActivities);
+app.get('/viewUpcomingGuestAttractions', getTouristView);
 
 
 // User routes

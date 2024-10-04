@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Activity = require('../Models/Activity');
 
+const Itinerary = require('../Models/itinerarySchema'); // Adjust path as needed
+const MuseumsAndHistoricalPlaces = require('../Models/MuseumsAndHistoricalPlaces');
+
 const filterTouristActivities = async (req, res) => {
     const { minPrice, maxPrice, date, category, rating } = req.query;
 
@@ -45,5 +48,37 @@ const filterTouristActivities = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving activities', error });
     }
 };
+const getTouristView = async (req, res) => {
+    try {
+        const currentDate = new Date();
 
-module.exports = filterTouristActivities;
+        // Fetch upcoming activities
+        const upcomingActivities = await Activity.find({ date: { $gte: currentDate } });
+
+        // Fetch itineraries (you might want to filter by available dates as well)
+        const upcomingItineraries = await Itinerary.find({
+            availableDatesAndTimes: { $elemMatch: { $gte: currentDate.toISOString() } }
+        });
+
+        // Fetch museums and historical places
+        const museums = await MuseumsAndHistoricalPlaces.find();
+
+        // Combine results into a structured format
+        const result = {
+            upcomingActivities,
+            upcomingItineraries,
+            museums
+        };
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error retrieving tourist information:", error);
+        res.status(500).json({ message: 'Error retrieving information', error: error.message });
+    }
+};
+
+module.exports = {filterTouristActivities,getTouristView };
+
+
+
+
