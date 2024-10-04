@@ -1,9 +1,7 @@
 const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
 const mongoose = require('mongoose');
 const {otpSender} = require('../services/generateOTPgenric');
-const router = express.Router();
-const Activity = require('../Models/Activity');
-const Museum = require('../Models/Museum');
+// const Itinerary = require('../Models/Itinerary');
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
     const { username, email, password, mobileNumber, yearsOfExperience, previousWork, bio, languagesSpoken } = req.body;
@@ -83,19 +81,31 @@ const sendOTPtourGuide = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-const getActivitysandadvertiser = async(req,res) =>{
+const getItneraryandadtourguide = async(req,res) =>{
+    const ItineraryId = req.params._id
     try {
-        const activities = await Activity.find({ createdBy: userId });
-        const itineraries = await Itinerary.find({ createdBy: userId });
-        const museums = await Museum.find({ createdBy: userId });
-    
+        const Itinerary = await Itinerary.find({ItineraryId: ItineraryId});
         res.status(200).json({
-          activities,
-          itineraries,
-          museums
+          itineraries
         });
       } catch (error) {
         res.status(500).json({ error: 'Server error while fetching items' });
       }
+
+
+    //   const getmusuemsandplaces = async(req,res) =>{
+    //     const museumsAndHistoricalPlacesId = req.params._id
+    //     try {
+    //         const Itinerary = await Itinerary.find({museumsAndHistoricalPlacesId : museumsAndHistoricalPlacesId });
+    //         res.status(200).json({
+    //           itineraries
+    //         });
+    //       } catch (error) {
+    //         res.status(500).json({ error: 'Server error while fetching items' });
+    //       }
+     
+
+
+      
 }
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide, getActivitysandadvertiser}; // Export the controller functions
+module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide,getItneraryandadtourguide}; // Export the controller functions
