@@ -3,12 +3,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const adminSchema = new Schema({
-    email:{
-        type: String,
-        required: true,
-        unique: true,
-        trim: true, // Ensures no extra spaces are stored
-    },
     username: {
         type: String,
         required: true,
