@@ -17,6 +17,8 @@ const sellerSchema = new Schema({
     password: {
         type: String, // Change from Number to String for proper handling
         required: true,
+        minlength: 6 // Ensure passwords are stored securely
+
     },
     name: {
         type: String,
@@ -28,6 +30,10 @@ const sellerSchema = new Schema({
         required: false, // Description is optional
         trim: true, // Ensures no extra spaces are stored
     },
+    otp: {
+        type: String,
+        required: false,
+    }
 }, { timestamps: true });
 
 const Seller = mongoose.model('Seller', sellerSchema);

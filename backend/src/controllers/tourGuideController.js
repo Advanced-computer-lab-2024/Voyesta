@@ -1,6 +1,6 @@
-const tourGuideModel = require('../models/Tour Guide'); // Updated import to match the schema file name
+const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
 const mongoose = require('mongoose');
-
+const {otpSender} = require('../services/generateOTPgenric');
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
     const { username, email, password, mobileNumber, yearsOfExperience, previousWork, bio, languagesSpoken } = req.body;
@@ -71,4 +71,15 @@ const deleteTourGuide = async (req, res) => {
     }
 };
 
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide };
+// Send OTP to email
+const sendOTPtourGuide = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const otp = otpSender(email);
+        res.status(200).json({ message: 'OTP sent successfully', otp });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide}; // Export the controller functions

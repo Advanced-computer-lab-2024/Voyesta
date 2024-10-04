@@ -1,10 +1,13 @@
 const adModel = require('../models/Advertiser'); // Ensure this path is correct
-
+const {otpSender} = require('../services/generateOTPgenric');
 // Create a new Advertiser profile
 const createAdvertiser = async (req, res) => {
     const { username, email, password, website, hotline, companyProfile, servicesOffered } = req.body;
 
     try {
+        if (await adModel.exists({ email })) {  // Check if an advertiser profile with the email already exists
+            return res.status(400).json({ message: 'Advertiser already exists' });
+        }
         const advertiser = await adModel.create({
             username,
             email,
@@ -69,4 +72,42 @@ const deleteAdvertiser = async (req, res) => {
     }
 };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser };
+// Send OTP to email
+
+const sendOTPadvertiser = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const response = await otpSender(adModel, email);
+        res.json(response);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+// update password
+// const updatePassword = async (req, res) => {
+//     const { email } = req.params; // Extract email from URL parameters
+//     const { oldPassword, newPassword } = req.body; // Extract new password from request body
+
+//     try {
+//         const advertiser = await adModel.findOne({ email });
+//         if (!advertiser) {
+//             return res.status(404).json({ message: 'Advertiser not found' });
+//         }
+
+//         // Check if the old password matches the one in the database
+//         if (oldPassword !== advertiser.password) {
+//             return res.status(400).json({ message: 'Old password is incorrect' });
+//         }
+
+//         advertiser.password = newPassword; // Update the password
+//         await advertiser.save(); // Save the updated advertiser profile
+//         res.json({ message: 'Password updated successfully', advertiser });
+
+//     } catch (error) {
+//         res.status(400).json({ error: error.message });
+//     }
+// };
+
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser }; // Export the functions

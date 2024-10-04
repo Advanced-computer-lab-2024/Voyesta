@@ -1,10 +1,13 @@
-const sellerModel = require('../models/Seller'); // Ensure this path is correct
-
+const sellerModel = require('../Models/Seller'); // Ensure this path is correct
+const {otpSender} = require('../services/generateOTPgenric');
 // Create a new Seller profile
 const createSeller = async (req, res) => {
     const { username, email, password, name, description } = req.body;
 
     try {
+        if (await sellerModel.exists({ email })) {  // Check if a seller profile with the email already exists
+            return res.status(400).json({ message: 'Seller already exists' });
+        }
         const seller = await sellerModel.create({
             username,
             email,
@@ -67,4 +70,39 @@ const deleteSeller = async (req, res) => {
     }
 };
 
-module.exports = { createSeller, getSellers, updateSeller, deleteSeller };
+// Send OTP
+const sendOTPseller = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const response = await otpSender(sellerModel, email);
+        res.json(response);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+// update Password
+/*
+const updateSellerPassword = async (req, res) => {
+    const { email } = req.params; // Extract email from URL parameters
+    const {oldPassword,newPassword}= req.body;
+    try {
+        const seller = await sellerModel.findOne({ email });
+        if (!seller) {
+            return res.status(404).json({ message: 'Seller not found' });
+        }
+        // Check if the old password matches the one in the database
+        if (oldPassword !== seller.password) {
+            return res.status(400).json({ message: 'Old password is incorrect' });
+        }
+        seller.password = newPassword; // Update the password
+        await seller.save(); // Save the updated seller profile
+        res.json({ message: 'Password updated successfully', seller });  
+        }
+    catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+*/
+module.exports = { createSeller, getSellers, updateSeller, deleteSeller, sendOTPseller }; // Export the functions

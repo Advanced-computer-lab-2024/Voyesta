@@ -17,6 +17,8 @@ const advertSchema = new Schema({
     password: {
         type: String, // Ensure passwords are stored securely
         required: true,
+        minlength: 6 // Ensure passwords are stored securely
+
     },
     website: {
         type: String,
@@ -36,6 +38,10 @@ const advertSchema = new Schema({
         type: [String], // Array to list services the company offers
         required: false,
     },
+    otp: {
+        type: String,
+        required: false,
+    }
 }, { timestamps: true });
 
 const AdModel = mongoose.model('Advertiser', advertSchema);

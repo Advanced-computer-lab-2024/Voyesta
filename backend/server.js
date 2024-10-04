@@ -1,10 +1,21 @@
 // server.js
-const app = require('./src/App');
+<<<<<<< Updated upstream
+const app = require('./App');
 
 // Set the port from the environment variable or use 3000
 const PORT = process.env.PORT || 3000;
-const MongoURI = "mongodb+srv://VoyestaDB:GUC_1234@voyestadb.cvp0i.mongodb.net/?retryWrites=true&w=majority&appName=VoyestaDB" ;
 
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
+=======
+const app = require('./src/App');
+const mongoose = require('mongoose');
+require('dotenv').config();
+// Set the port from the environment variable or use 3000
+const port = process.env.PORT || 3000;
+const MongoURI = process.env.MONGO_URI;
 mongoose.connect(MongoURI)
 .then(()=>{
   console.log("MongoDB is now connected!")
@@ -13,3 +24,4 @@ mongoose.connect(MongoURI)
     console.log(`Listening to requests on http://localhost:${port}`);
   })
 })
+>>>>>>> Stashed changes

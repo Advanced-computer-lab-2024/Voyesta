@@ -13,6 +13,8 @@ const touristSchema = new Schema({
   Password: {
     type: String,
     required: true,
+    minlength: 6 // Ensure passwords are stored securely
+
   },
    Number: {
     type: Number,
@@ -26,7 +28,11 @@ const touristSchema = new Schema({
   Job:{
     type:String,
     required:true
-  }
+  },
+  otp: {
+    type: String,
+    required: false,
+}
 
 }, { timestamps: true });
 

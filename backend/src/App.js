@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cron = require('node-cron');
+const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
+
+cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
 
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
@@ -25,7 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database connection
-const MongoURI = "mongodb+srv://VoyestaDB:GUC_1234@voyestadb.cvp0i.mongodb.net/?retryWrites=true&w=majority&appName=VoyestaDB";
+const MongoURI = process.env.MONGO_URI;
 
 mongoose.connect(MongoURI)
   .then(() => {

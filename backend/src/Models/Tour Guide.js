@@ -31,6 +31,10 @@ const tourGuideSchema = new Schema({
   previousWork: {
     type: String,
     required: false
+  },
+  otp: {
+    type: String,
+    required: false,
   }
 }, { timestamps: true });
 

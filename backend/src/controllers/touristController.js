@@ -1,9 +1,9 @@
 // #Task route solution
 
-const touristModel = require('../Models/tourist.js');
+const touristModel = require('../Models/Tourist');
 
 const { default: mongoose } = require('mongoose');
-
+const{otpSender} = require('../services/generateOTPgenric');
 const createTourist = async(req,res) => {
    const{Email,Username,Password,Number,Nationality,Job}= req.body;
    try{
@@ -74,6 +74,16 @@ const deleteTourist = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+// Send OTP to email
+const sendOTPtourist = async (req, res) => {
+   const { Email } = req.body;
 
+   try {
+       const response = await otpSender(touristModel, Email);
+       res.json(response);
+   } catch (error) {
+       res.status(400).json({ error: error.message });
+   }
+};
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist};
+module.exports = {createTourist, getTourists, updateTourist, deleteTourist,  sendOTPtourist}; // Export the controller functions
