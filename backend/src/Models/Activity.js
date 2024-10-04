@@ -82,7 +82,7 @@ Price: {
   },
   category: {
     type: Schema.Types.ObjectId,
-    ref: 'ActivityCat',
+    ref: 'ActivityCategory',
     required: true
   },
   tags: [{
