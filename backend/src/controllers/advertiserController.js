@@ -1,3 +1,4 @@
+
 const adModel = require('../Models/Advertiser'); // Ensure this path is correct
 const {otpSender} = require('../services/generateOTPgenric');
 const Activity = require('../Models/Activity');
@@ -245,4 +246,5 @@ const deleteActivity = async (req, res) => {
 //     }
 // };
 
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser , createActivity, getActivity,updateActivity,deleteActivity , getAllActivitiesByAdvertiser}; // Export the functions
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser, getActivity, createActivity, deleteActivity, updateActivity, getFilteredActivities }; // Export the functions
+
