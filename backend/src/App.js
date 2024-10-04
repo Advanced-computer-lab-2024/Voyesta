@@ -8,8 +8,7 @@ const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } =
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
 const { createTourist, getTourists, updateTourist, deleteTourist } = require("./controllers/touristController");
-const { registerGuestUser, getGuestUsers } = require("./controllers/userGuestController"); 
-const { registerGuestTourist, getGuestTourists } = require("./controllers/guestTouristController"); 
+
 
 //empty comment
 
@@ -68,11 +67,7 @@ app.put("/updateTourist", updateTourist);
 app.delete("/deleteTourist", deleteTourist);
 
 // User routes
-app.post("/addGuestTourist", registerGuestTourist);
-app.get("/guestTourists", getGuestTourists);
 
-app.post("/addGuestUser", registerGuestUser);
-app.get("/guestUsers", getGuestUsers);
 
 // Export the app
 module.exports = app;
