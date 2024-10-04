@@ -35,12 +35,12 @@ const getAdvertisers = async (req, res) => {
 
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract ID from URL parameters
     const updates = req.body;
 
     try {
-        const advertiser = await adModel.findOneAndUpdate(
-            { email }, // Find by email
+        const advertiser = await adModel.findByIdAndUpdate(
+            id, // Find by ID
             updates, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
@@ -57,10 +57,10 @@ const updateAdvertiser = async (req, res) => {
 
 // Delete an Advertiser profile
 const deleteAdvertiser = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract ID from URL parameters
 
     try {
-        const advertiser = await adModel.findOneAndDelete({ email });
+        const advertiser = await adModel.findByIdAndDelete(id); // Find and delete by ID
 
         if (!advertiser) {
             return res.status(404).json({ error: 'Advertiser not found' });

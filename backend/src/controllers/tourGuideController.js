@@ -33,12 +33,12 @@ const getTourGuides = async (req, res) => {
 
 // Update a Tour Guide profile
 const updateTourGuide = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract ID from URL parameters
     const updates = req.body;
 
     try {
-        const tourGuide = await tourGuideModel.findOneAndUpdate(
-            { email }, // Find by email
+        const tourGuide = await tourGuideModel.findByIdAndUpdate(
+            id, // Find by ID
             updates, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
@@ -53,12 +53,13 @@ const updateTourGuide = async (req, res) => {
     }
 };
 
+
 // Delete a Tour Guide profile
 const deleteTourGuide = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract ID from URL parameters
 
     try {
-        const tourGuide = await tourGuideModel.findOneAndDelete({ email });
+        const tourGuide = await tourGuideModel.findByIdAndDelete(id); // Find and delete by ID
 
         if (!tourGuide) {
             return res.status(404).json({ error: 'Tour guide not found' });
