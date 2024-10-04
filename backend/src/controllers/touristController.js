@@ -104,9 +104,14 @@ const filterTouristActivities = async (req, res) => {
         query.category = mongoose.Types.ObjectId(category);
     }
 
-    // Rating filter (assuming you have a rating field in your Activity schema)
+    // Rating filter
     if (rating) {
-        query.rating = { $gte: Number(rating) }; // Assuming rating is a number
+        const parsedRating = Number(rating);
+        if (parsedRating >= 1 && parsedRating <= 5) {
+            query.rating = { $gte: parsedRating }; // Filter for rating greater than or equal to the specified value
+        } else {
+            return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+        }
     }
 
     try {
@@ -117,9 +122,6 @@ const filterTouristActivities = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving activities', error });
     }
 };
-
-
-
 
 
 

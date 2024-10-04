@@ -28,6 +28,9 @@ const validatePriceType = (value) => {
 
 
 
+
+
+
 const activitySchema = new mongoose.Schema({
   title: {
     type: String,
@@ -39,54 +42,53 @@ const activitySchema = new mongoose.Schema({
   },
   location: {
     address: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     country: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     coordinates: {
-        lat: {
-            type: Number,
-            required: true
-        },
-        lng: {
-            type: Number,
-            required: true
-        }
+      lat: {
+        type: Number,
+        required: true
+      },
+      lng: {
+        type: Number,
+        required: true
+      }
     }
-},
-date: {
-  type: Date,
-  required: true
-},
-time: {
-  type: String,
-  required: true
-},
-duration: {
-  type: String,
-  required: true,
-  validate: {
-    validator: function(v) {
-      return /^(\d+ (Hour|Hours)( \d+ min)?)$/.test(v);
-    },
-    message: props => `${props.value} is not a valid duration format!`
-  }
-},
-price: {
+  },
+  date: {
+    type: Date,
+    required: true
+  },
+  time: {
+    type: String,
+    required: true
+  },
+  duration: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^(\d+ (Hour|Hours)( \d+ min)?)$/.test(v);
+      },
+      message: props => `${props.value} is not a valid duration format!`
+    }
+  },
+  price: {
     type: Schema.Types.Mixed,
     required: true,
-    validate : {
-        validator : validatePriceType,
-        message   : 'Price must be a number or an object with min and max properties'
+    validate: {
+      validator: validatePriceType,
+      message: 'Price must be a number or an object with min and max properties'
     }
-    
   },
   specialDiscount: {
     type: Number,
@@ -99,16 +101,20 @@ price: {
     ref: 'ActivityCategory',
     required: true
   },
-  tags: [{type : Schema.Types.ObjectId, ref : 'PreferenceTag'}],
+  tags: [{ type: Schema.Types.ObjectId, ref: 'PreferenceTag' }],
   advertiser: {
     type: Schema.Types.ObjectId,
     ref: 'Advertiser',
     required: true
-}
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+    default: 1 // Optional: Set a default rating if desired
+  }
 
 }, { timestamps: true });
 
-
-
-const activityModel = mongoose.model('Activity', activitySchema );
-module.exports= activityModel;
+const activityModel = mongoose.model('Activity', activitySchema);
+module.exports = activityModel;
