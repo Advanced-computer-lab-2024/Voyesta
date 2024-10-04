@@ -22,19 +22,21 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     ratings:
-        {
-            user: String,
+        [
+            {
+            user: ObjectId,
             rating: { type: Number, min: 0, max: 5 }
-        },
+        }
+    ],
     reviews: [
         {
-            user: String,
+            user: ObjectId,
             comment: String,
             rating: { type: Number, min: 0, max: 5 }
         }
     ],
     available_quantity: {
-        type: String,
+        type: Number,
         required: true // Assuming the picture is a URL
     },
 });
