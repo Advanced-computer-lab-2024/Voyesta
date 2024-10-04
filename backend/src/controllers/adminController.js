@@ -7,12 +7,9 @@ const TourismGovernor = require('../Models/tourismGovernor');
 
 // Create a new Admin profile
 const createAdmin = async (req, res) => {
-    const { email,username, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        if(await adminModel.exists({ email })) {  // Check if an admin profile with the email already exists
-            return res.status(400).json({ message: 'Admin already exists' });
-        }
         if (await adminModel.exists({ username })) {  // Check if an admin profile with the username already exists
             return res.status(400).json({ message: 'Admin already exists' });
         }

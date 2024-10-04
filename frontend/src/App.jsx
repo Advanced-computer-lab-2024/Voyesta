@@ -1,6 +1,6 @@
 import React from 'react'
 import './css/index.css'
-import AdminDashboard from './pages/admin/adminDashboard'
+import AdminDashboard from './pages/admin/AdminDashboard'
 
 // get hold of user and render the correct dashboard
 
