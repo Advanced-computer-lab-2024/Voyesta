@@ -43,7 +43,7 @@ const itinerarySchema = new Schema({
         required: true,
     },
     avdatesandtimes: {
-        type: [String], 
+        type: [Date], 
         required: true,
     },
     accesibility: {
