@@ -36,5 +36,5 @@ const touristSchema = new Schema({
 
 }, { timestamps: true });
 
-const Tourist = mongoose.model('Tourist', touristSchema);
+const Tourist = mongoose.models.Tourist || mongoose.model('Tourist', touristSchema);
 module.exports = Tourist;
