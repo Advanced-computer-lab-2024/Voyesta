@@ -62,11 +62,11 @@ const MuseumsAndHistoricalPlacesSchema = new Schema({
         ref: 'TourismGovernor',
         required: true
     },
-    tags: {
+    tags: [{
         type: Schema.Types.ObjectId,
-        ref: 'Tag',
-        required: false
-    }
+        ref: 'PreferenceTag',
+        required: true
+    }]
 });
 
 const MuseumsAndHistoricalPlaces = mongoose.model('MuseumsAndPlaces',MuseumsAndHistoricalPlacesSchema);
