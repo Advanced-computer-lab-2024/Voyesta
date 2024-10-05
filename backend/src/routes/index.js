@@ -31,6 +31,7 @@ const touristRouter = require("../routes/touristRouter");
 const activityRouter = require("../routes/activityRouter");
 const tourismGovernerRouter = require("./tourismGovernerRouter");
 const userGuestRouter = require("./userGuestRouter");
+const museumsHistoricalPlacesRouter = require("./museumsHistoricalPlacesRouter");
 
 _.use("/advertiser",  advertiserRouter);
 _.use("/seller",  sellerRouter);
@@ -39,6 +40,7 @@ _.use("/tourist",  touristRouter);
 _.use("/activity",  activityRouter);
 _.use("/tourismGoverner",  tourismGovernerRouter);
 _.use("/guest",  userGuestRouter);
+_.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 
 
 module.exports = _;

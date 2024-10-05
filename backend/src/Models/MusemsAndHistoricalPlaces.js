@@ -65,9 +65,8 @@ const museumsAndHistoricalPlacesSchema = new Schema({
         required: true
     },
     tags: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Tag',
-        required: false
+        type: String,
+        required: true
     }]
 
 });

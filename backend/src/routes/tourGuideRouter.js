@@ -5,7 +5,7 @@ const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = req
 
 _.post("/add", createTourGuide);
 _.get("/get", getTourGuides);
-_.put("/update", updateTourGuide);
-_.delete("/delete", deleteTourGuide);
+_.put("/update:/email", updateTourGuide);
+_.delete("/delete:/email", deleteTourGuide);
 
 module.exports = _;
