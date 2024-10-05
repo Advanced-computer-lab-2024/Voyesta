@@ -158,11 +158,11 @@ const TouristSearch = async (req, res) => {
         console.log('Search query:', query);
 
         // Step 1: Search for Category IDs by name
-        const categoryMatches = await Category.find({ name: { $regex: query, $options: 'i' } });
+        const categoryMatches = await Category.find({ Name: { $regex: query, $options: 'i' } });
         const categoryIds = categoryMatches.map(category => category._id); // Get matching category IDs
 
         // Step 2: Search for Tag IDs by name
-        const tagMatches = await Tag.find({ name: { $regex: query, $options: 'i' } });
+        const tagMatches = await Tag.find({ Name: { $regex: query, $options: 'i' } });
         const tagIds = tagMatches.map(tag => tag._id); // Get matching tag IDs
 
         // Step 3: Create search criteria for Museums and Activities
@@ -182,7 +182,8 @@ const TouristSearch = async (req, res) => {
         // Step 5: Return the combined results
         res.status(200).json({
             museums,
-            activities
+            activities,
+            itinerary
         });
 
     } catch (error) {
