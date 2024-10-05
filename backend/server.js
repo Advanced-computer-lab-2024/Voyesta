@@ -1,10 +1,14 @@
 // server.js
 const app = require('./App');
 
-// Set the port from the environment variable or use 3000
-const PORT = process.env.PORT || 3000;
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// Set the port from the environment variable or use 3000
+const port = process.env.PORT || 3000;
+
+ // Starting server
+ app.listen(port, () => {
+  console.log(`Listening to requests on http://localhost:${port}`);
+})
+

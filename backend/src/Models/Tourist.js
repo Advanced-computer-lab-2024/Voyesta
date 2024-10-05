@@ -45,6 +45,10 @@ const touristSchema = new Schema({
       // otp will be added next sprint forget its here for now
 }, { timestamps: true });
 
+
+// const Tourist = mongoose.models.Advertiser || mongoose.model('Tourist', touristSchema);
+// module.exports = Tourist;
+
 // Age validation
 touristSchema.pre('save', function(next) {  
     const age = new Date().getFullYear() - this.dob.getFullYear();
@@ -56,3 +60,4 @@ touristSchema.pre('save', function(next) {
 
 const Tourist = mongoose.model('Tourist', touristSchema);
 module.exports = Tourist;
+

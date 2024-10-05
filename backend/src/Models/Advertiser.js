@@ -44,5 +44,5 @@ const advertSchema = new Schema({
     }
 }, { timestamps: true });
 
-const AdModel = mongoose.model('Advertiser', advertSchema);
+const AdModel = mongoose.models.Advertiser || mongoose.model('Advertiser', advertSchema);
 module.exports = AdModel;

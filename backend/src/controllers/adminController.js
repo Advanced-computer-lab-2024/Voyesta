@@ -1,17 +1,15 @@
-const adminModel = require('../models/adminModel');
+const adminModel = require('../Models/Admin');
 //const bcrypt = require('bcrypt');
 const {otpSender} = require('../services/generateOTPgenric');
+const TourismGovernor = require('../Models/tourismGovernor');
 
 
 
 // Create a new Admin profile
 const createAdmin = async (req, res) => {
-    const { email,username, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        if(await adminModel.exists({ email })) {  // Check if an admin profile with the email already exists
-            return res.status(400).json({ message: 'Admin already exists' });
-        }
         if (await adminModel.exists({ username })) {  // Check if an admin profile with the username already exists
             return res.status(400).json({ message: 'Admin already exists' });
         }
@@ -52,15 +50,15 @@ const updatePassword = async (req, res) => {
 };
 
 // Delete an Admin profile
-const deleteAdmin = async (req, res) => {
+const deleteAccount = async (req, res) => {
     const { username } = req.params; // Extract username from URL parameters
 
     try {
         const admin = await adminModel.findOneAndDelete({ username });  
         if(!admin) {
-            return res.status(404).json({ message: 'Admin not found' });
+            return res.status(404).json({ message: 'User not found' });
         }
-        res.json({ message: 'Admin profile deleted successfully', admin });
+        res.json({ message: 'User profile deleted successfully', admin });
     }
     catch (error) {
         res.status(400).json({ error: error.message });
@@ -77,5 +75,30 @@ const sendOTPadmin = async (req, res) => {
     }
 };
 
+// Controller function to create a new tourism governor
+const createTourismGovernor = async (req, res) => {
+    const { username, password } = req.body;
 
-module.exports = { createAdmin, updatePassword, deleteAdmin ,sendOTPadmin};
+    // Ensure username and password are provided
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required' });
+    }
+
+    try {
+        // Create and save the new Tourism Governor
+        const newGovernor = new TourismGovernor({ username, password });
+        const savedGovernor = await newGovernor.save();
+        
+        return res.status(201).json({ message: 'Tourism Governor created successfully', governor: savedGovernor });
+    } catch (error) {
+        if (error.code === 11000) {
+            // Handle duplicate username error
+            return res.status(400).json({ message: 'Username already exists' });
+        }
+        return res.status(500).json({ message: 'Error creating Tourism Governor', error: error.message });
+    }
+};
+
+
+
+module.exports = { createAdmin, updatePassword, deleteAccount ,sendOTPadmin, createTourismGovernor};

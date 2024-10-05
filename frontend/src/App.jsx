@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import React from 'react'
+import './css/index.css'
+import AdminDashboard from './pages/admin/AdminDashboard'
+
+// get hold of user and render the correct dashboard
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        Hello world
-      </div>
-    </>
+    <div className="h-screen">
+      <AdminDashboard />
+    </div>
   )
 }
 

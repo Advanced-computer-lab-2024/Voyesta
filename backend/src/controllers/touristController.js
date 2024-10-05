@@ -4,6 +4,7 @@ const touristModel = require('../Models/Tourist');
 
 const { default: mongoose } = require('mongoose');
 const{otpSender} = require('../services/generateOTPgenric');
+
 const createTourist = async (req, res) => {
    const { Username, Email, Password, Number, Nationality, DOB, Job } = req.body;
 
