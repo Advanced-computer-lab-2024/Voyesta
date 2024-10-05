@@ -32,7 +32,7 @@ const getSellers = async (req, res) => {
 
 // Update a Seller profile
 const updateSeller = async (req, res) => {
-    const { id } = req.params; // Extract ID from URL parameters
+    const id = req.headers['id']; // Extract ID from URL parameters
     const updates = req.body;
 
     try {
@@ -54,7 +54,7 @@ const updateSeller = async (req, res) => {
 
 // Delete a Seller profile
 const deleteSeller = async (req, res) => {
-    const { id } = req.params; // Extract ID from URL parameters
+    const id = req.headers['id']; // Extract ID from URL parameters
 
     try {
         const seller = await sellerModel.findByIdAndDelete(id); // Find and delete by ID

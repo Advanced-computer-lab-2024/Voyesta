@@ -38,7 +38,7 @@ const getActivity = async (req, res) => {
     let id = req.headers['id']; // hard coded for now, will be replaced with req.user._id  after authentication
         
     try {
-        const activity = await Activity.findOne({_id: id }).populate('category tags advertiser');
+        const activity = await Activity.find().populate('category tags advertiser');
         
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
