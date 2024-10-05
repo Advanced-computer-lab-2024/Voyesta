@@ -4,6 +4,7 @@ const {otpSender} = require('../services/generateOTPgenric');
 
 
 const Itinerary = require('../Models/itinerarySchema');
+ const itineraryModel = require('../Models/Itinerary');
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
     const { username, email, password, mobileNumber, yearsOfExperience, previousWork } = req.body;

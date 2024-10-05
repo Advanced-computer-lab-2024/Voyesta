@@ -58,6 +58,19 @@ touristSchema.pre('save', function(next) {
     next();
 });
 
+
+// const Tourist = mongoose.models.Advertiser || mongoose.model('Tourist', touristSchema);
+// module.exports = Tourist;
+
+// Age validation
+touristSchema.pre('save', function(next) {  
+    const age = new Date().getFullYear() - this.dob.getFullYear();
+    if (age < 18) {
+        return next(new Error('You must be at least 18 years old to register.'));
+    }
+    next();
+});
+
 const Tourist = mongoose.model('Tourist', touristSchema);
 module.exports = Tourist;
 

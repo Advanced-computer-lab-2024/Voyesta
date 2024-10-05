@@ -1,8 +1,5 @@
-
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
-const TagSchema = require('./PreferenceTag');
 
 const priceRangeSchema = new Schema({
   min: {
@@ -27,12 +24,8 @@ const validatePriceType = (value) => {
 };
 
 
-
-
-
-
 const activitySchema = new mongoose.Schema({
-  title: {
+  name: {
     type: String,
     required: true
   },
@@ -42,53 +35,44 @@ const activitySchema = new mongoose.Schema({
   },
   location: {
     address: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     city: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     country: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     coordinates: {
-      lat: {
-        type: Number,
-        required: true
-      },
-      lng: {
-        type: Number,
-        required: true
-      }
+        lat: {
+            type: Number,
+            required: true
+        },
+        lng: {
+            type: Number,
+            required: true
+        }
     }
-  },
-  date: {
-    type: Date,
-    required: true
-  },
-  time: {
-    type: String,
-    required: true
-  },
-  duration: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function(v) {
-        return /^(\d+ (Hour|Hours)( \d+ min)?)$/.test(v);
-      },
-      message: props => `${props.value} is not a valid duration format!`
-    }
-  },
-  price: {
+},
+date: {
+  type: Date,
+  required: true
+},
+time: {
+  type: String,
+  required: true
+},
+Price: {
     type: Schema.Types.Mixed,
     required: true,
-    validate: {
-      validator: validatePriceType,
-      message: 'Price must be a number or an object with min and max properties'
+    validate : {
+        validator : validatePriceType,
+        message   : 'Price must be a number or an object with min and max properties'
     }
+    
   },
   specialDiscount: {
     type: Number,
@@ -101,19 +85,21 @@ const activitySchema = new mongoose.Schema({
     ref: 'ActivityCategory',
     required: true
   },
-  tags: [{ type: Schema.Types.ObjectId, ref: 'PreferenceTag' }],
+  tags: [{
+    type: Schema.Types.ObjectId,
+    ref: 'PreferenceTag',
+    required: true
+}],
   advertiser: {
     type: Schema.Types.ObjectId,
     ref: 'Advertiser',
     required: true
-  },
-  rating: {
-    type: Number,
-    min: 1,
-    max: 5,
-  }
+},
+
 
 }, { timestamps: true });
 
-const activityModel = mongoose.model('Activity', activitySchema);
-module.exports = activityModel;
+
+
+const activityModel = mongoose.model('Activity', activitySchema );
+module.exports= activityModel;
