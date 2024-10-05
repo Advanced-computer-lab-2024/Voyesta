@@ -7,11 +7,11 @@ const cron = require('node-cron');
 const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
 
 // cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
-
+//createItinerary,getItinerary,getAllItinerariesByGuide,deleteItinerary
 const{createPlaceOfInterest,getAllPlacesOfInterest,getPlaceOfInterest,updatePlaceOfInterest,deletePlaceOfInterest}=require("./controllers/TourismGovernor");
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser,getActivitysandadvertiser,createActivity } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
-const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide,createItinerary,getItinerary,getAllItinerariesByGuide,deleteItinerary } = require("./controllers/tourGuideController");
+const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
 const { createTourist, getTourists, updateTourist, deleteTourist,TouristSearch } = require("./controllers/touristController");
 const { registerGuestUser, getGuestUsers } = require("./controllers/userGuestController"); 
 const { registerGuestTourist, getGuestTourists } = require("./controllers/guestTouristController"); 
@@ -64,9 +64,9 @@ app.delete("/deleteTourist", deleteTourist);
 // app.get("/guestUsers", getGuestUsers);
 
 //Itinerary
-app.post("/addItinerary",createItinerary);
-app.get("/getItinerary",getAllItinerariesByGuide);
-app.delete("/deleteItinerary",deleteItinerary);
+// app.post("/addItinerary",createItinerary);
+// app.get("/getItinerary",getAllItinerariesByGuide);
+// app.delete("/deleteItinerary",deleteItinerary);
 //activity routes
 app.get("/ListOfActivities/:id", getActivitysandadvertiser);
 app.post("/addactivity/:id",createActivity);
