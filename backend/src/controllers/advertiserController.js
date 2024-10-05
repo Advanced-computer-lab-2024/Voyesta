@@ -38,20 +38,23 @@ const getAdvertisers = async (req, res) => {
 
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
-    const { id } = req.params; // Extract email from URL parameters
-    const {email,password,website,hotline,companyProfile,servicesOffered}= req.body;
+    // const { id } = req.params; // Extract id from URL parameters
+    const id = req.headers['id'];
+    const { email, password, website, hotline, companyProfile, servicesOffered } = req.body;
+    
     const updates = {};
     if (email) updates.email = email;
     if (password) updates.password = password;
     if (website) updates.website = website;
     if (hotline) updates.hotline = hotline;
     if (companyProfile) updates.companyProfile = companyProfile;
-    if (servicesOffered) updates.servicesOffered = servicesOffer
-
+    if (servicesOffered) updates.servicesOffered = servicesOffered; // Fixed typo from "servicesOffer"
 
     try {
-        const advertiser = await adModel.findOneAndUpdate(
-            { _id : id}, // Find by email
+        
+
+        const advertiser = await advertiserModel.findOneAndUpdate(
+            {_id: id}, // Correctly pass the id directly
             { $set: updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
@@ -66,12 +69,13 @@ const updateAdvertiser = async (req, res) => {
     }
 };
 
+
 // Delete an Advertiser profile
 const deleteAdvertiser = async (req, res) => {
-    const { id } = req.params; // Extract ID from URL parameters
+    const id  = req.headers['id']; // Extract ID from URL parameters
 
     try {
-        const advertiser = await advertiserModel.findByIdAndDelete(id); // Find and delete by ID
+        const advertiser = await advertiserModel.findOneAndDelete({_id: id}); // Find and delete by ID
 
         if (!advertiser) {
             return res.status(404).json({ error: 'Advertiser not found' });

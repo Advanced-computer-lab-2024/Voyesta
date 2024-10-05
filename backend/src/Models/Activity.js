@@ -1,17 +1,6 @@
 mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const priceRangeSchema = new Schema({
-  min: {
-      type: Number,
-      required: true
-  },
-  max: {
-      type: Number,
-      required: true
-  }
-}, { _id: false });
-
 
 const validatePriceType = (value) => {
   if (typeof value === 'number') {

@@ -1,4 +1,6 @@
 const Activity = require('../Models/Activity');
+const Category = require('../Models/ActivityCategory');
+
 const mongoose = require('mongoose');
 // Create a new Activity
 const createActivity = async (req, res) => {
@@ -33,7 +35,7 @@ const createActivity = async (req, res) => {
 
 // Get an Activity
 const getActivity = async (req, res) => {
-    let {id} = req.params; // hard coded for now, will be replaced with req.user._id  after authentication
+    let id = req.headers['id']; // hard coded for now, will be replaced with req.user._id  after authentication
         
     try {
         const activity = await Activity.findOne({_id: id }).populate('category tags advertiser');
@@ -49,7 +51,7 @@ const getActivity = async (req, res) => {
 };
 
 const getAllActivitiesByAdvertiser = async (req, res) => {  
-    const advertiserId = req.user._id; // hard coded for now, will be replaced with req.user._id  after authentication
+    const advertiserId = req.headers['id']; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {
         const activities = await Activity.find({ advertiser: advertiserId }).populate('category tags advertiser');
@@ -248,43 +250,7 @@ const filterTouristActivities = async (req, res) => {
     }
 };
 
-// const search = async (req, res) => {
-//     const { query } = req.query;
-//     console.log(query);
-    
-//     try {
-//       const activities = await Activity.find({
-//         $or: [
-//           { name: { $regex: query, $options: 'i' } },
-//           { tags: { $regex: query, $options: 'i' } },
-//           { category: { $regex: query, $options: 'i' } },
-//         ]
-//       });
-//       res.status(200).json(activities);
-//     } catch (error) {
-//       res.status(400).json({ error: error.message });
-//     }
-//   };
 
-// const search = async (req, res) => {
-//     const { query } = req.query;
-    
-//     try {
-//         const activities = await Activity.find({
-//             $or: [
-//                 { name: { $regex: query, $options: 'i' } }, // Search by name using regex
-//                 { tags: { $regex: query, $options: 'i' } }, // Search by tags using regex
-//                 // Check if the query is a valid ObjectId before searching by category
-//             ]
-//         });
-//         res.status(200).json(activities);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
-
-const Category = require('../Models/ActivityCategory'); // Adjust the path to your Category model
-// const Activity = require('./models/Activity'); // Adjust the path to your Activity model
 
 const search = async (req, res) => {
     const { query } = req.query;
