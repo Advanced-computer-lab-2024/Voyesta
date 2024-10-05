@@ -3,7 +3,8 @@ const museumsAndHistoricalPlacesModel = require('../Models/MusemsAndHistoricalPl
 // create a place of interest
 const createPlaceOfInterest = async (req, res) => {
     const { name, description, pictures, openingHours, ticketPrices} = req.body;
-    const  { id } = req.params; 
+    const id = req.user.id;
+    console.log(id);
     try {
         const placeOfInterest = await museumsAndHistoricalPlacesModel.create({
             name,

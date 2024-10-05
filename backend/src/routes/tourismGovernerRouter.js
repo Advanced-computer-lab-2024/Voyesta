@@ -1,6 +1,5 @@
 const express = require('express');
 const _ = express.Router();
-
 const {
     create,
     get,
@@ -10,7 +9,7 @@ const {
     search
 } = require('../controllers/museumsHistoricalPlacesController');
 
-_.post("/add/:id", create);
+_.post("/add", create);
 _.get("/get/:id", get);
 _.patch("/update/:id", update);
 _.delete("/delete/:id", remove);
