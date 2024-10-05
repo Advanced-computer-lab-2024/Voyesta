@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+
+
+
 const museumsAndHistoricalPlacesSchema = new Schema({
     name: {
         type: String,
@@ -61,10 +64,11 @@ const museumsAndHistoricalPlacesSchema = new Schema({
         ref: 'TourismGovernor',
         required: true
     },
-    tags: {
-        type: String,
-        required: true
-    }
+    tags: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Tag',
+        required: false
+    }]
 
 });
 

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+// Activity.jsconst mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const priceRangeSchema = new Schema({
@@ -95,8 +95,12 @@ Price: {
     ref: 'Advertiser',
     required: true
 },
-
-
+rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0
+  }
 }, { timestamps: true });
 
 

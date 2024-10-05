@@ -3,7 +3,7 @@ const museumsAndHistoricalPlacesModel = require('../Models/MusemsAndHistoricalPl
 
 // create a place of interest
 const createPlaceOfInterest = async (req, res) => {
-    const { name, description, pictures, location, openingHours, ticketPrices,createdBy } = req.body;
+    const { name, description, pictures, openingHours, ticketPrices} = req.body;
     const  { id } = req.params; 
     try {
         const placeOfInterest = await museumsAndHistoricalPlacesModel.create({
@@ -38,7 +38,7 @@ const getAllPlacesOfInterest = async (req, res) => {
 
 const getPlaceOfInterest = async (req, res) => {
     const { id } = req.params;
-    const { governor } = req.createdBy._id;
+    const { governor } = '66faceb88b0c920ad6ee3c1a';  // hard coded for now
     try {
         const placeOfInterest = await museumsAndHistoricalPlacesModel.findOne({ _id: id, createdBy: governor });
         if (!placeOfInterest) {
@@ -55,7 +55,7 @@ const getPlaceOfInterest = async (req, res) => {
 // update a place of interest by this governor
 const updatePlaceOfInterest = async (req, res) => {
     const { id } = req.params;
-    const { governor } = req.createdBy._id;
+    const { governor } = '66faceb88b0c920ad6ee3c1a';  // hard coded for now
     const { name, description, pictures, location, openingHours, ticketPrices } = req.body;
     try {
         const placeOfInterest = await museumsAndHistoricalPlacesModel.findOneAndUpdate({ _id: id, createdBy: governor }, {
@@ -79,7 +79,7 @@ const updatePlaceOfInterest = async (req, res) => {
 // delete a place of interest by this governor
 const deletePlaceOfInterest = async (req, res) => {
     const { id } = req.params;
-    const { governor } = req.createdBy._id;
+    const { governor } = '66faceb88b0c920ad6ee3c1a';    // hard coded for now
     try {
         const placeOfInterest = await museumsAndHistoricalPlacesModel.findOneAndDelete({ _id: id, createdBy: governor });
         if (!placeOfInterest) {
@@ -96,7 +96,7 @@ const createTagsForPlaceOfInterest = async (req, res) => {
     const { id } = req.params;
     const { tags } = req.body;
     try {
-        const placeOfInterest = await museumsAndHistoricalPlacesModel.findOneAndUpdate({ _id: id }, { tags }, { new: true });
+        const placeOfInterest = await museumsAndHistoricalPlacesModel.findOneAndUpdate({ _id: id }, { $set :{tags} }, { new: true });
         res.status(200).json({ message: 'Tags added successfully', placeOfInterest });
     }
     catch (error) {

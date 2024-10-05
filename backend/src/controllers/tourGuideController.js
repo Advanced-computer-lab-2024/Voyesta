@@ -93,14 +93,14 @@ const deleteTourGuide = async (req, res) => {
 
 
 const createItinerary = async (req, res) => {
-    const { description, tags, locations, tourLanguage, tourPrice, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
+    const { itineraryName,description, tags, tourLanguage, tourPrice, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
     const  { id } = req.params; 
     try {
         const itinerary = new Itinerary({
+            itineraryName,
             createdBy : id,
             description,
             tags,
-            locations,
             tourLanguage,
             tourPrice,
             availableDatesAndTimes,
@@ -120,10 +120,10 @@ const createItinerary = async (req, res) => {
 
 const getItinerary = async (req, res) => {
     const { id } = req.params;
-    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
 
     try {
-        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId });
+        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId }).populate('activities tags');
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
@@ -136,7 +136,7 @@ const getItinerary = async (req, res) => {
 
 // Get all Itineraries created by a Tour Guide
 const getAllItinerariesByGuide = async (req, res) => {
-    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
 
     try {
         const itineraries = await Itinerary.find({ createdBy: guideId });
@@ -150,7 +150,7 @@ const getAllItinerariesByGuide = async (req, res) => {
 // update an Itinerary
 const updateItinerary = async (req, res) => {
     const { id } = req.params;
-    const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
     const updates= req.body;
 
     try {

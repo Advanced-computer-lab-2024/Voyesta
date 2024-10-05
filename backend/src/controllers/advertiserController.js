@@ -39,7 +39,7 @@ const getAdvertisers = async (req, res) => {
 
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
-    const { username } = req.params; // Extract email from URL parameters
+    const { id } = req.params; // Extract email from URL parameters
     const {email,password,website,hotline,companyProfile,servicesOffered}= req.body;
     const updates = {};
     if (email) updates.email = email;
@@ -52,7 +52,7 @@ const updateAdvertiser = async (req, res) => {
 
     try {
         const advertiser = await adModel.findOneAndUpdate(
-            { email }, // Find by email
+            { _id : id}, // Find by email
             { $set: updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
@@ -102,7 +102,7 @@ const createActivity = async (req, res) => {
     // lat and lng are nested in coordinates object
     // as theres no frontend to send the google marker
     
-    const { name, description,date,time, city, country,lat,lng,duration, price, specialDiscount, category, tags} = req.body;
+    const { name, description,date,time,location,duration, price, specialDiscount, category, tags} = req.body;
     const  { id } = req.params;
     
     try {
@@ -111,15 +111,7 @@ const createActivity = async (req, res) => {
             description,
             date,
             time,
-            location : {
-                address,
-                city,
-                country,
-                coordinates:{
-                    lat,
-                    lng
-                }
-            },
+            location,
             price,
             duration,
             specialDiscount,
@@ -138,10 +130,10 @@ const createActivity = async (req, res) => {
 // Get an Activity
 const getActivity = async (req, res) => {
     const { id } = req.params;
-    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+    const advertiserId = '66ffe2b61027cbafe39ff5b1'; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {
-        const activity = await Activity.findById(id).populate('category tags advertiser');
+        const activity = await Activity.findById({_id: id, advertiser: advertiserId }).populate('category tags advertiser');
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
         }
@@ -157,7 +149,7 @@ const getActivity = async (req, res) => {
 };
 
 const getAllActivitiesByAdvertiser = async (req, res) => {  
-    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+    const advertiserId = '66ffe2b61027cbafe39ff5b1'; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {
         const activities = await Activity.find({ advertiser: advertiserId }).populate('category tags advertiser');
@@ -172,7 +164,7 @@ const getAllActivitiesByAdvertiser = async (req, res) => {
 // update an Activity
 const updateActivity = async (req, res) => {
     const { id } = req.params;
-    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+    const advertiserId =  '66ffe2b61027cbafe39ff5b1'; // hard coded for now, will be replaced with req.user._id  after authentication
 
     const updates = req.body;
 
@@ -198,7 +190,7 @@ const updateActivity = async (req, res) => {
 // delete an Activity
 const deleteActivity = async (req, res) => {
     const { id } = req.params;
-    const advertiserId = req.advertiser._id; // Assuming advertiser ID is stored in req.advertiser
+    const advertiserId = '66ffe2b61027cbafe39ff5b1'; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {
         const activity = await Activity.findById(id);

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const ActivitySchema = require('./Activity');
-const TagSchema = require('./PreferenceTag');
+// const ActivitySchema = require('./Activity');
+// const TagSchema = require('./PreferenceTag');
 
 const itinerarySchema = new Schema({
     itineraryName: {
@@ -11,10 +11,12 @@ const itinerarySchema = new Schema({
         trim: true, // Name of the itinerary
     },
     
-    //activities: [ActivitySchema], // Array of activities in the itinerary
+    activities: [{type: Schema.Types.ObjectId,
+        ref : 'Activity', // User/guide who created the itinerary
+        required: true}], // Array of activities in the itinerary
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref : 'TourismGovernor', // User/guide who created the itinerary
+        ref : 'TourGuide', // User/guide who created the itinerary
         required: true,
     },
     description: { // timeline of the itinerary
@@ -22,10 +24,7 @@ const itinerarySchema = new Schema({
         required: true,
         trim: true, // Optional description of the itinerary
     },
-    // tags: {
-    //     type: [TagSchema], // Array of tags associated with the itinerary
-    //     required: true,
-    // },
+    tags:  [{type: Schema.Types.ObjectId,ref: 'PreferenceTag',}],
     TourLanguage: {
         type: [String], 
         required: true,
@@ -35,7 +34,7 @@ const itinerarySchema = new Schema({
         required: true,
     },
     availableDatesAndTimes: {
-        type: [String], 
+        type: [Date], 
         required: true,
     },
     accessibility: {
