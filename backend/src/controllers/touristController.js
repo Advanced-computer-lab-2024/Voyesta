@@ -228,7 +228,7 @@ const getTouristView = async (req, res) => {
 //         const museums = await MuseumModel.find(searchCriteria).populate('category tags');
 //         const activities = await Activity.find(searchCriteria).populate('category tags');
 //         const itinerary= await Itinerary.find(searchCriteria).populate('tags')
-
+7
 //         // Step 5: Return the combined results
 //         res.status(200).json({
 //             museums,

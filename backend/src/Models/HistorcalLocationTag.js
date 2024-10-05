@@ -6,18 +6,18 @@ const tagSchema = new Schema({
         type: String,
         required: true,
         enum: ['Monuments', 'Museums', 'Religious Sites', 'Palaces','Castles'] // Specific set of types
-         },
+    },
     historicalPeriod: {
         type: String,
-        required: true,
+        required: false,
         validate: {
             validator: function(v) {
                 return /^\d{4} to \d{4}$/.test(v); // Regular expression to match YYYY to YYYY format
             },
             message: props => `${props.value} is not a valid historical period! It should be in the format YYYY-YYYY.`
         }
-        }
-    },);
+    }
+});
 
 const Tag = mongoose.model('Tag', tagSchema);
 module.exports = Tag;
