@@ -17,4 +17,6 @@ touristRouter.put('/updateTourist/:id', touristController.updateTourist);
 // Delete a tourist by username
 touristRouter.delete('/deleteTourist/:id', touristController.deleteTourist);
 
+touristRouter.post('/search', touristController.TouristSearch);
+
 module.exports = touristRouter; 
