@@ -1,4 +1,4 @@
-// Activity.jsconst mongoose = require('mongoose');
+mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const priceRangeSchema = new Schema({

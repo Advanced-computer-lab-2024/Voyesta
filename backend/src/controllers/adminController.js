@@ -1,6 +1,4 @@
 const adminModel = require('../Models/Admin');
-//const bcrypt = require('bcrypt');
-const {otpSender} = require('../services/generateOTPgenric');
 const TourismGovernor = require('../Models/tourismGovernor');
 
 

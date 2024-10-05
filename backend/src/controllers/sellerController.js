@@ -1,5 +1,4 @@
-const sellerModel = require('../Models/Seller'); // Ensure this path is correct
-const {otpSender} = require('../services/generateOTPgenric');
+const sellerModel = require('../Models/Seller'); 
 // Create a new Seller profile
 const createSeller = async (req, res) => {
     const { username, email, password, name, description } = req.body;

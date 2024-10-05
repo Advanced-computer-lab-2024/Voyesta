@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 // const activitySchema = require('./Activity');
 const itinerarySchema = new Schema({
-    itineraryName: {
+    name: {
         type: String,
         required: true,
         trim: true, // Name of the itinerary
@@ -34,11 +34,11 @@ const itinerarySchema = new Schema({
         type: [String], 
         required: true,
     },
-    TourLanguage: {
+    tourLanguage: {
         type: [String], 
         required: true,
     },
-    TourPrice: {
+    tourPrice: {
         type: Number, 
         required: true,
     },
@@ -53,7 +53,12 @@ const itinerarySchema = new Schema({
     pickdropofflocation: {
         type: [String], 
         required: true,
-    }
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref : 'TourGuide', // User/guide who created the itinerary
+        required: true,
+    },
     
 }, { timestamps: true });
 
