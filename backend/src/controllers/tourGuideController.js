@@ -81,17 +81,50 @@ const sendOTPtourGuide = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-// const getItneraryandadtourguide = async(req,res) =>{
-//     const ItineraryId = req.params._id
-//     try {
-//         const Itinerary = await Itinerary.find({ItineraryId: ItineraryId});
-//         res.status(200).json({
-//           itineraries
-//         });
-//       } catch (error) {
-//         res.status(500).json({ error: 'Server error while fetching items' });
-//       }
 
-      
-// }
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide}; // Export the controller functions
+const createItinerary = async (req, res) => {
+    const { itineraryName,description, tags, tourLanguage, tourPrice, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
+    const  { id } = req.params; 
+    try {
+        const itinerary = new Itinerary({
+            itineraryName,
+            createdBy : id,
+            description,
+            tags,
+            tourLanguage,
+            tourPrice,
+            availableDatesAndTimes,
+            activities,
+            accessibility,
+            pickUpLocation,
+            dropOffLocation
+        });
+
+        await itinerary.save();
+        res.status(201).json(itinerary);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const getAllItinerariesByGuide = async (req, res) => {
+    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
+
+    try {
+        const itineraries = await itineraryModel.find({ createdBy: guideId });
+        res.status(200).json(itineraries);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+};
+
+
+
+
+
+
+
+
+
+module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide,createItinerary,getAllItinerariesByGuide}; // Export the controller functions

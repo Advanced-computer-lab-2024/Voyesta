@@ -88,7 +88,7 @@ const sendOTPadvertiser = async (req, res) => {
 }
 // .populate('category tags advertiser');
 
-const getActivitysandadvertiser = async(req,res) =>{
+const GetAllActivities = async(req,res) =>{
     const advertiserId = req.params.id
     
     try {
@@ -136,7 +136,7 @@ const createActivity = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
-module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser,getActivitysandadvertiser,createActivity }; // Export the functions
+module.exports = { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser, sendOTPadvertiser,GetAllActivities,createActivity }; // Export the functions
 
 
 
