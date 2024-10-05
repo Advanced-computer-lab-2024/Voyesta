@@ -1,19 +1,25 @@
 const express = require('express');
 const activityRouter = express.Router();
-const advertiserController = require('../controllers/advertiserController');
+const activityController = require('../controllers/activityController');
 
 // Create an activity
-activityRouter.post('/createActivity/:id', advertiserController.createActivity);
+activityRouter.post('/add', activityController.createActivity);
 // Get all activities
-activityRouter.get('/getActivities', advertiserController.getActivity);
+activityRouter.get('/get/:id', activityController.getActivity);
+
+activityRouter.get('/getByAdvertiser', activityController.getAllActivitiesByAdvertiser);
 // Update an activity
-activityRouter.put('/updateActivity/:id', advertiserController.updateActivity);
+activityRouter.patch('/update/:id', activityController.updateActivity);
 // Delete an activity
-activityRouter.delete('/deleteActivity/:id', advertiserController.deleteActivity);
+activityRouter.delete('/delete/:id', activityController.deleteActivity);
 // Get all activities sorted by price
-activityRouter.get('/sortactivitiesp', advertiserController.sortactivitestsByPrice);
+activityRouter.get('/sortByPrice', activityController.sortactivitestsByPrice);
 // Get all activities sorted by Ratings
-activityRouter.get('/sortactivitiesr', advertiserController.sortactivitestsByRatings);
+activityRouter.get('/sortByRatings', activityController.sortactivitestsByRatings);
+
+activityRouter.get('/filterActivities', activityController.filterTouristActivities);
+
+activityRouter.get('/search', activityController.search);
 
 
 

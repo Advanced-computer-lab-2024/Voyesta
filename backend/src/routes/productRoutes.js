@@ -5,9 +5,9 @@ const productController = require('../controllers/productController');
 const touristController = require('../controllers/touristController');
 
 // GET all products route
-router.get('/getAllProducts', productController.getAllProducts);
-router.post('/addProduct', productController.addProduct);
-router.put('/updateProduct/:id', productController.updateProduct);
+router.get('/get', productController.getAllProducts);
+router.post('/add', productController.addProduct);
+router.put('/update/:id', productController.updateProduct);
 router.get('/search', productController.searchProductByName);
 router.get('/filterByPrice', productController.filterProductsByPrice);
 router.get('/sortByRatings', productController.sortProductsByRatings);

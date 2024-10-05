@@ -65,7 +65,7 @@ time: {
   type: String,
   required: true
 },
-Price: {
+price: {
     type: Schema.Types.Mixed,
     required: true,
     validate : {
@@ -86,8 +86,7 @@ Price: {
     required: true
   },
   tags: [{
-    type: Schema.Types.ObjectId,
-    ref: 'PreferenceTag',
+    type: String,
     required: true
 }],
   advertiser: {

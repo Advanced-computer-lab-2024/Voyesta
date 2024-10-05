@@ -7,7 +7,6 @@ _.post("/add", createTourist);
 _.get("/get", getTourists);
 _.put("/update", updateTourist);
 _.delete("/delete", deleteTourist);
-_.get('/filterActivities', filterTouristActivities);
 _.get('/touristAttractions', getTouristView);
 
 

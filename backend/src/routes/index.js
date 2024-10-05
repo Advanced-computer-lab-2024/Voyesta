@@ -7,11 +7,12 @@ const adminRouter = require('./adminRoutes');
 const productRouter = require('./productRoutes');
 const activityCategoryRouter = require('./activityCategoryRouter');
 const preferenceTagRouter = require('./preferenceTagRouter');
+const iteneraryRouter = require('./itineraryRouter');
 
 // POST route for creating a new tourism governor
 _.use('/admin', adminRouter);
 // adding products routes
-_.use('/products', productRouter)
+_.use('/product', productRouter)
 
 
 // adding Activity Category Router
@@ -24,11 +25,11 @@ _.use('/preferenceTag', preferenceTagRouter);
 
 
 
-const advertiserRouter = require("../routes/advertiserRouter");
-const sellerRouter = require("../routes/sellerRouter");
-const tourGuideRouter = require("../routes/tourGuideRouter");
-const touristRouter = require("../routes/touristRouter");
-const activityRouter = require("../routes/activityRouter");
+const advertiserRouter = require("./advertiserRouter");
+const sellerRouter = require("./sellerRouter");
+const tourGuideRouter = require("./tourGuideRouter");
+const touristRouter = require("./touristRouter");
+const activityRouter = require("./activityRouter");
 const tourismGovernerRouter = require("./tourismGovernerRouter");
 const userGuestRouter = require("./userGuestRouter");
 
@@ -39,6 +40,8 @@ _.use("/tourist",  touristRouter);
 _.use("/activity",  activityRouter);
 _.use("/tourismGoverner",  tourismGovernerRouter);
 _.use("/guest",  userGuestRouter);
+_.use('/itinerary', iteneraryRouter);
+_.use('/activity', activityRouter);
 
 
 module.exports = _;

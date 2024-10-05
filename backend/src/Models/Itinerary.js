@@ -57,7 +57,7 @@ const itinerarySchema = new Schema({
     createdBy: {
         type: Schema.Types.ObjectId,
         ref : 'TourGuide', // User/guide who created the itinerary
-        required: true,
+        required: false,
     },
     
 }, { timestamps: true });
