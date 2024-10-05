@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Activity = require('../Models/Activity');
 
 const Itinerary = require('../Models/itinerarySchema'); // Adjust path as needed
-const MuseumsAndHistoricalPlaces = require('../Models/MuseumsAndHistoricalPlaces');
+const MuseumsAndHistoricalPlaces = require('../Models/MusemsAndHistoricalPlaces');
 
 const filterTouristActivities = async (req, res) => {
     const { minPrice, maxPrice, date, category, rating } = req.query;

@@ -1,5 +1,6 @@
 const express = require('express');
 const tourismGovernerRouter = express.Router();
+
 const tourismGovernerController = require('../controllers/tourismGovernerController');
 
 // Create a place of interest

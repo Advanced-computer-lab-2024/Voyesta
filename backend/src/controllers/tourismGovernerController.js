@@ -1,5 +1,5 @@
-const tourismGovernorModel = require('../models/tourismGovernorModel');
-const museumsAndHistoricalPlacesModel = require('../models/museumsAndHistoricalPlaces');
+const tourismGovernorModel = require('../Models/tourismGovernor');
+const museumsAndHistoricalPlacesModel = require('../Models/MusemsAndHistoricalPlaces');
 
 // create a place of interest
 const createPlaceOfInterest = async (req, res) => {
