@@ -1,4 +1,4 @@
-const Tourist = require('../Models/tourist'); // Adjust path as needed
+const GuestTourist = require('../Models/GuestTourist.js'); // Ensure the path is correct
 
 const registerGuestTourist = async (req, res) => {
     const { username, email, password, mobileNumber, nationality, dob, jobOrStudent } = req.body;
@@ -17,8 +17,8 @@ const registerGuestTourist = async (req, res) => {
             jobOrStudent,
         });
 
-        await tourist.save();
-        res.status(201).json({ message: 'Tourist registered successfully', tourist });
+        await guestTourist.save();
+        res.status(201).json({ message: 'Guest tourist registered successfully', guestTourist }); // Use the correct variable name
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -26,12 +26,14 @@ const registerGuestTourist = async (req, res) => {
 
 const getGuestTourists = async (req, res) => {
     try {
-        const tourists = await Tourist.find({});
-        res.status(200).json(tourists);
+        const guestTourists = await GuestTourist.find({});
+        res.status(200).json(guestTourists);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
+
+
 
 
 

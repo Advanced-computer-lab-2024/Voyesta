@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+
 const router = require('./src/routes/index');
 
 // Load environment variables
@@ -25,7 +26,10 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('MongoDB connection error:', err));
 
+
 app.use('/api', router);
+
+
 
 // Export the app
 module.exports = app;

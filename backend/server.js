@@ -1,5 +1,6 @@
 // server.js
 const app = require('./App');
+
 const mongoose = require('mongoose');
 require('dotenv').config();
 
