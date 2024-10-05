@@ -81,15 +81,15 @@ const deleteTourGuide = async (req, res) => {
 };
 
 // Send OTP to email
-const sendOTPtourGuide = async (req, res) => {
-    const { email } = req.body;
-    try {
-        const otp = otpSender(email);
-        res.status(200).json({ message: 'OTP sent successfully', otp });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+// const sendOTPtourGuide = async (req, res) => {
+//     const { email } = req.body;
+//     try {
+//         const otp = otpSender(email);
+//         res.status(200).json({ message: 'OTP sent successfully', otp });
+//     } catch (error) {
+//         res.status(400).json({ error: error.message });
+//     }
+// };
 
 
 const createItinerary = async (req, res) => {
@@ -169,11 +169,7 @@ const updateItinerary = async (req, res) => {
 
 };
 
-
-
-
 // Delete an Itinerary
-
 const deleteItinerary = async (req, res) => {
     const { id } = req.params;
     const guideId = req.createdBy._id; // Assuming req.user contains the authenticated user's info
