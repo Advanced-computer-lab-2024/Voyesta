@@ -56,24 +56,6 @@ const updateTourGuide = async (req, res) => {
     }
 };
 
-
-// Delete a Tour Guide profile
-const deleteTourGuide = async (req, res) => {
-    const { id } = req.params; // Extract ID from URL parameters
-
-    try {
-        const tourGuide = await tourGuideModel.findByIdAndDelete(id); // Find and delete by ID
-
-        if (!tourGuide) {
-            return res.status(404).json({ error: 'Tour guide not found' });
-        }
-
-        res.status(200).json({ message: 'Tour guide deleted successfully', tourGuide });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
 // Send OTP to email
 // const sendOTPtourGuide = async (req, res) => {
 //     const { email } = req.body;
@@ -86,4 +68,4 @@ const deleteTourGuide = async (req, res) => {
 // };
 
 
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide }; // Export the controller functions
+module.exports = { createTourGuide, getTourGuides, updateTourGuide  }; // Export the controller functions
