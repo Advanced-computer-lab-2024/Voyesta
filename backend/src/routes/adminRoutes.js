@@ -1,5 +1,5 @@
 const express = require('express');
-const _ = express.Router();
+const router = express.Router();
 
 const adminController = require('../controllers/adminController');
 const authenticate = require('../middleware/authenticate');
@@ -16,4 +16,4 @@ router.post('/createAdmin', adminController.createAdmin);
 router.patch('/updatePassword', adminController.updatePassword);
 router.delete('/deleteAccount', adminController.deleteAccount);
 
-module.exports = _;
+module.exports = router;

@@ -118,34 +118,34 @@ const deleteTourist = async (req, res) => {
 
 
 
-// const getTouristView = async (req, res) => {
-//     try {
-//         const currentDate = new Date();
+const getTouristView = async (req, res) => {
+    try {
+        const currentDate = new Date();
 
-//         // Fetch upcoming activities
-//         const upcomingActivities = await Activity.find({ date: { $gte: currentDate } });
+        // Fetch upcoming activities
+        const upcomingActivities = await Activity.find({ date: { $gte: currentDate } });
 
-//         // Fetch itineraries (you might want to filter by available dates as well)
-//         const upcomingItineraries = await Itinerary.find({
-//             availableDatesAndTimes: { $elemMatch: { $gte: currentDate.toISOString() } }
-//         });
+        // Fetch itineraries (you might want to filter by available dates as well)
+        const upcomingItineraries = await Itinerary.find({
+            availableDatesAndTimes: { $elemMatch: { $gte: currentDate.toISOString() } }
+        });
 
-//         // Fetch museums and historical placesformat
-//         const museums = await MuseumsAndHistoricalPlaces.find();
+        // Fetch museums and historical placesformat
+        const museums = await MuseumsAndHistoricalPlaces.find();
 
-//         // Combine results into a structured 
-//         const result = {
-//             upcomingActivities,
-//             upcomingItineraries,
-//             museums
-//         };
+        // Combine results into a structured 
+        const result = {
+            upcomingActivities,
+            upcomingItineraries,
+            museums
+        };
 
-//         res.status(200).json(result);
-//     } catch (error) {
-//         console.error("Error retrieving tourist information:", error);
-//         res.status(500).json({ message: 'Error retrieving information', error: error.message });
-//     }
-// };
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error retrieving tourist information:", error);
+        res.status(500).json({ message: 'Error retrieving information', error: error.message });
+    }
+};
 
 // const TouristSearch = async (req, res) => {
 //     try {

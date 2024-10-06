@@ -4,26 +4,29 @@ const Category = require('../Models/ActivityCategory');
 const mongoose = require('mongoose');
 // Create a new Activity
 const createActivity = async (req, res) => {
-    // city and country are nested in location object
-    // lat and lng are nested in coordinates object
-    // as theres no frontend to send the google marker
-    
-    const { name, description,date,time, address,location,duration, price, specialDiscount, category, tags} = req.body;
-    const  id = req.headers['id'];
-    
+    const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
+    const advertiser = req.user.id;  // Assuming req.user is populated by authentication middleware
+
     try {
         const activity = new Activity({
             name,
             description,
             date,
             time,
-            location,
+            location: {
+                address: location.address,
+                city: location.city,
+                country: location.country,
+                coordinates: {
+                    lat: location.coordinates.lat,
+                    lng: location.coordinates.lng
+                }
+            },
             price,
-            duration,
             specialDiscount,
             category,
             tags,
-            advertiser: id
+            advertiser
         });
 
         await activity.save();
@@ -31,7 +34,8 @@ const createActivity = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}
+};
+
 
 // Get an Activity
 const getActivity = async (req, res) => {
@@ -51,7 +55,7 @@ const getActivity = async (req, res) => {
 };
 
 const getAllActivitiesByAdvertiser = async (req, res) => {  
-    const advertiserId = req.headers['id']; // hard coded for now, will be replaced with req.user._id  after authentication
+    const advertiserId = req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {
         const activities = await Activity.find({ advertiser: advertiserId }).populate('category tags advertiser');
@@ -66,7 +70,7 @@ const getAllActivitiesByAdvertiser = async (req, res) => {
 // update an Activity
 const updateActivity = async (req, res) => {
     const { id } = req.params;
-    const advertiserId =  '66ffe2b61027cbafe39ff5b1'; // hard coded for now, will be replaced with req.user._id  after authentication
+    const advertiserId =  req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
 
     const updates = req.body;
 
@@ -92,7 +96,7 @@ const updateActivity = async (req, res) => {
 // delete an Activity
 const deleteActivity = async (req, res) => {
     const { id } = req.params;
-    const advertiserId = '66ffe2b61027cbafe39ff5b1'; // hard coded for now, will be replaced with req.user._id  after authentication
+    const advertiserId = req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {
         const activity = await Activity.findByIdAndDelete(id);

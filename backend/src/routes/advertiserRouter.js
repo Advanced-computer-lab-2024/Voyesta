@@ -12,9 +12,9 @@ _.put("/update", authenticate, updateAdvertiser);
 _.delete("/delete", authenticate, deleteAdvertiser);
 
 
-_.post("/addActivity", createActivity);
-_.get("/getActivity", getAllActivitiesByAdvertiser);
-_.patch("/updateActivity", updateActivity);
-_.delete("/deleteActivity", deleteActivity);
+_.post("/addActivity", authenticate, createActivity);
+_.get("/getActivity", authenticate, getAllActivitiesByAdvertiser);
+_.patch("/updateActivity/:id", authenticate, updateActivity);
+_.delete("/deleteActivity/:id", authenticate, deleteActivity);
 
 module.exports = _;

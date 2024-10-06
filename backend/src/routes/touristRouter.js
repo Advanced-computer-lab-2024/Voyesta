@@ -12,7 +12,7 @@ _.post("/add", createTourist);
 _.get("/get",authenticate ,getTourists);
 _.put("/update", authenticate,updateTourist);
 _.delete("/delete", authenticate,deleteTourist);
-_.get('/touristAttractions', getTouristView);
+// _.get('/touristAttractions', getTouristView);
 
 _.get("/getMuseumsHistoricalPlaces/:id", get);
 
