@@ -28,8 +28,7 @@ function AdminDashboard(){
         />}/>
         <Route path="/products" element={<AdminProductsView />}/>
         <Route path="/account-management" element={
-          <AdminAccountManagementNavbar 
-            baseUrl="http://localhost:3000/api/admin"
+          <AdminAccountManagementNavbar
             title = "Account Management" 
           />}/>
     </Routes>       

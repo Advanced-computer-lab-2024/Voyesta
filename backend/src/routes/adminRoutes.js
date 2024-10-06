@@ -11,7 +11,7 @@ const {
     deleteActivityCategoryById
 } = require('../controllers/activityCategoryController');
 
-router.post('/createTourismGoverner', authenticate, adminController.createTourismGovernor);
+router.post('/createTourismGoverner', adminController.createTourismGovernor);
 router.post('/createAdmin', adminController.createAdmin);
 router.patch('/updatePassword', adminController.updatePassword);
 router.delete('/deleteAccount', adminController.deleteAccount);

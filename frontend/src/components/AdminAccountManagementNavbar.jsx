@@ -1,47 +1,82 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function AdminAccountManagement() {
-  const [activeTab, setActiveTab] = useState("addTourismGovernor"); // Tab management
+  const [activeTab, setActiveTab] = useState("addTourismGovernor");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(null);
-  const baseUrl = 'http://localhost:3000/api/admin'
+  const [token, setToken] = useState("");
+  const [pendingDeletions, setPendingDeletions] = useState([]); // New state for pending deletion accounts
+  const baseUrl = 'http://localhost:3000/api/admin';
 
-  // Handle Add Tourism Governor
-  const handleAddTourismGovernor = () => {
-    const url = baseUrl + "/createTourismGovernor";
-    
-    axios.post(url, { 
-      username: username, 
-      password: password 
-    })
-    .then(response => setMessage("Tourism Governor added successfully."))
-    .catch(err => setMessage("Error adding Tourism Governor."));
+  // Load token from local storage (or wherever you store it)
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+  }, []);
+
+  // Function to configure axios headers with the token
+  const getAuthHeaders = () => ({
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  // Function to handle fetching accounts with pending deletion requests
+  const fetchPendingDeletions = () => {
+    const url = baseUrl + "/pendingAccountDeletions"; // Assuming this is the correct endpoint
+
+    axios.get(url, getAuthHeaders())
+      .then(response => {
+        setPendingDeletions(response.data); // Assuming response data contains the list of accounts
+      })
+      .catch(err => setMessage("Error fetching pending deletion requests."));
   };
 
-  // Handle Add Admin
+  // Call fetchPendingDeletions when "approveDeletion" tab is active
+  useEffect(() => {
+    if (activeTab === "approveDeletion") {
+      fetchPendingDeletions();
+    }
+  }, [activeTab]);
+
+  const handleAddTourismGovernor = () => {
+    const url = baseUrl + "/createTourismGoverner";
+
+    axios.post(url, { username, password }, getAuthHeaders())
+      .then(response => {
+        setMessage("Tourism Governor added successfully.");
+        // Clear the input fields after successful submission
+        setUsername("");
+        setPassword("");
+      })
+      .catch(err => setMessage("Error adding Tourism Governor."));
+  };
+
   const handleAddAdmin = () => {
     const url = baseUrl + "/createAdmin";
-    
-    axios.post(url, { 
-      username: username, 
-      password: password 
-    })
-    .then(response => setMessage("Admin added successfully."))
-    .catch(err => setMessage("Error adding Admin."));
+
+    axios.post(url, { username, password }, getAuthHeaders())
+      .then(response => {
+        setMessage("Admin added successfully.");
+        // Clear the input fields after successful submission
+        setUsername("");
+        setPassword("");
+      })
+      .catch(err => setMessage("Error adding Admin."));
   };
 
-  // Handle Approve Account Deletion Request
-  const handleApproveAccountDeletion = () => {
+  const handleApproveAccountDeletion = (accountEmail) => {
     const url = baseUrl + "/approveAccountDeletion";
-    
-    axios.post(url, { 
-      email: email 
-    })
-    .then(response => setMessage("Account deletion request approved."))
-    .catch(err => setMessage("Error approving account deletion request."));
+
+    axios.post(url, { email: accountEmail }, getAuthHeaders())
+      .then(response => {
+        setMessage(`Account deletion approved for ${accountEmail}.`);
+        setPendingDeletions(pendingDeletions.filter(account => account.email !== accountEmail));
+      })
+      .catch(err => setMessage(`Error approving account deletion for ${accountEmail}.`));
   };
 
   return (
@@ -50,19 +85,19 @@ function AdminAccountManagement() {
 
       {/* Tab Navigation */}
       <div className="flex justify-around border-b mb-4">
-        <button 
+        <button
           className={`p-2 ${activeTab === "addTourismGovernor" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => setActiveTab("addTourismGovernor")}
         >
           Add Tourism Governor
         </button>
-        <button 
+        <button
           className={`p-2 ${activeTab === "addAdmin" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => setActiveTab("addAdmin")}
         >
           Add Admin
         </button>
-        <button 
+        <button
           className={`p-2 ${activeTab === "approveDeletion" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => setActiveTab("approveDeletion")}
         >
@@ -150,28 +185,27 @@ function AdminAccountManagement() {
       )}
 
       {activeTab === "approveDeletion" && (
-        <form onSubmit={(e) => {e.preventDefault(); handleApproveAccountDeletion();}} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Enter Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="bg-red-500 text-white rounded-lg p-2 mt-4 hover:bg-red-700"
-          >
-            Approve Account Deletion
-          </button>
-        </form>
+        <div className="flex flex-col gap-4">
+          {/* Display account cards for pending deletions */}
+          {pendingDeletions.length > 0 ? (
+            pendingDeletions.map(account => (
+              <div key={account.email} className="bg-gray-100 p-4 rounded shadow-md flex justify-between items-center">
+                <div>
+                  <p className="font-bold">{account.username}</p>
+                  <p>{account.email}</p>
+                </div>
+                <button
+                  onClick={() => handleApproveAccountDeletion(account.email)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                >
+                  Approve Deletion
+                </button>
+              </div>
+            ))
+          ) : (
+            <p>No pending account deletions.</p>
+          )}
+        </div>
       )}
 
       {/* Display Message */}
