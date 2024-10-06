@@ -14,7 +14,10 @@ const createTourGuide = async (req, res) => {
             previousWork,
         });
 
+        
+
         const token = generateToken(tourGuide._id, 'tourGuide');
+        console.log(token);
         res.status(201).json({ message: 'Profile created successfully', token ,tourGuide });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -23,8 +26,9 @@ const createTourGuide = async (req, res) => {
 
 // Get all Tour Guides profiles
 const getTourGuides = async (req, res) => {
+    const id = req.user.id; // Assuming req.user contains the authenticated user's info
     try {
-        const tourGuides = await tourGuideModel.find({});
+        const tourGuides = await tourGuideModel.findById(id);
         res.status(200).json(tourGuides);
     } catch (error) {
         res.status(400).json({ error: error.message });

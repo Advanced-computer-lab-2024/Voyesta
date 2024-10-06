@@ -1,7 +1,8 @@
 import React from 'react'
 import './css/index.css'
 import AdminDashboard from './pages/admin/AdminDashboard'
-import Tourism from './pages/TourismGovernorDashboard'
+import TourGuideDashboard from './pages/tourGuide/TourGuideDashboard'
+import Tourism from './pages/TourGuideDashboard'
 
 
 
@@ -10,7 +11,7 @@ function App() {
   return (
     <>
       <div>
-          <AdminDashboard />
+          <TourGuideDashboard />
 
       </div>
     </>

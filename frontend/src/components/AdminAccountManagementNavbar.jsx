@@ -26,7 +26,7 @@ function AdminAccountManagement() {
 
   // Function to handle fetching accounts with pending deletion requests
   const fetchPendingDeletions = () => {
-    const url = baseUrl + "/pendingAccountDeletions"; // Assuming this is the correct endpoint
+    const url = baseUrl + "/deleteAccount"; // Assuming this is the correct endpoint
 
     axios.get(url, getAuthHeaders())
       .then(response => {
