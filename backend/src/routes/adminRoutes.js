@@ -4,7 +4,7 @@ const adminController = require('../controllers/adminController');
 const authenticate = require('../middleware/authenticate');
 
 
-router.post('/createTourismGoverner', adminController.createTourismGovernor);
+router.post('/createTourismGoverner', authenticate, adminController.createTourismGovernor);
 router.post('/createAdmin', adminController.createAdmin);
 router.patch('/updatePassword', adminController.updatePassword);
 router.delete('/deleteAccount', adminController.deleteAccount);

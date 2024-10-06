@@ -19,7 +19,7 @@ const createAdmin = async (req, res) => {
         console.log(latestAdmin);
         
         const token = generateToken(latestAdmin._id, 'admin');
-        res.status(201).json({ message: 'Admin profile created successfully', token, admin: latestAdmin });
+        res.status(201).json({ message: 'Admin profile created successfully', token, latestAdmin });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -27,11 +27,11 @@ const createAdmin = async (req, res) => {
 
 // update Password
 const updatePassword = async (req, res) => {
-    const { username } = req.params; // Extract username from URL parameters
+    const id = req.user.id; // Extract id from URL parameters
     const { oldPassword,newPassword } = req.body; // Extract new password from request body
 
     try {
-       const admin = await adminModel.findOne({ username });
+       const admin = await adminModel.findById({ id });
        if(!admin) {
            return res.status(404).json({ message: 'Admin not found' });
        }
@@ -53,10 +53,9 @@ const updatePassword = async (req, res) => {
 
 // Delete an Admin profile
 const deleteAccount = async (req, res) => {
-    const { username } = req.params; // Extract username from URL parameters
-
+    const id = req.user.id;
     try {
-        const admin = await adminModel.findOneAndDelete({ username });  
+        const admin = await adminModel.findByIdAndDelete({ id });  
         if(!admin) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -79,8 +78,6 @@ const sendOTPadmin = async (req, res) => {
 
 // Controller function to create a new tourism governor
 const createTourismGovernor = async (req, res) => {
-    const id = req.user.id;
-    console.log(id);
     
     const { username, password } = req.body;
 

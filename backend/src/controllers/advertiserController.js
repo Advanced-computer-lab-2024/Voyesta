@@ -1,4 +1,5 @@
 const advertiserModel = require('../Models/Advertiser'); // Ensure this path is correct
+const { generateToken } = require('../utils/jwt')
 // const {otpSender} = require('../services/generateOTPgenric');
 
 const activityModel = require('../Models/Activity');
@@ -20,7 +21,10 @@ const createAdvertiser = async (req, res) => {
             companyProfile,
             servicesOffered,
         });
-        res.status(201).json({ message: 'Advertiser profile created successfully', advertiser });
+
+        const token = generateToken(advertiser._id, 'advertiser');
+
+        res.status(201).json({ message: 'Advertiser profile created successfully', token, advertiser });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -28,9 +32,10 @@ const createAdvertiser = async (req, res) => {
 
 // Get all Advertiser profiles
 const getAdvertisers = async (req, res) => {
+    const id = req.user.id;
     try {
-        const advertisers = await advertiserModel.find({});
-        res.status(200).json(advertisers);
+        const advertiser = await advertiserModel.findById(id);
+        res.status(200).json(advertiser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -38,7 +43,7 @@ const getAdvertisers = async (req, res) => {
 
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
-    const { id } = req.params; // Extract email from URL parameters
+    const id = req.user.id; // Extract email from URL parameters
     const {email,password,website,hotline,companyProfile,servicesOffered}= req.body;
     const updates = {};
     if (email) updates.email = email;
@@ -46,11 +51,11 @@ const updateAdvertiser = async (req, res) => {
     if (website) updates.website = website;
     if (hotline) updates.hotline = hotline;
     if (companyProfile) updates.companyProfile = companyProfile;
-    if (servicesOffered) updates.servicesOffered = servicesOffer
+    if (servicesOffered) updates.servicesOffered = servicesOffered;
 
 
     try {
-        const advertiser = await adModel.findOneAndUpdate(
+        const advertiser = await advertiserModel.findOneAndUpdate(
             { _id : id}, // Find by email
             { $set: updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
@@ -68,7 +73,7 @@ const updateAdvertiser = async (req, res) => {
 
 // Delete an Advertiser profile
 const deleteAdvertiser = async (req, res) => {
-    const { id } = req.params; // Extract ID from URL parameters
+    const id = req.user.id; // Extract ID from URL parameters
 
     try {
         const advertiser = await advertiserModel.findByIdAndDelete(id); // Find and delete by ID
