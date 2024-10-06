@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import AdminListView from "../../components/adminListView";
 import AdminAccountManagement from "../../components/AdminAccountManagement";
 import AdminProductsView from "../../components/AdminProductsView";
+import AdminAccountManagementNavbar from "../../components/AdminAccountManagementNavbar";
 
 // import Admin from "../../../../backend/src/Models/Admin";
 
@@ -27,7 +28,7 @@ function AdminDashboard(){
         />}/>
         <Route path="/products" element={<AdminProductsView />}/>
         <Route path="/account-management" element={
-          <AdminAccountManagement 
+          <AdminAccountManagementNavbar 
             baseUrl="http://localhost:3000/api/admin"
             title = "Account Management" 
           />}/>
