@@ -76,7 +76,6 @@ function AdminProductsView() {
     setProducts(sortedProducts);
   };
   
-
   const handleEdit = (product) => {
     const url = 'http://localhost:3000/api/admin/updateProduct/'+product._id;
     axios.put(url, product)
