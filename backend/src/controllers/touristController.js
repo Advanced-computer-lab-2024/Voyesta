@@ -1,5 +1,10 @@
 const touristModel = require('../Models/Tourist');
+const MuseumModel = require('../Models/MusemsAndHistoricalPlaces');
+const Category = require('../Models/ActivityCategory');
+const Tag = require('../Models/PreferenceTag')
+const Activity = require('../Models/Activity');
 
+const {generateToken} = require('../utils/jwt');
 
 
 const createTourist = async (req, res) => {
@@ -20,6 +25,8 @@ const createTourist = async (req, res) => {
        });
 
        await tourist.save();
+
+       const token = generateToken(tourist._id, 'tourist');
        res.status(201).json({ message: 'Tourist registered successfully', tourist });
    } catch (error) {
        res.status(400).json({ error: error.message });
@@ -39,7 +46,7 @@ const getTourists = async (req, res) => {
 
 // gets a tourist by username displaying all its information
  const getTourist = async (req, res) => {
-    const {id} = req.params;
+    const {id} = req.user.id;
 
     try{
      const tourist = await touristModel.findById(id);
@@ -57,7 +64,7 @@ const getTourists = async (req, res) => {
 
  const updateTourist = async (req, res) => {
    const { Email, Password, Number, Nationality, Job } = req.body;
-   const id  = req.headers['id'];
+   const { id } = req.user.id; // Extract ID from URL parameters
    
    // Create an object containing the fields to update
    const updateFields = {};
@@ -90,7 +97,7 @@ const getTourists = async (req, res) => {
 
 
 const deleteTourist = async (req, res) => {
-    const id  = req.headers['id']; // Extract ID from URL parameters
+    const id = req.user.id; // Extract ID from URL parameters
 
     try {
         // Attempt to delete the tourist by ID
@@ -111,34 +118,34 @@ const deleteTourist = async (req, res) => {
 
 
 
-// const getTouristView = async (req, res) => {
-//     try {
-//         const currentDate = new Date();
+const getTouristView = async (req, res) => {
+    try {
+        const currentDate = new Date();
 
-//         // Fetch upcoming activities
-//         const upcomingActivities = await Activity.find({ date: { $gte: currentDate } });
+        // Fetch upcoming activities
+        const upcomingActivities = await Activity.find({ date: { $gte: currentDate } });
 
-//         // Fetch itineraries (you might want to filter by available dates as well)
-//         const upcomingItineraries = await Itinerary.find({
-//             availableDatesAndTimes: { $elemMatch: { $gte: currentDate.toISOString() } }
-//         });
+        // Fetch itineraries (you might want to filter by available dates as well)
+        const upcomingItineraries = await Itinerary.find({
+            availableDatesAndTimes: { $elemMatch: { $gte: currentDate.toISOString() } }
+        });
 
-//         // Fetch museums and historical placesformat
-//         const museums = await MuseumsAndHistoricalPlaces.find();
+        // Fetch museums and historical placesformat
+        const museums = await MuseumsAndHistoricalPlaces.find();
 
-//         // Combine results into a structured 
-//         const result = {
-//             upcomingActivities,
-//             upcomingItineraries,
-//             museums
-//         };
+        // Combine results into a structured 
+        const result = {
+            upcomingActivities,
+            upcomingItineraries,
+            museums
+        };
 
-//         res.status(200).json(result);
-//     } catch (error) {
-//         console.error("Error retrieving tourist information:", error);
-//         res.status(500).json({ message: 'Error retrieving information', error: error.message });
-//     }
-// };
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error retrieving tourist information:", error);
+        res.status(500).json({ message: 'Error retrieving information', error: error.message });
+    }
+};
 
 // const TouristSearch = async (req, res) => {
 //     try {
@@ -188,4 +195,4 @@ const deleteTourist = async (req, res) => {
 // };
 
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist}; // Export the controller functions
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView}; // Export the controller functions

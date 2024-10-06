@@ -1,7 +1,8 @@
 const express = require('express');
-const _ = express.Router();
+const router = express.Router();
 
 const adminController = require('../controllers/adminController');
+const authenticate = require('../middleware/authenticate');
 
 const {
     createActivityCategory, 
@@ -10,39 +11,9 @@ const {
     deleteActivityCategoryById
 } = require('../controllers/activityCategoryController');
 
-const {
-    createPreferenceTag,  
-    getPreferenceTags, 
-    updatePreferenceTag, 
-    deletePreferenceTag
-} = require('../controllers/preferenceTagContoller');
+router.post('/createTourismGoverner', authenticate, adminController.createTourismGovernor);
+router.post('/createAdmin', adminController.createAdmin);
+router.patch('/updatePassword', adminController.updatePassword);
+router.delete('/deleteAccount', adminController.deleteAccount);
 
-
-const productController = require('../controllers/productController');
-
-// ------------- Not testedd ---------------
-_.post('/createTourismGoverner', adminController.createTourismGovernor);
-_.post('/createAdmin', adminController.createAdmin);
-_.patch('/updatePassword', adminController.updatePassword);
-_.delete('/deleteAccount', adminController.deleteAccount);
-
-_.post('/addActivityCategory',createActivityCategory);
-_.get('/getActivityCategory',getActivityCategory);
-_.put('/updateActivityCategory', updateActivityCategory);
-_.delete('/deleteActivityCategory',deleteActivityCategoryById);
-
-_.post('/addPrefernceTag',createPreferenceTag);
-_.get('/getPrefernceTag',getPreferenceTags);
-_.put('/updatePrefernceTag', updatePreferenceTag);
-_.delete('/deletePrefernceTag',deletePreferenceTag);
-
-_.get('/getProducts', productController.getAllProducts);
-_.post('/addProduct', productController.addProduct);
-_.put('/updateProduct/:id', productController.updateProduct);
-_.get('/searchProducts', productController.searchProductByName);
-_.get('/filterProductsByPrice', productController.filterProductsByPrice);
-_.get('/sortProductsByRatings', productController.sortProductsByRatings);
-_.get('/getProductsMinAndMax', productController.getMinAndMaxPrices);
-
-
-module.exports = _;
+module.exports = router;

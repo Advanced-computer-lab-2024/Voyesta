@@ -4,7 +4,7 @@ const museumsHistoricalPlacesModel = require('../Models/MusemsAndHistoricalPlace
 
 const create = async (req, res) => {
     const { name, description, pictures, location, openingHours, ticketPrices, tags} = req.body;
-    const  { id } = req.params; 
+    const id = req.user.id; 
     try {
         const placeOfInterest = await museumsHistoricalPlacesModel.create({
             name,
@@ -55,11 +55,11 @@ const get = async (req, res) => {
 // update a place of interest by this governor
 const update = async (req, res) => {
     const { id } = req.params;
-    
+    const governor = req.user.id;
     // const { governor } = '66faceb88b0c920ad6ee3c1a';  // hard coded for now
     const body = req.body;
     try {
-        const placeOfInterest = await museumsHistoricalPlacesModel.findOneAndUpdate({ _id:id }, body , { new: true });
+        const placeOfInterest = await museumsHistoricalPlacesModel.findOneAndUpdate({ _id:id , createdBy: governor}, body , { new: true });
         if (!placeOfInterest) {
             return res.status(404).json({ error: 'Place of interest not found or you do not have access' });
         }
@@ -73,8 +73,9 @@ const update = async (req, res) => {
 // delete a place of interest by this governor
 const remove = async (req, res) => {
     const { id } = req.params;
+    const governor = req.user.id;
     try {
-        const placeOfInterest = await museumsHistoricalPlacesModel.findOneAndDelete({ _id:id });
+        const placeOfInterest = await museumsHistoricalPlacesModel.findOneAndDelete({ _id:id , createdBy: governor });
         if (!placeOfInterest) {
             return res.status(404).json({ error: 'Place of interest not found or you do not have access' });
         }
@@ -88,8 +89,9 @@ const remove = async (req, res) => {
 const addTag = async (req, res) => {
     const { id } = req.params;
     const { tags } = req.body;
+    const governor = req.user.id;
     try {
-        const placeOfInterest = await museumsHistoricalPlacesModel.findOneAndUpdate({ _id: id }, { $push :{tags} }, { new: true });
+        const placeOfInterest = await museumsHistoricalPlacesModel.findOneAndUpdate({ _id: id , createdBy: governor}, { $push :{tags} }, { new: true });
         res.status(200).json({ message: 'Tags added successfully', placeOfInterest });
     }
     catch (error) {

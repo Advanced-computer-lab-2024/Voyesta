@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticate = require("../middleware/authenticate");
 let _ = express.Router();
 
 const { createTourist, getTourists, updateTourist, deleteTourist} = require("../controllers/touristController");
@@ -8,9 +9,10 @@ const { getItinerary, sortByPrice } = require('../controllers/itineraryControlle
 
 
 _.post("/add", createTourist);
-_.get("/get", getTourists);
-_.put("/update", updateTourist);
-_.delete("/delete", deleteTourist);
+_.get("/get",authenticate ,getTourists);
+_.put("/update", authenticate,updateTourist);
+_.delete("/delete", authenticate,deleteTourist);
+// _.get('/touristAttractions', getTouristView);
 
 _.get("/getMuseumsHistoricalPlaces/:id", get);
 

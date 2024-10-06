@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticate = require("../middleware/authenticate");
 let _ = express.Router();
 const {
     createItinerary,
@@ -20,14 +21,14 @@ const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = req
 
 _.post("/add", createTourGuide);
 _.get("/get", getTourGuides);
-_.put("/update/:email", updateTourGuide);
+_.put("/update", authenticate,updateTourGuide);
 
 //----------------Itineraries------------------
-_.post('/createItinerary', createItinerary);
-_.get('/getItinerary', getItinerary);
-_.get('/getItineraryByTourGuide', getAllItinerariesByGuide);
-_.delete('/deleteItinerary', deleteItinerary);
-_.patch('/updateItinerary', updateItinerary);
+_.post('/createItinerary', authenticate,createItinerary);
+_.get('/getItinerary/:id', getItinerary);
+_.get('/getItineraryByTourGuide', authenticate,getAllItinerariesByGuide);
+_.delete('/deleteItinerary/:id', authenticate,deleteItinerary);
+_.patch('/updateItinerary/:id', authenticate,updateItinerary);
 
 //----------------Activities------------------
 _.get('/getActivity', getActivity);

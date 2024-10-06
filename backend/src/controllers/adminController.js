@@ -1,6 +1,6 @@
 const adminModel = require('../Models/Admin');
 const TourismGovernor = require('../Models/tourismGovernor');
-
+const { generateToken } = require('../utils/jwt');
 
 
 // Create a new Admin profile
@@ -11,11 +11,15 @@ const createAdmin = async (req, res) => {
         if (await adminModel.exists({ username })) {  // Check if an admin profile with the username already exists
             return res.status(400).json({ message: 'Admin already exists' });
         }
-        const admin = await adminModel.create({
+        const newAdmin = new adminModel({
             username,
             password, // Remember to hash the password before saving in production
         });
-        res.status(201).json({ message: 'Admin profile created successfully', admin });
+        const latestAdmin = newAdmin.save();
+        console.log(latestAdmin);
+        
+        const token = generateToken(latestAdmin._id, 'admin');
+        res.status(201).json({ message: 'Admin profile created successfully', token, latestAdmin });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -23,11 +27,11 @@ const createAdmin = async (req, res) => {
 
 // update Password
 const updatePassword = async (req, res) => {
-    const { username } = req.params; // Extract username from URL parameters
+    const id = req.user.id; // Extract id from URL parameters
     const { oldPassword,newPassword } = req.body; // Extract new password from request body
 
     try {
-       const admin = await adminModel.findOne({ username });
+       const admin = await adminModel.findById({ id });
        if(!admin) {
            return res.status(404).json({ message: 'Admin not found' });
        }
@@ -49,10 +53,9 @@ const updatePassword = async (req, res) => {
 
 // Delete an Admin profile
 const deleteAccount = async (req, res) => {
-    const { username } = req.params; // Extract username from URL parameters
-
+    const id = req.user.id;
     try {
-        const admin = await adminModel.findOneAndDelete({ username });  
+        const admin = await adminModel.findByIdAndDelete({ id });  
         if(!admin) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -75,6 +78,7 @@ const sendOTPadmin = async (req, res) => {
 
 // Controller function to create a new tourism governor
 const createTourismGovernor = async (req, res) => {
+    
     const { username, password } = req.body;
 
     // Ensure username and password are provided
@@ -86,8 +90,10 @@ const createTourismGovernor = async (req, res) => {
         // Create and save the new Tourism Governor
         const newGovernor = new TourismGovernor({ username, password });
         const savedGovernor = await newGovernor.save();
-        
-        return res.status(201).json({ message: 'Tourism Governor created successfully', governor: savedGovernor });
+
+        const token = generateToken(savedGovernor._id, 'tourismGoverner')
+
+        return res.status(201).json({ message: 'Tourism Governor created successfully', token, governor: savedGovernor });
     } catch (error) {
         if (error.code === 11000) {
             // Handle duplicate username error

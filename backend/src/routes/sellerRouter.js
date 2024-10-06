@@ -10,12 +10,13 @@ const {
     filterProductsByPrice,
     sortProductsByRatings,
 } = require('../controllers/productController');
+const authenticate = require('../middleware/authenticate');
 
 
 _.post("/add", createSeller);
-_.get("/get", getSellers);
-_.put("/update", updateSeller);
-_.delete("/delete", deleteSeller);
+_.get("/get", authenticate, getSellers);
+_.put("/update", authenticate, updateSeller);
+_.delete("/delete", authenticate, deleteSeller);
 
 //------------------Products--------------------
 _.post('/createProduct', addProduct);

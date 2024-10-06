@@ -1,4 +1,6 @@
 const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
+const { generateToken } = require('../utils/jwt'); // Import the generateToken function from the auth file
+
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
     const { username, email, password, mobileNumber, yearsOfExperience, previousWork } = req.body;
@@ -11,7 +13,9 @@ const createTourGuide = async (req, res) => {
             yearsOfExperience,
             previousWork,
         });
-        res.status(201).json({ message: 'Profile created successfully', tourGuide });
+
+        const token = generateToken(tourGuide._id, 'tourGuide');
+        res.status(201).json({ message: 'Profile created successfully', token ,tourGuide });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -29,7 +33,7 @@ const getTourGuides = async (req, res) => {
 
 // Update a Tour Guide profile
 const updateTourGuide = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const { id } = req.user.id; // Extract email from URL parameters
     const {  mobileNumber,
         yearsOfExperience,
         previousWork,} = req.body;
@@ -41,7 +45,7 @@ const updateTourGuide = async (req, res) => {
 
     try {
         const tourGuide = await tourGuideModel.findOneAndUpdate(
-            { email}, // Find by email
+            { _id: id}, // Find by email
             {$set:updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
