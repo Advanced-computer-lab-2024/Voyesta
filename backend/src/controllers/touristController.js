@@ -6,6 +6,8 @@ const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag')
 const Activity = require('../Models/Activity');
 
+const generateToken = require('../utils/jwt');
+
 
 const createTourist = async (req, res) => {
    const { Username, Email, Password, Number, Nationality, DOB, Job } = req.body;
@@ -25,6 +27,8 @@ const createTourist = async (req, res) => {
        });
 
        await tourist.save();
+
+       const token = generateToken(tourist._id, 'tourist');
        res.status(201).json({ message: 'Tourist registered successfully', tourist });
    } catch (error) {
        res.status(400).json({ error: error.message });
@@ -44,7 +48,7 @@ const getTourists = async (req, res) => {
 
 // gets a tourist by username displaying all its information
  const getTourist = async (req, res) => {
-    const {id} = req.params;
+    const {id} = req.user.id;
 
     try{
      const tourist = await touristModel.findById(id);
@@ -62,7 +66,7 @@ const getTourists = async (req, res) => {
 
  const updateTourist = async (req, res) => {
    const { Email, Password, Number, Nationality, Job } = req.body;
-   const { id } = req.params;
+   const { id } = req.user.id; // Extract ID from URL parameters
    
    // Create an object containing the fields to update
    const updateFields = {};
@@ -95,7 +99,7 @@ const getTourists = async (req, res) => {
 
 
 const deleteTourist = async (req, res) => {
-    const { id } = req.params; // Extract ID from URL parameters
+    const { id } = req.user.id; // Extract ID from URL parameters
 
     try {
         // Attempt to delete the tourist by ID
@@ -243,4 +247,4 @@ const getTouristView = async (req, res) => {
 // };
 
 
-module.exports = {createTourist, getTourists, updateTourist, deleteTourist, getTouristView}; // Export the controller functions
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView}; // Export the controller functions

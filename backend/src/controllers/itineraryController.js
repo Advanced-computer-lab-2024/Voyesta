@@ -5,7 +5,7 @@ const PreferenceTag = require('../Models/PreferenceTag');
 
 const createItinerary = async (req, res) => {
     const { name, description, tags, tourLanguage, tourPrice, startDate, endDate, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
-    const id = req.headers['id']; 
+    const id = req.user.id; 
     try {
         const itinerary = new Itinerary({
             name,
@@ -48,7 +48,7 @@ const getItinerary = async (req, res) => {
 
 // Get all Itineraries created by a Tour Guide
 const getAllItinerariesByGuide = async (req, res) => {
-    const guideId = req.user._id; // Assuming req.user contains the authenticated user's info
+    const guideId = req.user.id; // Assuming req.user contains the authenticated user's info
 
     try {
         const itineraries = await Itinerary.find({ createdBy: guideId });
@@ -62,10 +62,11 @@ const getAllItinerariesByGuide = async (req, res) => {
 // update an Itinerary
 const updateItinerary = async (req, res) => {
     const { id } = req.params;
+    const guideId = req.user.id;
     const updates= req.body;
 
     try {
-        const itinerary = await Itinerary.findOne({ _id: id });
+        const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId });
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
@@ -83,9 +84,9 @@ const updateItinerary = async (req, res) => {
 // Delete an Itinerary
 const deleteItinerary = async (req, res) => {
     const { id } = req.params;
-
+    const guideId = req.user.id;
     try {
-        const itinerary = await Itinerary.findOneAndDelete({ _id: id });
+        const itinerary = await Itinerary.findOneAndDelete({ _id: id , createdBy: guideId });
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
