@@ -2,43 +2,55 @@ import React, { useEffect, useState } from 'react';
 import '../css/PriceFilterBar.css';
 import axios from 'axios';
 
-const PriceFilterBar = ({setProducts }) => {
+const PriceFilterBar = ({products, setProducts }) => {
   
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [minVal, setMinVal] = useState(minPrice);
   const [maxVal, setMaxVal] = useState(maxPrice);
-  console.log(minPrice, maxPrice);
+  // const [filteredProducts, setFilteredProducts] = useState([]);
+  // console.log(minPrice, maxPrice);
 
 
   const totalWidth = maxPrice - minPrice;
   const minMaxDiff = totalWidth * 0.1; // 10% of total width
   
   useEffect(() => {
-    axios.get("http://localhost:3000/api/products/priceMinAndMax")
-    .then(res => {
-      // console.log(res.data.data);
-      setMaxPrice(res.data.data.maxPrice);
-      setMaxVal(res.data.data.maxPrice);
+    // axios.get("http://localhost:3000/api/admin/getProductsMinAndMax")
+    // .then(res => {
+    //   // console.log(res.data.data);
+    //   setMaxPrice(res.data.data.maxPrice);
+    //   setMaxVal(res.data.data.maxPrice);
 
-      setMinPrice(res.data.data.minPrice);
-      setMinVal(res.data.data.minPrice); 
-    })
-    .catch(err => console.log(err));
-  },[]);
+    //   setMinPrice(res.data.data.minPrice);
+    //   setMinVal(res.data.data.minPrice); 
+    // })
+    // .catch(err => console.log(err));
+    const prices = products.map((product) => product.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    setMinPrice(minPrice);
+    setMaxPrice(maxPrice);
+    setMinVal(minPrice);
+    setMaxVal(maxPrice);
+  },[products]);
 
   const onFilter = () =>{
-    axios.get('http://localhost:3000/api/products/filterByPrice', {
-      params: {
-          minPrice: minVal,
-          maxPrice: maxVal
-      }
-    })
-    .then(res => {
-    // console.log(res.data);
-    setProducts(res.data.data);
-    })
-    .catch(error => {console.error(error)});
+    // axios.get('http://localhost:3000/api/admin/filterProductsByPrice', {
+    //   params: {
+    //       minPrice: minVal,
+    //       maxPrice: maxVal
+    //   }
+    // })
+    // .then(res => {
+    // // console.log(res.data);
+    // setProducts(res.data.data);
+    // })
+    // .catch(error => {console.error(error)});
+    const filteredProducts = products.filter((product) => {
+      return product.price >= minVal && product.price <= maxVal;
+    });
+    setProducts(filteredProducts);
   }
 
   const handleMinChange = (e) => {

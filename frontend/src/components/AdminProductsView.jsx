@@ -6,33 +6,36 @@ import ProductCard from "./ProductCard";
 import axios from "axios";
 
 // TODO:
-// 1. filter values is currently working on the whole range of values in DB
-// 2. search is currently working with substring we want it to work correctly
+// 1. add Product
 
 function AdminProductsView() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
+  const [errorMsg, setErrorMsg] = useState();
+
+
   // console.log(minPrice, maxPrice)
 
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("");
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/products/getAllProducts')
-      .then(res => {
-        console.log(res.data.data);
-        setProducts(res.data.data);
-        // setFilteredProducts(res.data.data);
-      })
-      .catch(err => console.log(err));
+    fetchProducts();
   }, []);
 
+  const fetchProducts = () =>{
+    axios.get('http://localhost:3000/api/admin/getProducts')
+    .then(res => {
+      setProducts(res.data.data);
+    })
+    .catch(err => console.log(err));
+  }
 
   const handleSearch = (e) => {
     // const term = e.target.value.toLowerCase();
     setSearchTerm(e.target.value);
-    axios.get('http://localhost:3000/api/products/search', {
+    axios.get('http://localhost:3000/api/admin/searchProducts', {
         params: {
             name: e.target.value
         }
@@ -40,27 +43,50 @@ function AdminProductsView() {
     .then(res => {
     // console.log(res.data);
     setProducts(res.data.data);
+    setErrorMsg();
     })
-    .catch(error => {console.error(error)});
-    
-  };
-  
-
-  const handleSortOrderChange = (e) => {
-    setSortOrder(e.target.value);
-    const sorted = filteredProducts.sort((a, b) => {
-      if (e.target.value === "asc") {
-        return a.price - b.price;
-      } else {
-        return b.price - a.price;
+    .catch(error => {
+      if(!error.response.data.success){
+        setProducts([]);
+        setErrorMsg("No products found!")
       }
     });
-    setFilteredProducts(sorted);
+    
   };
 
+  const handleSortOrderChange = (e) => {
+    const newSortOrder = e.target.value;
+    setSortOrder(newSortOrder);
+    
+    
+    const sortedProducts = [...products].sort((a, b) => {
+      const avgRatingA = a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length;
+      const avgRatingB = b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length;
+    
+      if (isNaN(avgRatingA) || isNaN(avgRatingB)) {
+        return 0; // or some other default value
+      }
+    
+      if (newSortOrder === 'asc') {
+        return avgRatingA - avgRatingB;
+      } else if (newSortOrder === 'desc') {
+        return avgRatingB - avgRatingA;
+      }
+    });
+    setProducts(sortedProducts);
+  };
+  
   const handleEdit = (product) => {
-    console.log("Edit product:", product);
-    // Add your edit product logic here
+    const url = 'http://localhost:3000/api/admin/updateProduct/'+product._id;
+    axios.put(url, product)
+    .then(res => {
+      console.log(res.data);
+      fetchProducts();
+      // setFilteredProducts(res.data.data);
+    })
+    .catch(err => console.log(err));
+    
+    
   };
 
   return (
@@ -71,15 +97,19 @@ function AdminProductsView() {
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
 
         <div className="mb-4">
-          <PriceFilterBar minPrice={minPrice} maxPrice={maxPrice} setProducts={setProducts}/>
+          <PriceFilterBar products={products} setProducts={setProducts}/>
         </div>
         
-        <div className="mb-4">
+        <div className="mb-4  text-center">
           <label>Sort Order:</label>
-          <select value={sortOrder} onChange={() =>{}} className="w-full p-2 border border-gray-400 rounded">
+          <select value={sortOrder} onChange={handleSortOrderChange} className="w-full p-2 border border-gray-400 rounded">
+            <option value="" disabled>Select an option</option>
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </select>
+
+          {/* <button className='form_control' onClick={handleSortOrderChange}>Sort</button> */}
+
         </div>
       </div>
 
@@ -97,8 +127,9 @@ function AdminProductsView() {
         </div>
         
         <div className="flex gap-3 flex-wrap justify-center">
+          {errorMsg ? <p className="text-center text-red-400 text-lg">{errorMsg}</p> : null}
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} onEdit={() => {}} />
+            <ProductCard key={product._id} oldProduct={product} onEdit={handleEdit} />
           ))}
         </div>
 
