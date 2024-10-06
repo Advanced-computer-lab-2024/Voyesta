@@ -50,30 +50,20 @@ const touristSchema = new Schema({
 }, { timestamps: true });
 
 
-// const Tourist = mongoose.models.Advertiser || mongoose.model('Tourist', touristSchema);
-// module.exports = Tourist;
 
 // Age validation
-touristSchema.pre('save', function(next) {  
-    const age = new Date().getFullYear() - this.dob.getFullYear();
-    if (age < 18) {
-        return next(new Error('You must be at least 18 years old to register.'));
+touristSchema.pre('save', function(next) {
+    if (this.DOB) { // Check if DOB is defined
+        const age = new Date().getFullYear() - this.DOB.getFullYear();
+        if (age < 18) {
+            return next(new Error('You must be at least 18 years old to register.'));
+        }
+    } else {
+        return next(new Error('Date of birth is required.'));
     }
     next();
 });
 
-
-// const Tourist = mongoose.models.Advertiser || mongoose.model('Tourist', touristSchema);
-// module.exports = Tourist;
-
-// Age validation
-touristSchema.pre('save', function(next) {  
-    const age = new Date().getFullYear() - this.DOB.getFullYear();
-    if (age < 18) {
-        return next(new Error('You must be at least 18 years old to register.'));
-    }
-    next();
-});
 
 const Tourist = mongoose.model('Tourist', touristSchema);
 module.exports = Tourist;
