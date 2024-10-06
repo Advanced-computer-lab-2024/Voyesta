@@ -21,8 +21,6 @@ _.get('/filterActivities', activityController.filterTouristActivities);
 _.get('/sortActivityByPrice', activityController.sortactivitestsByPrice);
 _.get('/sortActivityByRatings', activityController.sortactivitestsByRatings);
 
-
-
 _.get('/getItinerary/:id', getItinerary);
 _.get('/sortByPrice', sortByPrice);
 
