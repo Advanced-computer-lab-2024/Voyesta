@@ -14,28 +14,28 @@ function SellerDashboard(){
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/create-product" element={
           <SellerCreateProduct
-            baseUrl="http://localhost:2000/api/seller"
+            baseUrl="http://localhost:3000/api/seller"
             title = "Create Product" 
           />
         }/>
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/view-products" element={
           <SellerViewProducts
-            baseUrl="http://localhost:2000/api/seller"
+            baseUrl="http://localhost:3000/api/seller"
             title = "View Products" 
           />
         }/>
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/view-my-products" element={
           <SellerViewMyProducts
-            baseUrl="http://localhost:2000/api/seller"
+            baseUrl="http://localhost:3000/api/seller"
             title = "View My Products" 
           />
         }/>
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/my-profile" element={
           <SellerProfile
-            baseUrl="http://localhost:2000/api/seller"
+            baseUrl="http://localhost:3000/api/seller"
             title = "My Profile" 
           />
         }/>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import PriceFilterBar from "../PriceFilterBar";
-import ProductCard from "../ProductCard";
+import PriceFilterBar from "./SellerPriceFilterBar";
+import ProductCard from "./SellerProductCard";
 import axios from "axios";
 
 function SellerViewProducts(props) {
@@ -29,7 +29,7 @@ function SellerViewProducts(props) {
 };
 
 useEffect(() => {
-    axios.get('http://localhost:2000/api/user', getAuthHeaders()).then((res) => {
+    axios.get('http://localhost:3000/api/user', getAuthHeaders()).then((res) => {
       console.log(res.data.user);
       setUser(res.data.user);
     }).then(res =>{
