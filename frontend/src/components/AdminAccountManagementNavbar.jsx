@@ -52,7 +52,10 @@ function AdminAccountManagement() {
         setUsername("");
         setPassword("");
       })
-      .catch(err => setMessage("Error adding Tourism Governor."));
+      .catch(err => {
+        console.log(err);
+        setMessage(err.data.error)
+      });
   };
 
   const handleAddAdmin = () => {
@@ -87,19 +90,19 @@ function AdminAccountManagement() {
       <div className="flex justify-around border-b mb-4">
         <button
           className={`p-2 ${activeTab === "addTourismGovernor" ? "border-b-2 border-blue-500" : ""}`}
-          onClick={() => setActiveTab("addTourismGovernor")}
+          onClick={() => {setActiveTab("addTourismGovernor"); setMessage("")}}
         >
           Add Tourism Governor
         </button>
         <button
           className={`p-2 ${activeTab === "addAdmin" ? "border-b-2 border-blue-500" : ""}`}
-          onClick={() => setActiveTab("addAdmin")}
+          onClick={() => {setActiveTab("addAdmin");setMessage("")}}
         >
           Add Admin
         </button>
         <button
           className={`p-2 ${activeTab === "approveDeletion" ? "border-b-2 border-blue-500" : ""}`}
-          onClick={() => setActiveTab("approveDeletion")}
+          onClick={() => {setActiveTab("approveDeletion");setMessage("")}}
         >
           Approve Account Deletion
         </button>

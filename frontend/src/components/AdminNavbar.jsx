@@ -20,28 +20,28 @@ function AdminNavbar(){
         </ul>
 
         <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
-            <NavLink to="/activity-category" className="flex flex-col items-center gap-1">
+            <NavLink to="/admin/activity-category" className="flex flex-col items-center gap-1">
                 <p>Activity Category</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
             <div className="w-0  border-r border-[#f5e1b4]"/>
             
-            <NavLink to="/preference-tag" className="flex flex-col items-center gap-1">
+            <NavLink to="/admin/preference-tag" className="flex flex-col items-center gap-1">
                 <p>Preference Tag</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
             
             <div className="w-0  border-r border-[#f5e1b4]"/>
 
-            <NavLink to="/products" className="flex flex-col items-center gap-1">
+            <NavLink to="/admin/products" className="flex flex-col items-center gap-1">
                 <p>Products</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
             <div className="w-0  border-r border-[#f5e1b4]"/>
 
-            <NavLink to="/account-management" className="flex flex-col items-center gap-1">
+            <NavLink to="/admin/account-management" className="flex flex-col items-center gap-1">
                 <p>Account Managment</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>        
