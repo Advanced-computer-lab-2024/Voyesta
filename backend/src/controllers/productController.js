@@ -1,17 +1,44 @@
 // controllers/productController.js
 const Product = require('../Models/product');
+const Seller = require('../Models/Seller')
 
 const addProduct = async (req, res) => {
-    const id   = req.user.id;
+    const id = req.user.id;
     const role = req.user.type;
+
     try {
+        // Ensure the user is a seller before adding the product
+        let seller = "";
+
+        if (role === 'seller') {
+            seller = await Seller.findById(id).select('name'); // Assuming 'User' is the seller's model and 'name' is the seller's name field
+
+            
+        }else if(role === 'admin'){
+            seller = 'admin';
+        }else{
+            return res.status(403).json({
+                success: false,
+                message: 'Only sellers or Admins can add products'
+            });
+        }
+
+        // Fetch the seller's name from the database by their ID
+        
+        if (!seller) {
+            return res.status(404).json({
+                success: false,
+                message: 'Seller not found'
+            });
+        }
+
         // Create a new product document from the request body
         const newProduct = new Product({
             name: req.body.name,
             picture: req.body.picture,
             price: req.body.price,
             description: req.body.description,
-            seller: req.body.seller,
+            seller: seller.name, // Use the seller's name
             ratings: req.body.ratings,
             reviews: req.body.reviews, // Assuming this is an array of review objects
             available_quantity: req.body.available_quantity,
@@ -38,6 +65,7 @@ const addProduct = async (req, res) => {
         });
     }
 };
+
 
 // Function to fetch all products
 const getAllProducts = async (req, res) => {

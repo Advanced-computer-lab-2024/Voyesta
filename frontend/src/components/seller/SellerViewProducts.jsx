@@ -29,7 +29,7 @@ function SellerViewProducts(props) {
 };
 
 useEffect(() => {
-    axios.get('http://localhost:2000/api/user', getAuthHeaders()).then((res) => {
+    axios.get('http://localhost:3000/api/user', getAuthHeaders()).then((res) => {
       console.log(res.data.user);
       setUser(res.data.user);
     }).then(res =>{

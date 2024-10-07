@@ -46,7 +46,6 @@ function AddProduct(props) {
         picture,
         price,
         description,
-        seller,
         available_quantity: availableQuantity,
         // createdBy
       }, getAuthHeaders()).then(res => {
@@ -117,7 +116,7 @@ function AddProduct(props) {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label htmlFor="seller" className="block text-sm font-medium text-gray-700">
             Seller
           </label>
@@ -129,7 +128,7 @@ function AddProduct(props) {
             className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
             required
           />
-        </div>
+        </div> */}
 
 
         <div>

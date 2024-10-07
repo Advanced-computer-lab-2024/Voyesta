@@ -29,7 +29,7 @@ function SellerViewMyProducts(props) {
 };
 // for the edit to be accessed only by the seller of the product or the admin
 useEffect(() => {
-    axios.get('http://localhost:2000/api/user', getAuthHeaders()).then((res) => {
+    axios.get('http://localhost:3000/api/user', getAuthHeaders()).then((res) => {
       console.log(res.data.user);
       setUser(res.data.user);
     }).then(res =>{

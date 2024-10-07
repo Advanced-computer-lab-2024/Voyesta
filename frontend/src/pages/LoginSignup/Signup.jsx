@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TouristSignup from './TouristSignUp';
 import axios from 'axios';
-// import { Navigate } from 'react-router-dom';
 import TourGuideNavbar from '../../components/tourGuideComponents/TourGuideNavbar';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,7 +60,7 @@ function Signup() {
 
   const handleSellerSignup = ()=>{
     setUserType("seller");
-    axios.post('http://localhost:2000/api/seller/add',{username,email,password})
+    axios.post('http://localhost:3000/api/seller/add',{username,email,password})
     .then(res =>{
       const token =res.data.token;
       localStorage.setItem('token', token);
