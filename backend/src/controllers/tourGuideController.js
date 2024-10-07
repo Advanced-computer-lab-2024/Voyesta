@@ -37,7 +37,7 @@ const getTourGuides = async (req, res) => {
 
 // Update a Tour Guide profile
 const updateTourGuide = async (req, res) => {
-    const { id } = req.user.id; // Extract email from URL parameters
+    const id = req.user.id; // Extract email from URL parameters
     const {  mobileNumber,
         yearsOfExperience,
         previousWork,} = req.body;
@@ -53,6 +53,9 @@ const updateTourGuide = async (req, res) => {
             {$set:updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
+
+        console.log(tourGuide);
+        
 
         if (!tourGuide) {
             return res.status(404).json({ error: 'Tour guide not found' });

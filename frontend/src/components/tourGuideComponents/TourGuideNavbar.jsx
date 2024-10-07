@@ -16,29 +16,29 @@ function TourGuideNavbar() {
       </ul>
 
       <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
-        <NavLink to="/profile" className="flex flex-col items-center gap-1">
+        <NavLink to="/tourGuide/profile" className="flex flex-col items-center gap-1">
           <p>Profile</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
 
         <div className="w-0 border-r border-[#f5e1b4]" />
 
-        <NavLink to="/itineraries" className="flex flex-col items-center gap-1">
+        <NavLink to="/tourGuide/itineraries" className="flex flex-col items-center gap-1">
           <p>Itineraries</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
 
         <div className="w-0 border-r border-[#f5e1b4]" />
 
-        <NavLink to="/activities" className="flex flex-col items-center gap-1">
+        <NavLink to="/tourGuide/activities" className="flex flex-col items-center gap-1">
           <p>Activities</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
 
         <div className="w-0 border-r border-[#f5e1b4]" />
 
-        <NavLink to="/museums" className="flex flex-col items-center gap-1">
-          <p>Museums</p>
+        <NavLink to="/tourGuide/museums" className="flex flex-col items-center gap-1">
+          <p>Museums and Historical Places</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
       </ul>

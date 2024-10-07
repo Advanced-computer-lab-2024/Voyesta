@@ -1,10 +1,7 @@
 import React from 'react'
 import './css/index.css'
-import AdminDashboard from './pages/admin/AdminDashboard'
-import TourGuideDashboard from './pages/tourGuide/TourGuideDashboard'
-import Tourism from './pages/TourGuideDashboard'
-import Dashboard from './pages/Dashboard'
-import { Route, Routes } from 'react-router-dom'
+// import AdminDashboard from './pages/admin/AdminDashboard'
+// import Tourism from './pages/TourismGovernorDashboard'
 import Signup from './pages/LoginSignup/Signup'
 
 
@@ -18,7 +15,7 @@ function App() {
             <Route exact path="/" element={<Signup />}/>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin/*" element={<AdminDashboard />} />
-            {/* <Route path='/tourGuide' element={<h1>Tour Guide Dashboard</h1>} /> */}
+            {/* <Route path='/tourGuide/*' element={<TourGuideDashboard />} /> */}
           </Routes>
       </div>
     </>

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import TouristSignup from './TouristSignUp';
-import TourGuideSignup from './tourGuideSignup';
+import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import TourGuideNavbar from '../../components/tourGuideComponents/TourGuideNavbar';
+import { useNavigate } from 'react-router-dom';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -10,6 +13,7 @@ function Signup() {
   const [signedUp, setSignedUp] = useState(false);   
   const [userType, setUserType] = useState('');
 
+  const navigate = useNavigate();
 
   const validate = () => {
     const errors = {};
@@ -44,7 +48,14 @@ function Signup() {
   }
 
   const handleTourGuideSignup = ()=>{
-    
+    setUserType("tourGuide");
+    axios.post('http://localhost:3000/api/tourGuide/add', { username, email, password })
+    .then(res =>{
+      console.log(res);
+      const token = res.data.token;
+      localStorage.setItem('token', token);
+      navigate("/tourGuide");
+    });
   }
 
   const handleSellerSignup = ()=>{
@@ -147,7 +158,7 @@ function Signup() {
             </div>
             <div 
               className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => setUserType("tourist")}
+              onClick={() => handleTourGuideSignup()}
             >
                 Tour Guide
             </div>
@@ -171,7 +182,7 @@ function Signup() {
       <>
         {userType === "tourist" ?
             <TouristSignup username={username} password={password} email={email}/> :
-            userType === "tourGuide" ? <TourGuideSignup username={username} password={password} email={email} /> :
+            userType === "tourGuide" ? <TourGuideNavbar username={username} password={password} email={email} /> :
             null
         }
       </>
