@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import PriceFilterBar from "../PriceFilterBar";
-import ProductCard from "../ProductCard";
+import PriceFilterBar from "./SellerPriceFilterBar";
+import ProductCard from "./SellerProductCard";
 import axios from "axios";
 
 function SellerViewProducts(props) {
