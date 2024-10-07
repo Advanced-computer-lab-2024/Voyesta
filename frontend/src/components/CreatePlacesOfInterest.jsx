@@ -67,7 +67,7 @@ function CreatePlacesOfInterest(probs) {
                     required
                 />
             </div>
-
+            
             <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                     Description
@@ -207,6 +207,18 @@ function CreatePlacesOfInterest(probs) {
                         required
                     />
                 </div>
+                <div>
+                <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+                    tags
+                </label>
+                <textarea
+                    id="tags"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                    required
+                />
+            </div>
             
             <button
                 type="submit"

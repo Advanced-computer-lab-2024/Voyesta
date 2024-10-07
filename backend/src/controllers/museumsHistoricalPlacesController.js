@@ -10,7 +10,7 @@ const create = async (req, res) => {
             openingHours, 
             ticketPrices:{foreigner,native,student}, 
             tags} = req.body;
-    const id = req.user.id; 
+    const id = req.user.id ; 
     try {
         const placeOfInterest = await museumsHistoricalPlacesModel.create({
             name,
@@ -30,7 +30,7 @@ const create = async (req, res) => {
 
 
 const get = async (req, res) => {
-    const { id } = req.params;
+    const  id  = req.user.id;
     try {
         const placesOfInterest = await museumsHistoricalPlacesModel.find({ createdBy: id });
         res.status(200).json(placesOfInterest);

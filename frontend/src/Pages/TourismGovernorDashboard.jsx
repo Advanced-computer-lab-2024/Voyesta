@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import CreatePlacesOfInterest from "../components/CreatePlacesOfInterest";
 import TourismGovernorNavbar from "../components/TourismGovernorNavbar";
-import TourismGovernorAccount from "../components/TourismGovernorAccount";
+import TourismGovernorAccount from "../components/EditPlacesOfInterest";
 
 
 
