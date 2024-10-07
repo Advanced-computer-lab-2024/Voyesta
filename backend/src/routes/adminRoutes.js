@@ -36,6 +36,7 @@ _.delete('/deletePrefernceTag',deletePreferenceTag);
 
 // ------------ Products ---------------- //
 _.get('/getProducts', productController.getAllProducts);
+_.get('/getMyProducts', productController.getMyProducts);
 _.post('/addProduct', productController.addProduct);
 _.put('/updateProduct/:id', productController.updateProduct);
 _.get('/searchProducts', productController.searchProductByName);
