@@ -1,8 +1,8 @@
 import React from 'react'
 import './css/index.css'
-import AdminDashboard from './pages/admin/AdminDashboard'
+//import AdminDashboard from './pages/admin/AdminDashboard'
 import Tourism from './pages/TourismGovernorDashboard'
-
+import SellerDashboard from './Pages/seller/SellerDashboard'
 
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
   return (
     <>
       <div>
-          <AdminDashboard />
+          <SellerDashboard />
 
       </div>
     </>

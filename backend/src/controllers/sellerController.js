@@ -1,4 +1,5 @@
-const sellerModel = require('../Models/Seller'); 
+const sellerModel = require('../Models/Seller');
+const { generateToken } = require('../utils/jwt');
 // Create a new Seller profile
 const createSeller = async (req, res) => {
     const { username, email, password, name, description } = req.body;
@@ -24,7 +25,7 @@ const createSeller = async (req, res) => {
 };
 
 // Get all Seller profiles
-const getSellers = async (req, res) => {
+const getSeller = async (req, res) => {
     const id = req.user.id;
     try {
         const sellers = await sellerModel.findById(id);
@@ -108,4 +109,4 @@ const updateSellerPassword = async (req, res) => {
     }
 };
 */
-module.exports = { createSeller, getSellers, updateSeller, deleteSeller, sendOTPseller }; // Export the functions
+module.exports = { createSeller, getSeller, updateSeller, deleteSeller, sendOTPseller }; // Export the functions

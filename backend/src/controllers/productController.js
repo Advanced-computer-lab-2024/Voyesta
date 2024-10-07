@@ -2,6 +2,8 @@
 const Product = require('../Models/product');
 
 const addProduct = async (req, res) => {
+    const { id }  = req.user.id;
+    const role = req.user.type;
     try {
         // Create a new product document from the request body
         const newProduct = new Product({
@@ -12,7 +14,11 @@ const addProduct = async (req, res) => {
             seller: req.body.seller,
             ratings: req.body.ratings,
             reviews: req.body.reviews, // Assuming this is an array of review objects
-            available_quantity: req.body.available_quantity
+            available_quantity: req.body.available_quantity,
+            createdBy: {
+                _id: id,
+                role: role
+            }
         });
 
         // Save the product to the database
@@ -57,10 +63,55 @@ const getAllProducts = async (req, res) => {
     }
 };
 
+// get all my products
+const getMyProducts = async (req, res) => {
+    try {
+        const products = await Product.find({
+            'createdBy._id': req.user.id,    // Match the user's _id
+            'createdBy.role': req.user.role}).select(); // Fetches all products
+        if(products.length !== 0){
+            res.status(200).json({
+                success: true,
+                data: products
+            });
+        } else{
+            res.status(404).json({
+                success: false,
+                message: 'No products found'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error retrieving products',
+            error: error.message
+        });
+    }
+};
+
+
+
+
 // Function to update a product by ID
 const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id; // Get product ID from URL params
+
+
+
+        const product = await Product.findOne({
+            _id: productId,
+            'createdBy._id': req.user.id,    // Check if the product was created by this user
+            'createdBy.role': req.user.role  // Check if the role matches (e.g., 'Seller' or 'Admin')
+        });
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found or you do not have permission to update this product'
+            });
+        }
+
 
         // Find the product by ID and update it with the request body data
         const updatedProduct = await Product.findByIdAndUpdate(
@@ -227,4 +278,4 @@ const getMinAndMaxPrices = async (req, res) => {
 
 
 
-module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings, getMinAndMaxPrices}
+module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings, getMinAndMaxPrices, getMyProducts}

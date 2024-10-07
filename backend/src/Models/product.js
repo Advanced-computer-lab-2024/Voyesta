@@ -39,6 +39,18 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true // Assuming the picture is a URL
     },
+    createdBy: {
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        // Model discriminator to specify either 'Seller' or 'Admin'
+        role: {
+            type: String,
+            required: true,
+            enum: ['Seller', 'Admin']
+        }
+    }
 });
 
 const Product = mongoose.model('Product', productSchema);
