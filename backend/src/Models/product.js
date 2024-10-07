@@ -48,7 +48,7 @@ const productSchema = new mongoose.Schema({
         role: {
             type: String,
             required: true,
-            enum: ['Seller', 'Admin']
+            enum: ['seller', 'admin']
         }
     }
 });

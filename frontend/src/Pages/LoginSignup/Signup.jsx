@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import TouristSignup from './TouristSignUp';
 import TourGuideSignup from './tourGuideSignup';
+import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -10,6 +12,7 @@ function Signup() {
   const [signedUp, setSignedUp] = useState(false);   
   const [userType, setUserType] = useState('');
 
+  const navigate = useNavigate();
 
   const validate = () => {
     const errors = {};
@@ -48,7 +51,15 @@ function Signup() {
   }
 
   const handleSellerSignup = ()=>{
+    setUserType("seller");
+    axios.post('http://localhost:2000/api/seller/add',{username,email,password})
+    .then(res =>{
+      const token =res.data.token;
+      localStorage.setItem('token', token);
+      navigate('/seller');
+    });
 
+   
   }
   
 
@@ -155,7 +166,7 @@ function Signup() {
           <div className='flex flex-row gap-2'>
             <div 
               className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => setUserType("seller")}
+              onClick={handleSellerSignup}
             >
               Seller
             </div>

@@ -3,7 +3,7 @@ import PriceFilterBar from "../PriceFilterBar";
 import ProductCard from "../ProductCard";
 import axios from "axios";
 
-function SellerViewProducts(props) {
+function SellerViewMyProducts(props) {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState();
@@ -42,12 +42,12 @@ useEffect(() => {
 
 
 useEffect(() => {
-  fetchProducts();
+  fetchMyProducts();
 }, []);
 
-  const fetchProducts = () => {
+  const fetchMyProducts = () => {
     setLoading(true);  // Set loading to true when fetching
-    axios.get(url + '/getAllProducts')
+    axios.get(url + '/getMyProducts', getAuthHeaders())
       .then(res => {
         setProducts(res.data.data);
         setLoading(false);  // Stop loading when data is fetched
@@ -158,4 +158,4 @@ useEffect(() => {
   );
 }
 
-export default SellerViewProducts;
+export default SellerViewMyProducts;

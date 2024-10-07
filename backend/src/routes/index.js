@@ -46,9 +46,9 @@ _.use('/itinerary', iteneraryRouter);
 _.use('/activity', activityRouter);
 _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 
-_.get("/userType",authenticate,  (req, res) => {
+_.get("/user",authenticate,  (req, res) => {
     res.status(200).json({
-        userType: req.user.type
+        user: req.user
     })
 });
 

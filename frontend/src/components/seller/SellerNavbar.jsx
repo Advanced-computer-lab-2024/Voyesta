@@ -20,13 +20,18 @@ function SellerNavbar(){
         </ul>
 
         <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
-            <NavLink to="/seller-create-product" className="flex flex-col items-center gap-1">
+            <NavLink to="/seller/create-product" className="flex flex-col items-center gap-1">
                 <p>Create a product</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
-            <NavLink to="/seller-view-products" className="flex flex-col items-center gap-1">
+            <NavLink to="/seller/view-products" className="flex flex-col items-center gap-1">
                 <p>View Products</p>
+                <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
+            </NavLink>
+
+            <NavLink to="/seller/view-my-products" className="flex flex-col items-center gap-1">
+                <p>View My Products</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 

@@ -2,7 +2,7 @@
 const Product = require('../Models/product');
 
 const addProduct = async (req, res) => {
-    const { id }  = req.user.id;
+    const id   = req.user.id;
     const role = req.user.type;
     try {
         // Create a new product document from the request body
