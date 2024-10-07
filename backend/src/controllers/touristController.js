@@ -27,7 +27,7 @@ const createTourist = async (req, res) => {
        await tourist.save();
 
        const token = generateToken(tourist._id, 'tourist');
-       res.status(201).json({ message: 'Tourist registered successfully', tourist });
+       res.status(201).json({ message: 'Tourist registered successfully', token, tourist });
    } catch (error) {
        res.status(400).json({ error: error.message });
    }
