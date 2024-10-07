@@ -68,7 +68,7 @@ const getMyProducts = async (req, res) => {
     try {
         const products = await Product.find({
             'createdBy._id': req.user.id,    // Match the user's _id
-            'createdBy.role': req.user.role}).select(); // Fetches all products
+            'createdBy.role': req.user.type}).select(); // Fetches all products
         if(products.length !== 0){
             res.status(200).json({
                 success: true,
@@ -97,12 +97,15 @@ const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id; // Get product ID from URL params
 
-
+        // check if admin or seller
+        if(req.user.type == 'admin'){
+            // do the logic
+        }
 
         const product = await Product.findOne({
             _id: productId,
             'createdBy._id': req.user.id,    // Check if the product was created by this user
-            'createdBy.role': req.user.role  // Check if the role matches (e.g., 'Seller' or 'Admin')
+            'createdBy.role': req.user.type  // Check if the role matches (e.g., 'Seller' or 'Admin')
         });
 
         if (!product) {
