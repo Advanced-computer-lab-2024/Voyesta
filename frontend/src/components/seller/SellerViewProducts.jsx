@@ -60,34 +60,38 @@ useEffect(() => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    if (e.target.value === "") {
-      fetchProducts();  // Fetch all products if search is cleared
-      return;
-    }
-
-    axios.get(url + '/searchProducts', {
-      params: { name: e.target.value }
+    axios.get('http://localhost:3000/api/seller/searchProductByName', {
+        params: {
+            name: e.target.value
+        }
     })
     .then(res => {
-      setProducts(res.data.data);
-      setErrorMsg("");  // Clear error if products are found
+    // console.log(res.data);
+    setProducts(res.data.data);
+    setErrorMsg();
     })
     .catch(error => {
-      if (!error.response.data.success) {
+      if(!error.response.data.success){
         setProducts([]);
-        setErrorMsg("No products found!");
+        setErrorMsg("No products found!")
       }
     });
   };
 
   const handleSortOrderChange = (e) => {
+
     const newSortOrder = e.target.value;
     setSortOrder(newSortOrder);
-
+    
+    
     const sortedProducts = [...products].sort((a, b) => {
-      const avgRatingA = a.ratings.length > 0 ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length : 0;
-      const avgRatingB = b.ratings.length > 0 ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length : 0;
-
+      const avgRatingA = a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length;
+      const avgRatingB = b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length;
+    
+      if (isNaN(avgRatingA) || isNaN(avgRatingB)) {
+        return 0; // or some other default value
+      }
+    
       if (newSortOrder === 'asc') {
         return avgRatingA - avgRatingB;
       } else if (newSortOrder === 'desc') {
