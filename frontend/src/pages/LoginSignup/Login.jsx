@@ -1,34 +1,58 @@
+import axios from "axios";
 import React, {useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login(){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
+    const [userType, setUserType] = useState("");
+
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
         if (validate()) {
           // Call API to create new user
-          console.log('Create new user:', { username, email, password });
-        //   setSignedUp(true);
+            console.log('Create new user:', { username, password });
 
-        // search if user exist in db and return it in tourismGovernor then admin
-        }
-      };
+            axios.post("http://localhost:3000/api/login",{
+                username,
+                password
+            }).then(res =>{
+                const token = res.data.token;
+                console.log(res.data);
+                setUserType(res.data.userType);
+                
+                if(res.data.userType === "admin"){
+                    navigate("/admin");
+                }else if(res.data.userType === "tourismGovernor"){
+                    navigate("/tourismGovernor");
+                }
+                
+                localStorage.setItem('token', token);
+            }).catch(err => console.log(err));
 
-      const validate = () => {
-        const errors = {};
-        if (username.trim() === '') {
-          errors.username = 'Username is required';
+
         }
-        if (password.trim() === '') {
-          errors.password = 'Password is required';
-        } else if (password.length < 8) {
-          errors.password = 'Password must be at least 8 characters long';
-        }
-        setErrors(errors);
-        return Object.keys(errors).length === 0;
-      };
+
+        
+
+    };
+
+    const validate = () => {
+    const errors = {};
+    if (username.trim() === '') {
+        errors.username = 'Username is required';
+    }
+    if (password.trim() === '') {
+        errors.password = 'Password is required';
+    } else if (password.length < 8) {
+        errors.password = 'Password must be at least 8 characters long';
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+    };
 
     return(
         <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
