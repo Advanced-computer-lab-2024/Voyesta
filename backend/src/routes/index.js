@@ -9,6 +9,8 @@ const activityCategoryRouter = require('./activityCategoryRouter');
 const preferenceTagRouter = require('./preferenceTagRouter');
 const iteneraryRouter = require('./itineraryRouter');
 
+
+
 // POST route for creating a new tourism governor
 _.use('/admin', adminRouter);
 // adding products routes
@@ -51,6 +53,11 @@ _.get("/user",authenticate,  (req, res) => {
         user: req.user
     })
 });
+
+const login = require('../controllers/LoginController');
+
+_.post("/login",  login.Login);
+
 
 module.exports = _;
 
