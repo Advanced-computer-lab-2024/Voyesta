@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 function SellerProfileManagement(props) {
   const [sellerData, setSellerData] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   const url = props.baseUrl;
 
   const token = localStorage.getItem('token');
@@ -26,7 +26,7 @@ const fetchMyProfile = () => {
   setLoading(true);  // Set loading to true when fetching
   axios.get(url + '/get', getAuthHeaders())
     .then(res => {
-      const { username, email, name, description } = response.data;
+      const { username, email, name, description } = res.data;
       setSellerData({ username, email });
       setName(name);
       setDescription(description);
@@ -47,11 +47,12 @@ const fetchMyProfile = () => {
   const handleUpdateSeller = (e) => {
     e.preventDefault();
     setLoading(true); // Set loading to true when updating
-    axios.put(url + '/updateSeller',{ name, description },getAuthHeaders())
-      .then((response) => {
+    axios.put(url + '/update',{ name, description },getAuthHeaders())
+      .then(res => {
         setMessage('Seller profile updated successfully!');
-        console.log(response.data);
+        console.log(res.data);
         setLoading(false); // Stop loading after updating
+        window.location.reload();
       })
       .catch((error) => {
         setMessage(error.response?.data?.message || 'Failed to update profile.');
@@ -62,11 +63,12 @@ const fetchMyProfile = () => {
 
   const handleDeleteAccount = () => {
     setLoading(true); // Set loading to true when deleting
-    axios.delete(url + '/deleteSeller', getAuthHeaders())
-      .then((response) => {
+    axios.delete(url + '/delete', getAuthHeaders())
+      .then(res => {
         setMessage('Seller account deleted successfully.');
-        console.log(response.data);
+        console.log(res.data);
         setLoading(false); // Stop loading after deletion
+        navigate('/account-deleted');
       })
       .catch((error) => {
         setMessage('Failed to delete account.');

@@ -35,6 +35,11 @@ function SellerNavbar(){
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
+            <NavLink to="/seller/my-profile" className="flex flex-col items-center gap-1">
+                <p>Profile</p>
+                <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
+            </NavLink>
+
         </ul>
 
         

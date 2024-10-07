@@ -4,7 +4,7 @@ import SellerNavbar from '../../components/seller/SellerNavbar';
 import SellerCreateProduct from '../../components/seller/SellerCreateProduct';
 import SellerViewProducts from '../../components/seller/SellerViewProducts';
 import SellerViewMyProducts from '../../components/seller/SellerViewMyProducts';
-
+import SellerProfile from '../../components/seller/SellerProfileMangement';
 function SellerDashboard(){
   return(
     <div>
@@ -30,6 +30,13 @@ function SellerDashboard(){
           <SellerViewMyProducts
             baseUrl="http://localhost:2000/api/seller"
             title = "View My Products" 
+          />
+        }/>
+        <Route exact path="/" element={<div>Home</div>}/>
+        <Route path="/my-profile" element={
+          <SellerProfile
+            baseUrl="http://localhost:2000/api/seller"
+            title = "My Profile" 
           />
         }/>
     </Routes>       
