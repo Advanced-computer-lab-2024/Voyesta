@@ -27,7 +27,7 @@ function SellerViewMyProducts(props) {
         Authorization: `Bearer ${token}`
     }}
 };
-
+// for the edit to be accessed only by the seller of the product or the admin
 useEffect(() => {
     axios.get('http://localhost:2000/api/user', getAuthHeaders()).then((res) => {
       console.log(res.data.user);
