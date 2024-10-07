@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import PriceFilterBar from "../SellerPriceFilterBar";
+import PriceFilterBar from "./SellerPriceFilterBar";
 import ProductCard from "./SellerProductCard";
 import axios from "axios";
 
