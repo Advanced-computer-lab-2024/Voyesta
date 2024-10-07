@@ -8,6 +8,7 @@ function EditPlacesOfInterest({ userId }) {
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
+  // const token = localStorage.getItem("token");
   // Fetch places on mount
   useEffect(() => {
     fetchPlaces();
@@ -19,7 +20,7 @@ function EditPlacesOfInterest({ userId }) {
     console.log(token);
     return {
     headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDMzMzYwNDEzNDUxYzc5YmI0NGU4ZCIsInR5cGUiOiJ0b3VyaXNtR292ZXJuZXIiLCJpYXQiOjE3MjgyNjMwMDgsImV4cCI6MTc1NDE4MzAwOH0.qdjnre9S9j4zFhuscE0dnFxTD8KZLX2_r_pg_gXI1UE`
+        Authorization: `Bearer ${token}`
     }}
 };
 

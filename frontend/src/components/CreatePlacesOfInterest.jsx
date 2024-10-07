@@ -17,6 +17,9 @@ function CreatePlacesOfInterest(probs) {
     const [tags, setTags] = useState([]);
     const [message, setMessage] = useState(null);
 
+
+    const token = localStorage.getItem("token");
+
     const handleCreatePlaceOfInterest = (e) => {
         e.preventDefault();
         const placeOfInterest = {
@@ -42,7 +45,7 @@ function CreatePlacesOfInterest(probs) {
         };
         const url = 'http://localhost:3000/api/tourismGoverner/add';
         axios.post(url, placeOfInterest, {
-            headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDMzMzYwNDEzNDUxYzc5YmI0NGU4ZCIsInR5cGUiOiJ0b3VyaXNtR292ZXJuZXIiLCJpYXQiOjE3MjgyNjMwMDgsImV4cCI6MTc1NDE4MzAwOH0.qdjnre9S9j4zFhuscE0dnFxTD8KZLX2_r_pg_gXI1UE` }
+            headers: { Authorization: `Bearer ${token}` }
         }).
         then(res => {
             console.log(res.data);

@@ -20,14 +20,14 @@ function TourismGovernorNavbar(){
         </ul>
 
         <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
-            <NavLink to="/places-of-interest" className="flex flex-col items-center gap-1">
+            <NavLink to="/tourismGovernor/places-of-interest" className="flex flex-col items-center gap-1">
                 <p>Create Places Of Interest</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
 
             <div className="w-0  border-r border-[#f5e1b4]"/>
             
-            <NavLink to="/account-list" className="flex flex-col items-center gap-1">
+            <NavLink to="/tourismGovernor/account-list" className="flex flex-col items-center gap-1">
                 <p>Account list</p>
                 <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden"/>
             </NavLink>
