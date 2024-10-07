@@ -20,3 +20,4 @@ function AdminProductLabel(props){
 }
 
 export default AdminProductLabel;
+

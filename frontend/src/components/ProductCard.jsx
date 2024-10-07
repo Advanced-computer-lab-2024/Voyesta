@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { assets } from '../assets/assets';
 import AdminProductLabel from './AdminProductLabel';
 
-function ProductCard({ oldProduct, onEdit }) {
+function ProductCard({ oldProduct, onEdit, userType, userId }) {
   
   // console.log(product);
 
@@ -38,6 +38,15 @@ function ProductCard({ oldProduct, onEdit }) {
       setAverageRating(average.toFixed(0)); // round to 1 decimal place
     }
   }, [oldProduct.ratings]);
+
+  console.log(product);
+  console.log(product.createdBy?._id);
+  console.log(userId);
+  console.log(userType);
+  // check if the user is an admin or the seller of the product
+  const isEditable = userType === 'admin' || (
+    product.createdBy?._id === userId && product.createdBy?.role === 'seller'
+  );
   
   return (
   <div className='bg-[#f5e1b4] shadow-md rounded-md p-4 w-80'>
@@ -54,11 +63,13 @@ function ProductCard({ oldProduct, onEdit }) {
       <div className="relative flex flex-row justify-end">
         <div className='w-6 h-6'>
         </div>
-        <img
-          onClick={handleEditClick}
-          src={assets.editIcon}
-          className="w-6 h-6 cursor-pointer absolute buttom-2 right-2"
-        />
+        {isEditable && (
+            <img
+              onClick={handleEditClick}
+              src={assets.editIcon}
+              className="w-6 h-6 cursor-pointer absolute buttom-2 right-2"
+            />
+          )}
       </div>
       {/* </div> */}
     </div>
