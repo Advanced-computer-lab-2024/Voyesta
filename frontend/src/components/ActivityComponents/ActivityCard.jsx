@@ -9,7 +9,7 @@ function ActivityCard({ activity, getAuthHeaders, fetchActivities}) {
   // State to hold editable activity values
   console.log(activity);
   const [editableActivity, setEditableActivity] = useState(activity);
-
+  // console.log(editableActivity);
   // Handle input changes in edit mode
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,15 +57,15 @@ function ActivityCard({ activity, getAuthHeaders, fetchActivities}) {
           <p>
             <strong>Time:</strong> {activity.time}
           </p>
-          <p>
+          {/* <p>
             <strong>Location:</strong> {activity.location}
-          </p>
+          </p> */}
           <p>
             <strong>Price:</strong> ${activity.price}
           </p>
-          <p>
-            <strong>Category:</strong> {activity.category}
-          </p>
+          {/* <p>
+            <strong>Category:</strong> {activity.category"unknown category"}
+          </p> */}
           <p>
             <strong>Tags:</strong> {activity.tags.join(", ")}
           </p>

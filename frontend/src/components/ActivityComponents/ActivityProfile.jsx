@@ -23,8 +23,8 @@ const ActivityManagement = () => {
   const [message, setMessage] = useState(null);
   const [viewStatus, setViewStatus] = useState("");
 
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNiYjhmNzNkYjdkZTU3YmEyMjRiNCIsInR5cGUiOiJhZHZlcnRpc2VyIiwiaWF0IjoxNzI4Mjk3ODcxLCJleHAiOjE3NTQyMTc4NzF9.J75YSz_DmEuLdm1WvtiEIb6EFf5Q-qjKqAmFB5wWV9Y"
-  // localStorage.getItem("token")
+  // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNiYjhmNzNkYjdkZTU3YmEyMjRiNCIsInR5cGUiOiJhZHZlcnRpc2VyIiwiaWF0IjoxNzI4Mjk3ODcxLCJleHAiOjE3NTQyMTc4NzF9.J75YSz_DmEuLdm1WvtiEIb6EFf5Q-qjKqAmFB5wWV9Y"
+  const token = localStorage.getItem("token");
   const baseUrl = 'http://localhost:3000/api/advertiser'; // Adjust this based on your backend
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const ActivityManagement = () => {
       setViewStatus("Loading...");
       axios.get("http://localhost:3000/api/advertiser/getActivity", getAuthHeaders())
       .then(res => {
-        // console.log(res.data);
+        console.log(res.data);
         setActivities(res.data);
         setViewStatus("");
         if(res.data.length ===0){
@@ -65,21 +65,6 @@ const ActivityManagement = () => {
    
   };
 
-  const setEditFields = (activity)=>{
-    console.log(category)
-    setName(activity.name);
-    setDescription(activity.description);
-    setDate(activity.date);
-    setTime(activity.time);
-    setLocation(activity.location);
-    setPrice(activity.price);
-    setCategory(activity.category);
-    setTags(activity.tags.join(', ')); // Assuming tags are stored as an array
-    setSpecialDiscounts(activity.specialDiscounts);
-    setBookingOpen(activity.bookingOpen);
-
-    setActiveTab("editActivity");
-  }
 
   const handleUpdateActivity = async (e) => {
     e.preventDefault();
@@ -137,10 +122,9 @@ const ActivityManagement = () => {
       {activeTab === 'viewActivity'? (
         <>
         {
-          activities.map(activity => {
-            console.log("category, " , activity.category)
-            return <ActivityCard key={activity._id} activity={activity} getAuthHeaders={getAuthHeaders} fetchActivities={fetchActivity} />
-            })
+          activities.map(activity => (
+            <ActivityCard key={activity._id} activity={activity} getAuthHeaders={getAuthHeaders} fetchActivities={fetchActivity} />
+          ))
         }
         {
           (viewStatus === "") ? null : <p className='text-gray-500 text-sm'>{viewStatus}</p>
