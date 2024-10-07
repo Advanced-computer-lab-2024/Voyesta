@@ -1,5 +1,5 @@
 import React from "react";
-import AdminNavbar from "../../components/adminNavbar";
+import AdminNavbar from "../../components/AdminNavbar";
 import { Routes, Route } from "react-router-dom";
 import AdminListView from "../../components/adminListView";
 import AdminAccountManagement from "../../components/AdminAccountManagement";
@@ -11,7 +11,6 @@ function AdminDashboard(){
   return(
     <div>
       <AdminNavbar />
-      
       <Routes>
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/activity-category" element={

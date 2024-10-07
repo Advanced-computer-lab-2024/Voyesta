@@ -29,7 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.use('/api', router);
 
-
+mongoose.set('strictQuery', false);
 
 // Export the app
 module.exports = app;

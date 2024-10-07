@@ -1,20 +1,19 @@
 import React from 'react'
 import './css/index.css'
-import AdminDashboard from './pages/admin/AdminDashboard'
-import Tourism from './pages/TourismGovernorDashboard'
-
-
+// import AdminDashboard from './Pages/admin/AdminDashboard'
+// import Tourism from './pages/TourismGovernorDashboard'
+ import AdvertiserDashboard from './Pages/Advertiser/AdvertiserDashboard'
 
 function App() {
 
   return (
     <>
       <div>
-          <AdminDashboard />
-
+          {/* { <AdminDashboard /> } */}
+           <AdvertiserDashboard /> 
       </div>
     </>
   )
 }
 
-export default App
+export default App;
