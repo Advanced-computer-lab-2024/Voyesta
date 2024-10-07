@@ -8,6 +8,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import TourGuideDashboard from './pages/tourGuide/TourGuideDashboard'
 
 
+import AdvertiserDashboard from './Pages/Advertiser/AdvertiserDashboard'
 
 
 
@@ -21,10 +22,12 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin/*" element={<AdminDashboard />} />
             <Route path='/tourGuide/*' element={<TourGuideDashboard />} />
+            <Route path='/tourGuide' element={<h1>Tour Guide Dashboard</h1>} />
+            <Route path='/advertiser/*' element={<AdvertiserDashboard />} />
           </Routes>
       </div>
     </>
   )
 }
 
-export default App
+export default App;

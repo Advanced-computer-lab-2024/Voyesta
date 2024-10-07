@@ -11,7 +11,6 @@ function AdminDashboard(){
   return(
     <div>
       <AdminNavbar />
-      
       <Routes>
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/activity-category" element={

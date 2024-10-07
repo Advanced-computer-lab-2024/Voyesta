@@ -34,6 +34,7 @@ function Signup() {
     return Object.keys(errors).length === 0;
   };
 
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validate()) {
@@ -64,6 +65,13 @@ function Signup() {
   
 
   const handleAdvertiserSignup = ()=>{
+    setUserType("advertiser");
+    axios.post('http://localhost:3000/api/advertiser/add',{username,email,password})
+    .then(res =>{
+      const token =res.data.token;
+      localStorage.setItem('token', token);
+      navigate('/advertiser');
+    });
 
   }
 
@@ -172,7 +180,7 @@ function Signup() {
             </div>
             <div 
               className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => setUserType("advertiser")}
+              onClick={() => handleAdvertiserSignup()}
             >
               Advertiser
             </div>

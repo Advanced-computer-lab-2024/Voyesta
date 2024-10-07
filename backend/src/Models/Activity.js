@@ -25,24 +25,24 @@ const activitySchema = new mongoose.Schema({
   location: {
     address: {
         type: String,
-        required: true
+        // required: true
     },
     city: {
         type: String,
-        required: true
+        // required: true
     },
     country: {
         type: String,
-        required: true
+        // required: true
     },
     coordinates: {
         lat: {
             type: Number,
-            required: true
+            // required: true
         },
         lng: {
             type: Number,
-            required: true
+            // required: true
         }
     }
 },
