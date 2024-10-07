@@ -6,12 +6,13 @@ const bodyParser = require('body-parser');
 const cron = require('node-cron');
 const { cleanupExpiredOTPs } = require('./services/cleanOTPs');
 
-cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
-
-const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("./controllers/advertiserController");
+// cron.schedule('*/5 * * * *', cleanupExpiredOTPs); // Run every 5 minutes to clean up expired OTPs
+//createItinerary,getItinerary,getAllItinerariesByGuide,deleteItinerary
+const{createPlaceOfInterest,getAllPlacesOfInterest,getPlaceOfInterest,updatePlaceOfInterest,deletePlaceOfInterest}=require("./controllers/TourismGovernor");
+const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser,GetAllActivities,createActivity } = require("./controllers/advertiserController");
 const { createSeller, getSellers, updateSeller, deleteSeller } = require("./controllers/sellerController");
-const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("./controllers/tourGuideController");
-const { createTourist, getTourists, updateTourist, deleteTourist } = require("./controllers/touristController");
+const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide,createItinerary,getAllItinerariesByGuide } = require("./controllers/tourGuideController");
+const { createTourist, getTourists, updateTourist, deleteTourist,TouristSearch } = require("./controllers/touristController");
 const { registerGuestUser, getGuestUsers } = require("./controllers/userGuestController"); 
 const { registerGuestTourist, getGuestTourists } = require("./controllers/guestTouristController"); 
 
@@ -31,24 +32,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Database connection
 const MongoURI = process.env.MONGO_URI;
 
-mongoose.connect(MongoURI)
-  .then(() => {
-    console.log("MongoDB is now connected!");
+app.patch("/touristSearch",TouristSearch);
 
-    // Define the port
-    const port = process.env.PORT || 3000; // Use environment variable or default to 3000
-
-    // Starting server
-    app.listen(port, () => {
-      console.log(`Listening to requests on http://localhost:${port}`);
-    });
-  })
-  .catch(err => console.log(err));
-
-// Define routes
-app.get('/', (req, res) => {
-  res.send('Welcome to the Node.js app connected to MongoDB!');
-});
 
 // Your existing routes...
 app.post("/addAdvertiser", createAdvertiser);
@@ -71,12 +56,24 @@ app.get("/tourists", getTourists);
 app.put("/updateTourist", updateTourist);
 app.delete("/deleteTourist", deleteTourist);
 
-// User routes
-app.post("/addGuestTourist", registerGuestTourist);
-app.get("/guestTourists", getGuestTourists);
 
-app.post("/addGuestUser", registerGuestUser);
-app.get("/guestUsers", getGuestUsers);
+//Itinerary
+app.post("/addItinerary",createItinerary);
+app.get("/getItinerary",getAllItinerariesByGuide);
+
+
+
+//activity routes
+app.get("/ListOfActivities/:id", GetAllActivities);
+app.post("/addactivity/:id",createActivity);
+//Tourism Governor routes
+
+
+app.post("/addplace/:id", createPlaceOfInterest);
+app.get("/getallPlaces", getAllPlacesOfInterest);
+app.get("/getonePlace/:id", getPlaceOfInterest);
+app.put("/updateplace", updatePlaceOfInterest);
+app.delete("/deleteplace", deletePlaceOfInterest);
 
 // Export the app
 module.exports = app;

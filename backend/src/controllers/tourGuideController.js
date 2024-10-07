@@ -1,9 +1,9 @@
 const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
-const mongoose = require('mongoose');
-const {otpSender} = require('../services/generateOTPgenric');
+const { generateToken } = require('../utils/jwt'); // Import the generateToken function from the auth file
+
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
-    const { username, email, password, mobileNumber, yearsOfExperience, previousWork, bio, languagesSpoken } = req.body;
+    const { username, email, password, mobileNumber, yearsOfExperience, previousWork } = req.body;
     try {
         const tourGuide = await tourGuideModel.create({
             username,
@@ -12,10 +12,13 @@ const createTourGuide = async (req, res) => {
             mobileNumber,
             yearsOfExperience,
             previousWork,
-            bio,
-            languagesSpoken,
         });
-        res.status(201).json({ message: 'Profile created successfully', tourGuide });
+
+        
+
+        const token = generateToken(tourGuide._id, 'tourGuide');
+        console.log(token);
+        res.status(201).json({ message: 'Profile created successfully', token ,tourGuide });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -23,8 +26,9 @@ const createTourGuide = async (req, res) => {
 
 // Get all Tour Guides profiles
 const getTourGuides = async (req, res) => {
+    const id = req.user.id; // Assuming req.user contains the authenticated user's info
     try {
-        const tourGuides = await tourGuideModel.find({});
+        const tourGuides = await tourGuideModel.findById(id);
         res.status(200).json(tourGuides);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -33,15 +37,25 @@ const getTourGuides = async (req, res) => {
 
 // Update a Tour Guide profile
 const updateTourGuide = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
-    const updates = req.body;
+    const id = req.user.id; // Extract email from URL parameters
+    const {  mobileNumber,
+        yearsOfExperience,
+        previousWork,} = req.body;
+
+        const updates = {};
+        if (mobileNumber)  updates.mobileNumber = mobileNumber;
+        if (yearsOfExperience) updates.yearsOfExperience = yearsOfExperience;
+        if (previousWork) updates.previousWork = previousWork;
 
     try {
         const tourGuide = await tourGuideModel.findOneAndUpdate(
-            { email }, // Find by email
-            updates, // Update these fields
+            { _id: id}, // Find by email
+            {$set:updates }, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
+
+        console.log(tourGuide);
+        
 
         if (!tourGuide) {
             return res.status(404).json({ error: 'Tour guide not found' });
@@ -53,32 +67,16 @@ const updateTourGuide = async (req, res) => {
     }
 };
 
-// Delete a Tour Guide profile
-const deleteTourGuide = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
-
-    try {
-        const tourGuide = await tourGuideModel.findOneAndDelete({ email });
-
-        if (!tourGuide) {
-            return res.status(404).json({ error: 'Tour guide not found' });
-        }
-
-        res.status(200).json({ message: 'Tour guide deleted successfully', tourGuide });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
 // Send OTP to email
-const sendOTPtourGuide = async (req, res) => {
-    const { email } = req.body;
-    try {
-        const otp = otpSender(email);
-        res.status(200).json({ message: 'OTP sent successfully', otp });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
+// const sendOTPtourGuide = async (req, res) => {
+//     const { email } = req.body;
+//     try {
+//         const otp = otpSender(email);
+//         res.status(200).json({ message: 'OTP sent successfully', otp });
+//     } catch (error) {
+//         res.status(400).json({ error: error.message });
+//     }
+// };
 
-module.exports = { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide , sendOTPtourGuide}; // Export the controller functions
+
+module.exports = { createTourGuide, getTourGuides, updateTourGuide  }; // Export the controller functions

@@ -1,5 +1,5 @@
-const sellerModel = require('../Models/Seller'); // Ensure this path is correct
-const {otpSender} = require('../services/generateOTPgenric');
+const sellerModel = require('../Models/Seller');
+const { generateToken } = require('../utils/jwt');
 // Create a new Seller profile
 const createSeller = async (req, res) => {
     const { username, email, password, name, description } = req.body;
@@ -15,16 +15,20 @@ const createSeller = async (req, res) => {
             name,
             description,
         });
-        res.status(201).json({ message: 'Seller profile created successfully', seller });
+
+        const token = generateToken(seller._id, 'seller');
+
+        res.status(201).json({ message: 'Seller profile created successfully', token, seller });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
 // Get all Seller profiles
-const getSellers = async (req, res) => {
+const getSeller = async (req, res) => {
+    const id = req.user.id;
     try {
-        const sellers = await sellerModel.find({});
+        const sellers = await sellerModel.findById(id);
         res.status(200).json(sellers);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -33,12 +37,12 @@ const getSellers = async (req, res) => {
 
 // Update a Seller profile
 const updateSeller = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const id = req.user.id; // Extract ID from URL parameters
     const updates = req.body;
 
     try {
-        const seller = await sellerModel.findOneAndUpdate(
-            { email }, // Find by email
+        const seller = await sellerModel.findByIdAndUpdate(
+            id, // Find by ID
             updates, // Update these fields
             { new: true, runValidators: true } // Return the updated document and validate
         );
@@ -55,10 +59,10 @@ const updateSeller = async (req, res) => {
 
 // Delete a Seller profile
 const deleteSeller = async (req, res) => {
-    const { email } = req.params; // Extract email from URL parameters
+    const id = req.user.id; // Extract ID from URL parameters
 
     try {
-        const seller = await sellerModel.findOneAndDelete({ email });
+        const seller = await sellerModel.findByIdAndDelete(id); // Find and delete by ID
 
         if (!seller) {
             return res.status(404).json({ error: 'Seller not found' });
@@ -105,4 +109,4 @@ const updateSellerPassword = async (req, res) => {
     }
 };
 */
-module.exports = { createSeller, getSellers, updateSeller, deleteSeller, sendOTPseller }; // Export the functions
+module.exports = { createSeller, getSeller, updateSeller, deleteSeller, sendOTPseller }; // Export the functions

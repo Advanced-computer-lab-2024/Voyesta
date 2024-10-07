@@ -22,7 +22,7 @@ const sellerSchema = new Schema({
     },
     name: {
         type: String,
-        required: true, // Seller name is required
+       // required: true, // Seller name is required
         trim: true, // Ensures no extra spaces are stored
     },
     description: {

@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+const router = require('./src/routes/index');
+
 // Load environment variables
 dotenv.config();
 
@@ -24,10 +26,10 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('MongoDB connection error:', err));
 
-// Define routes (for example, a basic home route)
-app.get('/', (req, res) => {
-    res.send('Welcome to the Node.js app connected to MongoDB!');
-});
+
+app.use('/api', router);
+
+mongoose.set('strictQuery', false);
 
 // Export the app
 module.exports = app;
