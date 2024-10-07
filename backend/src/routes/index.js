@@ -33,6 +33,7 @@ const activityRouter = require("./activityRouter");
 const tourismGovernerRouter = require("./tourismGovernerRouter");
 const userGuestRouter = require("./userGuestRouter");
 const museumsHistoricalPlacesRouter = require("./museumsHistoricalPlacesRouter");
+const authenticate = require('../middleware/authenticate');
 
 _.use("/advertiser",  advertiserRouter);
 _.use("/seller",  sellerRouter);
@@ -45,6 +46,11 @@ _.use('/itinerary', iteneraryRouter);
 _.use('/activity', activityRouter);
 _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 
+_.get("/userType",authenticate,  (req, res) => {
+    res.status(200).json({
+        userType: req.user.type
+    })
+});
 
 module.exports = _;
 
