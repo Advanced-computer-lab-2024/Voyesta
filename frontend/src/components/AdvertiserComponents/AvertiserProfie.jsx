@@ -21,8 +21,16 @@ function AdvertiserProfile() {
     fetchProfile();
   }, []);
 
-  // const token = localStorage.getItem('token');
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNiYjhmNzNkYjdkZTU3YmEyMjRiNCIsInR5cGUiOiJhZHZlcnRpc2VyIiwiaWF0IjoxNzI4Mjk3ODcxLCJleHAiOjE3NTQyMTc4NzF9.J75YSz_DmEuLdm1WvtiEIb6EFf5Q-qjKqAmFB5wWV9Y"
+// useEffect(()=>{
+//   if(website === ""){
+//     setActiveTab("createAccount");
+//   }else{
+//     // setActiveTab(activeTab);
+//   }
+// }, []);
+
+  const token = localStorage.getItem('token');
+  // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNiYjhmNzNkYjdkZTU3YmEyMjRiNCIsInR5cGUiOiJhZHZlcnRpc2VyIiwiaWF0IjoxNzI4Mjk3ODcxLCJleHAiOjE3NTQyMTc4NzF9.J75YSz_DmEuLdm1WvtiEIb6EFf5Q-qjKqAmFB5wWV9Y"
 
   const getAuthHeaders = () => {
     return {
@@ -37,6 +45,7 @@ function AdvertiserProfile() {
     try {
       const response = await axios.get(baseUrl, getAuthHeaders());
       setProfile(response.data);
+      console.log(response.data);
       // Set initial values for form fields
       setUsername(response.data.username);
       setEmail(response.data.email);
@@ -51,10 +60,10 @@ function AdvertiserProfile() {
   };
 
   useEffect(() => {
-    if (activeTab === "createAccount") {
+    if (website === "") {
       setActiveTab("createAccount");
     } else {
-      setActiveTab("viewProfile");
+      setActiveTab(activeTab);
     }
   }, [website]);
 
@@ -72,7 +81,8 @@ function AdvertiserProfile() {
     try {
       await axios.put("http://localhost:3000/api/advertiser/update", updatedData, getAuthHeaders());
       setMessage("Profile updated successfully.");
-      fetchProfile(); // Refetch updated profile
+      fetchProfile();
+      setActiveTab("viewProfile") // Refetch updated profile
     } catch (error) {
       console.error('Error updating profile:', error);
       setMessage("Error updating profile.");
@@ -93,7 +103,7 @@ function AdvertiserProfile() {
       };
 
       try {
-        await axios.post(createAccountUrl, updatedData, getAuthHeaders());
+        await axios.put("http://localhost:3000/api/advertiser/update", updatedData, getAuthHeaders());
         setMessage("Account created successfully.");
         fetchProfile(); // Refetch profile after account creation
         setActiveTab("viewProfile");
