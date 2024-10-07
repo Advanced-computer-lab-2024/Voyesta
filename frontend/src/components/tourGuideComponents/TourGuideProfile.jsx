@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ProfileView = () => {
-  const [activeTab, setActiveTab] = useState("createAccount");
-  const [profile, setProfile] = useState(null);
+  const [activeTab, setActiveTab] = useState("viewProfile");
+  const [profile, setProfile] = useState({});
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -50,10 +50,10 @@ const ProfileView = () => {
   };
 
   useEffect(()=>{
-    if( activeTab === "createAccount"){
+    if( mobileNumber === ""){
       setActiveTab("createAccount")
     } else{
-      setActiveTab("viewProfile") 
+      setActiveTab(activeTab) 
     }
   }
     ,[mobileNumber])
@@ -66,7 +66,9 @@ const ProfileView = () => {
     try {
       await axios.put("http://localhost:3000/api/tourGuide/update", updatedData, getAuthHeaders());
       setMessage("Profile updated successfully.");
-      fetchProfile(); // Refetch updated profile
+      fetchProfile();
+      setActiveTab("viewProfile");
+      // Refetch updated profile
     } catch (error) {
       console.error('Error updating profile:', error);
       setMessage("Error updating profile.");

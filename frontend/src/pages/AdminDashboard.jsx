@@ -1,9 +1,9 @@
 import React from "react";
-import AdminNavbar from "../../components/AdminNavbar";
+import AdminNavbar from "../components/AdminNavbar";
 import { Routes, Route } from "react-router-dom";
-import AdminListView from "../../components/adminListView";
-import AdminProductsView from "../../components/AdminProductsView";
-import AdminAccountManagementNavbar from "../../components/AdminAccountManagementNavbar";
+import AdminListView from "../components/adminListView";
+import AdminProductsView from "../components/AdminProductsView";
+import AdminAccountManagementNavbar from "../components/AdminAccountManagementNavbar";
 
 // import Admin from "../../../../backend/src/Models/Admin";
 
