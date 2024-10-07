@@ -20,11 +20,11 @@ const {
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("../controllers/tourGuideController");
 
 _.post("/add", createTourGuide);
-_.get("/get", getTourGuides);
+_.get("/get", authenticate, getTourGuides);
 _.put("/update", authenticate,updateTourGuide);
 
 //----------------Itineraries------------------
-_.post('/createItinerary', authenticate,createItinerary);
+_.post('/createItinerary', authenticate, createItinerary);
 _.get('/getItinerary/:id', getItinerary);
 _.get('/getItineraryByTourGuide', authenticate,getAllItinerariesByGuide);
 _.delete('/deleteItinerary/:id', authenticate,deleteItinerary);

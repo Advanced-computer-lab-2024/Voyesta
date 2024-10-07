@@ -1,10 +1,9 @@
 import React from 'react'
 import './css/index.css'
-// import AdminDashboard from './pages/admin/AdminDashboard'
-import Tourism from './pages/TourismGovernorDashboard'
-import Signup from './pages/LoginSignup/Signup'
-import { Routes, Route } from 'react-router-dom'
-import Dashboard from './pages/Dashboard'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import TourGuideDashboard from './pages/tourGuide/TourGuideDashboard'
+import Tourism from './pages/TourGuideDashboard'
+
 
 
 

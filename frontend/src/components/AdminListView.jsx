@@ -11,7 +11,7 @@ function AdminListView(props){
 
     //fetch activity categories
     const fetchItems = () =>{
-        const url = props.baseUrl +"/get";
+        const url = props.baseUrl +"/get"+props.target;
         axios.get(url)
         .then(res => {
             // console.log(res.data);
@@ -24,7 +24,7 @@ function AdminListView(props){
     const handleDelete = (e) =>{
         const parent = e.target.parentNode.parentNode.parentNode;
         
-        const url = props.baseUrl +"/delete";
+        const url = props.baseUrl +"/delete"+props.target;
         axios.delete(url,{
             data:{
                 Id: parent.id
@@ -46,7 +46,7 @@ function AdminListView(props){
     const handleEditSubmit = (e, item) =>   {
         e.preventDefault();
         const newName = e.target.elements[0].value;
-        const url = props.baseUrl +"/update";
+        const url = props.baseUrl +"/update"+props.target;
         axios.put(url,{
 
                 Id: item._id,
@@ -72,7 +72,7 @@ function AdminListView(props){
     const handleAdd = (e) =>{
       e.preventDefault();
       // const Name = e.target.elements[0].value;
-      const url = props.baseUrl +"/add";
+      const url = props.baseUrl +"/add"+props.target;
       axios.post(url, {
           Name: newActivity
       })
