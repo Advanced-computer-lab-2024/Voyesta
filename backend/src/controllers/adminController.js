@@ -89,10 +89,11 @@ const createTourismGovernor = async (req, res) => {
     try {
         // Create and save the new Tourism Governor
         const newGovernor = new TourismGovernor({ username, password });
-        const savedGovernor = await newGovernor.save();
 
+        const savedGovernor = await newGovernor.save();
         const token = generateToken(savedGovernor._id, 'tourismGoverner')
 
+        
         return res.status(201).json({ message: 'Tourism Governor created successfully', token, governor: savedGovernor });
     } catch (error) {
         if (error.code === 11000) {

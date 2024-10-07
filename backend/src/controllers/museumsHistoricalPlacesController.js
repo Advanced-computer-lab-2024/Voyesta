@@ -3,16 +3,22 @@ const museumsHistoricalPlacesModel = require('../Models/MusemsAndHistoricalPlace
 
 
 const create = async (req, res) => {
-    const { name, description, pictures, location, openingHours, ticketPrices, tags} = req.body;
+    const { name,
+             description,
+             pictures, 
+            location:{address , city,country,coordinates:{lat,lng}}, 
+            openingHours, 
+            ticketPrices:{foreigner,native,student}, 
+            tags} = req.body;
     const id = req.user.id; 
     try {
         const placeOfInterest = await museumsHistoricalPlacesModel.create({
             name,
             description,
             pictures,
-            location,
+            location:{address , city,country,coordinates:{lat,lng}},
             openingHours,
-            ticketPrices,
+            ticketPrices :{foreigner,native,student},
             tags,
             createdBy: id
         });
