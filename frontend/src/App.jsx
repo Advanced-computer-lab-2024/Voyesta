@@ -6,13 +6,17 @@ import Tourism from './pages/TourGuideDashboard'
 
 
 
+
 function App() {
 
   return (
     <>
       <div>
-          <AdminDashboard />
-
+          <Routes>
+            <Route exact path="/" element={<Signup />}/>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path='/tourGuide' element={<h1>Tour Guide Dashboard</h1>} />
+          </Routes>
       </div>
     </>
   )
