@@ -151,7 +151,7 @@ function Signup() {
             <p>Already have an account? </p>
             <p 
               className='font-bold cursor-pointer text-gray-800'
-              onClick={() => {console.log("navigate to Login");}}
+              onClick={() => {navigate("/login");}}
             >
               Login
             </p>
