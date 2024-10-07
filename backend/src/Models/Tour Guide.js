@@ -20,12 +20,12 @@ const tourGuideSchema = new Schema({
   },
   mobileNumber: {
     type: String, // Change to String to handle various formats
-    required: true,
+    required: false,
     match: /^\+?[0-9]{7,15}$/ // Basic validation for mobile numbers
   },
   yearsOfExperience: {
     type: Number,
-    required: true,
+    required: false,
     min: 0 // Minimum experience cannot be negative
   },
   previousWork: {

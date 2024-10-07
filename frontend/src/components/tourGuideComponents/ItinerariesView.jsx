@@ -17,23 +17,31 @@ const Itineraries = () => {
   const [accessibility, setAccessibility] = useState([]);
   const [pickDropOffLocation, setPickDropOffLocation] = useState([]);
   const [message, setMessage] = useState(null);
-  const [token, setToken] = useState("");
   const [editingId, setEditingId] = useState(null); // New state for tracking which itinerary is being edited
 
   const baseUrl = "http://localhost:3000/api/tourGuide";
+  
+  const token = localStorage.getItem('token');
+
+  const getAuthHeaders = () => {
+    console.log(token);
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+  };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
     fetchItineraries();
   }, []);
 
   const fetchItineraries = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/getItineraryByTourGuide`, { headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDJjNjU2OTZiN2Y4M2IwZDk5MzM0NSIsInR5cGUiOiJ0b3VyR3VpZGUiLCJpYXQiOjE3MjgyMzUwOTQsImV4cCI6MTc1NDE1NTA5NH0.OeLtK_avEGuQqi7RFjrvly780Ks_F1HIHA21SyQVguU` } });
+      const response = await axios.get(`${baseUrl}/getItineraryByTourGuide`, getAuthHeaders());
       setItineraries(response.data);
     } catch (error) {
-      console.error('Error fetching itineraries:',  error);
+      console.error('Error fetching itineraries:', error);
       setMessage("Error fetching itineraries.");
     }
   };
@@ -54,16 +62,17 @@ const Itineraries = () => {
       accessibility,
       pickDropOffLocation,
     };
+    console.log(token);
     console.log(editingId);
+
     try {
       if (editingId) {
         // Update existing itinerary
-        await axios.patch(`${baseUrl}/updateItinerary/${editingId}`, newItinerary, { headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDJjNjU2OTZiN2Y4M2IwZDk5MzM0NSIsInR5cGUiOiJ0b3VyR3VpZGUiLCJpYXQiOjE3MjgyMzUwOTQsImV4cCI6MTc1NDE1NTA5NH0.OeLtK_avEGuQqi7RFjrvly780Ks_F1HIHA21SyQVguU` } });
+        await axios.patch(`${baseUrl}/updateItinerary/${editingId}`, newItinerary, getAuthHeaders());
         setMessage("Itinerary updated successfully.");
-        console.log(editingId);
       } else {
         // Create new itinerary
-        await axios.post(`${baseUrl}/createItinerary`, newItinerary, { headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDJjNjU2OTZiN2Y4M2IwZDk5MzM0NSIsInR5cGUiOiJ0b3VyR3VpZGUiLCJpYXQiOjE3MjgyMzUwOTQsImV4cCI6MTc1NDE1NTA5NH0.OeLtK_avEGuQqi7RFjrvly780Ks_F1HIHA21SyQVguU` } });
+        await axios.post(`${baseUrl}/createItinerary`, newItinerary, getAuthHeaders());
         setMessage("Itinerary added successfully.");
       }
       fetchItineraries(); // Refetch itineraries
@@ -71,6 +80,17 @@ const Itineraries = () => {
     } catch (error) {
       console.error('Error saving itinerary:', error);
       setMessage("Error saving itinerary.");
+    }
+  };
+
+  const handleDeleteItinerary = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/deleteItinerary/${id}`, getAuthHeaders());
+      setMessage("Itinerary deleted successfully.");
+      fetchItineraries(); // Refetch itineraries after deletion
+    } catch (error) {
+      console.error('Error deleting itinerary:', error);
+      setMessage("Error deleting itinerary.");
     }
   };
 
@@ -105,7 +125,7 @@ const Itineraries = () => {
     setPickDropOffLocation(itinerary.pickDropOffLocation || []); // Ensure it's an array
     setEditingId(itinerary._id); // Set the editing ID
     setActiveTab("addItinerary"); // Switch to the addItinerary tab
-};
+  };
 
   return (
     <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
@@ -139,12 +159,21 @@ const Itineraries = () => {
                 <p>Locations: {itinerary.locations.join(', ')}</p>
                 <p>Price: ${itinerary.tourPrice}</p>
                 {/* Edit Button */}
-                <button 
-                  className="bg-yellow-500 text-white rounded-lg p-1 mt-2 hover:bg-yellow-700"
-                  onClick={() => handleEditClick(itinerary)}
-                >
-                  Edit
-                </button>
+                <div className="flex justify-between mt-2">
+                  <button
+                    className="bg-yellow-500 text-white rounded-lg p-1 hover:bg-yellow-700"
+                    onClick={() => handleEditClick(itinerary)}
+                  >
+                    Edit
+                  </button>
+                  {/* Delete Button */}
+                  <button
+                    className="bg-red-500 text-white rounded-lg p-1 hover:bg-red-700"
+                    onClick={() => handleDeleteItinerary(itinerary._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))
           ) : (
@@ -210,7 +239,9 @@ const Itineraries = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            />
+              rows="4"
+              required
+            ></textarea>
           </div>
 
           <div>
@@ -232,17 +263,7 @@ const Itineraries = () => {
               value={locations}
               onChange={(e) => setLocations(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="tourLanguage" className="block text-sm font-medium text-gray-700">Tour Language</label>
-            <input
-              type="text"
-              id="tourLanguage"
-              value={tourLanguage.join(',')}
-              onChange={(e) => setTourLanguage(e.target.value.split(",").map(lang => lang.trim()))}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
             />
           </div>
 
@@ -258,41 +279,8 @@ const Itineraries = () => {
             />
           </div>
 
-          <div>
-            <label htmlFor="avdatesandtimes" className="block text-sm font-medium text-gray-700">Available Dates and Times</label>
-            <input
-              type="text"
-              id="avdatesandtimes"
-              value={avdatesandtimes.join(',')}
-              onChange={(e) => setAvDatesAndTimes(e.target.value.split(",").map(date => date.trim()))}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="accessibility" className="block text-sm font-medium text-gray-700">Accessibility Features</label>
-            <input
-              type="text"
-              id="accessibility"
-              value={accessibility.join(',')}
-              onChange={(e) => setAccessibility(e.target.value.split(",").map(feature => feature.trim()))}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="pickDropOffLocation" className="block text-sm font-medium text-gray-700">Pick/Drop Off Location</label>
-            <input
-              type="text"
-              id="pickDropOffLocation"
-              value={pickDropOffLocation.join(',')}
-              onChange={(e) => setPickDropOffLocation(e.target.value.split(",").map(location => location.trim()))}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            />
-          </div>
-
-          <button type="submit" className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-            {editingId ? "Update Itinerary" : "Add Itinerary"}
+          <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">
+            {editingId ? 'Update Itinerary' : 'Add Itinerary'}
           </button>
         </form>
       )}

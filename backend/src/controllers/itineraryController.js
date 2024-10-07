@@ -49,7 +49,7 @@ const getItinerary = async (req, res) => {
 // Get all Itineraries created by a Tour Guide
 const getAllItinerariesByGuide = async (req, res) => {
     const guideId = req.user.id; // Assuming req.user contains the authenticated user's info
-
+    
     try {
         const itineraries = await Itinerary.find({ createdBy: guideId });
         res.status(200).json(itineraries);

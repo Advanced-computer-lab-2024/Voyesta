@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ProfileView = () => {
-  const [activeTab, setActiveTab] = useState("viewProfile");
+  const [activeTab, setActiveTab] = useState("createAccount");
   const [profile, setProfile] = useState(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -11,17 +11,25 @@ const ProfileView = () => {
   const [previousWork, setPreviousWork] = useState("");
   const [password, setPassword] = useState(""); // For account creation
   const [message, setMessage] = useState(null);
-  const [token, setToken] = useState("");
+
 
   const baseUrl = "http://localhost:3000/api/tourGuide/get"; // Adjust based on your backend
   const createAccountUrl = "http://localhost:3000/api/tourGuide/add"; // Update to your backend create account URL
 
   // Load token from local storage (or wherever you store it)
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
     fetchProfile();
   }, []);
+
+  const token = localStorage.getItem('token');
+
+  const getAuthHeaders = () =>{
+    console.log(token);
+    return {
+    headers: {
+        Authorization: `Bearer ${token}`
+      }}
+  };
 
   // Fetch user profile
   const fetchProfile = async () => {
@@ -37,13 +45,20 @@ const ProfileView = () => {
       console.error('Error fetching profile:', error);
       setMessage("Error fetching profile.");
     }
+    
+    
   };
 
-  const getAuthHeaders = () => ({
-    headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDJjNjU2OTZiN2Y4M2IwZDk5MzM0NSIsInR5cGUiOiJ0b3VyR3VpZGUiLCJpYXQiOjE3MjgyMzUwOTQsImV4cCI6MTc1NDE1NTA5NH0.OeLtK_avEGuQqi7RFjrvly780Ks_F1HIHA21SyQVguU`,
-    },
-  });
+  useEffect(()=>{
+    if( activeTab === "createAccount"){
+      setActiveTab("createAccount")
+    } else{
+      setActiveTab("viewProfile") 
+    }
+  }
+    ,[mobileNumber])
+
+
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -59,21 +74,18 @@ const ProfileView = () => {
   };
 
   const handleCreateAccount = async (e) => {
-    e.preventDefault();
-    const newAccountData = { username, email, password, mobileNumber, yearsOfExperience, previousWork };
     try {
-      const response = await axios.post(createAccountUrl, newAccountData);
-
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-
-      setMessage(response.data.message); // Success message from backend
-      setUsername('');
-      setEmail('');
-      setPassword('');
-      setMobileNumber('');
-      setYearsOfExperience('');
-      setPreviousWork('');
+      e.preventDefault();
+      const updatedData = { username, email, password, mobileNumber, yearsOfExperience, previousWork }; // Include all fields
+      try {
+        await axios.put("http://localhost:3000/api/tourGuide/update", updatedData, getAuthHeaders());
+        setMessage("Profile updated successfully.");
+        fetchProfile(); // Refetch updated profile
+        setActiveTab("viewProfile"); // After account creation, go back to viewing profile
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        setMessage("Error updating profile.");
+      }
     } catch (error) {
       console.error('Error creating account:', error);
       setMessage("Error creating account.");
@@ -83,10 +95,14 @@ const ProfileView = () => {
   return (
     <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
       <h1 className="text-2xl text-gray-600 font-bold mb-3">Profile Management</h1>
-
+      
       {/* Tab Navigation */}
       <div className="flex justify-around border-b mb-4">
-        <button
+        
+        {
+          activeTab !== "createAccount" ?( 
+            <>
+          <button
           className={`p-2 ${activeTab === "viewProfile" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => setActiveTab("viewProfile")}
         >
@@ -97,13 +113,17 @@ const ProfileView = () => {
           onClick={() => setActiveTab("editProfile")}
         >
           Edit Profile
-        </button>
+        </button> 
+        </>):
         <button
-          className={`p-2 ${activeTab === "createAccount" ? "border-b-2 border-blue-500" : ""}`}
-          onClick={() => setActiveTab("createAccount")}
-        >
-          Create Account
-        </button>
+        className={`p-2 ${activeTab === "createAccount" ? "border-b-2 border-blue-500" : ""}`}
+        onClick={() => setActiveTab("createAccount")}
+      >
+        Add Account Details
+      </button>
+        }
+        
+        
       </div>
 
       {/* Content based on Active Tab */}
@@ -238,20 +258,6 @@ const ProfileView = () => {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
             <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">
               Mobile Number
             </label>
@@ -296,7 +302,7 @@ const ProfileView = () => {
             type="submit"
             className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
           >
-            Create Account
+            Add Account Details
           </button>
         </form>
       )}
