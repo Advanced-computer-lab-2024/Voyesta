@@ -24,9 +24,8 @@ const create = async (req, res) => {
 
 
 const get = async (req, res) => {
-    const { id } = req.params;
     try {
-        const placesOfInterest = await museumsHistoricalPlacesModel.find({ createdBy: id });
+        const placesOfInterest = await museumsHistoricalPlacesModel.find();
         res.status(200).json(placesOfInterest);
     } catch (error) {
         res.status(400).json({ error: error.message });

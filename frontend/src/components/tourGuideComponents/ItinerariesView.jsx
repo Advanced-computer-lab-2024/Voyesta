@@ -33,7 +33,7 @@ const Itineraries = () => {
       const response = await axios.get(`${baseUrl}/getItineraryByTourGuide`, { headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDJjNjU2OTZiN2Y4M2IwZDk5MzM0NSIsInR5cGUiOiJ0b3VyR3VpZGUiLCJpYXQiOjE3MjgyMzUwOTQsImV4cCI6MTc1NDE1NTA5NH0.OeLtK_avEGuQqi7RFjrvly780Ks_F1HIHA21SyQVguU` } });
       setItineraries(response.data);
     } catch (error) {
-      console.error('Error fetching itineraries:', error);
+      console.error('Error fetching itineraries:',  error);
       setMessage("Error fetching itineraries.");
     }
   };

@@ -6,10 +6,10 @@ const ProfileView = () => {
   const [profile, setProfile] = useState(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [yearsOfExperience, setYearsOfExperience] = useState("");
+  const [previousWork, setPreviousWork] = useState("");
   const [password, setPassword] = useState(""); // For account creation
-  const [mobileNumber, setMobileNumber] = useState(""); // For account creation
-  const [yearsOfExperience, setYearsOfExperience] = useState(""); // For account creation
-  const [previousWork, setPreviousWork] = useState(""); // For account creation
   const [message, setMessage] = useState(null);
   const [token, setToken] = useState("");
 
@@ -26,10 +26,13 @@ const ProfileView = () => {
   // Fetch user profile
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(baseUrl,getAuthHeaders());
+      const response = await axios.get(baseUrl, getAuthHeaders());
       setProfile(response.data);
       setUsername(response.data.username); // Set initial values for form fields
       setEmail(response.data.email);
+      setMobileNumber(response.data.mobileNumber);
+      setYearsOfExperience(response.data.yearsOfExperience);
+      setPreviousWork(response.data.previousWork);
     } catch (error) {
       console.error('Error fetching profile:', error);
       setMessage("Error fetching profile.");
@@ -38,17 +41,16 @@ const ProfileView = () => {
 
   const getAuthHeaders = () => ({
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDJjNjU2OTZiN2Y4M2IwZDk5MzM0NSIsInR5cGUiOiJ0b3VyR3VpZGUiLCJpYXQiOjE3MjgyMzUwOTQsImV4cCI6MTc1NDE1NTA5NH0.OeLtK_avEGuQqi7RFjrvly780Ks_F1HIHA21SyQVguU`,
     },
   });
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    const updatedData = { username, email }; // Include other fields as necessary
+    const updatedData = { username, email, mobileNumber, yearsOfExperience, previousWork }; // Include all fields
     try {
       await axios.put("http://localhost:3000/api/tourGuide/update", updatedData, getAuthHeaders());
       setMessage("Profile updated successfully.");
-      // Optionally refetch the profile
       fetchProfile(); // Refetch updated profile
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -63,11 +65,9 @@ const ProfileView = () => {
       const response = await axios.post(createAccountUrl, newAccountData);
 
       const { token } = response.data;
-      
       localStorage.setItem('token', token);
 
       setMessage(response.data.message); // Success message from backend
-      // Optionally clear the input fields
       setUsername('');
       setEmail('');
       setPassword('');
@@ -107,15 +107,27 @@ const ProfileView = () => {
       </div>
 
       {/* Content based on Active Tab */}
-      {activeTab === "viewProfile" && profile ? (
-        <div>
-          <p><strong>Name:</strong> {profile.username}</p>
-          <p><strong>Email:</strong> {profile.email}</p>
-          {/* Add more profile fields if necessary */}
-        </div>
-      ) : activeTab === "viewProfile" ? (
-        <p>Loading...</p>
-      ) : activeTab === "editProfile" ? (
+      {activeTab === "viewProfile" && (
+        profile ? (
+          <div>
+            <p><strong>Username:</strong> {profile.username}</p>
+            <p><strong>Email:</strong> {profile.email}</p>
+            <p><strong>Mobile Number:</strong> {profile.mobileNumber}</p>
+            <p><strong>Years of Experience:</strong> {profile.yearsOfExperience}</p>
+            <p><strong>Previous Work:</strong> {profile.previousWork}</p>
+          </div>
+        ) : (
+          <div>
+            <p><strong>Username:</strong> Loading...</p>
+            <p><strong>Email:</strong> Loading...</p>
+            <p><strong>Mobile Number:</strong> Loading...</p>
+            <p><strong>Years of Experience:</strong> Loading...</p>
+            <p><strong>Previous Work:</strong> Loading...</p>
+          </div>
+        )
+      )}
+
+      {activeTab === "editProfile" && (
         <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -145,6 +157,47 @@ const ProfileView = () => {
             />
           </div>
 
+          <div>
+            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">
+              Mobile Number
+            </label>
+            <input
+              type="text"
+              id="mobileNumber"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700">
+              Years of Experience
+            </label>
+            <input
+              type="text"
+              id="yearsOfExperience"
+              value={yearsOfExperience}
+              onChange={(e) => setYearsOfExperience(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="previousWork" className="block text-sm font-medium text-gray-700">
+              Previous Work
+            </label>
+            <textarea
+              id="previousWork"
+              value={previousWork}
+              onChange={(e) => setPreviousWork(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
           <button
             type="submit"
             className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
@@ -152,7 +205,9 @@ const ProfileView = () => {
             Update Profile
           </button>
         </form>
-      ) : activeTab === "createAccount" && (
+      )}
+
+      {activeTab === "createAccount" && (
         <form onSubmit={handleCreateAccount} className="flex flex-col gap-4">
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">

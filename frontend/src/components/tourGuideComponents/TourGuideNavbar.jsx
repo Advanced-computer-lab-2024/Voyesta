@@ -38,7 +38,7 @@ function TourGuideNavbar() {
         <div className="w-0 border-r border-[#f5e1b4]" />
 
         <NavLink to="/museums" className="flex flex-col items-center gap-1">
-          <p>Museums</p>
+          <p>Museums and Historical Places</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
       </ul>
