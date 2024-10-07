@@ -52,7 +52,7 @@ function Signup() {
 
   const handleSellerSignup = ()=>{
     setUserType("seller");
-    axios.post('http://localhost:2000/api/seller/add',{username,email,password})
+    axios.post('http://localhost:3000/api/seller/add',{username,email,password})
     .then(res =>{
       const token =res.data.token;
       localStorage.setItem('token', token);

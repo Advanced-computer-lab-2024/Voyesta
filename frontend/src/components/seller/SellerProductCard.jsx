@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { assets } from '../assets/assets';
+import { assets } from '../../assets/assets';
 import SellerProductLabel from './SellerProductLabel';
 
 function ProductCard({ oldProduct, onEdit, userType, userId }) {
