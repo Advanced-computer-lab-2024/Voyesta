@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CreateActivity from './CreateActivity'; // Import your CreateActivity component
+import ActivityCard from './ActivityCard';
 
 const ActivityManagement = () => {
   const [activeTab, setActiveTab] = useState('viewActivity');
-  const [activity, setActivity] = useState(null);
+  // const [activity, setActivity] = useState(null);
+  const [activities, setActivities] = useState([]);
+
 
   // Form fields for view/edit activity
   const [name, setName] = useState('');
@@ -18,7 +21,10 @@ const ActivityManagement = () => {
   const [specialDiscounts, setSpecialDiscounts] = useState('');
   const [bookingOpen, setBookingOpen] = useState(false);
   const [message, setMessage] = useState(null);
+  const [viewStatus, setViewStatus] = useState("");
 
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNiYjhmNzNkYjdkZTU3YmEyMjRiNCIsInR5cGUiOiJhZHZlcnRpc2VyIiwiaWF0IjoxNzI4Mjk3ODcxLCJleHAiOjE3NTQyMTc4NzF9.J75YSz_DmEuLdm1WvtiEIb6EFf5Q-qjKqAmFB5wWV9Y"
+  // localStorage.getItem("token")
   const baseUrl = 'http://localhost:3000/api/advertiser'; // Adjust this based on your backend
 
   useEffect(() => {
@@ -27,32 +33,53 @@ const ActivityManagement = () => {
     }
   }, [activeTab]);
 
+  const getAuthHeaders = () =>{
+    // console.log(token);
+    return {
+    headers: {
+        Authorization: `Bearer ${token}`
+       }}
+    };
   // Fetch the activity details
   const fetchActivity = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/getActivity`, {headers: {
-        Authorization: `Bearer `
-      }});
-      setActivity(response.data);
+      setViewStatus("Loading...");
+      axios.get("http://localhost:3000/api/advertiser/getActivity", getAuthHeaders())
+      .then(res => {
+        // console.log(res.data);
+        setActivities(res.data);
+        setViewStatus("");
+        if(res.data.length ===0){
+          setViewStatus("No activities found! Create Activities");
+        }
+      })
+      .catch(e => {
+        console.log(e)
+        setMessage("error while fetching ")});
+      
+      // setActivity(response.data);
 
       // Set the form values for edit mode
-      if (response.data) {
-        setName(response.data.name);
-        setDescription(response.data.description);
-        setDate(response.data.date);
-        setTime(response.data.time);
-        setLocation(response.data.location);
-        setPrice(response.data.price);
-        setCategory(response.data.category);
-        setTags(response.data.tags.join(', ')); // Assuming tags are stored as an array
-        setSpecialDiscounts(response.data.specialDiscounts);
-        setBookingOpen(response.data.bookingOpen);
-      }
-    } catch (error) {
-      console.error('Error fetching activity:', error);
-      setMessage('Error fetching activity.');
-    }
+      // if (response.data) {
+      //   
+      // }
+   
   };
+
+  const setEditFields = (activity)=>{
+    console.log(category)
+    setName(activity.name);
+    setDescription(activity.description);
+    setDate(activity.date);
+    setTime(activity.time);
+    setLocation(activity.location);
+    setPrice(activity.price);
+    setCategory(activity.category);
+    setTags(activity.tags.join(', ')); // Assuming tags are stored as an array
+    setSpecialDiscounts(activity.specialDiscounts);
+    setBookingOpen(activity.bookingOpen);
+
+    setActiveTab("editActivity");
+  }
 
   const handleUpdateActivity = async (e) => {
     e.preventDefault();
@@ -92,12 +119,12 @@ const ActivityManagement = () => {
         >
           View Activity
         </button>
-        <button
+        {/* <button
           className={`p-2 ${activeTab === 'editActivity' ? 'border-b-2 border-blue-500' : ''}`}
           onClick={() => setActiveTab('editActivity')}
         >
           Edit Activity
-        </button>
+        </button> */}
         <button
           className={`p-2 ${activeTab === 'createActivity' ? 'border-b-2 border-blue-500' : ''}`}
           onClick={() => setActiveTab('createActivity')}
@@ -107,190 +134,21 @@ const ActivityManagement = () => {
       </div>
 
       {/* Content based on Active Tab */}
-      {activeTab === 'viewActivity' && activity ? (
-        <div>
-          <p>
-            <strong>Name:</strong> {activity.name}
-          </p>
-          <p>
-            <strong>Description:</strong> {activity.description}
-          </p>
-          <p>
-            <strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>Time:</strong> {activity.time}
-          </p>
-          <p>
-            <strong>Location:</strong> {activity.location}
-          </p>
-          <p>
-            <strong>Price:</strong> ${activity.price}
-          </p>
-          <p>
-            <strong>Category:</strong> {activity.category}
-          </p>
-          <p>
-            <strong>Tags:</strong> {activity.tags.join(', ')}
-          </p>
-          <p>
-            <strong>Special Discounts:</strong> {activity.specialDiscounts}
-          </p>
-          <p>
-            <strong>Booking Open:</strong> {activity.bookingOpen ? 'Yes' : 'No'}
-          </p>
-        </div>
-      ) : activeTab === 'viewActivity' ? (
-        <p>Loading...</p>
-      ) : activeTab === 'editActivity' ? (
-        <form onSubmit={handleUpdateActivity} className="flex flex-col gap-4">
-          {/* Form fields for editing activity - consistent with CreateActivity */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-              Date
-            </label>
-            <input
-              type="date"
-              id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="time" className="block text-sm font-medium text-gray-700">
-              Time
-            </label>
-            <input
-              type="time"
-              id="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-              Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-              Price
-            </label>
-            <input
-              type="number"
-              id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-              Category
-            </label>
-            <input
-              type="text"
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
-              Tags (comma separated)
-            </label>
-            <input
-              type="text"
-              id="tags"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="specialDiscounts" className="block text-sm font-medium text-gray-700">
-              Special Discounts
-            </label>
-            <input
-              type="text"
-              id="specialDiscounts"
-              value={specialDiscounts}
-              onChange={(e) => setSpecialDiscounts(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label htmlFor="bookingOpen" className="block text-sm font-medium text-gray-700">
-              Booking Open
-            </label>
-            <input
-              type="checkbox"
-              id="bookingOpen"
-              checked={bookingOpen}
-              onChange={(e) => setBookingOpen(e.target.checked)}
-              className="ml-2"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-          >
-            Update Activity
-          </button>
-        </form>
+      {activeTab === 'viewActivity'? (
+        <>
+        {
+          activities.map(activity => {
+            console.log("category, " , activity.category)
+            return <ActivityCard key={activity._id} activity={activity} getAuthHeaders={getAuthHeaders} fetchActivities={fetchActivity} />
+            })
+        }
+        {
+          (viewStatus === "") ? null : <p className='text-gray-500 text-sm'>{viewStatus}</p>
+        }
+        
+        </>
       ) : activeTab === 'createActivity' && (
-        <CreateActivity baseUrl={baseUrl} />
+        <CreateActivity getAuthHeaders={getAuthHeaders}/>
       )}
 
       {/* Display Message */}

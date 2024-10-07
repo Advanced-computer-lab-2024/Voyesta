@@ -7,11 +7,9 @@ function AdminNavbar(){
     return(
         <div className="flex items-center justify-between text-[#f5e1b4] bg-[#003366] px-5 py-5 font-medium">
 
-        {/* <NavLink to="/"> */}
-            {/* <img src={assets.logo} className="w-36" /> */}
-            <div  className="text-2xl font-bold cursor-default">V O Y E S T A</div>
+        <div  className="text-2xl font-bold cursor-default">V O Y E S T A</div>
 
-        {/* </NavLink> */}
+        
 
         <ul>
             <div className="flex items-center gap-6">
@@ -51,7 +49,7 @@ function AdminNavbar(){
         
 
         {/* sideBar Menu for small screeens */}
-        <div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full' : 'w-0'} `}>
+        {/* <div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full' : 'w-0'} `}>
             <div className="flex flex-col text-gray-600">
                 <div onClick={() =>setVisible(false)} className="flex items-center gap-4 p-3 cursor-pointer">
                     <img src={assets.dropdown_icon} className="h-4 rotate-180" />
@@ -62,7 +60,7 @@ function AdminNavbar(){
                 <NavLink onClick={() =>{setVisible(false)}} className="py-2 pl-6 border" to="/players">Players</NavLink>
 
             </div>
-        </div>
+        </div> */}
     </div>
     );
 }

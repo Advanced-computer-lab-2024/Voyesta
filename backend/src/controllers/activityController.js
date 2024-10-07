@@ -18,8 +18,8 @@ const createActivity = async (req, res) => {
                 city: location.city,
                 country: location.country,
                 coordinates: {
-                    lat: location.coordinates.lat,
-                    lng: location.coordinates.lng
+                    lat: location.lat,
+                    lng: location.lng
                 }
             },
             price,
@@ -54,7 +54,8 @@ const getActivity = async (req, res) => {
     }
 };
 
-const getAllActivitiesByAdvertiser = async (req, res) => {  
+const getAllActivitiesByAdvertiser = async (req, res) => { 
+    console.log(req.user); 
     const advertiserId = req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
 
     try {

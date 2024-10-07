@@ -5,29 +5,27 @@ import AdvertiserNavbar from '../../components/AdvertiserComponents/AdvertiserNa
 import ActivityProfile from '../../components/ActivityComponents/ActivityProfile';
 // import Update_Read_DeleteAdvertiser from  '../../components/AdvertiserComponents/Update_Read_DeleteAdvertiser';
 import ViewAdvertiserProfile from '../../components/AdvertiserComponents/ViewAdvertiserProfile';
+import AdvertiserProfile from '../../components/AdvertiserComponents/AvertiserProfie';
 
 
 function AdvertiserDashboard() {
     return (
       <div>
          <AdvertiserNavbar />
-      <Routes>
-        <Route exact path="/" element={<div>Home</div>}/>
-        <Route path="/profile" element={
-          <ActivityProfile  
-            baseUrl="http://localhost:3000/api/advertiser"
-            title = "Advertiser" 
-          />
-        }/>
-          {/* <Route path="/update-profile" element={
-          <Update_Read_DeleteAdvertiser   
-            baseUrl="http://localhost:3000/api/advertiser"
-            title = "Advertiser" 
-          /> */}
-        {/* }/> */}
-          <Route path="view-profile" element={<ViewAdvertiserProfile />} />
-        </Routes>
-      </div>
+          <Routes>
+            <Route exact path="/" element={<div>Home</div>}/>
+            <Route path="/profile" element={
+              <AdvertiserProfile />
+              
+            }/>
+            <Route path="/activity" element={
+              <ActivityProfile  
+                baseUrl="http://localhost:3000/api/advertiser"
+                title = "Advertiser" 
+              />} 
+            />
+          </Routes>
+        </div>
     );
   }
   

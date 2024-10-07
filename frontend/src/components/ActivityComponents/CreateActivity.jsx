@@ -16,7 +16,6 @@ const CreateActivity = (props) => {
 
   const handleCreateActivity = (e) => {
     e.preventDefault();
-    const url = props.baseUrl + "/add";
     const activityData = {
       name,
       description,
@@ -30,18 +29,23 @@ const CreateActivity = (props) => {
       bookingOpen,
     };
 
-    axios.post(url, activityData)
-      .then(response => setMessage("Activity created successfully!"))
-      .catch(err => setMessage("Error creating activity: " + err.message));
+    axios.post("http://localhost:3000/api/advertiser/addActivity", activityData, props.getAuthHeaders())
+      .then(res => {
+        console.log(res);
+        setMessage("Activity created successfully!")}
+      )
+      .catch(err => {
+        console.log(err);
+        setMessage("Error creating activity: " + err.message)
+    });
   };
 
   return (
-    <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-      <h1 className="text-2xl text-gray-600 font-bold mb-3">Create Activity</h1>
+    
       <form onSubmit={handleCreateActivity} className="flex flex-col gap-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Activity Name
+            Name
           </label>
           <input
             type="text"
@@ -189,7 +193,6 @@ const CreateActivity = (props) => {
           </p>
         )}
       </form>
-    </div>
   );
 };
 

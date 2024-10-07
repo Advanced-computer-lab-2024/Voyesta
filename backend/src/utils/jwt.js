@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config()
 
 // Access the secret key from the environment variables
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "voyestadb";
 
 // Function to generate JWT
 const generateToken = (userId, userType) => {

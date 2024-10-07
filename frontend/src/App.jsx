@@ -5,6 +5,7 @@ import Tourism from './pages/TourismGovernorDashboard'
 import Signup from './pages/LoginSignup/Signup'
 import { Routes, Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
+import AdvertiserDashboard from './Pages/Advertiser/AdvertiserDashboard'
 
 
 
@@ -17,6 +18,7 @@ function App() {
             <Route exact path="/" element={<Signup />}/>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path='/tourGuide' element={<h1>Tour Guide Dashboard</h1>} />
+            <Route path='/advertiser/*' element={<AdvertiserDashboard />} />
           </Routes>
       </div>
     </>

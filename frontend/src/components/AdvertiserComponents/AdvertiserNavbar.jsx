@@ -17,31 +17,19 @@ function TourGuideNavbar() {
       </ul>
 
       <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
-        <NavLink to="/profile" className="flex flex-col items-center gap-1">
+        <NavLink to="/advertiser/profile" className="flex flex-col items-center gap-1">
           <p>Profile</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
 
         <div className="w-0 border-r border-[#f5e1b4]" />
 
-        <NavLink to="/itineraries" className="flex flex-col items-center gap-1">
-          <p>Itineraries</p>
+        <NavLink to="/advertiser/Activity" className="flex flex-col items-center gap-1">
+          <p>Activity</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
 
-        <div className="w-0 border-r border-[#f5e1b4]" />
-
-        <NavLink to="/activities" className="flex flex-col items-center gap-1">
-          <p>Activities</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
-
-        <div className="w-0 border-r border-[#f5e1b4]" />
-
-        <NavLink to="/museums" className="flex flex-col items-center gap-1">
-          <p>Museums</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
+        
       </ul>
 
       {/* Sidebar Menu for small screens */}
@@ -52,7 +40,7 @@ function TourGuideNavbar() {
             <p>Back</p>
           </div>
           <NavLink onClick={() => { setVisible(false) }} className="py-2 pl-6 border" to="/">Home</NavLink>
-          <NavLink onClick={() => { setVisible(false) }} className="py-2 pl-6 border" to="/profile">Profile</NavLink>
+          <NavLink onClick={() => { setVisible(false) }} className="py-2 pl-6 border" to="/advertiser/profile">Profile</NavLink>
           <NavLink onClick={() => { setVisible(false) }} className="py-2 pl-6 border" to="/itineraries">Itineraries</NavLink>
           <NavLink onClick={() => { setVisible(false) }} className="py-2 pl-6 border" to="/activities">Activities</NavLink>
           <NavLink onClick={() => { setVisible(false) }} className="py-2 pl-6 border" to="/museums">Museums</NavLink>
