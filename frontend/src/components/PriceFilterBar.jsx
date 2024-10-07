@@ -93,4 +93,4 @@ const PriceFilterBar = ({products, setProducts }) => {
   );
 };
 
-export default PriceFilterBar;
+export default PriceFilterBar;

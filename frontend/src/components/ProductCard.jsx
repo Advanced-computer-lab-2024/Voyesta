@@ -126,4 +126,4 @@ function ProductCard({ oldProduct, onEdit }) {
   );
 }
 
-export default ProductCard;
+export default ProductCard;

@@ -76,6 +76,7 @@ function AdminProductsView() {
     setProducts(sortedProducts);
   };
   
+
   const handleEdit = (product) => {
     const url = 'http://localhost:3000/api/admin/updateProduct/'+product._id;
     axios.put(url, product)
@@ -115,8 +116,8 @@ function AdminProductsView() {
 
       <div className="w-4/5 pl-4 pt-5">
 
-        <div className="mb-4 w-1/2 mx-auto">
-
+        <div className="mb-4 w-1/2 mx-auto flex flex-row gap-2">
+          <button className="border px-3 rounded" onClick={fetchProducts}>Reset</button>
           <input
             type="text"
             value={searchTerm}
