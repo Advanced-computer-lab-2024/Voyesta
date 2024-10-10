@@ -32,10 +32,10 @@ const createItinerary = async (req, res) => {
 
 
 const getItinerary = async (req, res) => {
-    const { id } = req.params;
+    // const { id } = req.params;
 
     try {
-        const itinerary = await Itinerary.findOne({ _id: id}).populate('activities tags');
+        const itinerary = await Itinerary.find().populate('activities tags');
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
@@ -125,20 +125,22 @@ const sortByPrice = async (req, res) => {
 }}
 
 const search = async (req, res) => {
-    const { query } = req.query;
-    console.log(query);
-    
+    const query = String(req.query.query); // Changed to match the 'query' parameter from frontend
+    console.log('Search query:', query);
+  
     try {
-      const placesOfInterest = await Itinerary.find({
-        $or: [
-          { name: { $regex: query, $options: 'i' } }
-        ]
-      });
-      res.status(200).json(placesOfInterest);
+      const itineraries = await Itinerary.find({
+           name: { $regex: query, $options: 'i' } 
+      }).populate('tags'); // Ensure you're populating related tags if necessary
+  
+      res.status(200).json(itineraries);
     } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
+      console.error('Error in search controller:', error);
+      res.status(400).json({ error: error.message });
+    }
+  };
+  
+
 
 const filter = async (req, res) => {
     const { minPrice, maxPrice, startDate, endDate, preferences, languages } = req.query;

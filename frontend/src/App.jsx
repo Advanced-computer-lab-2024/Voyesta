@@ -12,6 +12,7 @@ import AdvertiserDashboard from './Pages/Advertiser/AdvertiserDashboard'
 import SellerDashboard from './pages/seller/SellerDashboard'
 import TourismGovernorDashboard from './pages/TourismGovernorDashboard'
 import Login from './pages/LoginSignup/Login'
+import TouristDashboard from './pages/tourist/TouristDashboard';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route path='/advertiser/*' element={<AdvertiserDashboard />} />
             <Route path='/seller/*' element={< SellerDashboard />} />
             <Route path='/tourismGovernor/*' element={< TourismGovernorDashboard />} />
+            <Route path='/tourist/*' element={< TouristDashboard />} />
           </Routes>
       </div>
     </>

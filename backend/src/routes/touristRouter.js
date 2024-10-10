@@ -5,7 +5,7 @@ let _ = express.Router();
 const { createTourist, getTourists, updateTourist, deleteTourist} = require("../controllers/touristController");
 const { get} = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
-const { getItinerary, sortByPrice } = require('../controllers/itineraryController');
+const { getItinerary, sortByPrice, search, filter } = require('../controllers/itineraryController');
 
 
 _.post("/add", createTourist);
@@ -14,15 +14,17 @@ _.put("/update", authenticate,updateTourist);
 _.delete("/delete", authenticate,deleteTourist);
 // _.get('/touristAttractions', getTouristView);
 
-_.get("/getMuseumsHistoricalPlaces/:id", get);
+_.get("/getMuseumsHistoricalPlaces", get);
 
-_.get('/getActivity/:id', activityController.getActivity);
+_.get('/getActivity', activityController.getActivity);
 _.get('/filterActivities', activityController.filterTouristActivities);
 _.get('/sortActivityByPrice', activityController.sortactivitestsByPrice);
 _.get('/sortActivityByRatings', activityController.sortactivitestsByRatings);
 
-_.get('/getItinerary/:id', getItinerary);
+_.get('/getItinerary', getItinerary);
 _.get('/sortByPrice', sortByPrice);
+_.get('/itinerarySearch', search)
+_.get('/filterItinerary', filter);
 
 
 module.exports = _;

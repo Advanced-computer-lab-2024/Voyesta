@@ -30,7 +30,7 @@ const create = async (req, res) => {
 
 
 const get = async (req, res) => {
-    const  id  = req.user.id;
+    // const  id  = req.user.id;
     try {
         const placesOfInterest = await museumsHistoricalPlacesModel.find();
         res.status(200).json(placesOfInterest);

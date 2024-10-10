@@ -2,44 +2,44 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const touristSchema = new Schema({
-    Username: {
+    username: {
         type: String,
         required: true,
         trim: true,
     },
-    Email: {
+    email: {
         type: String,
         required: true,
         unique: true,
         lowercase: true,
         trim: true,
     },
-    Password: {
+    password: {
         type: String,
         required: true,
         minlength: 8,
     },
     Number: {
         type: String, // Use String to accommodate different formats
-        required: true,
+        required: false,
     },
     Nationality: {
         type: String,
-        required: true,
+        required: false,
     },
     DOB: {
         type: Date,
-        required: true,
+        required: false,
         immutable: true, // DOB cannot be changed
     },
     Job: {
         type: String,
         //enum: ['job', 'student'], // Limiting to specified values
-        required: true,
+        required: false,
     },
     Wallet:{
         type:Number,
-        required:true,
+        required:false,
         default:0 // Default value of wallet is 0
       },
       itinerary: [{ type: Schema.Types.ObjectId,
@@ -53,14 +53,15 @@ const touristSchema = new Schema({
 
 // Age validation
 touristSchema.pre('save', function(next) {
-    if (this.DOB) { // Check if DOB is defined
+    if (this.DOB !== undefined) { // Check if DOB is defined
         const age = new Date().getFullYear() - this.DOB.getFullYear();
         if (age < 18) {
             return next(new Error('You must be at least 18 years old to register.'));
         }
-    } else {
-        return next(new Error('Date of birth is required.'));
-    }
+    } 
+    // else {
+    //     return next(new Error('Date of birth is required.'));
+    // }
     next();
 });
 
