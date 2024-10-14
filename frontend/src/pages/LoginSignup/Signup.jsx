@@ -3,6 +3,7 @@ import TouristSignup from './TouristSignUp';
 import axios from 'axios';
 import TourGuideNavbar from '../../components/tourGuideComponents/TourGuideNavbar';
 import { useNavigate } from 'react-router-dom';
+import TouristNavbar from '../../components/touristComponents/TouristNavbar';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -44,7 +45,14 @@ function Signup() {
   };
 
   const handleTouristSignup = ()=>{
-
+    setUserType("tourist");
+    axios.post('http://localhost:3000/api/tourist/add', { username, email, password })
+    .then(res =>{
+      console.log(res);
+      const token = res.data.token;
+      localStorage.setItem('token', token);
+      navigate("/tourist");
+    });
   }
 
   const handleTourGuideSignup = ()=>{
@@ -167,7 +175,7 @@ function Signup() {
           <div className='flex flex-row gap-2'>
             <div 
               className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => setUserType("tourist")}
+              onClick={() => handleTouristSignup()}
             >
               Tourist
             </div>
@@ -196,7 +204,7 @@ function Signup() {
       </div> :
       <>
         {userType === "tourist" ?
-            <TouristSignup username={username} password={password} email={email}/> :
+            <TouristNavbar username={username} password={password} email={email}/> :
             userType === "tourGuide" ? <TourGuideNavbar username={username} password={password} email={email} /> :
             null
         }

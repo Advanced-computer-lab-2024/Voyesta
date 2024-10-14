@@ -8,16 +8,16 @@ const {generateToken} = require('../utils/jwt');
 
 
 const createTourist = async (req, res) => {
-   const { Username, Email, Password, Number, Nationality, DOB, Job } = req.body;
+   const { username, email, password, Number, Nationality, DOB, Job } = req.body;
 
    try {
-       if (await touristModel.exists({ Email })) {  // Check if a tourist profile with the email already exists
+       if (await touristModel.exists({ email })) {  // Check if a tourist profile with the email already exists
            return res.status(400).json({ message: 'Tourist already exists' });
        }
        const tourist = new touristModel({
-           Username,
-           Email,
-           Password, // Remember to hash the password before saving
+           username,
+           email,
+           password, // Remember to hash the password before saving
            Number,
            Nationality,
            DOB,
@@ -34,8 +34,9 @@ const createTourist = async (req, res) => {
 };
 
 const getTourists = async (req, res) => {
+    const id = req.user.id;
    try{
-    const tourist=await touristModel.find({});
+    const tourist=await touristModel.findById(id);
     res.status(200).json(tourist);
  
    
@@ -63,14 +64,15 @@ const getTourists = async (req, res) => {
 
 
  const updateTourist = async (req, res) => {
-   const { Email, Password, Number, Nationality, Job } = req.body;
-   const { id } = req.user.id; // Extract ID from URL parameters
+   const { Email, Password, Number, DOB, Nationality, Job } = req.body;
+   const id = req.user.id; // Extract ID from URL parameters
    
    // Create an object containing the fields to update
    const updateFields = {};
     if (Email) updateFields.Email = Email;
     if (Password) updateFields.Password = Password;
     if (Number) updateFields.Number = Number;
+    if (DOB) updateFields.DOB = DOB;
     if (Nationality) updateFields.Nationality = Nationality;
     if (Job) updateFields.Job = Job;
    
