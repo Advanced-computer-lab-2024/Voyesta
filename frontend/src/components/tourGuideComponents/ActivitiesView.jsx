@@ -53,7 +53,14 @@ const ActivitiesView = () => {
               <p>Price: ${activity.price}</p>
             )}
 
-            <p>Category: {activity.category}</p>
+            <p>
+              Category: 
+              {activity.category 
+                ? typeof activity.category === 'object' 
+                  ? JSON.stringify(activity.category) 
+                  : activity.category.Name 
+                : 'No categories found'}
+            </p>
             <p>Tags: {activity.tags.join(', ')}</p>
             <p>Rating: {activity.rating}</p>
             
