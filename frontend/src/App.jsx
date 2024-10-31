@@ -1,18 +1,26 @@
 import React from 'react'
-import './css/index.css'
 import { Route, Routes } from 'react-router-dom'
+import './css/index.css'
 
 
+//importing the login & signup components
 import Signup from './pages/LoginSignup/Signup'
+import Login from './pages/LoginSignup/Login'
+
+//importing the main dashboard component
 import Dashboard from './pages/Dashboard'
 
-import AdminDashboard from './pages/AdminDashboard'
-import TourGuideDashboard from './pages/tourGuide/TourGuideDashboard'
-import AdvertiserDashboard from './Pages/Advertiser/AdvertiserDashboard'
-import SellerDashboard from './pages/seller/SellerDashboard'
-import TourismGovernorDashboard from './pages/TourismGovernorDashboard'
-import Login from './pages/LoginSignup/Login'
-import TouristDashboard from './pages/tourist/TouristDashboard';
+// Importing the persona dashboard components
+import AdminDashboard from './Pages/Dashboards/AdminDashboard'
+import TourGuideDashboard from './pages/Dashboards/TourGuideDashboard'
+import AdvertiserDashboard from './Pages/Dashboards/AdvertiserDashboard'
+import SellerDashboard from './pages/Dashboards/SellerDashboard'
+import TourismGovernorDashboard from './pages/Dashboards/TourismGovernorDashboard'
+import TouristDashboard from './pages/Dashboards/TouristDashboard';
+
+
+
+
 
 
 function App() {

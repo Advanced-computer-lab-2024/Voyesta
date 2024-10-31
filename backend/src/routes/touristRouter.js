@@ -6,7 +6,7 @@ const { createTourist, getTourists, updateTourist, deleteTourist} = require("../
 const { get} = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const { getItinerary, sortByPrice, search, filter } = require('../controllers/itineraryController');
-
+const productController = require('../controllers/productController');
 
 _.post("/add", createTourist);
 _.get("/get",authenticate ,getTourists);
@@ -15,6 +15,10 @@ _.delete("/delete", authenticate,deleteTourist);
 // _.get('/touristAttractions', getTouristView);
 
 _.get("/getMuseumsHistoricalPlaces", get);
+
+
+
+_.get('/getProducts', productController.getAllProducts);
 
 _.get('/getActivity', activityController.getActivity);
 _.get('/filterActivities', activityController.filterTouristActivities);

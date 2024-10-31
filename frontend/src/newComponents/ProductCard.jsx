@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { assets } from '../../assets/assets';
-import SellerProductLabel from './SellerProductLabel';
+import { assets } from '../assets/assets';
+import ProductLabel from './ProductLabel';
+import axios from 'axios';
 
-function ProductCard({ oldProduct, onEdit, userType, userId }) {
+function ProductCard({ oldProduct, onEdit, userId }) {
   
   // console.log(product);
 
   const [product, setProduct] = useState(oldProduct);
-
-  // const [productName,  setProductName] = useState(product.name);
-  // const [productPrice, setProductPrice] = useState(product.price);
-  // const [productDescription, setProductDescription] = useState(product.description);
-  // const [productSeller,  setProductSeller] = useState(product.seller);
-  // const [productAvailableQuantity , setProductAvailableQuantity] = useState(product.availableQuantity);
-
-
-
-
   const [averageRating, setAverageRating] = useState(0);
   const [editMode, setEditMode] = useState(false);
+
+  const [userType, setUserType] = useState('');
+
+  const getAuthHeaders = () =>{
+    // console.log(token);
+    return {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }}
+  };
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/user',getAuthHeaders())
+    .then(res => setUserType(res.data.user.type))
+    .catch(err => console.log(err));
+  },[]); 
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -76,7 +83,7 @@ function ProductCard({ oldProduct, onEdit, userType, userId }) {
 
     <div className={`flex justify-between flex-col h-full text-sm ${editMode? null: 'hidden'}`}>
       <div className="edit-mode">
-          <SellerProductLabel 
+          <ProductLabel 
             title="Name" 
             value={product.name}
             setValue={setProduct}
@@ -85,7 +92,7 @@ function ProductCard({ oldProduct, onEdit, userType, userId }) {
             }}
           />
           <br />
-          <SellerProductLabel
+          <ProductLabel
             title="Description" 
             value={product.name}
             setValue={setProduct}
@@ -94,7 +101,7 @@ function ProductCard({ oldProduct, onEdit, userType, userId }) {
             }}
           />
           <br />
-          <SellerProductLabel
+          <ProductLabel
             title="Price"
             value={product.price}
             setValue={setProduct}
@@ -103,7 +110,7 @@ function ProductCard({ oldProduct, onEdit, userType, userId }) {
             }}
           />
           <br />
-          <SellerProductLabel
+          <ProductLabel
             title="Seller"
             value={product.seller}
             setValue={setProduct}
@@ -112,7 +119,7 @@ function ProductCard({ oldProduct, onEdit, userType, userId }) {
             }}
           />
           <br />
-          <SellerProductLabel
+          <ProductLabel
             title="Available Quantity"
             value={product.available_quantity}
             setValue={setProduct}
@@ -137,4 +144,4 @@ function ProductCard({ oldProduct, onEdit, userType, userId }) {
   );
 }
 
-export default ProductCard;
+export default ProductCard;

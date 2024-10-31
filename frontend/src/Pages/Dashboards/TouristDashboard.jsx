@@ -1,25 +1,30 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import AdminProductsView from "../../components/AdminProductsView";
-import ActivitiesView from "../../components/tourGuideComponents/ActivitiesView";
-import ItinerariesView from "../../components/tourGuideComponents/ItinerariesView";
+// import AdminProductsView from "../../components/AdminProductsView";
 import MuseumsAndHistoricalPlaceCard from "../../components/tourGuideComponents/MuseumsAndHistoricalPlacesSubNavbar";
-import AdminNavbar from '../../components/AdminNavbar';
-import TouristNavbar from '../../components/touristComponents/TouristNavbar';
 import TouristItinerariesView from '../../components/touristComponents/TouristItinerariesView';
 import TouristActivitiesView from '../../components/touristComponents/TouristActivitiesView';
 import TouristProfile from '../../components/touristComponents/TouristProfile'
+import NavBar from "../../components/NavBar";
+import ProductsView from "../../newComponents/ProuductView";
 
-// import Admin from "../../../../backend/src/Models/Admin";
+const navLinks = [
+  { path: "/tourist/", label: "Home" },
+  { path: "/tourist/profile", label: "Profile" },
+  { path: "/tourist/products", label: "Products" },
+  { path: "/tourist/activities", label: "Activities" },
+  { path: "/tourist/itineraries", label: "Itineraries" },
+  { path: "/tourist/museums", label: "Museums" }
+];
 
-function AdminDashboard(){
+function TouristDashboard(){
   return(
     <div>
-      <TouristNavbar />
+      <NavBar navLinks={navLinks} />
       <Routes>
         <Route exact path="/" element={<div>Home</div>}/>
         <Route path="/profile" element={<TouristProfile />}/>
-        <Route path="/products" element={<AdminProductsView />}/>
+        <Route path="/products" element={<ProductsView role="tourist" />}/>
         <Route path="/activities" element={<TouristActivitiesView />}/>
         <Route path="/itineraries" element={<TouristItinerariesView />}/>
         <Route path="/museums" element={<MuseumsAndHistoricalPlaceCard />}/>
@@ -28,4 +33,4 @@ function AdminDashboard(){
   );
 }
 
-export default AdminDashboard;
+export default TouristDashboard;

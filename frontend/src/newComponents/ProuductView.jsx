@@ -1,56 +1,54 @@
 import React, { useState, useEffect } from "react";
-import PriceFilterBar from "./SellerPriceFilterBar";
-import ProductCard from "./SellerProductCard";
+import PriceFilterBar from "./PriceFilterBar";
+import ProductCard from "./ProductCard";
 import axios from "axios";
 
-function SellerViewProducts(props) {
+function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(true);  // Loading state
-  const url = props.baseUrl;
+  const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
 
-
-
-
-
   const token = localStorage.getItem('token');
 
-  const getAuthHeaders = () =>{
-    console.log(token);
+  const getAuthHeaders = () => {
     return {
-    headers: {
+      headers: {
         Authorization: `Bearer ${token}`
-    }}
-};
+      }
+    };
+  };
 
-useEffect(() => {
-    axios.get('http://localhost:3000/api/user', getAuthHeaders()).then((res) => {
-      console.log(res.data.user);
-      setUser(res.data.user);
-    }).then(res =>{
-      setUser(res.data.user);
-    }).catch(err => console.log(err));
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/user', getAuthHeaders())
+      .then(res => {
+        setUser(res.data.user);
+      })
+      .catch(err => console.log(err));
   }, []);
 
+  useEffect(() => {
+    if (role === 'admin') {
+      fetchProducts('http://localhost:3000/api/admin/getProducts');
+    } else if (role === 'seller') {
+      fetchProducts('http://localhost:3000/api/seller/getAllProducts');
+    } else if (role === 'sellerMyProducts') {
+      fetchProducts('http://localhost:3000/api/seller/getMyProducts');
+    } else if (role === 'tourist') {
+      fetchProducts('http://localhost:3000/api/tourist/getProducts');
+    }
+  }, [role]);
 
-
-
-
-useEffect(() => {
-  fetchProducts();
-}, []);
-
-  const fetchProducts = () => {
-    setLoading(true);  // Set loading to true when fetching
-    axios.get(url + '/getAllProducts')
+  const fetchProducts = (url) => {
+    setLoading(true);
+    axios.get(url, getAuthHeaders())
       .then(res => {
         setProducts(res.data.data);
-        setLoading(false);  // Stop loading when data is fetched
+        setLoading(false);
       })
       .catch(err => {
         console.log(err);
@@ -60,38 +58,36 @@ useEffect(() => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    axios.get('http://localhost:3000/api/seller/searchProductByName', {
-        params: {
-            name: e.target.value
-        }
-    })
-    .then(res => {
-    // console.log(res.data);
-    setProducts(res.data.data);
-    setErrorMsg();
-    })
-    .catch(error => {
-      if(!error.response.data.success){
-        setProducts([]);
-        setErrorMsg("No products found!")
+    const searchUrl = role === 'admin' ? 'http://localhost:3000/api/admin/searchProducts' : 'http://localhost:3000/api/seller/searchProductByName';
+    axios.get(searchUrl, {
+      params: {
+        name: e.target.value
       }
-    });
+    })
+      .then(res => {
+        setProducts(res.data.data);
+        setErrorMsg("");
+      })
+      .catch(error => {
+        if (!error.response.data.success) {
+          setProducts([]);
+          setErrorMsg("No products found!");
+        }
+      });
   };
 
   const handleSortOrderChange = (e) => {
-
     const newSortOrder = e.target.value;
     setSortOrder(newSortOrder);
-    
-    
+
     const sortedProducts = [...products].sort((a, b) => {
       const avgRatingA = a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length;
       const avgRatingB = b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length;
-    
+
       if (isNaN(avgRatingA) || isNaN(avgRatingB)) {
-        return 0; // or some other default value
+        return 0;
       }
-    
+
       if (newSortOrder === 'asc') {
         return avgRatingA - avgRatingB;
       } else if (newSortOrder === 'desc') {
@@ -102,10 +98,10 @@ useEffect(() => {
   };
 
   const handleEdit = (product) => {
-    axios.put(url + '/updateProduct/' + product._id, product, getAuthHeaders())
+    const editUrl = role === 'admin' ? 'http://localhost:3000/api/admin/updateProduct/' + product._id : baseUrl + '/updateProduct/' + product._id;
+    axios.put(editUrl, product, getAuthHeaders())
       .then(res => {
-        console.log(res.data);
-        fetchProducts();  // Refresh products after editing
+        fetchProducts();
       })
       .catch(err => console.log(err));
   };
@@ -149,7 +145,7 @@ useEffect(() => {
             ) : (
               products.length > 0 ? (
                 products.map((product) => (
-                  <ProductCard key={product._id} oldProduct={product} onEdit={handleEdit}  userType={user.type} userId={user.id} />
+                  <ProductCard key={product._id} oldProduct={product} onEdit={handleEdit} userType={user?.type} userId={user?.id} />
                 ))
               ) : (
                 <p className="text-center text-lg">No products available.</p>
@@ -162,4 +158,4 @@ useEffect(() => {
   );
 }
 
-export default SellerViewProducts;
+export default ProductsView;

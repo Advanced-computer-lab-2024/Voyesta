@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function AdminProductLabel(props){
+function ProductLabel(props){
     // const [productName, setProductName] =  useState(props.value);
     // console.log(productName);
     return(
@@ -19,5 +19,5 @@ function AdminProductLabel(props){
     );
 }
 
-export default AdminProductLabel;
+export default ProductLabel;
 

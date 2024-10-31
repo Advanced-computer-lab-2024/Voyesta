@@ -1,14 +1,24 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import SellerNavbar from '../../components/seller/SellerNavbar';
 import SellerCreateProduct from '../../components/seller/SellerCreateProduct';
-import SellerViewProducts from '../../components/seller/SellerViewProducts';
-import SellerViewMyProducts from '../../components/seller/SellerViewMyProducts';
 import SellerProfile from '../../components/seller/SellerProfileMangement';
+import NavBar from "../../components/NavBar";
+import ProductsView from "../../newComponents/ProuductView";
+
+
+const navLinks = [
+  { path: "/seller/", label: "Home" },
+  { path: "/seller/create-product", label: "Create Product" },
+  { path: "/seller/view-products", label: "View Products" },
+  { path: "/seller/view-my-products", label: "View My Products" },
+  { path: "/seller/profile", label: "Profile" }
+];
+
+
 function SellerDashboard(){
   return(
     <div>
-      <SellerNavbar />
+      <NavBar navLinks={navLinks} />
       
       <Routes>
         <Route exact path="/" element={<div>Home</div>}/>
@@ -20,17 +30,11 @@ function SellerDashboard(){
         }/>
         
         <Route path="/view-products" element={
-          <SellerViewProducts
-            baseUrl="http://localhost:3000/api/seller"
-            title = "View Products" 
-          />
+          <ProductsView role="seller" />
         }/>
         
         <Route path="/view-my-products" element={
-          <SellerViewMyProducts
-            baseUrl="http://localhost:3000/api/seller"
-            title = "View My Products" 
-          />
+          <ProductsView role="sellerMyProducts" />
         }/>
         
         <Route path="/my-profile" element={

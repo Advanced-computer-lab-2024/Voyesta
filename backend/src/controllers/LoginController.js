@@ -1,5 +1,7 @@
 const TourismGovernor = require('../Models/tourismGovernor');
 const Admin = require('../Models/Admin');
+const Seller = require('../Models/Seller'); // Import the Seller model
+
 
 const { generateToken } = require('../utils/jwt');
 
@@ -26,6 +28,15 @@ const Login = async (req, res) => {
             return res.status(200).json({ message: 'Admin login successful', token, userType: "admin" });
           } 
         }
+
+         // Check in Seller Model if not found in TourismGovernor
+         const seller = await Seller.findOne({ username });
+         if (seller) {
+           if (seller.password === password) {
+             token = generateToken(seller._id, 'seller');
+             return res.status(200).json({ message: 'Seller login successful', token, userType: "seller" });
+           } 
+         }
         
     
         // If user not found in either models

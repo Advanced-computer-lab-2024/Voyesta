@@ -1,17 +1,20 @@
-// // pages/AdvertiserDashboard.js
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import AdvertiserNavbar from '../../components/AdvertiserComponents/AdvertiserNavbar';
 import ActivityProfile from '../../components/ActivityComponents/ActivityProfile';
-// import Update_Read_DeleteAdvertiser from  '../../components/AdvertiserComponents/Update_Read_DeleteAdvertiser';
-import ViewAdvertiserProfile from '../../components/AdvertiserComponents/ViewAdvertiserProfile';
 import AdvertiserProfile from '../../components/AdvertiserComponents/AvertiserProfie';
+import NavBar from '../../components/NavBar';
+
+const navLinks = [
+  { path: "/advertiser/", label: "Home" },
+  { path: "/advertiser/profile", label: "Profile" },
+  { path: "/advertiser/activity", label: "Activity" }
+];
 
 
 function AdvertiserDashboard() {
     return (
       <div>
-         <AdvertiserNavbar />
+         <NavBar navLinks={navLinks} />
           <Routes>
             <Route exact path="/" element={<div>Home</div>}/>
             <Route path="/profile" element={

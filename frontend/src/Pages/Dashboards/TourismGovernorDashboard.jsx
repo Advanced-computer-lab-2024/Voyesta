@@ -1,17 +1,22 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import CreatePlacesOfInterest from "../components/CreatePlacesOfInterest";
-import TourismGovernorNavbar from "../components/TourismGovernorNavbar";
-import TourismGovernorAccount from "../components/EditPlacesOfInterest";
+
+import CreatePlacesOfInterest from "../../components/CreatePlacesOfInterest";
+import TourismGovernorAccount from "../../components/EditPlacesOfInterest";
+import NavBar from "../../components/NavBar";
 
 
-
-
+const navLinks = [
+  { path: "/tourismGovernor/places-of-interest", label: "Create Places Of Interest" },
+  { path: "/tourismGovernor/account-list", label: "Account list" }
+];
 
 function TourismGovernorDashboard(){
+  
   return(
     <div>
-    <TourismGovernorNavbar />
+    <NavBar navLinks={navLinks} />
+            
       <Routes>
         <Route exact path="/" element={<div>Tourism Governor Home</div>}/>
         <Route path="/places-of-interest" element={

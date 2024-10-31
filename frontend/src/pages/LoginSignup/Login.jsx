@@ -28,7 +28,9 @@ function Login(){
                     navigate("/admin");
                 }else if(res.data.userType === "tourismGovernor"){
                     navigate("/tourismGovernor");
-                }
+                }else if(res.data.userType === "seller"){
+                  navigate("/seller");
+              }
                 
                 localStorage.setItem('token', token);
             }).catch(err => console.log(err));
