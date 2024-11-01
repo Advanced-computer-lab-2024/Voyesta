@@ -24,12 +24,12 @@ function AdvertiserDashboard() {
               
             } />
             <Route path="/activity" element={
-              // view activities + create activity
+              
               // <ActivityProfile  
               //   baseUrl="http://localhost:3000/api/advertiser"
               //   title = "Advertiser" 
               // /> 
-              // view Activity
+              
               <ActivitiesView baseUrl="http://localhost:3000/api/advertiser" role="advertiser" />
             } />
           </Routes>
