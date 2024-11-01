@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import TouristSignup from './TouristSignUp';
 import axios from 'axios';
-import TourGuideNavbar from '../../components/tourGuideComponents/TourGuideNavbar';
 import { useNavigate } from 'react-router-dom';
-import TouristNavbar from '../../components/touristComponents/TouristNavbar';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -33,7 +30,6 @@ function Signup() {
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
-
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -78,7 +74,6 @@ function Signup() {
    
   }
   
-
   const handleAdvertiserSignup = ()=>{
     setUserType("advertiser");
     axios.post('http://localhost:3000/api/advertiser/add',{username,email,password})

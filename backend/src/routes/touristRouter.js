@@ -17,10 +17,12 @@ _.delete("/delete", authenticate,deleteTourist);
 _.get("/getMuseumsHistoricalPlaces", get);
 
 
-
+// -----------------Working apis ------------------- //
 _.get('/getProducts', productController.getAllProducts);
 
 _.get('/getActivity', activityController.getActivity);
+// --------------- end working apis -----------------//
+
 _.get('/filterActivities', activityController.filterTouristActivities);
 _.get('/sortActivityByPrice', activityController.sortactivitestsByPrice);
 _.get('/sortActivityByRatings', activityController.sortactivitestsByRatings);

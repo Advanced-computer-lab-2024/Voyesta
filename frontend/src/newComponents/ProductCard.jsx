@@ -14,7 +14,6 @@ function ProductCard({ oldProduct, onEdit, userId }) {
   const [userType, setUserType] = useState('');
 
   const getAuthHeaders = () =>{
-    // console.log(token);
     return {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`

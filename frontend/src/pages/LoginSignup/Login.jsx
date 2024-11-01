@@ -30,7 +30,13 @@ function Login(){
                     navigate("/tourismGovernor");
                 }else if(res.data.userType === "seller"){
                   navigate("/seller");
-              }
+                }else if(res.data.userType === "tourGuide"){
+                  navigate("/tourGuide");
+                }else if(res.data.userType === "advertiser"){
+                  navigate("/advertiser");
+                }else if(res.data.userType === "tourist"){
+                  navigate("/tourist");
+                }
                 
                 localStorage.setItem('token', token);
             }).catch(err => console.log(err));
