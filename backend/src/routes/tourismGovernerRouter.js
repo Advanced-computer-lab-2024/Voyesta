@@ -11,9 +11,9 @@ const {
 } = require('../controllers/museumsHistoricalPlacesController');
 
 _.post("/add", authenticate,create);
-_.get("/get",authenticate, get);
-_.patch("/update/:id", authenticate,update);
-_.delete("/delete/:id", authenticate,remove);
+_.get("/getPlaces",authenticate, get);
+_.patch("/updatePlace/:id", authenticate,update);
+_.delete("/deletePlace/:id", authenticate,remove);
 _.post("/addTag/:id",authenticate, addTag);
 _.get("/search", search);
 

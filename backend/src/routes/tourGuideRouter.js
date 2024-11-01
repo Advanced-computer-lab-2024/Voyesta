@@ -26,7 +26,7 @@ _.put("/update", authenticate,updateTourGuide);
 //----------------Itineraries------------------
 _.post('/createItinerary', authenticate, createItinerary);
 _.get('/getItinerary/:id', getItinerary);
-_.get('/getItineraryByTourGuide', authenticate,getAllItinerariesByGuide);
+_.get('/getItinerary', authenticate,getAllItinerariesByGuide);
 _.delete('/deleteItinerary/:id', authenticate,deleteItinerary);
 _.patch('/updateItinerary/:id', authenticate,updateItinerary);
 
@@ -34,6 +34,6 @@ _.patch('/updateItinerary/:id', authenticate,updateItinerary);
 _.get('/getActivity', getActivity);
 
 //----------------Museums and historical places------------------
-_.get('/getMuseumsAndHistoricalPlaces', get);
+_.get('/getPlaces', get);
 
 module.exports = _;

@@ -1,9 +1,10 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import CreatePlacesOfInterest from "../../components/CreatePlacesOfInterest";
+// import CreatePlacesOfInterest from "../../components/CreatePlacesOfInterest";
 import TourismGovernorAccount from "../../components/EditPlacesOfInterest";
 import NavBar from "../../components/NavBar";
+import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";
 
 
 const navLinks = [
@@ -20,9 +21,13 @@ function TourismGovernorDashboard(){
       <Routes>
         <Route exact path="/" element={<div>Tourism Governor Home</div>}/>
         <Route path="/places-of-interest" element={
-          <CreatePlacesOfInterest
+          // <CreatePlacesOfInterest
+          //   baseUrl="http://localhost:3000/api/tourismGoverner"
+          //   title = "Create Places of Interest" 
+          // />
+          <MuseumsAndHistoricalPlacesView 
             baseUrl="http://localhost:3000/api/tourismGoverner"
-            title = "Create Places of Interest" 
+            role="tourismGovernor"
           />
         }/>
         <Route path="/account-list" element={

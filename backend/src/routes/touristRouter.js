@@ -14,20 +14,24 @@ _.put("/update", authenticate,updateTourist);
 _.delete("/delete", authenticate,deleteTourist);
 // _.get('/touristAttractions', getTouristView);
 
-_.get("/getMuseumsHistoricalPlaces", get);
+
 
 
 // -----------------Working apis ------------------- //
 _.get('/getProducts', productController.getAllProducts);
 
 _.get('/getActivity', activityController.getActivity);
+_.get('/getItinerary', getItinerary);
+_.get("/getPlaces", get);
 // --------------- end working apis -----------------//
 
+
+// ---------------- unused APIs ---------------------//
 _.get('/filterActivities', activityController.filterTouristActivities);
 _.get('/sortActivityByPrice', activityController.sortactivitestsByPrice);
 _.get('/sortActivityByRatings', activityController.sortactivitestsByRatings);
 
-_.get('/getItinerary', getItinerary);
+
 _.get('/sortByPrice', sortByPrice);
 _.get('/itinerarySearch', search)
 _.get('/filterItinerary', filter);
