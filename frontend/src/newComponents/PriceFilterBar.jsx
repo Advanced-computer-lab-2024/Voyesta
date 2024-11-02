@@ -1,72 +1,45 @@
+// PriceFilterBar.jsx
 import React, { useEffect, useState } from 'react';
 import '../css/PriceFilterBar.css';
-import axios from 'axios';
 
-const PriceFilterBar = ({products, setProducts }) => {
-  
+const PriceFilterBar = ({ products, setProducts }) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [minVal, setMinVal] = useState(minPrice);
   const [maxVal, setMaxVal] = useState(maxPrice);
-  // const [filteredProducts, setFilteredProducts] = useState([]);
-  // console.log(minPrice, maxPrice);
 
-
-  const totalWidth = maxPrice - minPrice;
-  const minMaxDiff = totalWidth * 0.1; // 10% of total width
-  
   useEffect(() => {
-    // axios.get("http://localhost:3000/api/admin/getProductsMinAndMax")
-    // .then(res => {
-    //   // console.log(res.data.data);
-    //   setMaxPrice(res.data.data.maxPrice);
-    //   setMaxVal(res.data.data.maxPrice);
+    const prices = products.map((product) => 
+      typeof product.price === 'object' ? product.price.min : product.price
+    );
+    setMinPrice(Math.min(...prices));
+    setMaxPrice(Math.max(...prices));
+    setMinVal(Math.min(...prices));
+    setMaxVal(Math.max(...prices));
+  }, [products]);
 
-    //   setMinPrice(res.data.data.minPrice);
-    //   setMinVal(res.data.data.minPrice); 
-    // })
-    // .catch(err => console.log(err));
-    const prices = products.map((product) => product.price);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    setMinPrice(minPrice);
-    setMaxPrice(maxPrice);
-    setMinVal(minPrice);
-    setMaxVal(maxPrice);
-  },[products]);
-
-  const onFilter = () =>{
-    // axios.get('http://localhost:3000/api/admin/filterProductsByPrice', {
-    //   params: {
-    //       minPrice: minVal,
-    //       maxPrice: maxVal
-    //   }
-    // })
-    // .then(res => {
-    // // console.log(res.data);
-    // setProducts(res.data.data);
-    // })
-    // .catch(error => {console.error(error)});
+  const onFilter = () => {
     const filteredProducts = products.filter((product) => {
-      return product.price >= minVal && product.price <= maxVal;
+      const price = typeof product.price === 'object' ? product.price.min : product.price;
+      return price >= minVal && price <= maxVal;
     });
     setProducts(filteredProducts);
-  }
+  };
 
   const handleMinChange = (e) => {
-    const value = Math.min(Number(e.target.value), maxVal - minMaxDiff);
+    const value = Math.min(Number(e.target.value), maxVal);
     setMinVal(value);
   };
 
   const handleMaxChange = (e) => {
-    const value = Math.max(Number(e.target.value), minVal + minMaxDiff);
-    setMaxVal(value);   
+    const value = Math.max(Number(e.target.value), minVal);
+    setMaxVal(value);
   };
 
   return (
     <div className="range_container">
       <div className="slider_label flex justify-between mx-2">
-        <span>${minVal}</span>  
+        <span>${minVal}</span>
         <span>${maxVal}</span>
       </div>
       <div className="sliders_control">
@@ -87,10 +60,9 @@ const PriceFilterBar = ({products, setProducts }) => {
           onChange={handleMaxChange}
         />
       </div>
-      
       <button className='form_control' onClick={onFilter}>Filter</button>
     </div>
   );
 };
 
-export default PriceFilterBar;
+export default PriceFilterBar;

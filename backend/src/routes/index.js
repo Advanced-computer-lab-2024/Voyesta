@@ -35,6 +35,7 @@ const activityRouter = require("./activityRouter");
 const tourismGovernerRouter = require("./tourismGovernerRouter");
 const userGuestRouter = require("./userGuestRouter");
 const museumsHistoricalPlacesRouter = require("./museumsHistoricalPlacesRouter");
+const categoryRouter = require("./activityCategoryRouter");
 const authenticate = require('../middleware/authenticate');
 
 _.use("/advertiser",  advertiserRouter);
@@ -45,7 +46,7 @@ _.use("/activity",  activityRouter);
 _.use("/tourismGoverner",  tourismGovernerRouter);
 _.use("/guest",  userGuestRouter);
 _.use('/itinerary', iteneraryRouter);
-_.use('/activity', activityRouter);
+_.use('/category', categoryRouter);
 _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 
 _.get("/user",authenticate,  (req, res) => {

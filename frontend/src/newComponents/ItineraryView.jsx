@@ -2,15 +2,26 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ItinerariesList from './ItinerariesList';
 import CreateItinerary from './CreateItinerary';
+import PriceFilterBar from './PriceFilterBar';
+import DateRangeFilter from './DateRangeFilter';
+import PreferencesFilter from './PreferencesFilter'; // Import the new filter component
 
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
+  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [message, setMessage] = useState(null);
   const [activeTab, setActiveTab] = useState('viewItineraries');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [selectedPreference, setSelectedPreference] = useState(''); // State for selected preference
 
   useEffect(() => {
     fetchItineraries();
   }, [activeTab]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [itineraries, startDate, endDate, selectedPreference]); // Add selectedPreference to dependencies
 
   const fetchItineraries = async () => {
     try {
@@ -26,6 +37,36 @@ const ItineraryView = ({ baseUrl, role }) => {
     }
   };
 
+  const applyFilters = () => {
+    let filtered = [...itineraries];
+
+    // Filter by date range
+    if (startDate) {
+      filtered = filtered.filter(itinerary => new Date(itinerary.date) >= new Date(startDate));
+    }
+    if (endDate) {
+      filtered = filtered.filter(itinerary => new Date(itinerary.date) <= new Date(endDate));
+    }
+
+    // Filter by selected preference
+    if (selectedPreference) {
+      filtered = filtered.filter(itinerary => itinerary.preferences.includes(selectedPreference));
+    }
+
+    // Set filtered itineraries to state
+    setFilteredItineraries(filtered);
+  };
+
+  const sortByRating = () => {
+    const sorted = [...filteredItineraries].sort((a, b) => b.rating - a.rating);
+    setFilteredItineraries(sorted);
+  };
+
+  const sortByPrice = () => {
+    const sorted = [...filteredItineraries].sort((a, b) => a.price - b.price);
+    setFilteredItineraries(sorted);
+  };
+
   const getAuthHeaders = () => {
     return {
       headers: {
@@ -35,6 +76,18 @@ const ItineraryView = ({ baseUrl, role }) => {
   };
 
   return (
+    <div className="flex">
+      
+          {/* Filtering Components */}
+          <div className="w-1/5 p-4 bg-red-300">
+            <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+              <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} />
+              <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+              <PreferencesFilter setSelectedPreferences={setSelectedPreference} /> {/* Include preferences filter */}
+              <button onClick={sortByRating}>Sort by Rating</button>
+              <button onClick={sortByPrice}>Sort by Price</button>
+          </div>
+          
     <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
       <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Itineraries</h1>
 
@@ -58,20 +111,36 @@ const ItineraryView = ({ baseUrl, role }) => {
             </button>
           </div>
 
-          {/* Content based on Active Tab */}
-          {activeTab === 'viewItineraries' ? (
-            <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={itineraries} role={role} />
-          ) : activeTab === 'createItinerary' && (
+          {/* Filtering Components */}
+          {activeTab === 'viewItineraries' && (
+            <>
+            <div className="w-1/5 p-4 bg-red-300">
+            <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+              <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} />
+              <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+              <PreferencesFilter setSelectedPreferences={setSelectedPreference} /> {/* Include preferences filter */}
+              <button onClick={sortByRating}>Sort by Rating</button>
+              <button onClick={sortByPrice}>Sort by Price</button>
+              <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} />
+            </div>
+            </>
+          )}
+
+          {activeTab === 'createItinerary' && (
             <CreateItinerary getAuthHeaders={getAuthHeaders} />
           )}
         </>
       )}
 
       {role !== 'tourGuide' && (
-        <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={itineraries} role={role} />
+        <>
+          <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} />
+        </>
       )}
     </div>
-  );
+  
+    </div>
+    );
 };
 
 export default ItineraryView;

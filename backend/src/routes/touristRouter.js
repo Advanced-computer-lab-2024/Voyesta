@@ -7,6 +7,8 @@ const { get} = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const { getItinerary, sortByPrice, search, filter } = require('../controllers/itineraryController');
 const productController = require('../controllers/productController');
+const { getActivityCategory } = require('../controllers/activityCategoryController');
+const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
 
 _.post("/add", createTourist);
 _.get("/get",authenticate ,getTourists);
@@ -23,6 +25,8 @@ _.get('/getProducts', productController.getAllProducts);
 _.get('/getActivity', activityController.getActivity);
 _.get('/getItinerary', getItinerary);
 _.get("/getPlaces", get);
+_.get('/getCategory', getActivityCategory)
+_.get('/getTags', getPreferenceTags)
 // --------------- end working apis -----------------//
 
 

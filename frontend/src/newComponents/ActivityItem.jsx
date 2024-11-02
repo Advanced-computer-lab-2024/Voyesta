@@ -78,6 +78,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
       {isEditing ? (
         <>
+        <div>
           <input
             type="text"
             name="name"
@@ -85,12 +86,16 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             onChange={handleChange}
             className="font-bold text-lg"
           />
+        </div>
+        <div>
           <textarea
             name="description"
             value={editedActivity.description}
             onChange={handleChange}
             className="w-full"
           />
+        </div>
+        <div>
           <input
             type="text"
             name="location.address"
@@ -98,6 +103,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             onChange={handleChange}
             placeholder="Address"
           />
+        </div>
+        <div>
           <input
             type="text"
             name="location.city"
@@ -105,6 +112,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             onChange={handleChange}
             placeholder="City"
           />
+        </div>
+        <div>
           <input
             type="text"
             name="location.country"
@@ -112,18 +121,24 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             onChange={handleChange}
             placeholder="Country"
           />
+        </div>
+        <div>
           <input
             type="date"
             name="date"
             value={convertDateToInputFormat(editedActivity.date)}
             onChange={handleChange}
           />
+        </div>
+        <div>
           <input
             type="time"
             name="time"
             value={convertTimeTo24HourFormat(editedActivity.time)}
             onChange={handleChange}
           />
+        </div>
+        <div>
           <input
             type="number"
             name="price.min"
@@ -131,6 +146,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             onChange={handleChange}
             placeholder="Min Price"
           />
+        </div>
+        <div>
           <input
             type="number"
             name="price.max"
@@ -138,30 +155,39 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             onChange={handleChange}
             placeholder="Max Price"
           />
+        </div>
+        <div>
           <input
             type="text"
             name="category"
             value={editedActivity.category}
             onChange={handleChange}
           />
+        </div>
+        <div>
           <input
             type="text"
             name="tags"
             value={editedActivity.tags.join(', ')}
             onChange={(e) => handleChange({ target: { name: 'tags', value: e.target.value.split(', ') } })}
           />
+        </div>
+        <div>
           <input
             type="number"
             name="rating"
             value={editedActivity.rating}
             onChange={handleChange}
           />
+        </div>
+        <div>
           <input
             type="text"
             name="specialDiscount"
             value={editedActivity.specialDiscount}
             onChange={handleChange}
           />
+        </div>
           <div className="flex gap-2 mt-2 h-8">
             <img
               onClick={handleSubmit}

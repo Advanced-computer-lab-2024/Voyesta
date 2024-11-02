@@ -4,7 +4,7 @@ const PreferenceTag = require('../Models/PreferenceTag');
 
 
 const createItinerary = async (req, res) => {
-    const { name, description, tags, tourLanguage, tourPrice, startDate, endDate, availableDatesAndTimes, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
+    const { name, description, tags, tourLanguage, tourPrice, startDate, endDate, availableDatesAndTimes, locations, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
     const id = req.user.id;
     try {
         const itinerary = new Itinerary({
@@ -17,6 +17,7 @@ const createItinerary = async (req, res) => {
             endDate,
             availableDatesAndTimes,
             activities,
+            locations,
             accessibility,
             pickUpLocation,
             dropOffLocation,

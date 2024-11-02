@@ -61,6 +61,7 @@ const ItineraryItem = ({ fetchItineraries, itinerary, role, baseUrl }) => {
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
       {isEditing ? (
         <>
+        <div>
           <input
             type="text"
             name="name"
@@ -68,36 +69,47 @@ const ItineraryItem = ({ fetchItineraries, itinerary, role, baseUrl }) => {
             onChange={handleChange}
             className="font-bold text-lg"
           />
+        </div>
+        <div>
           <textarea
             name="description"
             value={editedItinerary.description}
             onChange={handleChange}
             className="w-full"
           />
+        </div> 
+        <div>
           <input
             type="date"
             name="startDate"
             value={convertDateToInputFormat(editedItinerary.startDate)}
             onChange={handleChange}
           />
+        </div>
+        <div>
           <input
             type="date"
             name="endDate"
             value={convertDateToInputFormat(editedItinerary.endDate)}
             onChange={handleChange}
           />
+        </div>
+        <div>
           <input
             type="text"
             name="locations"
             value={editedItinerary.locations.join(', ')}
             onChange={(e) => handleChange({ target: { name: 'locations', value: e.target.value.split(', ') } })}
           />
+        </div>
+        <div>
           <input
             type="number"
             name="tourPrice"
             value={editedItinerary.tourPrice}
             onChange={handleChange}
           />
+        </div> 
           <div className="flex gap-2 mt-2 h-8">
             <img
               onClick={handleSubmit}
