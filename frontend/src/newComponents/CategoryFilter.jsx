@@ -10,6 +10,8 @@ const CategoryFilter = ({ baseUrl, selectedCategory, setSelectedCategory }) => {
       try {
         const response = await axios.get(`${baseUrl}/getCategory`);
         setCategories(response.data);
+        console.log(response.data);
+        
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
@@ -27,8 +29,8 @@ const CategoryFilter = ({ baseUrl, selectedCategory, setSelectedCategory }) => {
       >
         <option value="">All Categories</option>
         {categories.map((category) => (
-          <option key={category._id} value={category.name}>
-            {category.name}
+          <option key={category._id} value={category.Name} className="text-black-800 bg-white">
+            {category.Name}
           </option>
         ))}
       </select>

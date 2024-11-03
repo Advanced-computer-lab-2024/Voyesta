@@ -46,7 +46,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
       filtered = filtered.filter(activity => activity.category === category);
     }
     if (rating) {
-      filtered = filtered.filter(activity => activity.rating >= rating);
+      filtered = filtered.filter(activity => activity.rating === rating);
     }
     if (startDate) {
       filtered = filtered.filter(activity => new Date(activity.date) >= new Date(startDate));
@@ -88,6 +88,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
             onChange={(e) => setSortOption(e.target.value)}
             className="w-full p-2 border"
           >
+            <option value="">Sort</option>
             <option value="priceAsc">Price: Low to High</option>
             <option value="priceDesc">Price: High to Low</option>
             <option value="ratingAsc">Rating: Low to High</option>

@@ -4,7 +4,7 @@ import React from 'react';
 const RatingFilter = ({ setSelectedRating }) => {
   return (
     <div className="mb-4">
-      <label className="block mb-2">Minimum Rating</label>
+      <label className="block mb-2">Rating</label>
       <select onChange={(e) => setSelectedRating(e.target.value)} className="w-full p-2 border">
         <option value="">All</option>
         <option value="1">1 Star</option>

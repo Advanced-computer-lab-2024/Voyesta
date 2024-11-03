@@ -32,7 +32,7 @@ const PreferencesFilter = ({ setSelectedPreferences }) => {
       <select onChange={handleChange} value={selectedPreference} className="w-full p-2 border">
         <option value="">--All--</option>
         {preferences.map((preference) => (
-          <option key={preference.id} value={preference.name}>{preference.name}</option>
+          <option key={preference.id} value={preference.Name}>{preference.Name}</option>
         ))}
       </select>
     </div>

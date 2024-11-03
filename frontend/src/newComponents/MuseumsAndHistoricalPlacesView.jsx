@@ -9,15 +9,11 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [message, setMessage] = useState(null);
   const [activeTab, setActiveTab] = useState('viewPlaces');
-  const [selectedPreference, setSelectedPreference] = useState('');
-  
+  const [selectedTags, setSelectedTags] = useState([]); // Ensure this is initialized as an array
+
   useEffect(() => {
     fetchPlaces();
   }, [activeTab]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [places, selectedPreference]); // Add selectedTags to dependencies
 
   const fetchPlaces = async () => {
     try {
@@ -34,35 +30,34 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
     }
   };
 
-  const applyFilters = () => {
+  const applyTagFilter = () => {
     let filtered = [...places];
 
-    // Filter by selected tags
-    if (selectedPreference.length > 0) {
+    // Ensure selectedTags is an array
+    if (Array.isArray(selectedTags) && selectedTags.length > 0) {
       filtered = filtered.filter(place =>
-        selectedPreference.every(tag => place.tags.includes(tag))
+        selectedTags.every(tag => place.tags.includes(tag))
       );
+      console.log(selectedTags);
+      
     }
 
-    // Set filtered places to state
     setFilteredPlaces(filtered);
-  };
-
-  const getAuthHeaders = () => {
-    return {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    };
   };
 
   return (
     <div className="flex">
 
-      {/* Filtering Components */}
+      {/* Tag Filtering Section */}
       <div className="w-1/5 p-4 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter by Tags</h2>
-        <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
+        <PreferencesFilter setSelectedPreferences={setSelectedTags} />
+        <button
+          onClick={applyTagFilter}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Apply Filters
+        </button>
       </div>
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
@@ -72,7 +67,6 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
 
         {role === 'tourismGovernor' && (
           <>
-            {/* Sub-navbar for tourismGovernor */}
             <div className="flex justify-around border-b mb-4">
               <button
                 className={`p-2 ${activeTab === 'viewPlaces' ? 'border-b-2 border-blue-500' : ''}`}
@@ -88,18 +82,15 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
               </button>
             </div>
 
-            {/* Content based on Active Tab */}
-            {activeTab === 'viewPlaces' && (
+            {activeTab === 'viewPlaces' ? (
               <MuseumsAndHistoricalPlacesList
                 fetchPlaces={fetchPlaces}
                 baseUrl={baseUrl}
-                places={filteredPlaces} // Use filtered places
+                places={filteredPlaces}
                 role={role}
               />
-            )}
-
-            {activeTab === 'createPlace' && (
-              <CreateMuseumAndHistoricalPlace getAuthHeaders={getAuthHeaders} />
+            ) : (
+              <CreateMuseumAndHistoricalPlace getAuthHeaders={() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })} />
             )}
           </>
         )}
@@ -108,7 +99,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
           <MuseumsAndHistoricalPlacesList
             fetchPlaces={fetchPlaces}
             baseUrl={baseUrl}
-            places={filteredPlaces} // Use filtered places
+            places={filteredPlaces}
             role={role}
           />
         )}
