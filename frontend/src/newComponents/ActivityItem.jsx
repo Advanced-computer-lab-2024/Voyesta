@@ -1,12 +1,52 @@
 // ActivityItem.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets';
 
 const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState(activity);
+  const [mappedTags, setMappedTags] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+  
+  useEffect(() => {
+    if (activity.tags && Array.isArray(activity.tags)) {
+      const mappedTags = activity.tags.map(tag => tag.Name);
+      setEditedActivity(prevState => ({
+        ...prevState,
+        tags: mappedTags
+      }));
+      setMappedTags(mappedTags);
+      
+    }
+  }, [activity.tags]);
 
+  useEffect(() => {
+    axios.get(`${baseUrl}/getActivityCategories`, getAuthHeaders())
+    .then(res =>{
+      const categoryNames = res.data.map(category => category.Name);
+      setCategories(res.data);
+      // console.log(categoryNames);
+    })
+    .catch(err => console.log(err));
+
+    axios.get(`${baseUrl}/getPreferenceTags`, getAuthHeaders())
+    .then(res => {
+      const tagNames = res.data.map(tag => tag.Name);
+      setTags(tagNames);
+      console.log(tagNames);
+    })
+    .catch(err => console.log(err));
+  }, []);
+
+  const getAuthHeaders = () => {  
+    return {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    };
+  };
 
   const convertTimeTo24HourFormat = (time) => {
     const [timePart, modifier] = time.split(' ');
@@ -31,13 +71,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const getAuthHeaders = () =>{
-    return {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }}
-  };
-
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -48,15 +81,36 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedActivity({ ...editedActivity, [name]: value });
+    const { name, value, options } = e.target;
+    console.log(name, value);
+    if (name === 'tags') {
+      const selectedTags = Array.from(options).filter(option => option.selected).map(option => option.value);
+      setEditedActivity({ ...editedActivity, [name]: selectedTags });
+    } else {
+      setEditedActivity({ ...editedActivity, [name]: value });
+    }
   };
 
   const handleSubmit = async () => {
+
+    const activityData = {
+      ...editedActivity,
+      price: isNaN(parseFloat(editedActivity.price))
+        ? (() => {
+            const [min, max] = editedActivity.price.split('-').map(val => parseFloat(val.trim()));
+            return { min, max };
+          })()
+        : parseFloat(editedActivity.price),
+      location: {
+        lat: parseFloat(editedActivity.location.lat),
+        lng: parseFloat(editedActivity.location.lng)
+      },
+      specialDiscounts: parseFloat(editedActivity.specialDiscounts),
+    };
+    console.log(activityData);
     try {
       const url = `${baseUrl}/updateActivity/${activity._id}`;
-      // console.log(editedActivity)
-      await axios.patch(url, editedActivity, getAuthHeaders());
+      await axios.put(url, activityData, getAuthHeaders());
       fetchActivities();
       setIsEditing(false);
     } catch (error) {
@@ -78,116 +132,108 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
       {isEditing ? (
         <>
-        <div>
-          <input
-            type="text"
-            name="name"
-            value={editedActivity.name}
-            onChange={handleChange}
-            className="font-bold text-lg"
-          />
-        </div>
-        <div>
-          <textarea
-            name="description"
-            value={editedActivity.description}
-            onChange={handleChange}
-            className="w-full"
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            name="location.address"
-            value={editedActivity.location?.address || ''}
-            onChange={handleChange}
-            placeholder="Address"
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            name="location.city"
-            value={editedActivity.location?.city || ''}
-            onChange={handleChange}
-            placeholder="City"
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            name="location.country"
-            value={editedActivity.location?.country || ''}
-            onChange={handleChange}
-            placeholder="Country"
-          />
-        </div>
-        <div>
-          <input
-            type="date"
-            name="date"
-            value={convertDateToInputFormat(editedActivity.date)}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <input
-            type="time"
-            name="time"
-            value={convertTimeTo24HourFormat(editedActivity.time)}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <input
-            type="number"
-            name="price.min"
-            value={editedActivity.price?.min || ''}
-            onChange={handleChange}
-            placeholder="Min Price"
-          />
-        </div>
-        <div>
-          <input
-            type="number"
-            name="price.max"
-            value={editedActivity.price?.max || ''}
-            onChange={handleChange}
-            placeholder="Max Price"
-          />
-        </div>
-        <div>
-          <input
-            type="text"
+          <div className=''>
+            <input
+              type="text"
+              name="name"
+              value={editedActivity.name}
+              onChange={handleChange}
+              className="font-bold text-lg"
+            />
+          </div>
+          <div>
+            <textarea
+              name="description"
+              value={editedActivity.description}
+              onChange={handleChange}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <input
+              type="date"
+              name="date"
+              value={convertDateToInputFormat(editedActivity.date)}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <input
+              type="time"
+              name="time"
+              value={convertTimeTo24HourFormat(editedActivity.time)}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <input
+                type="text"
+                name="lat"
+                value={editedActivity.location.lat}
+                onChange={(e) => setEditedActivity({
+                  ...editedActivity,
+                  location: { ...editedActivity.location, lat: e.target.value }
+                })}
+                placeholder="Latitude"
+              />
+              <input
+                type="text"
+                name="lng"
+                value={editedActivity.location.lng}
+                onChange={(e) => setEditedActivity({
+                  ...editedActivity,
+                  location: { ...editedActivity.location, lng: e.target.value }
+                })}
+                placeholder="Longitude"
+              />
+          </div>    
+          <div>
+            <input
+              type="text"
+              name="price"
+              value={editedActivity.price}
+              onChange={handleChange}
+              placeholder="Price"
+            />
+          </div>
+          <div>
+          <select
             name="category"
-            value={editedActivity.category}
+            value={editedActivity.category?.Name}
             onChange={handleChange}
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            name="tags"
-            value={editedActivity.tags.join(', ')}
-            onChange={(e) => handleChange({ target: { name: 'tags', value: e.target.value.split(', ') } })}
-          />
-        </div>
-        <div>
-          <input
-            type="number"
-            name="rating"
-            value={editedActivity.rating}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            name="specialDiscount"
-            value={editedActivity.specialDiscount}
-            onChange={handleChange}
-          />
-        </div>
+            defaultValue={editedActivity.category?.Name}
+          >
+            <option disabled>Select a category</option>
+            {categories.map((category) => (
+              <option key={category.Name} value={category.Name}>
+                {category.Name}
+              </option>
+            ))}
+          </select>
+          </div>
+          <div>
+            <select
+              name="tags"
+              multiple
+              value={editedActivity.tags}
+              onChange={handleChange}
+              className='w-full'
+            >
+              {tags.map((tag, index) => (
+                <option key={index} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <input
+              type="text"
+              name="specialDiscount"
+              value={editedActivity.specialDiscount}
+              onChange={handleChange}
+            />
+          </div>
           <div className="flex gap-2 mt-2 h-8">
             <img
               onClick={handleSubmit}
@@ -210,9 +256,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
           
           {activity.location && typeof activity.location === 'object' ? (
             <p>Location: 
-              {activity.location.address || 'Unknown address'}, 
-              {activity.location.city || 'Unknown city'}, 
-              {activity.location.country || 'Unknown country'}
+              {activity.location.lat || 'Unknown latitude'}, 
+              {activity.location.lng || 'Unknown longitude'}
             </p>
           ) : (
             <p>Location information not available</p>
@@ -233,14 +278,15 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
           </p>
           
           {Array.isArray(activity.tags) ? (
-            <p>Tags: {activity.tags.join(', ')}</p>
+            <p>Tags: {mappedTags.join(', ')}</p>
           ) : (
             <p>Tags: No tags available</p>
           )}
 
-          <p>Rating: {activity.rating || 'No rating available'}</p>
-          
-          {activity.specialDiscount && <p>Special Discount: {activity.specialDiscount}</p>}
+          <p>Rating: {activity.rating.length === 0 ? 0 : 
+              (activity.rating.reduce((acc, curr) => acc + curr, 0) / activity.rating.length).toFixed(1)
+            }</p>
+          <p>Special Discount: {activity.specialDiscount}</p>
 
           {role === 'advertiser' && (
             <div className="flex gap-2 mt-2 h-6">

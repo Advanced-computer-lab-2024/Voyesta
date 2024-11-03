@@ -1,12 +1,18 @@
 const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
+const Tag = require('../Models/PreferenceTag');
 
 const mongoose = require('mongoose');
+
 // Create a new Activity
 const createActivity = async (req, res) => {
     const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
     const advertiser = req.user.id;  // Assuming req.user is populated by authentication middleware
-
+    const categoryID = await Category.findOne({ Name: category }).select('_id');
+    const tagIds = await Promise.all(tags.map(async (tag) => {
+        const tagId = await Tag.findOne({ Name: tag }).select('_id');
+        return tagId;
+    }));
     try {
         const activity = new Activity({
             name,
@@ -14,21 +20,16 @@ const createActivity = async (req, res) => {
             date,
             time,
             location: {
-                address: location.address,
-                city: location.city,
-                country: location.country,
-                coordinates: {
-                    lat: location.lat,
-                    lng: location.lng
-                }
+                lat: location.lat,
+                lng: location.lng
             },
             price,
             specialDiscount,
-            category,
-            tags,
+            category: categoryID,
+            tags: tagIds,
             advertiser
         });
-
+        // console.log(activity);
         await activity.save();
         res.status(201).json(activity);
     } catch (error) {
@@ -71,21 +72,34 @@ const getAllActivitiesByAdvertiser = async (req, res) => {
 const updateActivity = async (req, res) => {
     const { id } = req.params;
     const advertiserId =  req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
+    
+    let tagIds = null;
+    const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
 
-    const updates = req.body;
+    // console.log(category);
+    const categoryId = await Category.findOne({ Name: category }).select('_id');
+
+    if(tags){
+        tagIds = await Promise.all(tags.map(async (tag) => {
+            const tagId = await Tag.findOne({ Name: tag }).select('_id');
+            return tagId;
+        }));
+    }
+    const updates = { name, description, date, time, location, price, specialDiscount, "category": categoryId, "tags": tagIds };
+    console.log(updates);    
 
     try {
-        const activity = await Activity.findById(id);
+       const activity = await  Activity.findByIdAndUpdate(id, updates, { new: true, upsert: false, overwrite: true })
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
         }
 
-        if (activity.advertiser.toString() !== advertiserId.toString()) {
-            return res.status(403).json({ error: 'Unauthorized access' });
-        }
+        // if (activity.advertiser.toString() !== advertiserId.toString()) {
+        //     return res.status(403).json({ error: 'Unauthorized access' });
+        // }
 
-        Object.assign(activity, updates);
-        await activity.save();
+        // Object.assign(activity, updates);
+        // await activity.save();
         res.status(200).json(activity);
     } catch (error) {
         res.status(400).json({ error: error.message });

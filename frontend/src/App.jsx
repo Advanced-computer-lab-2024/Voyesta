@@ -17,6 +17,7 @@ import AdvertiserDashboard from './Pages/Dashboards/AdvertiserDashboard'
 import SellerDashboard from './pages/Dashboards/SellerDashboard'
 import TourismGovernorDashboard from './pages/Dashboards/TourismGovernorDashboard'
 import TouristDashboard from './pages/Dashboards/TouristDashboard';
+import MapView from './newComponents/MapView'
 
 
 
@@ -40,6 +41,7 @@ function App() {
             <Route path='/seller/*' element={< SellerDashboard />} />
             <Route path='/tourismGovernor/*' element={< TourismGovernorDashboard />} />
             <Route path='/tourist/*' element={< TouristDashboard />} />
+            <Route path='/map' element={<MapView lat="30.0648" lng="31.5102" />} />
           </Routes>
       </div>
     </>

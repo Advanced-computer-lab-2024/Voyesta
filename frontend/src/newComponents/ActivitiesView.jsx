@@ -17,7 +17,6 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [rating, setRating] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [priceOrder, setPriceOrder] = useState('asc');
   const [sortOption, setSortOption] = useState('priceAsc'); // Added sort option state
 
   useEffect(() => {
@@ -31,6 +30,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
+      console.log(response.data);
       setActivities(response.data);
       setFilteredActivities(response.data);
     } catch (error) {
@@ -127,7 +127,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
             </div>
 
             {activeTab === 'viewActivity' ? (
-              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} />
+              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={activities} role={role} />
             ) : (
               <CreateActivity />
             )}
@@ -138,6 +138,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
           <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} />
         )}
       </div>
+
     </div>
   );
 };

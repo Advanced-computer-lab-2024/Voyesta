@@ -1,6 +1,5 @@
 const preferenceTagModel = require('../Models/PreferenceTag');
 
-
 // Create a new preference tag
 createPreferenceTag = async (req, res) => {
     const { Name } = req.body;
@@ -53,4 +52,10 @@ createPreferenceTag = async (req, res) => {
     }
   };
 
-  module.exports = {createPreferenceTag,  getPreferenceTags, updatePreferenceTag, deletePreferenceTag};
+
+module.exports = {
+    createPreferenceTag,
+    getPreferenceTags,
+    updatePreferenceTag,
+    deletePreferenceTag,
+}

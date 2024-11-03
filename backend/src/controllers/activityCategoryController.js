@@ -61,4 +61,9 @@ const updateActivityCategory = async (req, res) => {
 }
 
 
-module.exports = {createActivityCategory, getActivityCategory, updateActivityCategory, deleteActivityCategoryById}
+module.exports = {
+    createActivityCategory,
+    getActivityCategory,
+    updateActivityCategory,
+    deleteActivityCategoryById
+}
