@@ -17,7 +17,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [rating, setRating] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [sortOption, setSortOption] = useState('priceAsc'); // Added sort option state
+  const [sortOption, setSortOption] = useState(''); // Added sort option state
 
   useEffect(() => {
     fetchActivities();
@@ -72,7 +72,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
 
   return (
     <div className="flex">
-      <div className="w-1/5 p-4 bg-red-300">
+      {role === 'tourist' && (
+        <div className="w-1/5 p-4 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
 
         <PriceFilterBar products={activities} setProducts={setFilteredActivities} />
@@ -88,7 +89,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
             onChange={(e) => setSortOption(e.target.value)}
             className="w-full p-2 border"
           >
-            <option value="">Sort</option>
+            <option value="">Choose...</option>
             <option value="priceAsc">Price: Low to High</option>
             <option value="priceDesc">Price: High to Low</option>
             <option value="ratingAsc">Rating: Low to High</option>
@@ -103,6 +104,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
           Apply Filters
         </button>
       </div>
+      )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
         <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Activities</h1>

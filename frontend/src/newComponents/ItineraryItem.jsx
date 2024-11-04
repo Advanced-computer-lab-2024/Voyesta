@@ -128,7 +128,7 @@ const ItineraryItem = ({ fetchItineraries, itinerary, role, baseUrl }) => {
           <h3 className="font-bold text-lg">{itinerary.name}</h3>
           <p>{itinerary.description || 'No description available'}</p>
           <p>From: {new Date(itinerary.startDate).toLocaleDateString()} To: {new Date(itinerary.endDate).toLocaleDateString()}</p>
-          <p>Locations: {itinerary.locations.join(', ')}</p>
+          <p>Locations: {itinerary.locations?.join(', ')}</p>
           <p>Price: ${itinerary.tourPrice}</p>
 
           {role === 'tourGuide' && (
