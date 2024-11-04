@@ -298,7 +298,28 @@ const search = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const rateActivity = async (req, res) => {
+    const { id } = req.params;
+    const { rating } = req.body;
+    console.log(id);
+    try {
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+        activity.ratings.push({
+            tourist: req.user.id,
+            rating
+        });
+        await activity.save();
+        res.status(200).json(activity);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
 
 
+  
 
-module.exports = { getActivity, createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search }
+
+module.exports = { getActivity, createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search,rateActivity }
