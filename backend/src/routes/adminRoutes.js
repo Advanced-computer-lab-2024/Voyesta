@@ -15,6 +15,9 @@ const {
     deletePreferenceTag
 } = require('../controllers/preferenceTagContoller');
 const productController = require('../controllers/productController');
+const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToComplaint } = require('../controllers/complaintController');
+const authenticate = require('../middleware/authenticate');
+
 // ------------- Not testedd ---------------
 _.post('/createTourismGoverner', adminController.createTourismGovernor);
 _.post('/createAdmin', adminController.createAdmin);
@@ -43,5 +46,11 @@ _.get('/searchProducts', productController.searchProductByName);
 _.get('/filterProductsByPrice', productController.filterProductsByPrice);
 _.get('/sortProductsByRatings', productController.sortProductsByRatings);
 _.get('/getProductsMinAndMax', productController.getMinAndMaxPrices);
+
+
+_.get('/getComplaints', getComplaints);
+_.get('/getComplaintById/:id', getComplaintById);
+_.patch('/updateComplaintStatus/:id', updateComplaintStatus);
+_.patch('/replyToComplaint/:id', addReplyToComplaint);
 
 module.exports = _;

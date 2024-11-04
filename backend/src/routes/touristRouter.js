@@ -9,6 +9,7 @@ const { getItinerary, sortByPrice, search, filter } = require('../controllers/it
 const productController = require('../controllers/productController');
 const { getActivityCategory } = require('../controllers/activityCategoryController');
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
+const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
 
 _.post("/add", createTourist);
 _.get("/get",authenticate ,getTourists);
@@ -39,6 +40,11 @@ _.get('/sortActivityByRatings', activityController.sortactivitestsByRatings);
 _.get('/sortByPrice', sortByPrice);
 _.get('/itinerarySearch', search)
 _.get('/filterItinerary', filter);
+
+// Complaint routes
+_.post('/createComplaint', authenticate, createComplaint);
+_.get('/getComplaintById/:id', authenticate, getComplaintById);
+_.get('/getComplaints', authenticate, getComplaints);
 
 
 module.exports = _;
