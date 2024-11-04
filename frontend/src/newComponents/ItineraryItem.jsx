@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 
-const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries }) => {
+const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
 
   const convertDateToInputFormat = (dateString) => {
     const date = new Date(dateString);
@@ -207,7 +207,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries }) => {
           <p>Accessibility: {itinerary.accessibility.join(', ')}</p>
           <p>Pick-Up Location: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
           <p>Drop-Off Location: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
-          <div className="flex justify-between mt-2 h-6">  
+          {role === "tourGuide" &&<div className="flex justify-between mt-2 h-6">  
             <img
               onClick={() => handleDelete(itinerary._id)}
               src={assets.deleteIcon}
@@ -219,6 +219,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries }) => {
               className="w-6 h-6 cursor-pointer"
             />
           </div>
+          }
         </>
       )}
     </div>
