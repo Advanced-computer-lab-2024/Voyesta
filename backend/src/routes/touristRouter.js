@@ -8,7 +8,7 @@ const activityController = require('../controllers/activityController');
 const { getItinerary, sortByPrice, search, filter } = require('../controllers/itineraryController');
 const productController = require('../controllers/productController');
 const { getActivityCategory } = require('../controllers/activityCategoryController');
-const {TourGuideComments } = require('../controllers/tourGuideController');
+const {TourGuideComments,rateTourGuide } = require('../controllers/tourGuideController');
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
 
 _.post("/add", createTourist);
@@ -30,6 +30,8 @@ _.get('/getCategory', getActivityCategory)
 _.get('/getTags', getPreferenceTags)
 _.patch('/Comment/:id', authenticate, activityController.activityComments);
 _.patch('/tourGuideComment/:id', authenticate, TourGuideComments);
+_.patch('/tourGuideRate/:id', authenticate, rateTourGuide);
+
 // --------------- end working apis -----------------//
 
 
