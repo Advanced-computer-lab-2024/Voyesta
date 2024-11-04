@@ -1,10 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import ProfileView from "../../components/tourGuideComponents/TourGuideProfile";
-// import ItinerariesView from "../../components/tourGuideComponents/ItinerariesView";
-// import ActivitiesView from "../../components/tourGuideComponents/ActivitiesView";
-// import MuseumsView from "../../components/tourGuideComponents/MuseumsAndHistoricalPlacesSubNavbar";
 import NavBar from "../../components/NavBar";
+
 import ActivitiesView from "../../newComponents/ActivitiesView";
 import ItineraryView from "../../newComponents/ItineraryView";
 import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";

@@ -1,7 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import AdminListView from "../../components/adminListView";
-import AdminAccountManagementNavbar from "../../components/AdminAccountManagementNavbar";
+
+import AdminListView from "../../components/adminComponents/AdminListView";
+import AdminAccountManagementNavbar from "../../components/adminComponents/AdminAccountManagementNavbar";
 import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
 

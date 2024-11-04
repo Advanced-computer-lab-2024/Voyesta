@@ -1,7 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import SellerCreateProduct from '../../components/seller/SellerCreateProduct';
-import SellerProfile from '../../components/seller/SellerProfileMangement';
+
+import SellerCreateProduct from '../../components/sellerComponents/SellerCreateProduct';
+import SellerProfile from '../../components/sellerComponents/SellerProfileMangement';
 import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
 

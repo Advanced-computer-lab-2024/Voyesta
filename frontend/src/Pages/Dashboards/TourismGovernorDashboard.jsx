@@ -1,8 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// import CreatePlacesOfInterest from "../../components/CreatePlacesOfInterest";
-import TourismGovernorAccount from "../../components/EditPlacesOfInterest";
 import NavBar from "../../components/NavBar";
 import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";
 import CreateTag from "../../newComponents/CreateTag";
@@ -39,10 +37,11 @@ function TourismGovernorDashboard(){
           />
         }/>
         <Route path="/account-list" element={
-          <TourismGovernorAccount 
-            baseUrl="http://localhost:3000/api/tourismGoverner"
-            title = "Account list" 
-          />    
+          // <TourismGovernorAccount 
+          //   baseUrl="http://localhost:3000/api/tourismGoverner"
+          //   title = "Account list" 
+          // />  
+          <div>Account Managment</div>  
         }/>
 
       </Routes>       

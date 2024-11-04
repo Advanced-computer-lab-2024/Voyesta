@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ActivityProfile from '../../components/ActivityComponents/ActivityProfile';
+
 import AdvertiserProfile from '../../components/AdvertiserComponents/AvertiserProfie';
 import NavBar from '../../components/NavBar';
 import ActivitiesView from '../../newComponents/ActivitiesView';
