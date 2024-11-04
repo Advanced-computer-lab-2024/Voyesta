@@ -39,7 +39,7 @@ const CreateMuseumAndHistoricalPlace = (props) => {
       tags: tags.split(',').map(tag => tag.trim())
     };
 
-    axios.post("http://localhost:3000/api/tourismGovernor/addPlace", placeData, props.getAuthHeaders())
+    axios.post("http://localhost:3000/api/tourismGoverner/add", placeData, props.getAuthHeaders())
       .then(res => {
         console.log(res);
         setMessage("Place created successfully!");

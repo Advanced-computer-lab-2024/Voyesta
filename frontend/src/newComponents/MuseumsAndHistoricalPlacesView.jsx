@@ -9,7 +9,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [message, setMessage] = useState(null);
   const [activeTab, setActiveTab] = useState('viewPlaces');
-  const [selectedTags, setSelectedTags] = useState([]); // Ensure this is initialized as an array
+  const [selectedTags, setSelectedTags] = useState(''); // Initialize as a string
 
   useEffect(() => {
     fetchPlaces();
@@ -31,34 +31,52 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   };
 
   const applyTagFilter = () => {
+    console.log("applyTagFilter called"); // Debug log
     let filtered = [...places];
+    
+    console.log(Array.isArray(selectedTags));
+    console.log("selectedTags:", selectedTags); // Debug log
+    
+    // Convert selectedTags to an array if it's a string
+    const tagsArray = selectedTags.split(',').map(tag => tag.trim());
 
-    // Ensure selectedTags is an array
-    if (Array.isArray(selectedTags) && selectedTags.length > 0) {
-      filtered = filtered.filter(place =>
-        selectedTags.every(tag => place.tags.includes(tag))
-      );
-      console.log(selectedTags);
-      
+    // Check if "--All--" is selected or if selectedTags is empty
+    if (tagsArray.includes("--All--") || selectedTags.trim() === '') {
+      setFilteredPlaces(places);
+      return;
     }
 
+    // Ensure tagsArray is an array
+    if (tagsArray.length > 0) {
+      filtered = filtered.filter(place =>
+        tagsArray.every((tag) => {
+          return place.tags.includes(tag);
+        })
+      );
+      console.log(tagsArray);
+    }
+  
     setFilteredPlaces(filtered);
   };
 
   return (
     <div className="flex">
 
-      {/* Tag Filtering Section */}
-      <div className="w-1/5 p-4 bg-red-300">
-        <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter by Tags</h2>
-        <PreferencesFilter setSelectedPreferences={setSelectedTags} />
-        <button
-          onClick={applyTagFilter}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Apply Filters
-        </button>
-      </div>
+      {role === 'tourist' && (
+        <>
+            {/* Tag Filtering Section */}
+        <div className="w-1/5 p-4 bg-red-300">
+          <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter by Tags</h2>
+          <PreferencesFilter setSelectedPreferences={setSelectedTags} />
+          <button
+            onClick={applyTagFilter}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Apply Filters
+          </button>
+        </div>
+        </>
+      )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
         <h1 className="text-2xl text-gray-600 font-bold mb-3">Museums and Historical Places</h1>

@@ -5,10 +5,12 @@ import { Routes, Route } from "react-router-dom";
 import TourismGovernorAccount from "../../components/EditPlacesOfInterest";
 import NavBar from "../../components/NavBar";
 import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";
+import CreateTag from "../../newComponents/CreateTag";
 
 
 const navLinks = [
   { path: "/tourismGovernor/places-of-interest", label: "Create Places Of Interest" },
+  { path: "/tourismGovernor/create-tag", label: "Create Tag" },
   { path: "/tourismGovernor/account-list", label: "Account list" }
 ];
 
@@ -28,6 +30,12 @@ function TourismGovernorDashboard(){
           <MuseumsAndHistoricalPlacesView 
             baseUrl="http://localhost:3000/api/tourismGoverner"
             role="tourismGovernor"
+          />
+        }/>
+        <Route path="/create-tag" element={
+          <CreateTag
+            baseUrl="http://localhost:3000/api/tourismGoverner"
+            title = "Create Tag" 
           />
         }/>
         <Route path="/account-list" element={

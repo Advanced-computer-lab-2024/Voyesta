@@ -68,7 +68,8 @@ const ItineraryView = ({ baseUrl, role }) => {
 
   return (
     <div className="flex">
-      <div className="w-1/5 p-4 bg-red-300">
+      {role === 'tourist' && (
+        <div className="w-1/5 p-4 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
 
         <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} />
@@ -98,6 +99,7 @@ const ItineraryView = ({ baseUrl, role }) => {
           Apply Filters
         </button>
       </div>
+      )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
         <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Itineraries</h1>
