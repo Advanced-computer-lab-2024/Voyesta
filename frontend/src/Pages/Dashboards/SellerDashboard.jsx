@@ -38,7 +38,7 @@ function SellerDashboard(){
           <ProductsView role="sellerMyProducts" />
         }/>
         
-        <Route path="/my-profile" element={
+        <Route path="/profile" element={
           <SellerProfile
             baseUrl="http://localhost:3000/api/seller"
             title = "My Profile" 

@@ -15,6 +15,6 @@ const tourismGovernorSchema = new Schema({
     },
 }, { timestamps: true });
 
-const TourismGovernor = mongoose.model('TourismGovernor', tourismGovernorSchema);
+const TourismGovernor = mongoose.models.TourismGovernor || mongoose.model('TourismGovernor', tourismGovernorSchema);
 
 module.exports = TourismGovernor;

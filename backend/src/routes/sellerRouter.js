@@ -11,6 +11,7 @@ const {
     sortProductsByRatings,
     getMyProducts
 } = require('../controllers/productController');
+const { changePassword } = require('../controllers/accountController');
 
 
 
@@ -27,5 +28,7 @@ _.put('/updateProduct/:id', authenticate , updateProduct);
 _.get('/searchProductByName', searchProductByName);
 _.get('/filterProductsByPrice', filterProductsByPrice);
 _.get('/sortProductsByRatings', sortProductsByRatings);
+
+_.patch('/changePassword', authenticate, changePassword);
 
 module.exports = _;

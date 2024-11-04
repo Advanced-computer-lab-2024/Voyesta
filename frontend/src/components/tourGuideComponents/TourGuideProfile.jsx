@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ChangePassword from '../../newComponents/ChangePassword';
 
 const ProfileView = () => {
   const [activeTab, setActiveTab] = useState("viewProfile");
@@ -116,6 +117,12 @@ const ProfileView = () => {
         >
           Edit Profile
         </button> 
+        <button
+              className={`p-2 ${activeTab === 'changePassword' ? 'border-b-2 border-blue-500' : ''}`}
+              onClick={() => setActiveTab('changePassword')}
+            >
+              Change Password
+        </button>
         </>):
         <button
         className={`p-2 ${activeTab === "createAccount" ? "border-b-2 border-blue-500" : ""}`}
@@ -147,6 +154,10 @@ const ProfileView = () => {
             <p><strong>Previous Work:</strong> Loading...</p>
           </div>
         )
+      )}
+
+      {activeTab === 'changePassword' && (
+          <ChangePassword baseUrl='http://localhost:3000/api/tourGuide' />
       )}
 
       {activeTab === "editProfile" && (

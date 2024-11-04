@@ -12,6 +12,7 @@ const {TourGuideComments,rateTourGuide } = require('../controllers/tourGuideCont
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
 const { createBooking, getBookings, cancelBooking, payForBooking } = require('../controllers/bookingController');
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
+const { changePassword } = require('../controllers/accountController');
 
 _.post("/add", createTourist);
 _.get("/get", authenticate, getTourists);
@@ -59,5 +60,7 @@ _.patch('/redeemPoints', authenticate, redeemPoints); // Add this line
 _.post('/createComplaint', authenticate, createComplaint);
 _.get('/getComplaintById/:id', authenticate, getComplaintById);
 _.get('/getComplaints', authenticate, getComplaints);
+
+_.patch('/changePassword', authenticate, changePassword);
 
 module.exports = _;

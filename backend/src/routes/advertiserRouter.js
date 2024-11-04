@@ -7,6 +7,7 @@ const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } =
 const {createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser} =require("../controllers/activityController")
 const { getActivityCategory } = require("../controllers/activityCategoryController");
 const { getPreferenceTags } = require("../controllers/preferenceTagContoller");
+const { changePassword } = require('../controllers/accountController');
 
 
 _.post("/add", createAdvertiser);
@@ -22,5 +23,7 @@ _.delete("/deleteActivity/:id", authenticate, deleteActivity);
 
 _.get("/getActivityCategories", authenticate, getActivityCategory);
 _.get("/getPreferenceTags", authenticate, getPreferenceTags);
+
+_.patch('/changePassword', authenticate, changePassword);
 
 module.exports = _;

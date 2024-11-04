@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ChangePassword from '../../newComponents/ChangePassword';
 
 function AdminAccountManagement() {
   const [activeTab, setActiveTab] = useState("addTourismGovernor");
@@ -106,6 +107,12 @@ function AdminAccountManagement() {
         >
           Approve Account Deletion
         </button>
+        <button
+              className={`p-2 ${activeTab === 'changePassword' ? 'border-b-2 border-blue-500' : ''}`}
+              onClick={() => setActiveTab('changePassword')}
+            >
+              Change Password
+        </button>
       </div>
 
       {/* Form Display based on Active Tab */}
@@ -146,6 +153,10 @@ function AdminAccountManagement() {
             Add Tourism Governor
           </button>
         </form>
+      )}
+
+      {activeTab === 'changePassword' && (
+          <ChangePassword baseUrl={baseUrl} />
       )}
 
       {activeTab === "addAdmin" && (

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ChangePassword from '../../newComponents/ChangePassword';
 
 const ProfileView = () => {
   const [activeTab, setActiveTab] = useState("viewProfile"); // Default to "viewProfile"
@@ -109,12 +110,20 @@ const ProfileView = () => {
       <div className="bg-white shadow-md rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Profile</h1>
-          <button
-            onClick={() => setActiveTab(activeTab === "viewProfile" ? "editProfile" : "viewProfile")}
-            className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
-          >
-            {activeTab === "viewProfile" ? "Edit Profile" : "View Profile"}
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={() => setActiveTab(activeTab === "viewProfile" ? "editProfile" : "viewProfile")}
+              className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+            >
+              {activeTab === "viewProfile" ? "Edit Profile" : "View Profile"}
+            </button>
+            <button
+              onClick={() => setActiveTab("changePassword")}
+              className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+            >
+              Change Password
+            </button>
+          </div>
         </div>
         {message && (
           <p className={`${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
@@ -166,7 +175,7 @@ const ProfileView = () => {
               </form>
             </div>
           </div>
-        ) : (
+        ) : activeTab === "editProfile" ? (
           <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -250,6 +259,8 @@ const ProfileView = () => {
               Update Profile
             </button>
           </form>
+        ) : activeTab === 'changePassword' && (
+          <ChangePassword baseUrl='http://localhost:3000/api/tourist' />
         )}
       </div>
     </div>

@@ -17,6 +17,7 @@ const {
 } = require('../controllers/preferenceTagContoller');
 const productController = require('../controllers/productController');
 const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToComplaint } = require('../controllers/complaintController');
+const { changePassword } = require('../controllers/accountController');
 
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
@@ -61,5 +62,7 @@ _.get('/getComplaints', getComplaints);
 _.get('/getComplaintById/:id', getComplaintById);
 _.patch('/updateComplaintStatus/:id', updateComplaintStatus);
 _.patch('/replyToComplaint/:id', addReplyToComplaint);
+
+_.patch('/changePassword', authenticate, changePassword);
 
 module.exports = _;
