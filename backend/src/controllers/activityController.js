@@ -267,6 +267,24 @@ const filterTouristActivities = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving activities', error });
     }
 };
+const activityComments = async (req, res) => {
+    const { id } = req.params;
+    const { comment } = req.body;
+    try {
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+        activity.comments.push({
+            tourist: req.user.id,
+            comment
+        });
+        await activity.save();
+        res.status(200).json(activity);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
 
 
 
@@ -301,4 +319,4 @@ const search = async (req, res) => {
 
 
 
-module.exports = { getActivity, createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search }
+module.exports = { getActivity, createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search,activityComments }
