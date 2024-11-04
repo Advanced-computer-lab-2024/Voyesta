@@ -34,22 +34,30 @@ const touristSchema = new Schema({
     },
     Job: {
         type: String,
-        //enum: ['job', 'student'], // Limiting to specified values
         required: false,
     },
-    Wallet:{
-        type:Number,
-        required:false,
-        default:0 // Default value of wallet is 0
-      },
-      itinerary: [{ type: Schema.Types.ObjectId,
-        ref:'Itinerary',
-        required:false
-    }], // Array of itineraries
-      // otp will be added next sprint forget its here for now
+    Wallet: {
+        type: Number,
+        required: false,
+        default: 0 // Default value of wallet is 0
+    },
+    bookings: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Booking'
+    }],
+    level: {
+        type: Number,
+        default: 1 // Default level is 1
+    },
+    accumulatedPoints: {
+        type: Number,
+        default: 0 // Default accumulated points is 0
+    },
+    currentPoints: {
+        type: Number,
+        default: 0 // Default current points is 0
+    }
 }, { timestamps: true });
-
-
 
 // Age validation
 touristSchema.pre('save', function(next) {
@@ -58,14 +66,9 @@ touristSchema.pre('save', function(next) {
         if (age < 18) {
             return next(new Error('You must be at least 18 years old to register.'));
         }
-    } 
-    // else {
-    //     return next(new Error('Date of birth is required.'));
-    // }
+    }
     next();
 });
 
-
 const Tourist = mongoose.model('Tourist', touristSchema);
 module.exports = Tourist;
-

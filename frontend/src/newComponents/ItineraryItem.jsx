@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
+import BookingPopup from './BookingPopup';
 
 const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
 
@@ -24,6 +25,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
   const [dropOffLocation, setDropOffLocation] = useState(`${itinerary.dropOffLocation.lat}, ${itinerary.dropOffLocation.lng}`);
   const [bookingActive, setBookingActive] = useState(itinerary.bookingActive);
   const [inappropriate, setInappropriate] = useState(itinerary.inappropriate);
+  const [showPopup, setShowPopup] = useState(false);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -116,6 +118,19 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
       fetchItineraries();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleBooking = async (eventDate) => {
+    try {
+      const url = `${baseUrl}/BookEvent/${itinerary._id}`;
+      await axios.post(url, { bookableModel: 'Itinerary', eventDate }, getAuthHeaders());
+      alert('Booking successful!');
+      setShowPopup(false);
+      window.location.href = '/tourist/bookings';
+    } catch (error) {
+      console.error('Error booking itinerary:', error);
+      alert('Error booking itinerary.');
     }
   };
 
@@ -254,6 +269,20 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
             <button onClick={flagAsInappropriate} className="bg-red-500 text-white rounded-lg p-2 mt-4 hover:bg-red-700">
               Flag as Inappropriate
             </button>
+          )}
+          {role === 'tourist' && (
+            <>
+              <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Book Itinerary
+              </button>
+              {showPopup && (
+                <BookingPopup
+                  itinerary={itinerary}
+                  onClose={() => setShowPopup(false)}
+                  onBook={handleBooking}
+                />
+              )}
+            </>
           )}
         </>
       )}
