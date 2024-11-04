@@ -27,6 +27,11 @@ _.get('/getItinerary', getItinerary);
 _.get("/getPlaces", get);
 _.get('/getCategory', getActivityCategory)
 _.get('/getTags', getPreferenceTags)
+
+_.patch('/addRatings/:id',authenticate, activityController.rateActivity);
+
+_.patch('/ProductRatings/:id',authenticate, productController.rateProduct);
+_.patch('/ProductReview/:id',authenticate, productController.reviewProduct);
 // --------------- end working apis -----------------//
 
 
