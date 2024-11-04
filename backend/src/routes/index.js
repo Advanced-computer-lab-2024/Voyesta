@@ -13,9 +13,9 @@ const iteneraryRouter = require('./itineraryRouter');
 
 // POST route for creating a new tourism governor
 _.use('/admin', adminRouter);
+
 // adding products routes
 _.use('/product', productRouter)
-
 
 // adding Activity Category Router
 _.use('/activityCategory', activityCategoryRouter);

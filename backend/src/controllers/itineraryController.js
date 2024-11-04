@@ -3,6 +3,9 @@ const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
 const PreferenceTag = require('../Models/PreferenceTag');
 
+
+
+// Create an Itinerary
 const createItinerary = async (req, res) => {
     const { name, tourLanguage, tourPrice, availableDates, activityNames, durations,  accessibility, pickUpLocation, dropOffLocation } = req.body;
     const id = req.user.id;
@@ -29,6 +32,7 @@ const createItinerary = async (req, res) => {
             accessibility,
             pickUpLocation,
             dropOffLocation,
+            bookingActive: false,
             createdBy: id
         });
         await itinerary.save();
@@ -38,11 +42,12 @@ const createItinerary = async (req, res) => {
     }
 };
 
+// Get an Itinerary
 const getItinerary = async (req, res) => {
-    // const { id } = req.params;
+    const { id } = req.params;
 
     try {
-        const itinerary = await Itinerary.find().populate('activities tags');
+        const itinerary = await Itinerary.findById(id).populate('activities tags');
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
@@ -50,20 +55,28 @@ const getItinerary = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
 };
 
-// Get all Itineraries created by a Tour Guide
-const getAllItinerariesByGuide = async (req, res) => {
-    const guideId = req.user.id; // Assuming req.user contains the authenticated user's info
-    
+// Get all Itineraries based on user type
+const getItineraries = async (req, res) => {
+    const userId = req.user.id; // Assuming req.user contains the authenticated user's info
+    const userType = req.user.type; // Assuming req.user contains the user's type (e.g., 'tourGuide', 'tourist', or 'admin')
+
     try {
-        const itineraries = await Itinerary.find({ createdBy: guideId }).populate('activities tags');
+        let itineraries;
+        if (userType === 'tourGuide') {
+            itineraries = await Itinerary.find({ createdBy: userId }).populate('activities tags');
+        } else if (userType === 'tourist') {
+            itineraries = await Itinerary.find({ bookingActive: true, inappropriate: false }).populate('activities tags');
+        } else if (userType === 'admin') {
+            itineraries = await Itinerary.find().populate('activities tags');
+        } else {
+            return res.status(400).json({ error: 'Invalid user type' });
+        }
         res.status(200).json(itineraries);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
 };
 
 // update an Itinerary
@@ -98,6 +111,7 @@ const updateItinerary = async (req, res) => {
 const deleteItinerary = async (req, res) => {
     const { id } = req.params;
     const guideId = req.user.id;
+    
     try {
         const itinerary = await Itinerary.findOneAndDelete({ _id: id , createdBy: guideId });
         if (!itinerary) {
@@ -109,6 +123,50 @@ const deleteItinerary = async (req, res) => {
     }
 
 
+};
+
+// Update booking status
+const updateBookingStatus = async (req, res) => {
+    const { id } = req.params;
+    const { bookingActive } = req.body;
+
+    try {
+        const itinerary = await Itinerary.findById(id);
+        if (!itinerary) {
+            return res.status(404).json({ message: 'Itinerary not found' });
+        }
+
+        itinerary.bookingActive = bookingActive;
+        await itinerary.save();
+
+        res.status(200).json(itinerary);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Flag an Itinerary as Inappropriate
+const flagInappropriate = async (req, res) => {
+    const { id } = req.params;
+    const userType = req.user.type;
+
+    if (userType !== 'admin') {
+        return res.status(403).json({ error: 'Only admins can flag itineraries as inappropriate' });
+    }
+
+    try {
+        const itinerary = await Itinerary.findById(id);
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found' });
+        }
+
+        itinerary.inappropriate = true;
+        await itinerary.save();
+
+        res.status(200).json(itinerary);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };
 
 const sortByPrice = async (req, res) => {
@@ -153,8 +211,6 @@ const search = async (req, res) => {
     }
   };
   
-
-
 const filter = async (req, res) => {
     const { minPrice, maxPrice, startDate, endDate, preferences, languages } = req.query;
 
@@ -207,13 +263,17 @@ const filter = async (req, res) => {
     }
 };
 
+
+
 module.exports = {
     createItinerary,
     getItinerary,
-    getAllItinerariesByGuide,
+    getItineraries,
     updateItinerary,
     deleteItinerary,
+    updateBookingStatus,
     sortByPrice,
     search,
-    filter
+    filter,
+    flagInappropriate
 };

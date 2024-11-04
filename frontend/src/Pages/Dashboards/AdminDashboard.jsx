@@ -5,11 +5,13 @@ import AdminListView from "../../components/adminComponents/AdminListView";
 import AdminAccountManagementNavbar from "../../components/adminComponents/AdminAccountManagementNavbar";
 import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
+import ItineraryView from "../../newComponents/ItineraryView";
 
 const navLinks = [
   { path: "/admin/activity-category", label: "Activity Category" },
   { path: "/admin/preference-tag", label: "Preference Tag" },
   { path: "/admin/products", label: "Products" },
+  { path: "/admin/itineraries", label: "Itineraries" },
   { path: "/admin/account-management", label: "Account Management" }
 ];
 
@@ -34,6 +36,9 @@ function AdminDashboard(){
         />}/>
         <Route path="/products" element={
           <ProductsView role="admin" />
+        }/>
+        <Route path="/itineraries" element={
+          <ItineraryView baseUrl="http://localhost:3000/api/admin" role="admin" />
         }/>
         <Route path="/account-management" element={
           <AdminAccountManagementNavbar
