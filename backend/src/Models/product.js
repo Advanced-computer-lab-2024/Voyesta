@@ -21,20 +21,30 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ratings:
-        [
-            {
-            user: mongoose.Types.ObjectId,
-            rating: { type: Number, min: 0, max: 5 }
-        }
-    ],
-    reviews: [
-        {
-            user: mongoose.Types.ObjectId,
-            comment: String,
-            rating: { type: Number, min: 0, max: 5 }
-        }
-    ],
+    ratings:[{
+        tourist: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Tourist',
+          required: true
+        },
+        rating: {
+          type: Number,
+          required: true,
+          min:0,
+          max:5
+        }
+      }],
+    reviews:[{
+        tourist: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Tourist', 
+          required: true
+        },
+        review: {
+          type: String,
+          required: true
+        }
+      }],
     available_quantity: {
         type: Number,
         required: true // Assuming the picture is a URL

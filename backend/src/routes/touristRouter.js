@@ -32,6 +32,11 @@ _.patch('/Comment/:id', authenticate, activityController.activityComments);
 _.patch('/tourGuideComment/:id', authenticate, TourGuideComments);
 _.patch('/tourGuideRate/:id', authenticate, rateTourGuide);
 
+
+_.patch('/addRatings/:id',authenticate, activityController.rateActivity);
+
+_.patch('/ProductRatings/:id',authenticate, productController.rateProduct);
+_.patch('/ProductReview/:id',authenticate, productController.reviewProduct);
 // --------------- end working apis -----------------//
 
 
