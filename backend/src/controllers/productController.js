@@ -307,6 +307,49 @@ const getMinAndMaxPrices = async (req, res) => {
     }
 };
 
+const rateProduct = async (req, res) => {
+    const { id } = req.params;
+    const { rating } = req.body;
+    console.log(id);
+    try {
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        product.ratings.push({
+            tourist: req.user.id,
+            rating
+        });
+        await product.save();
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
 
 
-module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings, getMinAndMaxPrices, getMyProducts}
+
+const reviewProduct = async (req, res) => {
+    const { id } = req.params;
+    const { review } = req.body;
+    console.log(id);
+    try {
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        product.reviews.push({
+            tourist: req.user.id,
+            review
+        });
+        await product.save();
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+
+
+
+module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings, getMinAndMaxPrices, getMyProducts,rateProduct,reviewProduct}
