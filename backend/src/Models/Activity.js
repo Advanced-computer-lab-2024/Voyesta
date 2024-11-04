@@ -70,12 +70,19 @@ const activitySchema = new mongoose.Schema({
     ref: 'Advertiser',
     required: true
   },
-  rating: [{
-    type: Number,
-    min: 0,
-    max: 5,
-    default: 0
-  }]
+  ratings:[{
+    tourist: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tourist',
+      required: true
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min:0,
+      max:5
+    }
+  }],
 }, { timestamps: true });
 
 
