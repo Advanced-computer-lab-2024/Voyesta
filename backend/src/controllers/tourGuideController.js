@@ -77,6 +77,24 @@ const updateTourGuide = async (req, res) => {
 //         res.status(400).json({ error: error.message });
 //     }
 // };
+const TourGuideComments = async (req, res) => {
+    const { id } = req.params;
+    const { comment } = req.body;
+    try {
+        const tourGuide = await tourGuideModel.findById(id);
+        if (!tourGuide) {
+            return res.status(404).json({ error: 'tourGuide not found' });
+        }
+        tourGuide.comments.push({
+            tourist: req.user.id,
+            comment
+        });
+        await tourGuide.save();
+        res.status(200).json(tourGuide);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
 
 
-module.exports = { createTourGuide, getTourGuides, updateTourGuide  }; // Export the controller functions
+module.exports = { createTourGuide,TourGuideComments, getTourGuides, updateTourGuide  }; // Export the controller functions
