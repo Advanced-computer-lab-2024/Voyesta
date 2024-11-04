@@ -13,9 +13,9 @@ const iteneraryRouter = require('./itineraryRouter');
 
 // POST route for creating a new tourism governor
 _.use('/admin', adminRouter);
+
 // adding products routes
 _.use('/product', productRouter)
-
 
 // adding Activity Category Router
 _.use('/activityCategory', activityCategoryRouter);
@@ -37,6 +37,7 @@ const userGuestRouter = require("./userGuestRouter");
 const museumsHistoricalPlacesRouter = require("./museumsHistoricalPlacesRouter");
 const categoryRouter = require("./activityCategoryRouter");
 const authenticate = require('../middleware/authenticate');
+const bookingRouter = require('./bookingRouter');
 
 _.use("/advertiser",  advertiserRouter);
 _.use("/seller",  sellerRouter);
@@ -48,6 +49,7 @@ _.use("/guest",  userGuestRouter);
 _.use('/itinerary', iteneraryRouter);
 _.use('/category', categoryRouter);
 _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
+_.use('/bookings', bookingRouter);
 
 _.get("/user",authenticate,  (req, res) => {
     res.status(200).json({
@@ -61,4 +63,3 @@ _.post("/login",  login.Login);
 
 
 module.exports = _;
-

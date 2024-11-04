@@ -1,6 +1,7 @@
 const express = require('express');
 const _ = express.Router();
 const adminController = require('../controllers/adminController');
+const authenticate = require("../middleware/authenticate");
 
 const {
     createActivityCategory, 
@@ -17,6 +18,9 @@ const {
 const productController = require('../controllers/productController');
 const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToComplaint } = require('../controllers/complaintController');
 const authenticate = require('../middleware/authenticate');
+
+const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
+
 
 // ------------- Not testedd ---------------
 _.post('/createTourismGoverner', adminController.createTourismGovernor);
@@ -46,6 +50,11 @@ _.get('/searchProducts', productController.searchProductByName);
 _.get('/filterProductsByPrice', productController.filterProductsByPrice);
 _.get('/sortProductsByRatings', productController.sortProductsByRatings);
 _.get('/getProductsMinAndMax', productController.getMinAndMaxPrices);
+
+
+// ------------ Itineraries ---------------- //
+_.get('/getItinerary', authenticate, getItineraries);
+_.patch('/flagInappropriate/:id', authenticate, flagInappropriate);
 
 
 _.get('/getComplaints', getComplaints);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
+import BookingPopup from './BookingPopup';
 
 const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
 
@@ -22,6 +23,9 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
   const [accessibility, setAccessibility] = useState(itinerary.accessibility.join(', '));
   const [pickUpLocation, setPickUpLocation] = useState(`${itinerary.pickUpLocation.lat}, ${itinerary.pickUpLocation.lng}`);
   const [dropOffLocation, setDropOffLocation] = useState(`${itinerary.dropOffLocation.lat}, ${itinerary.dropOffLocation.lng}`);
+  const [bookingActive, setBookingActive] = useState(itinerary.bookingActive);
+  const [inappropriate, setInappropriate] = useState(itinerary.inappropriate);
+  const [showPopup, setShowPopup] = useState(false);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -93,6 +97,41 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
+  };
+
+  const toggleBookingStatus = async () => {
+    try {
+      const url = `${baseUrl}/itineraries/${itinerary._id}/booking-status`;
+      await axios.patch(url, { bookingActive: !bookingActive }, getAuthHeaders());
+      setBookingActive(!bookingActive);
+      fetchItineraries();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const flagAsInappropriate = async () => {
+    try {
+      const url = `${baseUrl}/flagInappropriate/${itinerary._id}`;
+      await axios.patch(url, {}, getAuthHeaders());
+      setInappropriate(true);
+      fetchItineraries();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleBooking = async (eventDate) => {
+    try {
+      const url = `${baseUrl}/BookEvent/${itinerary._id}`;
+      await axios.post(url, { bookableModel: 'Itinerary', eventDate }, getAuthHeaders());
+      alert('Booking successful!');
+      setShowPopup(false);
+      window.location.href = '/tourist/bookings';
+    } catch (error) {
+      console.error('Error booking itinerary:', error);
+      alert('Error booking itinerary.');
+    }
   };
 
   return (
@@ -207,19 +246,44 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
           <p>Accessibility: {itinerary.accessibility.join(', ')}</p>
           <p>Pick-Up Location: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
           <p>Drop-Off Location: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
-          {role === "tourGuide" &&<div className="flex justify-between mt-2 h-6">  
+          <p>Status: {bookingActive ? "Active" : "Inactive"}</p>
+          {role === ("admin" || "tourGuide") && <p>Inappropriate: {inappropriate ? "Yes" : "No"}</p>}
+          {role === "tourGuide" &&<div className="flex justify-between mt-2 ">  
             <img
               onClick={() => handleDelete(itinerary._id)}
               src={assets.deleteIcon}
               className="w-6 h-6 cursor-pointer"
             />
+            <button onClick={toggleBookingStatus} className={`${bookingActive ? "bg-red-500" : "bg-blue-500"} text-white rounded-lg p-2 mt-4 hover:${bookingActive ? "bg-red-700" : "bg-blue-700"}`}>
+              {bookingActive ? "Disable Booking" : "Enable Booking"}
+            </button>
             <img
               onClick={handleEdit}
               src={assets.editIcon}
               className="w-6 h-6 cursor-pointer"
             />
+            
           </div>
           }
+          {role === 'admin' && !inappropriate && (
+            <button onClick={flagAsInappropriate} className="bg-red-500 text-white rounded-lg p-2 mt-4 hover:bg-red-700">
+              Flag as Inappropriate
+            </button>
+          )}
+          {role === 'tourist' && (
+            <>
+              <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Book Itinerary
+              </button>
+              {showPopup && (
+                <BookingPopup
+                  itinerary={itinerary}
+                  onClose={() => setShowPopup(false)}
+                  onBook={handleBooking}
+                />
+              )}
+            </>
+          )}
         </>
       )}
     </div>

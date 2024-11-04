@@ -7,6 +7,7 @@ import ProductsView from "../../newComponents/ProuductView";
 import ActivitiesView from '../../newComponents/ActivitiesView';
 import ItineraryView from "../../newComponents/ItineraryView";
 import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";
+import BookingsPage from "../../newComponents/BookingPage";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 
 const navLinks = [
@@ -16,7 +17,8 @@ const navLinks = [
   { path: "/tourist/activities", label: "Activities" },
   { path: "/tourist/itineraries", label: "Itineraries" },
   { path: "/tourist/complaints", label: "Complaints" },
-  { path: "/tourist/museums", label: "Museums" }
+  { path: "/tourist/museums", label: "Museums" },
+  { path: "/tourist/bookings", label: "Bookings" }
 ];
 
 function TouristDashboard(){
@@ -42,6 +44,9 @@ function TouristDashboard(){
         <Route path="/museums" element={
           // <MuseumsAndHistoricalPlaceCard />
           <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+        }/>
+        <Route path="/bookings" element={
+          <BookingsPage baseUrl="http://localhost:3000/api/tourist" />
         }/>
     </Routes>       
     </div>

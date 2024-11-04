@@ -71,6 +71,15 @@ const itinerarySchema = new Schema({
             required: true
         }
     },
+    bookingActive: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    inappropriate: {
+        type: Boolean,
+        default: false,
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref : 'TourGuide', // User/guide who created the itinerary

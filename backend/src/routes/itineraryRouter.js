@@ -4,7 +4,7 @@ const {
     getItinerary, 
     updateItinerary, 
     deleteItinerary,
-    getAllItinerariesByGuide,
+    getItineraries,
     sortByPrice,
     search,
     filter
@@ -14,7 +14,7 @@ let _ = express.Router();
 
 _.post('/add', createItinerary);
 _.get('/get/:id', getItinerary);
-_.get('/getByGuide', getAllItinerariesByGuide);
+_.get('/getByGuide', getItineraries);
 _.delete('/delete/:id', deleteItinerary);
 _.patch('/update/:id', updateItinerary);
 _.get('/sortByPrice', sortByPrice);
