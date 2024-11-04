@@ -28,7 +28,7 @@ _.post('/createItinerary', authenticate, createItinerary);
 _.get('/getItinerary/:id', getItinerary);
 _.get('/getItinerary', authenticate,getAllItinerariesByGuide);
 _.delete('/deleteItinerary/:id', authenticate,deleteItinerary);
-_.patch('/updateItinerary/:id', authenticate,updateItinerary);
+_.put('/updateItinerary/:id', authenticate,updateItinerary);
 
 //----------------Activities------------------
 _.get('/getActivity', getActivity);

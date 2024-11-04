@@ -126,7 +126,7 @@ const ItineraryView = ({ baseUrl, role }) => {
             )}
 
             {activeTab === 'createItinerary' && (
-              <CreateItinerary getAuthHeaders={getAuthHeaders} />
+              <CreateItinerary />
             )}
           </>
         )}

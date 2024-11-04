@@ -7,52 +7,69 @@ const itinerarySchema = new Schema({
         required: true,
         trim: true, // Name of the itinerary
     },
-    startDate: {
+    availableDates: [{
         type: Date,
         required: true, // The start date of the itinerary
-    },
-    endDate: {
-        type: Date,
-        required: true, // The end date of the itinerary
-    },
+    }],
     activities: [{
         type: Schema.Types.ObjectId,
         ref: 'Activity', // Reference to Activity model
         required: true
     }],
-    description: {
-        type: String,
-        required: false,
-        trim: true, // Optional description of the itinerary
-    },
     tags: [{
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag',
         required: true
     }],
-    locations: {
-        type: [String], 
-        required: true,
-    },
+    locations: [{
+        lat: {
+            type: Number,
+            required: true
+        },
+        lng: {
+            type: Number,
+            required: true
+        }
+    }],
+    timeline: [{
+        type: String,
+        required: true
+    }],
+    durations: [{
+        type: Number,
+        required: true
+    }],
     tourLanguage: {
-        type: [String], 
+        type: String, 
         required: true,
     },
     tourPrice: {
         type: Number, 
         required: true,
     },
-    avdatesandtimes: {
-        type: [Date], 
+    accessibility:[{
+        type: String, 
         required: true,
+    }],
+    pickUpLocation: {
+        lat: {
+            type: Number,
+            required: true
+        },
+        lng: {
+            type: Number,
+            required: true
+        }
     },
-    accesibility: {
-        type: [String], 
-        required: true,
-    },
-    pickdropofflocation: {
-        type: [String], 
-        required: true,
+    dropOffLocation: {
+        lat: {
+            type: Number,
+            required: true
+        },
+        lng: {
+            type: Number,
+            required: true
+        }
     },
     createdBy: {
         type: Schema.Types.ObjectId,

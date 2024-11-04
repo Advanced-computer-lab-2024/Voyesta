@@ -1,36 +1,42 @@
 const Itinerary = require('../Models/Itinerary');
+const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
 const PreferenceTag = require('../Models/PreferenceTag');
 
-
 const createItinerary = async (req, res) => {
-    const { name, description, tags, tourLanguage, tourPrice, startDate, endDate, availableDatesAndTimes, locations, activities, accessibility, pickUpLocation, dropOffLocation } = req.body;
+    const { name, tourLanguage, tourPrice, availableDates, activityNames, durations,  accessibility, pickUpLocation, dropOffLocation } = req.body;
     const id = req.user.id;
     try {
+        // Fetch activities based on activity names
+        const activities = await Activity.find({ name: { $in: activityNames } });
+
+        // Extract activity IDs, tags, locations, and timeline
+        const activityIds = activities.map(activity => activity._id);
+        const tags = [...new Set(activities.flatMap(activity => activity.tags))]; // Unique tags
+        const locations = activities.map(activity => activity.location);
+        const timeline = activities.map(activity => activity.time);
+
         const itinerary = new Itinerary({
             name,
-            description,
             tags,
             tourLanguage,
             tourPrice,
-            startDate,
-            endDate,
-            availableDatesAndTimes,
-            activities,
+            availableDates,
+            activities: activityIds,
             locations,
+            timeline,
+            durations,
             accessibility,
             pickUpLocation,
             dropOffLocation,
             createdBy: id
         });
-
         await itinerary.save();
         res.status(201).json(itinerary);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-
 
 const getItinerary = async (req, res) => {
     // const { id } = req.params;
@@ -52,7 +58,7 @@ const getAllItinerariesByGuide = async (req, res) => {
     const guideId = req.user.id; // Assuming req.user contains the authenticated user's info
     
     try {
-        const itineraries = await Itinerary.find({ createdBy: guideId });
+        const itineraries = await Itinerary.find({ createdBy: guideId }).populate('activities tags');
         res.status(200).json(itineraries);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -64,7 +70,7 @@ const getAllItinerariesByGuide = async (req, res) => {
 const updateItinerary = async (req, res) => {
     const { id } = req.params;
     const guideId = req.user.id;
-    const updates= req.body;
+    const updates = req.body;
 
     try {
         const itinerary = await Itinerary.findOne({ _id: id, createdBy: guideId });
@@ -72,14 +78,20 @@ const updateItinerary = async (req, res) => {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
 
+        // Fetch new activity IDs and tags based on activity names
+        if (updates.activities) {
+            const activities = await Activity.find({ name: { $in: updates.activities } });
+            updates.activities = activities.map(activity => activity._id);
+            updates.tags = [...new Set(activities.flatMap(activity => activity.tags))]; // Unique tags
+        }
+
+        // Directly apply updates
         Object.assign(itinerary, updates);
         await itinerary.save();
         res.status(200).json(itinerary);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
-
 };
 
 // Delete an Itinerary
@@ -195,7 +207,13 @@ const filter = async (req, res) => {
     }
 };
 
-
-
-
-module.exports = { createItinerary, getItinerary, getAllItinerariesByGuide, updateItinerary, deleteItinerary, sortByPrice, search, filter }
+module.exports = {
+    createItinerary,
+    getItinerary,
+    getAllItinerariesByGuide,
+    updateItinerary,
+    deleteItinerary,
+    sortByPrice,
+    search,
+    filter
+};
