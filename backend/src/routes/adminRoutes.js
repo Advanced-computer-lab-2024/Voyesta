@@ -17,7 +17,7 @@ const {
 } = require('../controllers/preferenceTagContoller');
 const productController = require('../controllers/productController');
 const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToComplaint } = require('../controllers/complaintController');
-const authenticate = require('../middleware/authenticate');
+
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
 
