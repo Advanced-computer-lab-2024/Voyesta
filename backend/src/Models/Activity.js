@@ -1,3 +1,5 @@
+const { text } = require('body-parser');
+
 mongoose = require('mongoose');
 const { Schema } = mongoose;
 
@@ -70,12 +72,30 @@ const activitySchema = new mongoose.Schema({
     ref: 'Advertiser',
     required: true
   },
-  rating: [{
-    type: Number,
-    min: 0,
-    max: 5,
-    default: 0
-  }]
+  ratings:[{
+    tourist: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tourist',
+      required: true
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min:0,
+      max:5
+    }
+  }],
+  comments:[{
+    tourist: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tourist',
+      required: true
+    },
+    comment: {
+      type: String,
+      required: true
+    }
+  }],
 }, { timestamps: true });
 
 

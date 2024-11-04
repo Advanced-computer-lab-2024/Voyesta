@@ -35,7 +35,31 @@ const tourGuideSchema = new Schema({
   otp: {
     type: String,
     required: false,
-  }
+  },
+  comments:[{
+    tourist: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tourist',
+      required: true
+    },
+    comment: {
+      type: String,
+      required: true
+    }
+  }],
+  ratings:[{
+    tourist: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tourist',
+      required: true
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min:0,
+      max:5
+    }
+  }]
 }, { timestamps: true });
 
 const TourGuide = mongoose.model('TourGuide', tourGuideSchema);

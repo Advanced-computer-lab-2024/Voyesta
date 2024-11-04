@@ -8,6 +8,7 @@ const activityController = require('../controllers/activityController');
 const { getItineraries, sortByPrice, search, filter } = require('../controllers/itineraryController');
 const productController = require('../controllers/productController');
 const { getActivityCategory } = require('../controllers/activityCategoryController');
+const {TourGuideComments,rateTourGuide } = require('../controllers/tourGuideController');
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
 const { createBooking, getBookings, cancelBooking, payForBooking } = require('../controllers/bookingController');
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
@@ -25,6 +26,15 @@ _.get('/getItinerary', authenticate, getItineraries);
 _.get("/getPlaces", authenticate, get);
 _.get('/getCategory', authenticate, getActivityCategory)
 _.get('/getTags', authenticate, getPreferenceTags)
+_.patch('/Comment/:id', authenticate, activityController.activityComments);
+_.patch('/tourGuideComment/:id', authenticate, TourGuideComments);
+_.patch('/tourGuideRate/:id', authenticate, rateTourGuide);
+
+
+_.patch('/addRatings/:id',authenticate, activityController.rateActivity);
+
+_.patch('/ProductRatings/:id',authenticate, productController.rateProduct);
+_.patch('/ProductReview/:id',authenticate, productController.reviewProduct);
 // --------------- end working apis -----------------//
 
 // -----------------New APIs --------------------- //
