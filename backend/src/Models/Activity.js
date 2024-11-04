@@ -1,3 +1,5 @@
+const { text } = require('body-parser');
+
 mongoose = require('mongoose');
 const { Schema } = mongoose;
 
@@ -75,7 +77,18 @@ const activitySchema = new mongoose.Schema({
     min: 0,
     max: 5,
     default: 0
-  }]
+  }],
+  comments:[{
+    tourist: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tourist',
+      required: true
+    },
+    comment: {
+      type: String,
+      required: true
+    }
+  }],
 }, { timestamps: true });
 
 
