@@ -4,7 +4,7 @@ const { createSeller, getSeller, updateSeller, deleteSeller } = require("../cont
 const authenticate = require("../middleware/authenticate");
 const {
     addProduct,             
-    //getAllProducts
+    getProducts,
     updateProduct,
     searchProductByName,
     filterProductsByPrice,
@@ -22,7 +22,7 @@ _.delete("/delete", authenticate, deleteSeller);
 
 //------------------Products--------------------
 _.post('/createProduct', authenticate ,addProduct);
-//_.get('/getAllProducts', getAllProducts);
+_.get('/getAllProducts', getProducts);
 //_.get('/getMyProducts', authenticate ,getMyProducts);
 _.put('/updateProduct/:id', authenticate , updateProduct);
 _.get('/searchProductByName', searchProductByName);

@@ -6,6 +6,8 @@ const Activity = require('../Models/Activity');
 
 const {generateToken} = require('../utils/jwt');
 const amadeus = require('../utils/amadeusClient');
+const handleAmadeusError = require('../utils/amadeusClient'); // Import the error handler
+
 
 
 
@@ -203,10 +205,32 @@ const searchFlights = async (req, res) => {
         res.status(200).json(response.data);
     } catch (error) {
         console.error("Error searching for flights:", error);
-        res.status(500).json({ error: error.message });
+        const { status, message } = handleAmadeusError(error);
+        res.status(status).json({ error: message });
+    }
+};
+
+
+// Search for hotels
+const searchHotels = async (req, res) => {
+    const { cityCode, checkInDate, checkOutDate, adults } = req.query;
+
+    try {
+        const response = await amadeus.shopping.hotelOffers.get({
+            cityCode,
+            checkInDate,
+            checkOutDate,
+            adults
+        });
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Error searching for flights:", error);
+        const { status, message } = handleAmadeusError(error);
+        res.status(status).json({ error: message });
     }
 };
 
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints}; // Export the controller functions
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotels}; // Export the controller functions
