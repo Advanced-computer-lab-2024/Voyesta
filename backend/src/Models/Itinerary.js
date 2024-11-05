@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-// const activitySchema = require('./Activity');
+
 const itinerarySchema = new Schema({
     name: {
         type: String,
@@ -85,8 +85,32 @@ const itinerarySchema = new Schema({
         ref : 'TourGuide', // User/guide who created the itinerary
         required: false,
     },
+    ratings: [{
+        tourist: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tourist',
+            required: true
+        },
+        rating: {
+            type: Number,
+            required: true,
+            min: 0,
+            max: 5
+        }
+    }],
+    comments: [{
+        tourist: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tourist',
+            required: true
+        },
+        comment: {
+            type: String,
+            required: true
+        }
+    }]
     
 }, { timestamps: true });
 
-const itineraryModel = mongoose.model('Itinerary', itinerarySchema);
-module.exports = itineraryModel;
+const Itinerary = mongoose.model('Itinerary', itinerarySchema);
+module.exports = Itinerary;

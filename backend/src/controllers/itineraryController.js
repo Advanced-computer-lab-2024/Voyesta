@@ -270,7 +270,75 @@ const filter = async (req, res) => {
     }
 };
 
-
+// Add a rating to an itinerary
+const addItineraryRating = async (req, res) => {
+    const { id } = req.params;
+    const { rating } = req.body;
+    const touristId = req.user.id;
+  
+    try {
+      const itinerary = await Itinerary.findById(id);
+      if (!itinerary) {
+        return res.status(404).json({ error: 'Itinerary not found' });
+      }
+  
+      const existingRating = itinerary.ratings.find(r => r.tourist.toString() === touristId);
+      if (existingRating) {
+        return res.status(400).json({ error: 'You have already rated this itinerary' });
+      }
+  
+      itinerary.ratings.push({ tourist: touristId, rating });
+      await itinerary.save();
+      res.status(200).json({ message: 'Rating added successfully', itinerary });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+  
+  // Add a comment to an itinerary
+  const addItineraryComment = async (req, res) => {
+    const { id } = req.params;
+    const { comment } = req.body;
+    const touristId = req.user.id;
+  
+    try {
+      const itinerary = await Itinerary.findById(id);
+      if (!itinerary) {
+        return res.status(404).json({ error: 'Itinerary not found' });
+      }
+  
+      const existingComment = itinerary.comments.find(c => c.tourist.toString() === touristId);
+      if (existingComment) {
+        return res.status(400).json({ error: 'You have already commented on this itinerary' });
+      }
+  
+      itinerary.comments.push({ tourist: touristId, comment });
+      await itinerary.save();
+      res.status(200).json({ message: 'Comment added successfully', itinerary });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+  
+// Check if a tourist has already rated or commented on an itinerary
+const checkItineraryRatingAndComment = async (req, res) => {
+    const { id } = req.params;
+    const touristId = req.user.id;
+  
+    try {
+      const itinerary = await Itinerary.findById(id);
+      if (!itinerary) {
+        return res.status(404).json({ error: 'Itinerary not found' });
+      }
+  
+      const hasRated = itinerary.ratings.some(r => r.tourist.toString() === touristId);
+      const hasCommented = itinerary.comments.some(c => c.tourist.toString() === touristId);
+  
+      res.status(200).json({ hasRated, hasCommented });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 
 module.exports = {
     createItinerary,
@@ -282,5 +350,8 @@ module.exports = {
     sortByPrice,
     search,
     filter,
-    flagInappropriate
+    flagInappropriate,
+    addItineraryRating,
+    addItineraryComment,
+    checkItineraryRatingAndComment
 };

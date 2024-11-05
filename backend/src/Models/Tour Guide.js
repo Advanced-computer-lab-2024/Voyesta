@@ -42,6 +42,11 @@ const tourGuideSchema = new Schema({
       ref: 'Tourist',
       required: true
     },
+    itineraryId :{
+      type: Schema.Types.ObjectId,
+      ref: 'Itinerary',
+      required: true
+    },
     comment: {
       type: String,
       required: true
@@ -53,12 +58,17 @@ const tourGuideSchema = new Schema({
       ref: 'Tourist',
       required: true
     },
+    itineraryId :{
+      type: Schema.Types.ObjectId,
+      ref: 'Itinerary',
+      required: true
+    },
     rating: {
       type: Number,
       required: true,
       min:0,
       max:5
-    }
+    },
   }]
 }, { timestamps: true });
 

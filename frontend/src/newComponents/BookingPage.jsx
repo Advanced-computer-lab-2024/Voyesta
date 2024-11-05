@@ -1,9 +1,11 @@
 // frontend/src/pages/BookingsPage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import EventCard from '../newComponents/EventCard';
 
 const BookingsPage = ({ baseUrl }) => {
   const [bookings, setBookings] = useState([]);
+  const [activeTab, setActiveTab] = useState('upcoming');
 
   useEffect(() => {
     fetchBookings();
@@ -52,25 +54,58 @@ const BookingsPage = ({ baseUrl }) => {
     }
   };
 
+  const upcomingBookings = bookings.filter(booking => new Date(booking.eventDate) >= new Date());
+  const attendedBookings = bookings.filter(booking => new Date(booking.eventDate) < new Date());
+
   return (
     <div className="p-4">
       <h1 className="text-2xl mb-4">My Bookings</h1>
-      {bookings.length === 0 ? (
-        <p>No bookings found.</p>
+      <div className="flex mb-4">
+        <button
+          className={`p-2 ${activeTab === 'upcoming' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('upcoming')}
+        >
+          Upcoming Events
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'attended' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('attended')}
+        >
+          Attended Events
+        </button>
+      </div>
+      {activeTab === 'upcoming' ? (
+        <div>
+          {upcomingBookings.length === 0 ? (
+            <p>No upcoming bookings found.</p>
+          ) : (
+            upcomingBookings.map((booking) => (
+              <EventCard
+                key={booking._id}
+                booking={booking}
+                baseUrl={baseUrl}
+                handlePayment={handlePayment}
+                handleCancel={handleCancel}
+              />
+            ))
+          )}
+        </div>
       ) : (
-        bookings.map((booking) => (
-          <div key={booking._id} className="bg-gray-100 p-4 rounded shadow-md mb-2">
-            <p>Booking ID: {booking._id}</p>
-            <p>Event Date: {new Date(booking.eventDate).toLocaleDateString()}</p>
-            <p>Status: {booking.status}</p>
-            <button onClick={() => handlePayment(booking._id)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-              Pay Now
-            </button>
-            <button onClick={() => handleCancel(booking._id)} className="bg-red-500 text-white rounded-lg p-2 mt-4 hover:bg-red-700">
-              Cancel Booking
-            </button>
-          </div>
-        ))
+        <div>
+          {attendedBookings.length === 0 ? (
+            <p>No attended bookings found.</p>
+          ) : (
+            attendedBookings.map((booking) => (
+              <EventCard
+                key={booking._id}
+                booking={booking}
+                baseUrl={baseUrl}
+                handlePayment={handlePayment}
+                handleCancel={handleCancel}
+              />
+            ))
+          )}
+        </div>
       )}
     </div>
   );
