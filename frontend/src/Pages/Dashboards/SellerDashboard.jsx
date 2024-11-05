@@ -5,13 +5,15 @@ import SellerCreateProduct from '../../components/sellerComponents/SellerCreateP
 import SellerProfile from '../../components/sellerComponents/SellerProfileMangement';
 import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
+import ProductSalesView from "../../newComponents/ProductSalesView";
 
 
 const navLinks = [
   { path: "/seller/", label: "Home" },
   { path: "/seller/create-product", label: "Create Product" },
-  { path: "/seller/view-products", label: "View Products" },
-  { path: "/seller/view-my-products", label: "View My Products" },
+  { path: "/seller/view-products", label: "All Products" },
+  { path: "/seller/view-my-products", label: "My Products" },
+  { path: "/seller/sales", label: "Sales" },
   { path: "/seller/profile", label: "Profile" }
 ];
 
@@ -36,6 +38,10 @@ function SellerDashboard(){
         
         <Route path="/view-my-products" element={
           <ProductsView role="sellerMyProducts" />
+        }/>
+
+        <Route path="/sales" element={
+          <ProductSalesView userType="seller" />
         }/>
         
         <Route path="/profile" element={

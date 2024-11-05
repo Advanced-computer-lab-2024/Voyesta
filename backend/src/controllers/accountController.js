@@ -1,7 +1,7 @@
 const Tourist = require('../Models/Tourist');
 const TourGuide = require('../Models/Tour Guide');
 const Advertiser = require('../Models/Advertiser');
-const TourismGovernor = require('../Models/TourismGovernor');
+const TourismGovernor = require('../Models/tourismGovernor');
 const Admin = require('../Models/Admin');
 const Seller = require('../Models/Seller');
 const Activity = require('../Models/Activity');

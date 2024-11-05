@@ -38,6 +38,8 @@ const museumsHistoricalPlacesRouter = require("./museumsHistoricalPlacesRouter")
 const categoryRouter = require("./activityCategoryRouter");
 const authenticate = require('../middleware/authenticate');
 const bookingRouter = require('./bookingRouter');
+const purchaseRouter = require('./purchaseRouter');
+
 
 _.use("/advertiser",  advertiserRouter);
 _.use("/seller",  sellerRouter);
@@ -50,6 +52,8 @@ _.use('/itinerary', iteneraryRouter);
 _.use('/category', categoryRouter);
 _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 _.use('/bookings', bookingRouter);
+_.use('/purchase', purchaseRouter);
+
 
 _.get("/user",authenticate,  (req, res) => {
     res.status(200).json({

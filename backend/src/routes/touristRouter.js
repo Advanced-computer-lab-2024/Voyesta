@@ -19,7 +19,7 @@ _.get("/get", authenticate, getTourists);
 _.put("/update", authenticate, updateTourist);
 _.delete("/delete", authenticate, deleteTourist);
 
-_.get('/getProducts', productController.getAllProducts);
+_.get('/getProducts', authenticate, productController.getProducts);
 _.get('/getActivity', activityController.getActivity);
 _.get('/getItinerary', authenticate, itineraryController.getItineraries);
 _.get("/getPlaces", authenticate, get);
@@ -35,8 +35,8 @@ _.patch('/activityRate/:id', authenticate, activityController.addRating);
 _.patch('/itineraryRate/:id', authenticate, itineraryController.addItineraryRating);
 _.patch('/itineraryComment/:id', authenticate, itineraryController.addItineraryComment);
 
-_.patch('/ProductRatings/:id', authenticate, productController.rateProduct);
-_.patch('/ProductReview/:id', authenticate, productController.reviewProduct);
+_.patch('/productRate/:id', authenticate, productController.rateProduct);
+_.patch('/productReview/:id', authenticate, productController.reviewProduct);
 
 _.get('/checkActivityRatingAndComment/:id', authenticate, activityController.checkActivityRatingAndComment);
 _.get('/checkItineraryRatingAndComment/:id', authenticate, itineraryController.checkItineraryRatingAndComment);

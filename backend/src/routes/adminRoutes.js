@@ -42,14 +42,18 @@ _.put('/updatePrefernceTag', updatePreferenceTag);
 _.delete('/deletePrefernceTag',deletePreferenceTag);
 
 // ------------ Products ---------------- //
-_.get('/getProducts', productController.getAllProducts);
-_.get('/getMyProducts', productController.getMyProducts);
+_.get('/getProducts', authenticate, productController.getProducts);
+// _.get('/getMyProducts', productController.getMyProducts);
 _.post('/addProduct', productController.addProduct);
 _.put('/updateProduct/:id', productController.updateProduct);
 _.get('/searchProducts', productController.searchProductByName);
 _.get('/filterProductsByPrice', productController.filterProductsByPrice);
 _.get('/sortProductsByRatings', productController.sortProductsByRatings);
 _.get('/getProductsMinAndMax', productController.getMinAndMaxPrices);
+_.patch('/archiveProduct/:id', authenticate, productController.archiveProduct);
+_.patch('/unarchiveProduct/:id', authenticate, productController.unarchiveProduct);
+_.get('/getProductsSales', authenticate, productController.getProductSales);
+
 
 
 // ------------ Itineraries ---------------- //
