@@ -133,11 +133,11 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
 
   const handleBooking = async (eventDate) => {
     try {
-      const url = `${baseUrl}/bookings/create/${activity._id}`;
+      const url = `${baseUrl}/bookEvent/${activity._id}`;
       await axios.post(url, { bookableModel: 'Activity', eventDate }, getAuthHeaders());
       alert('Booking successful!');
       setShowPopup(false);
-      navigate('/bookings');
+      navigate('/tourist/bookings');
     } catch (error) {
       console.error('Error booking activity:', error);
       alert('Error booking activity.');
