@@ -10,6 +10,7 @@ import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistor
 import BookingsPage from "../../newComponents/BookingPage";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import TouristPurchasesView from "../../newComponents/TouristPurchaseView";
+import BookingDropDownMenue from "../../newComponents/BookingDropDownMenu";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -47,9 +48,10 @@ function TouristDashboard(){
           // <MuseumsAndHistoricalPlaceCard />
           <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
         }/>
-        <Route path="/bookings" element={
-          <BookingsPage baseUrl="http://localhost:3000/api/tourist" />
-        }/>
+       <Route path="/bookings" element={<DropdownMenu />} /> {/* Use the DropdownMenu component */}
+                <Route path="/bookings/flight" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
+                <Route path="/bookings/hotel" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
+                <Route path="/bookings/transport" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
          <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
