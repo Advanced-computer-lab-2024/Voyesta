@@ -23,6 +23,6 @@ const purchaseSchema = new mongoose.Schema({
     }
 });
 
-const Purchase = mongoose.model('Purchase', purchaseSchema);
+// const Purchase = mongoose.model('Purchase', purchaseSchema);
 
-module.exports = Purchase;
+module.exports = mongoose.models.Purchase || mongoose.model('Purchase', purchaseSchema);

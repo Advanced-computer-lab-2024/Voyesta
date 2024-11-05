@@ -7,6 +7,8 @@ import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
 import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
+import ProductSalesView from "../../newComponents/ProductSalesView";
+
 
 const navLinks = [
   { path: "/admin/activity-category", label: "Activity Category" },
@@ -14,6 +16,7 @@ const navLinks = [
   { path: "/admin/products", label: "Products" },
   { path: "/admin/itineraries", label: "Itineraries" },
   { path: "/admin/complaints", label: "Complaints" },
+  { path: "/admin/sales", label: "Sales" },
   { path: "/admin/account-management", label: "Account Management" }
 ];
 
@@ -48,6 +51,10 @@ function AdminDashboard(){
             title="Complaints"
             role="admin"
           />
+        }/>
+
+        <Route path="/sales" element={
+          <ProductSalesView userType="admin" />
         }/>
         <Route path="/account-management" element={
           <AdminAccountManagementNavbar

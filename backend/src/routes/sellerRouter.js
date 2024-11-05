@@ -17,12 +17,12 @@ _.post('/createProduct', authenticate ,productController.addProduct);
 _.get('/getAllProducts', productController.getProducts);
 _.get('/getMyProducts', authenticate ,productController.getProducts);
 _.put('/updateProduct/:id', authenticate , productController.updateProduct);
-_.get('/searchProductByName', productController.searchProductByName);
-_.get('/filterProductsByPrice', productController.filterProductsByPrice);
-_.get('/sortProductsByRatings', productController.sortProductsByRatings);
-_.patch('/archiveProduct/:id', authenticate, productController.archiveProduct);
-_.patch('/unarchiveProduct/:id', authenticate, productController.unarchiveProduct);
+_.get('/getProductsSales', authenticate, productController.getProductSales);
 
-_.patch('/changePassword', authenticate, changePassword);
+
+
+
+// _.get('/searchProductByName', productController.searchProductByName);
+// _.get('/filterProductsByPrice', productController.filterProductsByPrice);
 
 module.exports = _;

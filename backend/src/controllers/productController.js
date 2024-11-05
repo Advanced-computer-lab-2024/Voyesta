@@ -1,66 +1,72 @@
-// controllers/productController.js
 const Product = require('../Models/product');
 const Seller = require('../Models/Seller');
+const upload = require('../middleware/upload');
+const Purchase = require('../models/purchase');
 
 const addProduct = async (req, res) => {
-    const id = req.user.id;
-    const role = req.user.type;
-
-    try {
-        // Ensure the user is a seller before adding the product
-        let seller = "";
-
-        if (role === 'seller') {
-            seller = await Seller.findById(id).select('name'); // Assuming 'User' is the seller's model and 'name' is the seller's name field
-        } else if (role === 'admin') {
-            seller = 'admin';
-        } else {
-            return res.status(403).json({
-                success: false,
-                message: 'Only sellers or Admins can add products'
-            });
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ success: false, message: err });
         }
 
-        // Fetch the seller's name from the database by their ID
-        if (!seller) {
-            return res.status(404).json({
-                success: false,
-                message: 'Seller not found'
-            });
-        }
+        const id = req.user.id;
+        const role = req.user.type;
+        // console.log(id, role);
+        try {
+            let name = "";
 
-        // Create a new product document from the request body
-        const newProduct = new Product({
-            name: req.body.name,
-            picture: req.body.picture,
-            price: req.body.price,
-            description: req.body.description,
-            seller: seller.name, // Use the seller's name
-            ratings: req.body.ratings,
-            reviews: req.body.reviews, // Assuming this is an array of review objects
-            available_quantity: req.body.available_quantity,
-            createdBy: {
-                _id: id,
-                role: role
+            if (role === 'seller') {
+                const seller = await Seller.findById(id);
+                name = seller.name;
+            } else if (role === 'admin') {
+                name = 'admin';
+            } else {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Only sellers or Admins can add products'
+                });
             }
-        });
 
-        // Save the product to the database
-        const savedProduct = await newProduct.save();
+            // console.log(name);
 
-        // Respond with the newly created product
-        res.status(201).json({
-            success: true,
-            message: 'Product successfully added!',
-            data: savedProduct
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error adding product',
-            error: error.message
-        });
-    }
+            if (!name) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Seller not found'
+                });
+            }
+
+            const newProduct = new Product({
+                name: req.body.name,
+                picture: req.file ? `/uploads/${req.file.filename}` : '', // Save the image URL
+                price: req.body.price,
+                description: req.body.description,
+                seller: name,
+                ratings: req.body.ratings,
+                reviews: req.body.reviews,
+                available_quantity: req.body.available_quantity,
+                createdBy: {
+                    _id: id,
+                    role: role
+                }
+            });
+
+            // console.log(newProduct);
+            const savedProduct = await newProduct.save();
+            
+            res.status(201).json({
+                success: true,
+                message: 'Product successfully added!',
+                data: savedProduct
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: 'Error adding product',
+                error: error.message
+            });
+        }
+    });
 };
 
 // Combined function to fetch products based on user role
@@ -383,16 +389,57 @@ const unarchiveProduct = async (req, res) => {
     }
 };
 
-module.exports = { 
-    getProducts, 
-    addProduct, 
-    updateProduct, 
-    searchProductByName, 
-    filterProductsByPrice, 
-    sortProductsByRatings, 
-    getMinAndMaxPrices, 
+const getProductSales = async (req, res) => {
+    const userType = req.user.type;
+    
+    try {
+        let products;
+        if (userType === 'seller') {
+            products = await Product.find({ 'createdBy._id': req.user.id });
+        } else if (userType === 'admin') {
+            products = await Product.find();
+        } else {
+            return res.status(403).json({
+                success: false,
+                message: 'Unauthorized access'
+            });
+        }
+        const salesData = await Promise.all(products.map(async (product) => {
+            const sales = await Purchase.aggregate([
+                { $match: { productId: product._id } },
+                { $group: { _id: '$productId', totalSales: { $sum: '$quantity' } } }
+            ]);
+
+            return {
+                product,
+                totalSales: sales.length > 0 ? sales[0].totalSales : 0
+            };
+        }));
+
+        res.status(200).json({
+            success: true,
+            data: salesData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching product sales data',
+            error: error.message
+        });
+    }
+};
+
+module.exports = {
+    addProduct,
+    getProducts,
+    updateProduct,
+    searchProductByName,
+    filterProductsByPrice,
+    sortProductsByRatings,
+    getMinAndMaxPrices,
     rateProduct,
     reviewProduct,
     archiveProduct,
-    unarchiveProduct
+    unarchiveProduct,
+    getProductSales
 };

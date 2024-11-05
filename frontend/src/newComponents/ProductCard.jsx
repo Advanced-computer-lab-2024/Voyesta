@@ -53,10 +53,16 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId }) {
 
   useEffect(() => {
     if (product.ratings) {
+      if(product.ratings.length === 0){
+        setAverageRating(0);
+        return;
+      }
       const ratings = product.ratings.map((rating) => rating.rating);
       const sum = ratings.reduce((acc, current) => acc + current, 0);
       const average = sum / ratings.length;
       setAverageRating(average.toFixed(0)); // round to 1 decimal place
+    }else{
+      setAverageRating(0);
     }
   }, [oldProduct.ratings]);
 
@@ -70,8 +76,8 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId }) {
     <div className='bg-[#f5e1b4] shadow-md rounded-md p-4 w-80'>
       <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : null}`}>
         <div>
-          <img src={product.image} alt={product.name} className="w-full h-40 object-cover" />
-          <h2 className="text-lg font-bold">{product.name}</h2>
+        <img src={`http://localhost:3000${product.picture}`} alt={product.name} className="w-full h-40 object-cover" />
+        <h2 className="text-lg font-bold">{product.name}</h2>
           <p className="text-gray-600 ">{product.description}</p>
           <p className="text-gray-600 "><span className='w-1/2'>Price:</span> <span className='w-1/2'>${product.price}</span></p>
           <p className="text-gray-600 "><span className='w-1/2'>Seller:</span> {product.seller}</p>

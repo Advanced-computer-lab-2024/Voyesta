@@ -1,5 +1,5 @@
 // controllers/purchaseController.js
-const Purchase = require('../Models/Purchase');
+const Purchase = require('../Models/purchase');
 
 const createPurchase = async (req, res) => {
     const { productId, touristId, quantity } = req.body;

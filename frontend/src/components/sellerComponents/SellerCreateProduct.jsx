@@ -1,60 +1,45 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-//import _ from '../../../../backend/src/routes';
 
 function AddProduct(props) {
   const [name, setName] = useState('');
-  const [picture, setPicture] = useState('');  // Could be a URL or file path
+  const [picture, setPicture] = useState(null);  // Change to file input
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [seller, setSeller] = useState('');
-  //const [ratings, setRatings] = useState('');  // Assuming ratings is a number
-  const [reviews, setReviews] = useState([]);  // Assuming reviews is an array
   const [availableQuantity, setAvailableQuantity] = useState('');
   const [message, setMessage] = useState(null);
-  const [user, setUser] = useState(null);
+
   const handleAddProduct = async (e) => {
     e.preventDefault();  // Prevent the default form submission behavior
 
     const url = props.baseUrl + '/createProduct';  // Backend API URL
 
-
     const token = localStorage.getItem('token');
 
-    const getAuthHeaders = () =>{
-      console.log(token);
+    const getAuthHeaders = () => {
       return {
-      headers: {
+        headers: {
           Authorization: `Bearer ${token}`
-      }}
-  };
+        }
+      }
+    };
 
-    // useEffect(() => {
-    //   axios.get('/api/user', getAuthHeaders()).then((res) => {
-    //     console.log(res.data.user);
-    //     setUser(res.data.user);
-    //   });
-    // }, []);
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('picture', picture);
+    formData.append('price', price);
+    formData.append('description', description);
+    formData.append('available_quantity', availableQuantity);
 
-    // const createdBy = {
-    //   _id: user._id,
-    //   role: user.type
-    // };
-
-      axios.post(url, {
-        name,
-        picture,
-        price,
-        description,
-        available_quantity: availableQuantity,
-        // createdBy
-      }, getAuthHeaders()).then(res => {
-        setMessage("Product created successfully!"); 
+    axios.post(url, formData, getAuthHeaders())
+      .then(res => {
+        setMessage("Product created successfully!");
         console.log(res);
-    }).catch(err => {
+      })
+      .catch(err => {
         setMessage(err.response?.data?.message || "Failed to create Product.");
-        console.log(err)});
-
+        console.log(err);
+      });
   };
 
   return (
@@ -77,13 +62,12 @@ function AddProduct(props) {
 
         <div>
           <label htmlFor="picture" className="block text-sm font-medium text-gray-700">
-            Picture URL
+            Picture
           </label>
           <input
-            type="text"
+            type="file"
             id="picture"
-            value={picture}
-            onChange={(e) => setPicture(e.target.value)}
+            onChange={(e) => setPicture(e.target.files[0])}
             className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
             required
           />
@@ -115,21 +99,6 @@ function AddProduct(props) {
             required
           />
         </div>
-
-        {/* <div>
-          <label htmlFor="seller" className="block text-sm font-medium text-gray-700">
-            Seller
-          </label>
-          <input
-            type="text"
-            id="seller"
-            value={seller}
-            onChange={(e) => setSeller(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-            required
-          />
-        </div> */}
-
 
         <div>
           <label htmlFor="availableQuantity" className="block text-sm font-medium text-gray-700">

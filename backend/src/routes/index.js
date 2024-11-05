@@ -54,6 +54,7 @@ _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 _.use('/bookings', bookingRouter);
 _.use('/purchase', purchaseRouter);
 
+
 _.get("/user",authenticate,  (req, res) => {
     res.status(200).json({
         user: req.user

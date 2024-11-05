@@ -36,5 +36,5 @@ const sellerSchema = new Schema({
     }
 }, { timestamps: true });
 
-const Seller = mongoose.model('Seller', sellerSchema);
-module.exports = Seller;
+
+module.exports = mongoose.models.Seller || mongoose.model('Seller', sellerSchema);;

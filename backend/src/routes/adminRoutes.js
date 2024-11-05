@@ -53,6 +53,8 @@ _.get('/sortProductsByRatings', productController.sortProductsByRatings);
 _.get('/getProductsMinAndMax', productController.getMinAndMaxPrices);
 _.patch('/archiveProduct/:id', authenticate, productController.archiveProduct);
 _.patch('/unarchiveProduct/:id', authenticate, productController.unarchiveProduct);
+_.get('/getProductsSales', authenticate, productController.getProductSales);
+
 
 
 // ------------ Itineraries ---------------- //
