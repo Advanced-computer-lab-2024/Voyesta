@@ -2,7 +2,15 @@ const express = require("express");
 const authenticate = require("../middleware/authenticate");
 let _ = express.Router();
 
-const { createTourist, getTourists, updateTourist, deleteTourist, redeemPoints , searchFlights,searchHotels} = require("../controllers/touristController");
+const { createTourist, getTourists, updateTourist, 
+    deleteTourist, 
+    redeemPoints , 
+    searchFlights,
+    searchHotels ,
+    confirmFlightPrice,
+    confirmHotelPrice,
+    bookFlight,
+    bookHotel  } = require("../controllers/touristController");
 const { get } = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const itineraryController = require('../controllers/itineraryController');
@@ -56,5 +64,9 @@ _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
 
 _.get('/searchFlights', authenticate, searchFlights);
 _.get('/searchHotels', authenticate, searchHotels);
+_.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
+_.post('/confirmHotelPrice', authenticate, confirmHotelPrice);
+_.post('/bookFlight', authenticate, bookFlight);
+_.post('/bookHotel', authenticate, bookHotel);
 
 module.exports = _;

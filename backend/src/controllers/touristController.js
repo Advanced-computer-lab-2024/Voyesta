@@ -210,6 +210,31 @@ const searchFlights = async (req, res) => {
     }
 };
 
+const confirmFlightPrice = async (req, res) => {
+    const { flightOffer } = req.body; // flightOffer should be the selected offer details
+
+    try {
+        const response = await amadeus.shopping.flightOffers.pricing.post(
+            JSON.stringify({ data: { type: "flight-offer-pricing", flightOffers: [flightOffer] } })
+        );
+
+        res.status(200).json({ price: response.data });
+    } catch (error) {
+        console.error("Error confirming flight price:", error);
+        res.status(500).json({ error: "An error occurred while confirming flight price." });
+    }
+};
+
+const bookFlight = async (req, res) => {
+    // Just a simulation; real booking logic would go here if required.
+    res.status(200).json({ message: 'Flight booked successfully!' });
+};
+
+
+
+
+
+
 
 // Search for hotels
 const searchHotels = async (req, res) => {
@@ -231,6 +256,25 @@ const searchHotels = async (req, res) => {
     }
 };
 
+const confirmHotelPrice = async (req, res) => {
+    const { hotelOfferId } = req.body; // ID of the selected hotel offer
+
+    try {
+        const response = await amadeus.shopping.hotelOffer(hotelOfferId).get();
+        
+        res.status(200).json({ price: response.data.offers[0].price });
+    } catch (error) {
+        console.error("Error confirming hotel price:", error);
+        res.status(500).json({ error: "An error occurred while confirming hotel price." });
+    }
+};
+
+const bookHotel = async (req, res) => {
+    // Just a simulation; real booking logic would go here if required.
+    res.status(200).json({ message: 'Hotel booked successfully!' });
+};
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotels}; // Export the controller functions
+
+
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotels,confirmFlightPrice,confirmHotelPrice,bookFlight,bookHotel}; // Export the controller functions
