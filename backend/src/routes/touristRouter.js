@@ -12,7 +12,7 @@ const { TourGuideComments, rateTourGuide, checkTourGuideRatingAndComment } = req
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
 const { createBooking, getBookings, cancelBooking, payForBooking } = require('../controllers/bookingController');
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
-const { changePassword } = require('../controllers/accountController');
+const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 
 _.post("/add", createTourist);
 _.get("/get", authenticate, getTourists);
@@ -52,5 +52,6 @@ _.get('/getComplaintById/:id', authenticate, getComplaintById);
 _.get('/getComplaints', authenticate, getComplaints);
 
 _.patch('/changePassword', authenticate, changePassword);
+_.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
 
 module.exports = _;

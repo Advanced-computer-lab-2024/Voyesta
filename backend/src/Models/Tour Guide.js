@@ -69,7 +69,12 @@ const tourGuideSchema = new Schema({
       min:0,
       max:5
     },
-  }]
+  }],
+  status: {
+    type: String,
+    enum: ['pending', 'active', 'deleted'],
+    default: 'active'
+  }
 }, { timestamps: true });
 
 const TourGuide = mongoose.model('TourGuide', tourGuideSchema);

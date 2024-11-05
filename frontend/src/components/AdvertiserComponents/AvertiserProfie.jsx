@@ -13,6 +13,7 @@ function AdvertiserProfile() {
   const [servicesOffered, setServicesOffered] = useState([]);
   const [password, setPassword] = useState(""); // For account creation
   const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null); // State to handle error messages
 
   const baseUrl = "http://localhost:3000/api/advertiser/get"; // Adjust based on your backend
   const createAccountUrl = "http://localhost:3000/api/advertiser/add"; // Update to your backend create account URL
@@ -22,17 +23,7 @@ function AdvertiserProfile() {
     fetchProfile();
   }, []);
 
-// useEffect(()=>{
-//   if(website === ""){
-//     setActiveTab("createAccount");
-//   }else{
-//     // setActiveTab(activeTab);
-//   }
-// }, []);
-
   const token = localStorage.getItem('token');
-  // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNiYjhmNzNkYjdkZTU3YmEyMjRiNCIsInR5cGUiOiJhZHZlcnRpc2VyIiwiaWF0IjoxNzI4Mjk3ODcxLCJleHAiOjE3NTQyMTc4NzF9.J75YSz_DmEuLdm1WvtiEIb6EFf5Q-qjKqAmFB5wWV9Y"
-
   const getAuthHeaders = () => {
     return {
       headers: {
@@ -86,7 +77,7 @@ function AdvertiserProfile() {
       setActiveTab("viewProfile") // Refetch updated profile
     } catch (error) {
       console.error('Error updating profile:', error);
-      setMessage("Error updating profile.");
+      setError(error.response?.data?.message || "Error updating profile.");
     }
   };
 
@@ -110,12 +101,28 @@ function AdvertiserProfile() {
         setActiveTab("viewProfile");
       } catch (error) {
         console.error('Error creating account:', error);
-        setMessage("Error creating account.");
+        setError(error.response?.data?.message || "Error creating account.");
       }
     } catch (error) {
       console.error('Error creating account:', error);
-      setMessage("Error creating account.");
+      setError(error.response?.data?.message || "Error creating account.");
     }
+  };
+
+  const handleRequestAccountDeletion = async () => {
+    try {
+      const url = "http://localhost:3000/api/advertiser/setStatusToDeleted";
+      await axios.patch(url, {}, getAuthHeaders());
+      setMessage("Account deletion requested successfully.");
+      fetchProfile();
+    } catch (error) {
+      console.error('Error requesting account deletion:', error);
+      setError(error.response?.data?.message || "Error requesting account deletion.");
+    }
+  };
+
+  const closeErrorPopup = () => {
+    setError(null);
   };
 
   return (
@@ -165,6 +172,12 @@ function AdvertiserProfile() {
             <p><strong>Company Profile:</strong> {profile.companyProfile}</p>
             <p><strong>Hotline:</strong> {profile.hotline}</p>
             <p><strong>Services Offered:</strong> {profile.servicesOffered?.join(", ")}</p>
+            <button
+              onClick={handleRequestAccountDeletion}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
+            >
+              Request Account Deletion
+            </button>
           </div>
         ) : (
           <div>
@@ -343,6 +356,21 @@ function AdvertiserProfile() {
         <p className={`mt-4 ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
           {message}
         </p>
+      )}
+
+      {/* Error Popup */}
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <p>{error}</p>
+            <button
+              onClick={closeErrorPopup}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

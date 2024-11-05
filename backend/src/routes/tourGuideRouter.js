@@ -19,7 +19,7 @@ const {
 } = require('../controllers/museumsHistoricalPlacesController');
 
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("../controllers/tourGuideController");
-const { changePassword } = require('../controllers/accountController');
+const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 
 _.post("/add", createTourGuide);
 _.get("/get", authenticate, getTourGuides);
@@ -41,5 +41,6 @@ _.get('/getActivity', getActivity);
 _.get('/getPlaces', get);
 
 _.patch('/changePassword', authenticate, changePassword);
+_.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
 
 module.exports = _;

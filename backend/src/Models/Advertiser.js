@@ -41,6 +41,11 @@ const advertSchema = new Schema({
     otp: {
         type: String,
         required: false,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'active', 'deleted'],
+      default: 'active'
     }
 }, { timestamps: true });
 

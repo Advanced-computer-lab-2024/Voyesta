@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ChangePassword from '../../newComponents/ChangePassword';
 
-const ProfileView = () => {
-  const [activeTab, setActiveTab] = useState("viewProfile"); // Default to "viewProfile"
-  const [profile, setProfile] = useState({});
+function TouristProfile() {
+  const [activeTab, setActiveTab] = useState("viewProfile");
+  const [profile, setProfile] = useState(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -12,13 +12,12 @@ const ProfileView = () => {
   const [dob, setDob] = useState("");
   const [job, setJob] = useState("");
   const [wallet, setWallet] = useState(0);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(0);
   const [accumulatedPoints, setAccumulatedPoints] = useState(0);
   const [currentPoints, setCurrentPoints] = useState(0);
-  const [pointsToRedeem, setPointsToRedeem] = useState(""); // For redeeming points
   const [password, setPassword] = useState(""); // For account creation
   const [message, setMessage] = useState(null);
-  const [isAccountDetailsAdded, setIsAccountDetailsAdded] = useState(false); // Track if account details are added
+  const [error, setError] = useState(null); // State to handle error messages
 
   const baseUrl = "http://localhost:3000/api/tourist/get"; // Adjust based on your backend
 
@@ -27,13 +26,19 @@ const ProfileView = () => {
     fetchProfile();
   }, []);
 
+  const token = localStorage.getItem('token');
+  const getAuthHeaders = () => {
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+  };
+
+  // Fetch user profile
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(baseUrl, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const response = await axios.get(baseUrl, getAuthHeaders());
       const data = response.data;
       setProfile(data);
       setUsername(data.username);
@@ -46,225 +51,338 @@ const ProfileView = () => {
       setLevel(data.level);
       setAccumulatedPoints(data.accumulatedPoints);
       setCurrentPoints(data.currentPoints);
-      setIsAccountDetailsAdded(true);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setMessage("Error fetching profile.");
     }
   };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    const updatedData = {
+      username,
+      email,
+      mobileNumber,
+      nationality,
+      dob,
+      job
+    };
+
     try {
+      await axios.put("http://localhost:3000/api/tourist/update", updatedData, getAuthHeaders());
+      setMessage("Profile updated successfully.");
+      fetchProfile();
+      setActiveTab("viewProfile"); // Refetch updated profile
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError(error.response?.data?.message || "Error updating profile.");
+    }
+  };
+
+  const handleCreateAccount = async (e) => {
+    try {
+      e.preventDefault();
       const updatedData = {
         username,
         email,
-        Number: mobileNumber,
-        Nationality: nationality,
-        Job: job
+        password,
+        mobileNumber,
+        nationality,
+        dob,
+        job
       };
-      await axios.put(baseUrl, updatedData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      setMessage("Profile updated successfully.");
-      fetchProfile(); // Refetch updated profile
+
+      try {
+        await axios.put("http://localhost:3000/api/tourist/update", updatedData, getAuthHeaders());
+        setMessage("Account created successfully.");
+        fetchProfile(); // Refetch profile after account creation
+        setActiveTab("viewProfile");
+      } catch (error) {
+        console.error('Error creating account:', error);
+        setError(error.response?.data?.message || "Error creating account.");
+      }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setMessage("Error updating profile.");
+      console.error('Error creating account:', error);
+      setError(error.response?.data?.message || "Error creating account.");
     }
   };
 
-  const handleRedeemPoints = async (e) => {
-    e.preventDefault();
-    const points = parseInt(pointsToRedeem, 10);
-
-    if (isNaN(points) || points % 10000 !== 0) {
-      setMessage("Points to redeem must be a multiple of 10,000.");
-      return;
-    }
-
-    if (points > currentPoints) {
-      setMessage("Insufficient points to redeem.");
-      return;
-    }
-
-    console.log(points);
-
+  const handleRequestAccountDeletion = async () => {
     try {
-      const response = await axios.patch("http://localhost:3000/api/tourist/redeemPoints", { pointsToRedeem: points }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      setMessage(response.data.message);
-      fetchProfile(); // Refetch updated profile
+      const url = "http://localhost:3000/api/tourist/setStatusToDeleted";
+      await axios.patch(url, {}, getAuthHeaders());
+      setMessage("Account deletion requested successfully.");
+      fetchProfile();
     } catch (error) {
-      console.log('Error redeeming points:', error);
-      // setMessage(error.response.data.error);
+      console.error('Error requesting account deletion:', error);
+      setError(error.response?.data?.message || "Error requesting account deletion.");
     }
+  };
+
+  const closeErrorPopup = () => {
+    setError(null);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Profile</h1>
-          <div className="flex space-x-4">
+    <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
+      <h1 className="text-2xl text-gray-600 font-bold mb-3">Tourist Profile Management</h1>
+
+      {/* Tab Navigation */}
+      <div className="flex justify-around border-b mb-4">
+        <button
+          className={`p-2 ${activeTab === "viewProfile" ? "border-b-2 border-blue-500" : ""}`}
+          onClick={() => setActiveTab("viewProfile")}
+        >
+          View Profile
+        </button>
+        <button
+          className={`p-2 ${activeTab === "editProfile" ? "border-b-2 border-blue-500" : ""}`}
+          onClick={() => setActiveTab("editProfile")}
+        >
+          Edit Profile
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'changePassword' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('changePassword')}
+        >
+          Change Password
+        </button>
+      </div>
+
+      {/* Content based on Active Tab */}
+      {activeTab === "viewProfile" && (
+        profile ? (
+          <div>
+            <p><strong>Username:</strong> {profile.username}</p>
+            <p><strong>Email:</strong> {profile.email}</p>
+            <p><strong>Mobile Number:</strong> {profile.mobileNumber}</p>
+            <p><strong>Nationality:</strong> {profile.nationality}</p>
+            <p><strong>Date of Birth:</strong> {profile.dob}</p>
+            <p><strong>Job:</strong> {profile.job}</p>
+            <p><strong>Wallet:</strong> {profile.wallet}</p>
+            <p><strong>Level:</strong> {profile.level}</p>
+            <p><strong>Accumulated Points:</strong> {profile.accumulatedPoints}</p>
+            <p><strong>Current Points:</strong> {profile.currentPoints}</p>
             <button
-              onClick={() => setActiveTab(activeTab === "viewProfile" ? "editProfile" : "viewProfile")}
-              className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+              onClick={handleRequestAccountDeletion}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
             >
-              {activeTab === "viewProfile" ? "Edit Profile" : "View Profile"}
+              Request Account Deletion
             </button>
+          </div>
+        ) : (
+          <div>
+            <p><strong>Username:</strong> Loading...</p>
+            <p><strong>Email:</strong> Loading...</p>
+            <p><strong>Mobile Number:</strong> Loading...</p>
+            <p><strong>Nationality:</strong> Loading...</p>
+            <p><strong>Date of Birth:</strong> Loading...</p>
+            <p><strong>Job:</strong> Loading...</p>
+            <p><strong>Wallet:</strong> Loading...</p>
+            <p><strong>Level:</strong> Loading...</p>
+            <p><strong>Accumulated Points:</strong> Loading...</p>
+            <p><strong>Current Points:</strong> Loading...</p>
+          </div>
+        )
+      )}
+
+      {activeTab === 'changePassword' && (
+          <ChangePassword baseUrl='http://localhost:3000/api/tourist' />
+      )}
+
+      {activeTab === "editProfile" && (
+        <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+            <input
+              type="text"
+              id="mobileNumber"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="nationality" className="block text-sm font-medium text-gray-700">Nationality</label>
+            <input
+              type="text"
+              id="nationality"
+              value={nationality}
+              onChange={(e) => setNationality(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+            <input
+              type="date"
+              id="dob"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="job" className="block text-sm font-medium text-gray-700">Job</label>
+            <input
+              type="text"
+              id="job"
+              value={job}
+              onChange={(e) => setJob(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+          >
+            Update Profile
+          </button>
+        </form>
+      )}
+
+      {activeTab === "createAccount" && (
+        <form onSubmit={handleCreateAccount} className="flex flex-col gap-4">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+            <input
+              type="text"
+              id="mobileNumber"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="nationality" className="block text-sm font-medium text-gray-700">Nationality</label>
+            <input
+              type="text"
+              id="nationality"
+              value={nationality}
+              onChange={(e) => setNationality(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+            <input
+              type="date"
+              id="dob"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="job" className="block text-sm font-medium text-gray-700">Job</label>
+            <input
+              type="text"
+              id="job"
+              value={job}
+              onChange={(e) => setJob(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+          >
+            Create Account
+          </button>
+        </form>
+      )}
+
+      {/* Display Message */}
+      {message && (
+        <p className={`mt-4 ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
+          {message}
+        </p>
+      )}
+
+      {/* Error Popup */}
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <p>{error}</p>
             <button
-              onClick={() => setActiveTab("changePassword")}
-              className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+              onClick={closeErrorPopup}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
             >
-              Change Password
+              Close
             </button>
           </div>
         </div>
-        {message && (
-          <p className={`${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
-            {message}
-          </p>
-        )}
-        {activeTab === "viewProfile" ? (
-          <div>
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold">Personal Information</h2>
-              <p><strong>Username:</strong> {username}</p>
-              <p><strong>Email:</strong> {email}</p>
-              <p><strong>Mobile Number:</strong> {mobileNumber}</p>
-              <p><strong>Nationality:</strong> {nationality}</p>
-              <p><strong>Date of Birth:</strong> {new Date(dob).toLocaleDateString()}</p>
-              <p><strong>Job:</strong> {job}</p>
-            </div>
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold">Loyalty Points</h2>
-              <p><strong>Level:</strong> {level}</p>
-              <p><strong>Current Points:</strong> {currentPoints}</p>
-            </div>
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold">Wallet</h2>
-              <p><strong>Wallet Balance:</strong> ${wallet}</p>
-            </div>
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold">Redeem Points</h2>
-              <form onSubmit={handleRedeemPoints} className="flex flex-col gap-4">
-                <div>
-                  <label htmlFor="pointsToRedeem" className="block text-sm font-medium text-gray-700">
-                    Points to Redeem (multiple of 10,000)
-                  </label>
-                  <input
-                    type="text"
-                    id="pointsToRedeem"
-                    value={pointsToRedeem}
-                    onChange={(e) => setPointsToRedeem(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-                >
-                  Redeem Points
-                </button>
-              </form>
-            </div>
-          </div>
-        ) : activeTab === "editProfile" ? (
-          <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">
-                Mobile Number
-              </label>
-              <input
-                type="text"
-                id="mobileNumber"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              />
-            </div>
-            <div>
-              <label htmlFor="nationality" className="block text-sm font-medium text-gray-700">
-                Nationality
-              </label>
-              <input
-                type="text"
-                id="nationality"
-                value={nationality}
-                onChange={(e) => setNationality(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              />
-            </div>
-            <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                id="dob"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                readOnly
-              />
-            </div>
-            <div>
-              <label htmlFor="job" className="block text-sm font-medium text-gray-700">
-                Job
-              </label>
-              <input
-                type="text"
-                id="job"
-                value={job}
-                onChange={(e) => setJob(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-            >
-              Update Profile
-            </button>
-          </form>
-        ) : activeTab === 'changePassword' && (
-          <ChangePassword baseUrl='http://localhost:3000/api/tourist' />
-        )}
-      </div>
+      )}
     </div>
   );
 };
 
-export default ProfileView;
+export default TouristProfile;

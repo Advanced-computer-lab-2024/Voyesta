@@ -17,10 +17,9 @@ const {
 } = require('../controllers/preferenceTagContoller');
 const productController = require('../controllers/productController');
 const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToComplaint } = require('../controllers/complaintController');
-const { changePassword } = require('../controllers/accountController');
-
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
+const { changePassword, setStatusToActive, deleteAccount, getDeletedUsers } = require('../controllers/accountController');
 
 
 // ------------- Not testedd ---------------
@@ -63,6 +62,9 @@ _.get('/getComplaintById/:id', getComplaintById);
 _.patch('/updateComplaintStatus/:id', updateComplaintStatus);
 _.patch('/replyToComplaint/:id', addReplyToComplaint);
 
-_.patch('/changePassword', authenticate, changePassword);
+_.patch('/changePassword', changePassword);
+_.patch('/setStatusToActive/:id', setStatusToActive);
+_.delete('/deleteAccount/:id', deleteAccount);
+_.get('/getDeletedUsers', getDeletedUsers);
 
 module.exports = _;

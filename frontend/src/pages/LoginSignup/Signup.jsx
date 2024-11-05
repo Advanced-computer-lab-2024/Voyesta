@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import TermsAndConditions from '../../newComponents/TermsAndConditions';
 
 function Signup() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [signedUp, setSignedUp] = useState(false);   
+  const [signedUp, setSignedUp] = useState(false);
   const [userType, setUserType] = useState('');
-
+  const [showTerms, setShowTerms] = useState(false);
   const navigate = useNavigate();
 
   const validate = () => {
@@ -34,177 +35,170 @@ function Signup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validate()) {
-      // Call API to create new user
-      console.log('Create new user:', { username, email, password });
       setSignedUp(true);
     }
   };
 
-  const handleTouristSignup = ()=>{
+  const handleTouristSignup = () => {
     setUserType("tourist");
     axios.post('http://localhost:3000/api/tourist/add', { username, email, password })
-    .then(res =>{
-      console.log(res);
-      const token = res.data.token;
-      localStorage.setItem('token', token);
-      navigate("/tourist");
-    });
-  }
+      .then(res => {
+        const token = res.data.token;
+        localStorage.setItem('token', token);
+        navigate("/tourist");
+      });
+  };
 
-  const handleTourGuideSignup = ()=>{
+  const handleTourGuideSignup = () => {
     setUserType("tourGuide");
-    axios.post('http://localhost:3000/api/tourGuide/add', { username, email, password })
-    .then(res =>{
-      console.log(res);
-      const token = res.data.token;
-      localStorage.setItem('token', token);
-      navigate("/tourGuide");
-    });
-  }
+    setShowTerms(true);
+  };
 
-  const handleSellerSignup = ()=>{
+  const handleSellerSignup = () => {
     setUserType("seller");
-    axios.post('http://localhost:3000/api/seller/add',{username,email,password})
-    .then(res =>{
-      const token =res.data.token;
-      localStorage.setItem('token', token);
-      navigate('/seller');
-    });
+    setShowTerms(true);
+  };
 
-   
-  }
-  
-  const handleAdvertiserSignup = ()=>{
+  const handleAdvertiserSignup = () => {
     setUserType("advertiser");
-    axios.post('http://localhost:3000/api/advertiser/add',{username,email,password})
-    .then(res =>{
-      const token =res.data.token;
-      localStorage.setItem('token', token);
-      navigate('/advertiser');
-    });
+    setShowTerms(true);
+  };
 
-  }
-
+  const handleAcceptTerms = () => {
+    setShowTerms(false);
+    if (userType === "tourGuide") {
+      axios.post('http://localhost:3000/api/tourGuide/add', { username, email, password })
+        .then(res => {
+          const token = res.data.token;
+          localStorage.setItem('token', token);
+          navigate("/tourGuide");
+        });
+    } else if (userType === "seller") {
+      axios.post('http://localhost:3000/api/seller/add', { username, email, password })
+        .then(res => {
+          const token = res.data.token;
+          localStorage.setItem('token', token);
+          navigate("/seller");
+        });
+    } else if (userType === "advertiser") {
+      axios.post('http://localhost:3000/api/advertiser/add', { username, email, password })
+        .then(res => {
+          const token = res.data.token;
+          localStorage.setItem('token', token);
+          navigate("/advertiser");
+        });
+    }
+  };
 
   return (
     <>
-    {(!signedUp) ?
-      <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Signup</h1>
-        <form onSubmit={handleSubmit}className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              placeholder="Enter your username"
-            />
-            {errors.username && (
-              <div className="text-red-500 text-xs">{errors.username}</div>
-            )}
-          </div>
-          
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                placeholder="Enter your email"
-            />
-            {errors.email && (
-                <div className="text-red-500 text-xs">{errors.email}</div>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              placeholder="Enter your password"
-            />
-            {errors.password && (
-              <div className="text-red-500 text-xs">{errors.password}</div>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-          >
-            Signup
-          </button>
-
-          <div className='text-gray-500 flex flex-row justify-center text-sm gap-1 cursor-default'>
-            <p>Already have an account? </p>
-            <p 
-              className='font-bold cursor-pointer text-gray-800'
-              onClick={() => {navigate("/login");}}
-            >
-              Login
-            </p>
-          </div>
-        </form>
-      </div> :
-
-      (userType === "")?
-      
-      <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">What am I?</h1>
-        <div className='flex flex-col gap-2'>
-          <div className='flex flex-row gap-2'>
-            <div 
-              className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => handleTouristSignup()}
-            >
-              Tourist
+      {showTerms ? (
+        <TermsAndConditions onAccept={handleAcceptTerms} />
+      ) : (
+        <>
+          {!signedUp ? (
+            <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
+              <h1 className="text-2xl text-gray-600 font-bold mb-3">Signup</h1>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                    required
+                  />
+                  {errors.username && <div className="text-red-500 text-xs">{errors.username}</div>}
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                    required
+                  />
+                  {errors.email && <div className="text-red-500 text-xs">{errors.email}</div>}
+                </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                    required
+                  />
+                  {errors.password && <div className="text-red-500 text-xs">{errors.password}</div>}
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+                >
+                  Signup
+                </button>
+              </form>
             </div>
-            <div 
-              className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => handleTourGuideSignup()}
-            >
-                Tour Guide
-            </div>
-          </div>
-          <div className='flex flex-row gap-2'>
-            <div 
-              className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={handleSellerSignup}
-            >
-              Seller
-            </div>
-            <div 
-              className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
-              onClick={() => handleAdvertiserSignup()}
-            >
-              Advertiser
-            </div>
-          </div>
-        </div>
-      </div> :
-      <>
-        {userType === "tourist" ?
-            <TouristNavbar username={username} password={password} email={email}/> :
-            userType === "tourGuide" ? <TourGuideNavbar username={username} password={password} email={email} /> :
-            null
-        }
-      </>
-    }
+          ) : (
+            <>
+              {userType === "" ? (
+                <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
+                  <h1 className="text-2xl text-gray-600 font-bold mb-3">What am I?</h1>
+                  <div className='flex flex-col gap-2'>
+                    <div className='flex flex-row gap-2'>
+                      <div
+                        className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
+                        onClick={handleTouristSignup}
+                      >
+                        Tourist
+                      </div>
+                      <div
+                        className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
+                        onClick={handleTourGuideSignup}
+                      >
+                        Tour Guide
+                      </div>
+                    </div>
+                    <div className='flex flex-row gap-2'>
+                      <div
+                        className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
+                        onClick={handleSellerSignup}
+                      >
+                        Seller
+                      </div>
+                      <div
+                        className='mb-2 w-1/2 p-5 mx-auto bg-blue-500 hover:bg-blue-700 text-white rounded-lg text-2xl'
+                        onClick={handleAdvertiserSignup}
+                      >
+                        Advertiser
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {userType === "tourist" ? (
+                    <touristNavbar username={username} password={password} email={email} />
+                  ) : userType === "tourGuide" ? (
+                    <tourGuideNavbar username={username} password={password} email={email} />
+                  ) : null}
+                </>
+              )}
+            </>
+          )}
+        </>
+      )}
     </>
   );
 }

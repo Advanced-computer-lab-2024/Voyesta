@@ -56,6 +56,11 @@ const touristSchema = new Schema({
     currentPoints: {
         type: Number,
         default: 0 // Default current points is 0
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'active', 'deleted'],
+        default: 'active'
     }
 }, { timestamps: true });
 

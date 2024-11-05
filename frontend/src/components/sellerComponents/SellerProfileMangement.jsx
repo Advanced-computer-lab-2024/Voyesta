@@ -1,20 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import ChangePassword from '../../newComponents/ChangePassword';
 
 function SellerProfileManagement(props) {
-  const [sellerData, setSellerData] = useState(null);
+  const [activeTab, setActiveTab] = useState("viewProfile");
+  const [profile, setProfile] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("viewProfile");
-  const navigate = useNavigate();
-  const url = props.baseUrl;
+  const [error, setError] = useState(null); // State to handle error messages
+
+  const url = "http://localhost:3000/api/seller/get"; // Adjust based on your backend
 
   const token = localStorage.getItem('token');
-
   const getAuthHeaders = () => {
     return {
       headers: {
@@ -23,59 +21,57 @@ function SellerProfileManagement(props) {
     };
   };
 
-  const fetchMyProfile = () => {
-    setLoading(true);  // Set loading to true when fetching
-    axios.get(url + '/get', getAuthHeaders())
-      .then(res => {
-        const { username, email, name, description } = res.data;
-        setSellerData({ username, email });
-        setName(name);
-        setDescription(description);
-        setLoading(false);  // Stop loading when data is fetched
-      })
-      .catch(err => {
-        setMessage('Failed to fetch seller details.');
-        console.log(err);
-        setLoading(false);
-      });
+  // Fetch seller profile
+  const fetchProfile = async () => {
+    try {
+      const response = await axios.get(url, getAuthHeaders());
+      setProfile(response.data);
+      console.log(response.data);
+      // Set initial values for form fields
+      setName(response.data.name);
+      setDescription(response.data.description);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setMessage("Error fetching profile.");
+    }
   };
 
-  // Fetch seller details on component mount
   useEffect(() => {
-    fetchMyProfile();
+    fetchProfile();
   }, []);
 
-  const handleUpdateSeller = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when updating
-    axios.put(url + '/update', { name, description }, getAuthHeaders())
-      .then(res => {
-        setMessage('Seller profile updated successfully!');
-        console.log(res.data);
-        setLoading(false); // Stop loading after updating
-        window.location.reload();
-      })
-      .catch((error) => {
-        setMessage(error.response?.data?.message || 'Failed to update profile.');
-        console.error(error);
-        setLoading(false);
-      });
+    const updatedData = {
+      name,
+      description
+    };
+
+    try {
+      await axios.put(url + '/update', updatedData, getAuthHeaders());
+      setMessage("Profile updated successfully.");
+      fetchProfile();
+      setActiveTab("viewProfile"); // Refetch updated profile
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError(error.response?.data?.message || "Error updating profile.");
+    }
   };
 
-  const handleDeleteAccount = () => {
-    setLoading(true); // Set loading to true when deleting
-    axios.delete(url + '/delete', getAuthHeaders())
-      .then(res => {
-        setMessage('Seller account deleted successfully.');
-        console.log(res.data);
-        setLoading(false); // Stop loading after deletion
-        navigate('/account-deleted');
-      })
-      .catch((error) => {
-        setMessage('Failed to delete account.');
-        console.error(error);
-        setLoading(false);
-      });
+  const handleRequestAccountDeletion = async () => {
+    try {
+      const url = "http://localhost:3000/api/seller/setStatusToDeleted";
+      await axios.patch(url, {}, getAuthHeaders());
+      setMessage("Account deletion requested successfully.");
+      fetchProfile();
+    } catch (error) {
+      console.error('Error requesting account deletion:', error);
+      setError(error.response?.data?.message || "Error requesting account deletion.");
+    }
+  };
+
+  const closeErrorPopup = () => {
+    setError(null);
   };
 
   return (
@@ -86,9 +82,15 @@ function SellerProfileManagement(props) {
       <div className="flex justify-around border-b mb-4">
         <button
           className={`p-2 ${activeTab === "viewProfile" ? "border-b-2 border-blue-500" : ""}`}
-          onClick={() => { setActiveTab("viewProfile"); setMessage("") }}
+          onClick={() => setActiveTab("viewProfile")}
         >
           View Profile
+        </button>
+        <button
+          className={`p-2 ${activeTab === "editProfile" ? "border-b-2 border-blue-500" : ""}`}
+          onClick={() => setActiveTab("editProfile")}
+        >
+          Edit Profile
         </button>
         <button
           className={`p-2 ${activeTab === 'changePassword' ? 'border-b-2 border-blue-500' : ''}`}
@@ -98,90 +100,84 @@ function SellerProfileManagement(props) {
         </button>
       </div>
 
-      {/* Form Display based on Active Tab */}
+      {/* Content based on Active Tab */}
       {activeTab === "viewProfile" && (
-        sellerData ? (
-          <form onSubmit={handleUpdateSeller} className="flex flex-col gap-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={sellerData.username}
-                disabled
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={sellerData.email}
-                disabled
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <input
-                type="text"
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-              />
-            </div>
-
+        profile ? (
+          <div>
+            <p><strong>Name:</strong> {profile.name}</p>
+            <p><strong>Description:</strong> {profile.description}</p>
             <button
-              type="submit"
-              className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+              onClick={handleRequestAccountDeletion}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
             >
-              Update Profile
+              Request Account Deletion
             </button>
-
-            <button
-              type="button"
-              onClick={handleDeleteAccount}
-              className="bg-red-500 text-white rounded-lg p-2 mt-4 hover:bg-red-700"
-            >
-              Delete Account
-            </button>
-
-            {message && (
-              <p className={`mt-2 ${message.includes('successfully') ? 'text-green-500' : 'text-red-500'}`}>
-                {message}
-              </p>
-            )}
-          </form>
+          </div>
         ) : (
-          <p>Loading...</p>
+          <div>
+            <p><strong>Name:</strong> Loading...</p>
+            <p><strong>Description:</strong> Loading...</p>
+          </div>
         )
       )}
 
       {activeTab === 'changePassword' && (
-        <ChangePassword baseUrl={url} />
+          <ChangePassword baseUrl='http://localhost:3000/api/seller' />
+      )}
+
+      {activeTab === "editProfile" && (
+        <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+          >
+            Update Profile
+          </button>
+        </form>
+      )}
+
+      {/* Display Message */}
+      {message && (
+        <p className={`mt-4 ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
+          {message}
+        </p>
+      )}
+
+      {/* Error Popup */}
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <p>{error}</p>
+            <button
+              onClick={closeErrorPopup}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
