@@ -12,11 +12,11 @@ import Dashboard from './pages/Dashboard'
 
 // Importing the persona dashboard components
 import AdminDashboard from './Pages/Dashboards/AdminDashboard'
-import TourGuideDashboard from './pages/Dashboards/TourGuideDashboard'
+import TourGuideDashboard from './Pages/Dashboards/TourGuideDashboard'
 import AdvertiserDashboard from './Pages/Dashboards/AdvertiserDashboard'
-import SellerDashboard from './pages/Dashboards/SellerDashboard'
-import TourismGovernorDashboard from './pages/Dashboards/TourismGovernorDashboard'
-import TouristDashboard from './pages/Dashboards/TouristDashboard';
+import SellerDashboard from './Pages/Dashboards/SellerDashboard'
+import TourismGovernorDashboard from './Pages/Dashboards/TourismGovernorDashboard'
+import TouristDashboard from './Pages/Dashboards/TouristDashboard';
 import MapView from './newComponents/MapView'
 
 

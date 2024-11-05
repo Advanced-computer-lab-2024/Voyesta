@@ -5,7 +5,7 @@
 
 .dropdown-link {
     text-decoration: none;
-    color: black;
+    color: inherit;
     padding: 10px;
     display: block;
 }
