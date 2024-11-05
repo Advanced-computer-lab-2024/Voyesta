@@ -4,12 +4,11 @@ const { createSeller, getSeller, updateSeller, deleteSeller } = require("../cont
 const authenticate = require("../middleware/authenticate");
 const {
     addProduct,
-    getAllProducts,
     updateProduct,
-    searchProductByName,
-    filterProductsByPrice,
-    sortProductsByRatings,
-    getMyProducts
+    getProducts,
+    getProductSales,
+    archiveProduct,
+    unarchiveProduct
 } = require('../controllers/productController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 
@@ -22,12 +21,16 @@ _.delete("/delete", authenticate, deleteSeller);
 
 //------------------Products--------------------
 _.post('/createProduct', authenticate ,addProduct);
-_.get('/getAllProducts', getAllProducts);
-_.get('/getMyProducts', authenticate ,getMyProducts);
+_.get('/getAllProducts', getProducts);
+_.get('/getMyProducts', authenticate ,getProducts);
+_.get('/getProductsSales', authenticate , getProductSales);
 _.put('/updateProduct/:id', authenticate , updateProduct);
-_.get('/searchProductByName', searchProductByName);
-_.get('/filterProductsByPrice', filterProductsByPrice);
-_.get('/sortProductsByRatings', sortProductsByRatings);
+_.patch('/archiveProduct/:id', authenticate, archiveProduct);
+_.patch('/unarchiveProduct/:id', authenticate, unarchiveProduct);
+
+// _.get('/searchProductByName', searchProductByName);
+// _.get('/filterProductsByPrice', filterProductsByPrice);
+// _.get('/sortProductsByRatings', sortProductsByRatings);
 
 _.patch('/changePassword', authenticate, changePassword);
 _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
