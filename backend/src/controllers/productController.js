@@ -1,6 +1,6 @@
 // controllers/productController.js
 const Product = require('../Models/product');
-const Seller = require('../Models/Seller')
+const Seller = require('../Models/Seller');
 
 const addProduct = async (req, res) => {
     const id = req.user.id;
@@ -12,11 +12,9 @@ const addProduct = async (req, res) => {
 
         if (role === 'seller') {
             seller = await Seller.findById(id).select('name'); // Assuming 'User' is the seller's model and 'name' is the seller's name field
-
-            
-        }else if(role === 'admin'){
+        } else if (role === 'admin') {
             seller = 'admin';
-        }else{
+        } else {
             return res.status(403).json({
                 success: false,
                 message: 'Only sellers or Admins can add products'
@@ -24,7 +22,6 @@ const addProduct = async (req, res) => {
         }
 
         // Fetch the seller's name from the database by their ID
-        
         if (!seller) {
             return res.status(404).json({
                 success: false,
@@ -66,17 +63,42 @@ const addProduct = async (req, res) => {
     }
 };
 
-
-// Function to fetch all products
-const getAllProducts = async (req, res) => {
+// Combined function to fetch products based on user role
+const getProducts = async (req, res) => {
     try {
-        const products = await Product.find().select(); // Fetches all products
-        if(products.length !== 0){
+        let products;
+        if(!req.user) {
+            products = await Product.find({ isArchived: false }).select();
+        }else{
+            const userId = req.user.id;
+            const userType = req.user.type;
+
+            if (userType === 'tourist') {
+                // Fetch all unarchived products for tourists
+                products = await Product.find({ isArchived: false }).select();
+            } else if (userType === 'admin') {
+                // Fetch all products for admins
+                products = await Product.find().select();
+            } else if (userType === 'seller') {
+                // Fetch products created by the seller
+                products = await Product.find({
+                    'createdBy._id': userId,
+                    'createdBy.role': userType
+                }).select();
+            } else {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Unauthorized access'
+                });
+            }
+        }
+
+        if (products.length !== 0) {
             res.status(200).json({
                 success: true,
                 data: products
             });
-        } else{
+        } else {
             res.status(404).json({
                 success: false,
                 message: 'No products found'
@@ -90,35 +112,6 @@ const getAllProducts = async (req, res) => {
         });
     }
 };
-
-// get all my products
-const getMyProducts = async (req, res) => {
-    try {
-        const products = await Product.find({
-            'createdBy._id': req.user.id,    // Match the user's _id
-            'createdBy.role': req.user.type}).select(); // Fetches all products
-        if(products.length !== 0){
-            res.status(200).json({
-                success: true,
-                data: products
-            });
-        } else{
-            res.status(404).json({
-                success: false,
-                message: 'No products found'
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error retrieving products',
-            error: error.message
-        });
-    }
-};
-
-
-
 
 // Function to update a product by ID
 const updateProduct = async (req, res) => {
@@ -126,7 +119,7 @@ const updateProduct = async (req, res) => {
         const productId = req.params.id; // Get product ID from URL params
 
         // check if admin or seller
-        if(req.user.type == 'admin'){
+        if (req.user.type == 'admin') {
             // do the logic
         }
 
@@ -143,11 +136,11 @@ const updateProduct = async (req, res) => {
             });
         }
 
-
         // Find the product by ID and update it with the request body data
         const updatedProduct = await Product.findByIdAndUpdate(
-            productId, 
-            {   name: req.body.name,
+            productId,
+            {
+                name: req.body.name,
                 picture: req.body.picture,
                 price: req.body.price,
                 description: req.body.description,
@@ -203,7 +196,7 @@ const searchProductByName = async (req, res) => {
             data: products
         });
     } catch (error) {
-        res.status(500).json({
+        res.status500.json({
             success: false,
             message: 'Error searching for products',
             error: error.message
@@ -216,7 +209,6 @@ const filterProductsByPrice = async (req, res) => {
         // Get minPrice and maxPrice from query params (or use default values)
         const minPrice = parseFloat(req.query.minPrice) || 0; // Default to 0 if not provided
         const maxPrice = parseFloat(req.query.maxPrice) || Infinity; // Default to Infinity if not provided
-
 
         // Find products within the price range
         const products = await Product.find({
@@ -310,46 +302,97 @@ const getMinAndMaxPrices = async (req, res) => {
 const rateProduct = async (req, res) => {
     const { id } = req.params;
     const { rating } = req.body;
-    console.log(id);
     try {
-        const product = await Product.findById(id);
+        const product = await Product.findById(id).populate('ratings reviews');
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
         }
-        product.ratings.push({
-            tourist: req.user.id,
-            rating
-        });
+
+        // Check if the user has already rated the product
+        const existingRating = product.ratings.find(r => r.tourist.toString() === req.user.id);
+        if (existingRating) {
+            // Update the existing rating
+            existingRating.rating = rating;
+        } else {
+            // Add a new rating
+            product.ratings.push({
+                tourist: req.user.id,
+                rating
+            });
+        }
+
         await product.save();
         res.status(200).json(product);
     } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
-
-
+        res.status(400).json({ error: error.message });
+    }
+};
 
 const reviewProduct = async (req, res) => {
     const { id } = req.params;
     const { review } = req.body;
-    console.log(id);
     try {
         const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
         }
-        product.reviews.push({
-            tourist: req.user.id,
-            review
-        });
+
+        // Check if the user has already reviewed the product
+        const existingReview = product.reviews.find(r => r.tourist.toString() === req.user.id);
+        if (existingReview) {
+            // Update the existing review
+            existingReview.review = review;
+        } else {
+            // Add a new review
+            product.reviews.push({
+                tourist: req.user.id,
+                review
+            });
+        }
+
         await product.save();
         res.status(200).json(product);
     } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+        res.status(400).json({ error: error.message });
+    }
+};
 
+const archiveProduct = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const product = await Product.findByIdAndUpdate(id, { isArchived: true }, { new: true });
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        res.status(200).json({ success: true, message: 'Product archived successfully', data: product });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error archiving product', error: error.message });
+    }
+};
 
+const unarchiveProduct = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const product = await Product.findByIdAndUpdate(id, { isArchived: false }, { new: true });
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        res.status(200).json({ success: true, message: 'Product unarchived successfully', data: product });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error unarchiving product', error: error.message });
+    }
+};
 
-
-module.exports = { getAllProducts, addProduct, updateProduct, searchProductByName, filterProductsByPrice, sortProductsByRatings, getMinAndMaxPrices, getMyProducts,rateProduct,reviewProduct}
+module.exports = { 
+    getProducts, 
+    addProduct, 
+    updateProduct, 
+    searchProductByName, 
+    filterProductsByPrice, 
+    sortProductsByRatings, 
+    getMinAndMaxPrices, 
+    rateProduct,
+    reviewProduct,
+    archiveProduct,
+    unarchiveProduct
+};

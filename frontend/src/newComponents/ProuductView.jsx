@@ -145,7 +145,7 @@ function ProductsView({ role, baseUrl }) {
             ) : (
               products.length > 0 ? (
                 products.map((product) => (
-                  <ProductCard key={product._id} oldProduct={product} onEdit={handleEdit} userType={user?.type} userId={user?.id} />
+                  <ProductCard key={product._id} fetchProducts={fetchProducts} oldProduct={product} onEdit={handleEdit} userType={user?.type} userId={user?.id} />
                 ))
               ) : (
                 <p className="text-center text-lg">No products available.</p>

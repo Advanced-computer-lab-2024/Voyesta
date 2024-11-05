@@ -60,6 +60,10 @@ const productSchema = new mongoose.Schema({
             required: true,
             enum: ['seller', 'admin']
         }
+    },
+    isArchived: {
+        type: Boolean,
+        default: false
     }
 });
 
