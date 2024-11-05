@@ -15,16 +15,7 @@ function ProductSalesView({userType}) {
     }
   };
 
-//   useEffect(() => {
-//     axios.get('http://localhost:3000/api/user', getAuthHeaders())
-//       .then(res => setUserType(res.data.user.type))
-//       .catch(err => {
-//         setError(err.response ? err.response.data.message : err.message);
-//         setLoading(false);
-//       });
 
-    
-//   }, []);
 
   useEffect(() => {
     axios.get(`http://localhost:3000/api/${userType}/getProductsSales`, getAuthHeaders())
