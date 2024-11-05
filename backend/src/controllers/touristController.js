@@ -5,6 +5,10 @@ const Tag = require('../Models/PreferenceTag')
 const Activity = require('../Models/Activity');
 
 const {generateToken} = require('../utils/jwt');
+const amadeus = require('../utils/amadeusClient');
+
+
+
 
 
 const createTourist = async (req, res) => {
@@ -180,5 +184,29 @@ const redeemPoints = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
+
+const searchFlights = async (req, res) => {
+    const { origin, destination, departureDate, returnDate, adults } = req.query;
+
+    try {
+        const response = await amadeus.shopping.flightOffersSearch.get({
+            originLocationCode: origin,
+            destinationLocationCode: destination,
+            departureDate,
+            returnDate,
+            adults,
+            max: 10 // Limit the results
+        });
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Error searching for flights:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 
 module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints}; // Export the controller functions
