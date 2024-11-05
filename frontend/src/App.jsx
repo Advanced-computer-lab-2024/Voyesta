@@ -4,8 +4,8 @@ import './css/index.css'
 
 
 //importing the login & signup components
-import Signup from './pages/LoginSignup/Signup'
-import Login from './pages/LoginSignup/Login'
+import Signup from './Pages/LoginSignup/Signup'
+import Login from './Pages/LoginSignup/Login'
 
 //importing the main dashboard component
 import Dashboard from './pages/Dashboard'
