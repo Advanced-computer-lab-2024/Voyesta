@@ -277,7 +277,8 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
               </button>
               {showPopup && (
                 <BookingPopup
-                  itinerary={itinerary}
+                  item={itinerary}
+                  itemType="itinerary"
                   onClose={() => setShowPopup(false)}
                   onBook={handleBooking}
                 />

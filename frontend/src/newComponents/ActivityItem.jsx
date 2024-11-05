@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets';
+import BookingPopup from './BookingPopup';
+import { useNavigate } from 'react-router-dom';
 
 const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -9,7 +11,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
   const [mappedTags, setMappedTags] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
-  
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (activity.tags && Array.isArray(activity.tags)) {
       const mappedTags = activity.tags.map(tag => tag.Name);
@@ -18,7 +22,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
         tags: mappedTags
       }));
       setMappedTags(mappedTags);
-      
     }
   }, [activity.tags]);
 
@@ -27,7 +30,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
     .then(res =>{
       const categoryNames = res.data.map(category => category.Name);
       setCategories(res.data);
-      // console.log(categoryNames);
     })
     .catch(err => console.log(err));
 
@@ -40,11 +42,12 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
     .catch(err => console.log(err));
   }, []);
 
-  const getAuthHeaders = () => {  
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
     return {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     };
   };
 
@@ -127,6 +130,23 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
       console.log(error);
     }
   };
+
+  const handleBooking = async (eventDate) => {
+    try {
+      const url = `${baseUrl}/bookings/create/${activity._id}`;
+      await axios.post(url, { bookableModel: 'Activity', eventDate }, getAuthHeaders());
+      alert('Booking successful!');
+      setShowPopup(false);
+      navigate('/bookings');
+    } catch (error) {
+      console.error('Error booking activity:', error);
+      alert('Error booking activity.');
+    }
+  };
+
+  const averageRating = activity.ratings.length === 0
+    ? 0
+    : (activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length).toFixed(1);
 
   return (
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
@@ -245,8 +265,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
               src={assets.cancelIcon}
               className="w-7 h-7 cursor-pointer absolute buttom-2 left-6"
             />
-            {/* <button onClick={handleSubmit} className="bg-green-500 text-white px-2 py-1 rounded">Save</button> */}
-            {/* <button onClick={handleCancel} className="bg-gray-500 text-white px-2 py-1 rounded">Cancel</button> */}
           </div>
         </>
       ) : (
@@ -283,10 +301,24 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             <p>Tags: No tags available</p>
           )}
 
-          <p>Rating: {activity.rating.length === 0 ? 0 : 
-              (activity.rating.reduce((acc, curr) => acc + curr, 0) / activity.rating.length).toFixed(1)
-            }</p>
+          <p>Rating: {averageRating}</p>
           <p>Special Discount: {activity.specialDiscount}</p>
+
+          {role === 'tourist' && (
+            <>
+              <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Book Activity
+              </button>
+              {showPopup && (
+                <BookingPopup
+                  item={activity}
+                  itemType="activity"
+                  onClose={() => setShowPopup(false)}
+                  onBook={handleBooking}
+                />
+              )}
+            </>
+          )}
 
           {role === 'advertiser' && (
             <div className="flex gap-2 mt-2 h-6">
@@ -296,13 +328,11 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
                 src={assets.editIcon}
                 className="w-6 h-6 cursor-pointer absolute buttom-0 right-6"
               />
-              {/* <button onClick={handleEdit} className="bg-blue-500 text-white px-2 py-1 rounded">Edit</button> */}
               <img
                 onClick={() => handleDelete(activity._id)}
                 src={assets.deleteIcon}
                 className="w-6 h-6 cursor-pointer absolute buttom-0 left-6"
               />
-              {/* <button onClick={() => handleDelete(activity._id)} className="bg-red-500 text-white px-2 py-1 rounded">Delete</button> */}
             </div>
           )}
         </>

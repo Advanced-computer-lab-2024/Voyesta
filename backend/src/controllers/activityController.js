@@ -1,7 +1,6 @@
 const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag');
-
 const mongoose = require('mongoose');
 
 // Create a new Activity
@@ -267,26 +266,31 @@ const filterTouristActivities = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving activities', error });
     }
 };
-const activityComments = async (req, res) => {
+
+// Add a comment to an activity
+const addComment = async (req, res) => {
     const { id } = req.params;
     const { comment } = req.body;
+    const touristId = req.user.id;
+
     try {
         const activity = await Activity.findById(id);
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
         }
-        activity.comments.push({
-            tourist: req.user.id,
-            comment
-        });
+
+        const existingComment = activity.comments.find(c => c.tourist.toString() === touristId);
+        if (existingComment) {
+            return res.status(400).json({ error: 'You have already commented on this activity' });
+        }
+
+        activity.comments.push({ tourist: touristId, comment });
         await activity.save();
-        res.status(200).json(activity);
+        res.status(200).json({ message: 'Comment added successfully', activity });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}
-
-
+};
 
 const search = async (req, res) => {
     const { query } = req.query;
@@ -316,28 +320,50 @@ const search = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-const rateActivity = async (req, res) => {
+
+// Add a rating to an activity
+const addRating = async (req, res) => {
     const { id } = req.params;
     const { rating } = req.body;
-    console.log(id);
+    const touristId = req.user.id;
+
     try {
         const activity = await Activity.findById(id);
         if (!activity) {
             return res.status(404).json({ error: 'Activity not found' });
         }
-        activity.ratings.push({
-            tourist: req.user.id,
-            rating
-        });
+
+        const existingRating = activity.ratings.find(r => r.tourist.toString() === touristId);
+        if (existingRating) {
+            return res.status(400).json({ error: 'You have already rated this activity' });
+        }
+
+        activity.ratings.push({ tourist: touristId, rating });
         await activity.save();
-        res.status(200).json(activity);
+        res.status(200).json({ message: 'Rating added successfully', activity });
     } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+        res.status(400).json({ error: error.message });
+    }
+};
 
+// Check if a tourist has already rated or commented on an activity
+const checkActivityRatingAndComment = async (req, res) => {
+    const { id } = req.params;
+    const touristId = req.user.id;
 
-  
+    try {
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
 
+        const hasRated = activity.ratings.some(r => r.tourist.toString() === touristId);
+        const hasCommented = activity.comments.some(c => c.tourist.toString() === touristId);
 
-module.exports = { getActivity, createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search,rateActivity,activityComments }
+        res.status(200).json({ hasRated, hasCommented });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = { createActivity, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment };

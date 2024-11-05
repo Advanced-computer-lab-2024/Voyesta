@@ -1,5 +1,7 @@
 const tourGuideModel = require('../Models/Tour Guide'); // Updated import to match the schema file name
 const { generateToken } = require('../utils/jwt'); // Import the generateToken function from the auth file
+const Itinerary = require('../Models/Itinerary');
+const TourGuide = require('../Models/Tour Guide');
 
 // Create a new Tour Guide profile
 const createTourGuide = async (req, res) => {
@@ -67,54 +69,75 @@ const updateTourGuide = async (req, res) => {
     }
 };
 
-// Send OTP to email
-// const sendOTPtourGuide = async (req, res) => {
-//     const { email } = req.body;
-//     try {
-//         const otp = otpSender(email);
-//         res.status(200).json({ message: 'OTP sent successfully', otp });
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
-const TourGuideComments = async (req, res) => {
-    const { id } = req.params;
-    const { comment } = req.body;
-    try {
-        const tourGuide = await tourGuideModel.findById(id);
-        if (!tourGuide) {
-            return res.status(404).json({ error: 'tourGuide not found' });
-        }
-        tourGuide.comments.push({
-            tourist: req.user.id,
-            comment
-        });
-        await tourGuide.save();
-        res.status(200).json(tourGuide);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+// Rate a tour guide based on an itinerary
 const rateTourGuide = async (req, res) => {
-    const { id } = req.params;
-    const { rating } = req.body;
-    console.log(id);
-    try {
-        const tourguide = await tourGuideModel.findById(id);
-        if (!tourguide) {
-            return res.status(404).json({ error: 'tourguide not found' });
+  const { id } = req.params; // Tour guide ID
+  const { rating, itineraryId } = req.body;
+  const touristId = req.user.id;
+
+  try {
+   
+    const tourGuide = await TourGuide.findById(id).populate('ratings');
+    if(tourGuide){
+        const existingRating = tourGuide.ratings.find(r => r.tourist.toString() === touristId && r.itineraryId.toString() === itineraryId);
+        if (existingRating) {
+        return res.status(400).json({ error: 'You have already rated this tour guide for this itinerary' });
         }
-        tourguide.ratings.push({
-            tourist: req.user.id,
-            rating
-        });
-        await tourguide.save();
-        res.status(200).json(tourguide);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+    }
+
+    tourGuide.ratings.push({ tourist: touristId, rating, itineraryId: itineraryId });
+    await tourGuide.save();
+    res.status(200).json({ message: 'Tour guide rating added successfully', tourGuide });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Comment on a tour guide based on an itinerary
+const TourGuideComments = async (req, res) => {
+  const { id } = req.params; // Tour guide ID
+  const { comment, itineraryId } = req.body;
+  const touristId = req.user.id;
+
+  try {
+    
+    const tourGuide = await TourGuide.findById(id).populate('comments');
+    if(tourGuide){
+        // console.log(tourGuide.comments[0].tourist.toString() === touristId);
+        const existingComment = tourGuide.comments.find(c => c.tourist.toString() === touristId && c.itineraryId.toString() === itineraryId);
+        if (existingComment) {
+        return res.status(400).json({ error: 'You have already commented on this tour guide for this itinerary' });
+        }
+    }
+
+    tourGuide.comments.push({ tourist: touristId, comment, itineraryId: itineraryId });
+    await tourGuide.save();
+    res.status(200).json({ message: 'Tour guide comment added successfully', tourGuide });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Check if a tourist has already rated or commented on a tour guide based on an itinerary
+const checkTourGuideRatingAndComment = async (req, res) => {
+  const { id } = req.params; // Tour guide ID
+  const { itineraryId } = req.query;
+  const touristId = req.user.id;
+
+  try {
+    const tourGuide = await TourGuide.findById(id).populate('ratings comments');
+    if (!tourGuide) {
+      return res.status(404).json({ error: 'Tour guide not found' });
+    }
 
 
+    const hasRated = tourGuide.ratings.some(r => r.tourist.toString() === touristId && r.itineraryId.toString() === itineraryId);
+    const hasCommented = tourGuide.comments.some(c => c.tourist.toString() === touristId && c.itineraryId.toString() === itineraryId);
 
-module.exports = { createTourGuide,rateTourGuide,TourGuideComments, getTourGuides, updateTourGuide  }; // Export the controller functions
+    res.status(200).json({ hasRated, hasCommented });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = { createTourGuide, rateTourGuide, TourGuideComments, getTourGuides, updateTourGuide, checkTourGuideRatingAndComment };
