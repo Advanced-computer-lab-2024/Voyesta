@@ -61,7 +61,11 @@ const touristSchema = new Schema({
         type: String,
         enum: ['pending', 'active', 'deleted'],
         default: 'active'
-    }
+    },
+    preferences: [{ // Array of preference tags for req 10.
+        type: Schema.Types.ObjectId,
+        ref: 'PreferenceTag'
+    }],
 }, { timestamps: true });
 
 // Age validation

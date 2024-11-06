@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
+import BookingDropDownMenu from '../newComponents/BookingDropDownMenu'; // Import the BookingDropDownMenu component
 
 function NavBar({ navLinks}) {
     const [visible, setVisible] = useState(false);
@@ -18,9 +19,13 @@ function NavBar({ navLinks}) {
             <ul className="hidden sm:flex gap-3 text-lg font-medium p-2">
                 {navLinks.map((link, index) => (
                     <React.Fragment key={index}>
-                        <NavLink to={link.path} className="flex flex-col items-center gap-1">
-                            <p>{link.label}</p>
-                        </NavLink>
+                        {link.label === 'Bookings' ? (
+                            <BookingDropDownMenu />
+                        ) : (
+                            <NavLink to={link.path} className="flex flex-col items-center gap-1">
+                                <p>{link.label}</p>
+                            </NavLink>
+                        )}
                         {index < navLinks.length - 1 && <div className="w-0 border-r border-[#f5e1b4]" />}
                     </React.Fragment>
                 ))}
