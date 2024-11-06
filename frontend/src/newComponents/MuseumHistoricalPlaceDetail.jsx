@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import MuseumAndHistoricalPlaceItem from './MuseumAndHistoricalPlaceItem';
 
 const MuseumHistoricalPlaceDetail = () => {
   const { id } = useParams();
@@ -29,22 +30,8 @@ const MuseumHistoricalPlaceDetail = () => {
   }
 
   return (
-    <div>
-      <h1>{place.name}</h1>
-      <p>{place.description}</p>
-      <div>
-        <h3>Pictures:</h3>
-        {place.pictures.map((picture, index) => (
-          <img key={index} src={picture} alt={`Picture ${index + 1}`} />
-        ))}
-      </div>
-      <p>Location: {place.location.address}, {place.location.city}, {place.location.country}</p>
-      <p>Coordinates: {place.location.coordinates.lat}, {place.location.coordinates.lng}</p>
-      <p>Opening Hours: {place.openingHours}</p>
-      <p>Ticket Prices: Foreigner - {place.ticketPrices.foreigner}, Native - {place.ticketPrices.native}, Student - {place.ticketPrices.student}</p>
-      {console.log(place.tags)}
-      <p>Tags: {place.tags.map(tag => tag).join(', ')}</p>
-      <p>Created By: {place.createdBy.username}</p>
+    <div className='w-4/5 mx-auto my-auto mt-32'>
+      <MuseumAndHistoricalPlaceItem place={place} />
     </div>
   );
 };

@@ -184,7 +184,8 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
           ) : (
             <p>Tags: No tags available</p>
           )}
-
+          { role === 'tourist' &&
+            <>
           <button onClick={() => {
             const link = generateShareLink(place._id);
             handleCopyLink(link);
@@ -193,7 +194,7 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
             const link = generateShareLink(place._id);
             handleShareViaEmail(link);
           }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">Share via Email</button>
-
+          </>}
           {role === 'tourismGovernor' && (
             <div className="flex gap-2 mt-2 h-6">
               <img
