@@ -5,8 +5,8 @@ const Tag = require('../Models/PreferenceTag')
 const Activity = require('../Models/Activity');
 
 const {generateToken} = require('../utils/jwt');
-const amadeus = require('../utils/amadeusClient');
-const handleAmadeusError = require('../utils/amadeusClient'); // Import the error handler
+//const amadeus = require('../utils/amadeusClient').amadeus;
+const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
 
 
 
@@ -191,6 +191,11 @@ const redeemPoints = async (req, res) => {
 
 const searchFlights = async (req, res) => {
     const { origin, destination, departureDate, returnDate, adults } = req.query;
+
+    
+
+    
+
 
     try {
         const response = await amadeus.shopping.flightOffersSearch.get({

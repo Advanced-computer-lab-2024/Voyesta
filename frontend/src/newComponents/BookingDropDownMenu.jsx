@@ -18,9 +18,10 @@ const DropdownMenu = () => {
             <Link to="/bookings" className="dropdown-link">Bookings</Link>
             {isOpen && (
                 <div className="dropdown-content">
-                    <Link to="/flight">Book Flight</Link>
-                    <Link to="/hotel">Book Hotel</Link>
-                    <Link to="/bookings/transport">Book Transportation</Link>
+                    <Link to="/tourist/flight">Book Flight</Link>
+                    <Link to="/tourist/hotel">Book Hotel</Link>
+                    <Link to="/tourist/transport">Book Transportation</Link>
+                    <Link to="/tourist/bookings">My Bookings</Link>
                 </div>
             )}
         </div>

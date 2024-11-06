@@ -54,6 +54,7 @@ function TouristDashboard(){
        <Route path="/flight" element={<BookFlight baseUrl="http://localhost:3000/api/tourist" />} />
          <Route path="/hotel" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
           <Route path="/transport" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
+          <Route path="/bookings" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
          <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>

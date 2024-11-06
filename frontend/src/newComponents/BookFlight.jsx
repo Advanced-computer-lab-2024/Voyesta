@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import FlightCard from './FlightCard';
 
 const BookFlight = ({ baseUrl }) => {
     const [origin, setOrigin] = useState('');
@@ -28,13 +29,9 @@ const BookFlight = ({ baseUrl }) => {
         const url = `${baseUrl}/searchFlights?origin=${origin}&destination=${destination}&departureDate=${departureDate}&returnDate=${returnDate}&adults=${adults}`;
         
         // Log the URL to confirm it contains the query parameters
-        console.log('Request URL:', url);
-
+        
         try {
-            const response = await axios.get(url, 
-                
-                ...getAuthHeaders()
-            );
+            const response = await axios.get(url, getAuthHeaders());
             setFlights(response.data);
         } catch (err) {
             setError('Failed to search for flights.');
@@ -48,7 +45,11 @@ const BookFlight = ({ baseUrl }) => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post(`${baseUrl}/confirmFlightPrice`, { flightId });
+            const response = await axios.post(
+                `${baseUrl}/confirmFlightPrice`, 
+                { flightId },
+                getAuthHeaders()  // Add headers here
+            );
             setSelectedFlight(response.data);
         } catch (err) {
             setError('Failed to confirm flight price.');
@@ -57,6 +58,7 @@ const BookFlight = ({ baseUrl }) => {
             setLoading(false);
         }
     };
+    
 
     return (
         <div>
@@ -86,10 +88,7 @@ const BookFlight = ({ baseUrl }) => {
             {error && <p>{error}</p>}
             <div>
                 {flights.map((flight) => (
-                    <div key={flight.id}>
-                        <p>{flight.details}</p>
-                        <button onClick={() => confirmFlightPrice(flight.id)}>Confirm Price</button>
-                    </div>
+                    <FlightCard key={flight.id} flight={flight} onConfirm={confirmFlightPrice} />
                 ))}
             </div>
             {selectedFlight && (
