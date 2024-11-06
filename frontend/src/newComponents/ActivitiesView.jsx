@@ -19,6 +19,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [endDate, setEndDate] = useState('');
   const [sortOption, setSortOption] = useState(''); // Added sort option state
 
+
   useEffect(() => {
     fetchActivities();
   }, [activeTab]);
@@ -69,6 +70,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
     });
     setFilteredActivities(sorted);
   };
+
+  
 
   return (
     <div className="flex">
@@ -139,6 +142,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
         {role !== 'advertiser' && (
           <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} />
         )}
+
+        
       </div>
 
     </div>
