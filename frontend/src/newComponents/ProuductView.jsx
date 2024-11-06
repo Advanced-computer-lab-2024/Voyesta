@@ -8,6 +8,7 @@ function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
   const [prices, setPrices] = useState([]);
   const [convertedPrices, setConvertedPrices] = useState([]); // New state for converted prices
+  const [targetCurrency, setTargetCurrency] = useState('USD'); // New state for target currency
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
@@ -16,7 +17,6 @@ function ProductsView({ role, baseUrl }) {
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
   const token = localStorage.getItem('token');
-
   const getAuthHeaders = () => {
     return {
       headers: {
@@ -112,7 +112,7 @@ function ProductsView({ role, baseUrl }) {
       <div className="w-1/5 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
         <div className="mb-4">
-          <PriceFilterBar products={products} setProducts={setProducts} />
+          <PriceFilterBar products={products} setProducts={setProducts} convertedPrices={convertedPrices} />
         </div>
         <div className="mb-4 text-center">
           <label>Sort Order:</label>
@@ -122,9 +122,11 @@ function ProductsView({ role, baseUrl }) {
             <option value="desc">Descending (by ratings)</option>
           </select>
         </div>
-        <div className="mb-4">
-          <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} /> {/* Pass setConvertedPrices */}
-        </div>
+        {role === 'tourist' && (
+          <div className="mb-4">
+            <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+          </div>
+        )}
       </div>
       <div className="w-4/5 pl-4 pt-5">
         <div className="mb-4 w-1/2 mx-auto">
@@ -152,6 +154,7 @@ function ProductsView({ role, baseUrl }) {
                     onEdit={handleEdit}
                     userId={user?._id}
                     convertedPrice={convertedPrices[index]} // Pass convertedPrice
+                    targetCurrency={targetCurrency} // Pass targetCurrency
                   />
                 ))
               ) : (

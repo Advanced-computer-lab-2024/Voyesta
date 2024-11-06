@@ -5,10 +5,19 @@ import axios from 'axios';
 const CategoryFilter = ({ baseUrl, selectedCategory, setSelectedCategory }) => {
   const [categories, setCategories] = useState([]);
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/getCategory`);
+        const response = await axios.get(`${baseUrl}/getCategory`, getAuthHeaders());
         setCategories(response.data);
         console.log(response.data);
         

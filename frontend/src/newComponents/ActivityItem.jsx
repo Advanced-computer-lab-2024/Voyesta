@@ -5,7 +5,7 @@ import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
 
-const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
+const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice, targetCurrency }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState(activity);
   const [mappedTags, setMappedTags] = useState([]);
@@ -26,14 +26,14 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
   }, [activity.tags]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/getActivityCategories`, getAuthHeaders())
+    axios.get(`${baseUrl}/getCategory`, getAuthHeaders())
     .then(res =>{
       const categoryNames = res.data.map(category => category.Name);
       setCategories(res.data);
     })
     .catch(err => console.log(err));
 
-    axios.get(`${baseUrl}/getPreferenceTags`, getAuthHeaders())
+    axios.get(`${baseUrl}/getTags`, getAuthHeaders())
     .then(res => {
       const tagNames = res.data.map(tag => tag.Name);
       setTags(tagNames);
@@ -95,7 +95,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
   };
 
   const handleSubmit = async () => {
-
     const activityData = {
       ...editedActivity,
       price: isNaN(parseFloat(editedActivity.price))
@@ -166,7 +165,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
               name="description"
               value={editedActivity.description}
               onChange={handleChange}
-              className="w-full"
+              className="w-full mt-2"
             />
           </div>
           <div>
@@ -285,9 +284,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
           <p>Time: {activity.time || 'Unknown time'}</p>
 
           {typeof activity.price === 'object' ? (
-            <p>Price Range: ${activity.price.min || '0'} - ${activity.price.max || '0'}</p>
+            <p>Price Range: {convertedPrice ? `${convertedPrice.min.toFixed(2)} - ${convertedPrice.max.toFixed(2)} ${targetCurrency}` : `${activity.price.min || '0'} - ${activity.price.max || '0'} USD`}</p>
           ) : (
-            <p>Price: ${activity.price || 'Unknown price'}</p>
+            <p>Price: {convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${activity.price.toFixed(2)} USD`}</p>
           )}
 
           <p>Category: {typeof activity.category === 'string' 

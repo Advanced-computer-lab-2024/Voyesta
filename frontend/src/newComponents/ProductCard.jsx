@@ -3,8 +3,7 @@ import { assets } from '../assets/assets';
 import ProductLabel from './ProductLabel';
 import axios from 'axios';
 
-function ProductCard({ fetchProducts, oldProduct, onEdit, userId }) {
-  
+function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice, targetCurrency }) {
   const [product, setProduct] = useState(oldProduct);
   const [averageRating, setAverageRating] = useState(0);
   const [editMode, setEditMode] = useState(false);
@@ -76,10 +75,10 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId }) {
     <div className='bg-[#f5e1b4] shadow-md rounded-md p-4 w-80'>
       <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : null}`}>
         <div>
-        <img src={`http://localhost:3000${product.picture}`} alt={product.name} className="w-full h-40 object-cover" />
-        <h2 className="text-lg font-bold">{product.name}</h2>
+          <img src={`http://localhost:3000${product.picture}`} alt={product.name} className="w-full h-40 object-cover" />
+          <h2 className="text-lg font-bold">{product.name}</h2>
           <p className="text-gray-600 ">{product.description}</p>
-          <p className="text-gray-600 "><span className='w-1/2'>Price:</span> <span className='w-1/2'>${product.price}</span></p>
+          <p className="text-gray-600 "><span className='w-1/2'>Price:</span> <span className='w-1/2'>{convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${product.price.toFixed(2)} USD`}</span></p>
           <p className="text-gray-600 "><span className='w-1/2'>Seller:</span> {product.seller}</p>
           <p className="text-gray-600 "><span className='w-1/2'>Ratings:</span> {averageRating} / 5</p>
           <p className="text-gray-600 "><span className='w-1/2'>Available Quantity:</span> {product.available_quantity}</p>

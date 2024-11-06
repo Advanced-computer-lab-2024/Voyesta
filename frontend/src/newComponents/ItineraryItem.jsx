@@ -3,7 +3,7 @@ import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 import BookingPopup from './BookingPopup';
 
-const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
+const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPrice, targetCurrency }) => {
 
   const convertDateToInputFormat = (dateString) => {
     const date = new Date(dateString);
@@ -220,7 +220,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
             />
           </div>
           <div className="flex justify-between mt-2 h-8">
-          <img
+            <img
               onClick={handleCancel}
               src={assets.cancelIcon}
               className="w-7 h-7 cursor-pointer"
@@ -236,7 +236,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
         <>
           <h2 className="text-xl font-bold">{itinerary.name}</h2>
           <p>Language: {itinerary.tourLanguage}</p>
-          <p>Price: ${itinerary.tourPrice}</p>
+          <p>Price: {convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${itinerary.tourPrice.toFixed(2)} USD`}</p>
           <p>Available Dates: {itinerary.availableDates.map(date => formatDate(date)).join(', ')}</p>
           <p>Activities: {itinerary.activities.map(activity => activity.name).join(', ')}</p>
           <p>Tags: {itinerary.tags.map(tag => tag.Name).join(', ')}</p>
@@ -254,25 +254,28 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
               src={assets.deleteIcon}
               className="w-6 h-6 cursor-pointer"
             />
-            <button onClick={toggleBookingStatus} className={`${bookingActive ? "bg-red-500" : "bg-blue-500"} text-white rounded-lg p-2 mt-4 hover:${bookingActive ? "bg-red-700" : "bg-blue-700"}`}>
-              {bookingActive ? "Disable Booking" : "Enable Booking"}
-            </button>
             <img
               onClick={handleEdit}
               src={assets.editIcon}
               className="w-6 h-6 cursor-pointer"
             />
-            
-          </div>
-          }
-          {role === 'admin' && !inappropriate && (
-            <button onClick={flagAsInappropriate} className="bg-red-500 text-white rounded-lg p-2 mt-4 hover:bg-red-700">
-              Flag as Inappropriate
-            </button>
-          )}
-          {role === 'tourist' && (
+            <img
+              onClick={toggleBookingStatus}
+              src={assets.toggleIcon}
+              className="w-6 h-6 cursor-pointer"
+            />
+            <img
+              onClick={flagAsInappropriate}
+              src={assets.flagIcon}
+              className="w-6 h-6 cursor-pointer"
+            />
+          </div>}
+          {role === "tourist" && (
             <>
-              <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+              <button
+                onClick={() => setShowPopup(true)}
+                className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+              >
                 Book Itinerary
               </button>
               {showPopup && (

@@ -1,4 +1,3 @@
-// ActivitiesView.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ActivitiesList from './ActivitiesList';
@@ -7,6 +6,7 @@ import PriceFilterBar from './PriceFilterBar';
 import CategoryFilter from './CategoryFilter';
 import RatingFilter from './RatingFilter';
 import DateRangeFilter from './DateRangeFilter';
+import CurrencyConverter from './CurrencyConverter';
 
 const ActivitiesView = ({ baseUrl, role }) => {
   const [activities, setActivities] = useState([]);
@@ -18,6 +18,9 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [sortOption, setSortOption] = useState(''); // Added sort option state
+  const [prices, setPrices] = useState([]);
+  const [convertedPrices, setConvertedPrices] = useState([]);
+  const [targetCurrency, setTargetCurrency] = useState('USD');
 
   useEffect(() => {
     fetchActivities();
@@ -33,6 +36,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
       console.log(response.data);
       setActivities(response.data);
       setFilteredActivities(response.data);
+      setPrices(response.data.map(activity => activity.price));
     } catch (error) {
       console.error('Error fetching activities:', error);
       setMessage("Error fetching activities.");
@@ -74,73 +78,46 @@ const ActivitiesView = ({ baseUrl, role }) => {
     <div className="flex">
       {role === 'tourist' && (
         <div className="w-1/5 p-4 bg-red-300">
-        <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+          <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+          <PriceFilterBar products={activities} setProducts={setFilteredActivities} convertedPrices={convertedPrices} />
+          <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
+          <RatingFilter setSelectedRating={setRating} />
+          <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
 
-        <PriceFilterBar products={activities} setProducts={setFilteredActivities} />
-        <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
-        <RatingFilter setSelectedRating={setRating} />
-        <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+          {/* Sorting Dropdown */}
+          <div className="mb-4">
+            <label className="block mb-2">Sort by</label>
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="w-full p-2 border"
+            >
+              <option value="">Choose...</option>
+              <option value="priceAsc">Price: Low to High</option>
+              <option value="priceDesc">Price: High to Low</option>
+              <option value="ratingAsc">Rating: Low to High</option>
+              <option value="ratingDesc">Rating: High to Low</option>
+            </select>
+          </div>
 
-        {/* Sorting Dropdown */}
-        <div className="mb-4">
-          <label className="block mb-2">Sort by</label>
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="w-full p-2 border"
+          <button
+            onClick={applyFilters}
+            className="w-full p-2 bg-blue-500 text-white rounded"
           >
-            <option value="">Choose...</option>
-            <option value="priceAsc">Price: Low to High</option>
-            <option value="priceDesc">Price: High to Low</option>
-            <option value="ratingAsc">Rating: Low to High</option>
-            <option value="ratingDesc">Rating: High to Low</option>
-          </select>
-        </div>
+            Apply Filters
+          </button>
 
-        <button
-          onClick={applyFilters}
-          className="w-full p-2 bg-blue-500 text-white rounded"
-        >
-          Apply Filters
-        </button>
-      </div>
+          <div className="mb-4">
+            <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+          </div>
+        </div>
       )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
         <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Activities</h1>
-
         {message && <div className="text-red-500 mb-4">{message}</div>}
-
-        {role === 'advertiser' && (
-          <>
-            <div className="flex justify-around border-b mb-4">
-              <button
-                className={`p-2 ${activeTab === 'viewActivity' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('viewActivity')}
-              >
-                View Activity
-              </button>
-              <button
-                className={`p-2 ${activeTab === 'createActivity' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('createActivity')}
-              >
-                Create Activity
-              </button>
-            </div>
-
-            {activeTab === 'viewActivity' ? (
-              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={activities} role={role} />
-            ) : (
-              <CreateActivity />
-            )}
-          </>
-        )}
-
-        {role !== 'advertiser' && (
-          <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} />
-        )}
+        <ActivitiesList activities={filteredActivities} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
       </div>
-
     </div>
   );
 };

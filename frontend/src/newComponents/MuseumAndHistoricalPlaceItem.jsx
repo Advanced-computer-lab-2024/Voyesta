@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { assets } from '../assets/assets';
 
-const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => {
+const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl, convertedPrices, targetCurrency }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlace, setEditedPlace] = useState(place);
-
-  const getAuthHeaders = () => {
-    return {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    };
-  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -29,24 +20,7 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
   };
 
   const handleSubmit = async () => {
-    try {
-      const url = `${baseUrl}/updatePlace/${place._id}`;
-      await axios.patch(url, editedPlace, getAuthHeaders());
-      fetchPlaces();
-      setIsEditing(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      const url = `${baseUrl}/deletePlace/${id}`;
-      await axios.delete(url, getAuthHeaders());
-      fetchPlaces();
-    } catch (error) {
-      console.log(error);
-    }
+    // Handle submit logic here
   };
 
   return (
@@ -64,7 +38,7 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
             name="description"
             value={editedPlace.description}
             onChange={handleChange}
-            className="w-full"
+            className="w-full mt-2"
           />
           <input
             type="text"
@@ -152,9 +126,9 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
 
           {typeof place.ticketPrices === 'object' ? (
             <>
-              <p>Foreigner Price: ${place.ticketPrices.foreigner || '0'}</p>
-              <p>Native Price: ${place.ticketPrices.native || '0'}</p>
-              <p>Student Price: ${place.ticketPrices.student || '0'}</p>
+              <p>Foreigner Price: {convertedPrices && convertedPrices.foreigner ? `${convertedPrices.foreigner.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.foreigner.toFixed(2)} USD`}</p>
+              <p>Native Price: {convertedPrices && convertedPrices.native ? `${convertedPrices.native.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.native.toFixed(2)} USD`}</p>
+              <p>Student Price: {convertedPrices && convertedPrices.student ? `${convertedPrices.student.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.student.toFixed(2)} USD`}</p>
             </>
           ) : (
             <p>Ticket Prices: Not available</p>
