@@ -72,9 +72,9 @@ const ItineraryView = ({ baseUrl, role }) => {
         <div className="w-1/5 p-4 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
 
-        <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} />
+        {/* <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} />
         <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-        <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
+        <PreferencesFilter setSelectedPreferences={setSelectedPreference} /> */}
         
         {/* Sorting Dropdown */}
         <div className="mb-4">
