@@ -218,12 +218,30 @@ const searchFlights = async (req, res) => {
 const confirmFlightPrice = async (req, res) => {
     const { flightOffer } = req.body; // flightOffer should be the selected offer details
 
+    const requestData = {
+        data: {
+            type: "flight-offers-pricing",
+            flightOffers: [flightOffer] // Flight offer should be inside the flightOffers array
+        }
+    };
+    
     try {
-        const response = await amadeus.shopping.flightOffers.pricing.post(
-            JSON.stringify({ data: { type: "flight-offer-pricing", flightOffers: [flightOffer] } })
-        );
+        const response = await amadeus.shopping.flightOffers.pricing.post(requestData)
+        
+        const priceDetails = response.data.flightOffers[0]?.price;
 
-        res.status(200).json({ price: response.data });
+        if (!priceDetails) {
+            return res.status(404).json({ error: "Price details not found." });
+        }
+
+        // Prepare the price info to send only grandTotal and currency
+        const priceInfo = {
+            grandTotal: priceDetails.grandTotal,
+            currency: priceDetails.currency
+        };
+
+        // Sending the extracted price details to the frontend
+        res.status(200).json({ price: priceInfo });
     } catch (error) {
         console.error("Error confirming flight price:", error);
         res.status(500).json({ error: "An error occurred while confirming flight price." });

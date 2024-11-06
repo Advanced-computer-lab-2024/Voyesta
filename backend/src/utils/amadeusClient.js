@@ -5,8 +5,7 @@ dotenv.config()
 
 const amadeus = new Amadeus({
   clientId: process.env.AMADEUS_CLIENT_ID,
-  clientSecret: process.env.AMADEUS_CLIENT_SECRET,
-  logLevel: 'debug'
+  clientSecret: process.env.AMADEUS_CLIENT_SECRET
 });
 
 const handleAmadeusError = (error) => {
