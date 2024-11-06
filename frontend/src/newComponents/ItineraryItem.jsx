@@ -26,6 +26,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
   const [bookingActive, setBookingActive] = useState(itinerary.bookingActive);
   const [inappropriate, setInappropriate] = useState(itinerary.inappropriate);
   const [showPopup, setShowPopup] = useState(false);
+  const [shareLink, setShareLink] = useState('');
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -132,6 +133,24 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
       console.error('Error booking itinerary:', error);
       alert('Error booking itinerary.');
     }
+  };
+
+  const handleCopyLink = (link) => {
+    navigator.clipboard.writeText(link).then(() => {
+      alert('Link copied to clipboard');
+    }).catch((err) => {
+      console.error('Failed to copy link: ', err);
+    });
+  };
+
+  const handleShareViaEmail = (link) => {
+    window.location.href = `mailto:?subject=Check this out&body=${link}`;
+  };
+
+  const generateShareLink = (itineraryId) => {
+    const link = `${window.location.origin}/itinerary/${itineraryId}`;
+    setShareLink(link);
+    return link;
   };
 
   return (
@@ -274,6 +293,18 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role }) => {
             <>
               <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
                 Book Itinerary
+              </button>
+              <button onClick={() => {
+                const link = generateShareLink(itinerary._id);
+                handleCopyLink(link);
+              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Share via Copy Link
+              </button>
+              <button onClick={() => {
+                const link = generateShareLink(itinerary._id);
+                handleShareViaEmail(link);
+              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Share via Email
               </button>
               {showPopup && (
                 <BookingPopup

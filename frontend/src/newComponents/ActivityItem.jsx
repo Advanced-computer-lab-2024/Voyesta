@@ -6,6 +6,7 @@ import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
 
 const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
+  const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState(activity);
   const [mappedTags, setMappedTags] = useState([]);
@@ -76,6 +77,24 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
 
   const handleEdit = () => {
     setIsEditing(true);
+  };
+
+  const handleCopyLink = (link) => {
+    navigator.clipboard.writeText(link).then(() => {
+      alert('Link copied to clipboard');
+    }).catch((err) => {
+      console.error('Failed to copy link: ', err);
+    });
+  };
+
+  const handleShareViaEmail = (link) => {
+    window.location.href = `mailto:?subject=Check this out&body=${link}`;
+  };
+
+  const generateShareLink = (activityId) => {
+    const link = `${window.location.origin}/activity/${activityId}`;
+    setShareLink(link);
+    return link;
   };
 
   const handleCancel = () => {
@@ -309,6 +328,18 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
               <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
                 Book Activity
               </button>
+              <button onClick={() => {
+                const link = generateShareLink(activity._id);
+                handleCopyLink(link);
+              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Share via Copy Link
+              </button>
+              <button onClick={() => {
+                const link = generateShareLink(activity._id);
+                handleShareViaEmail(link);
+              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+                Share via Email
+              </button>
               {showPopup && (
                 <BookingPopup
                   item={activity}
@@ -319,6 +350,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
               )}
             </>
           )}
+          
 
           {role === 'advertiser' && (
             <div className="flex gap-2 mt-2 h-6">

@@ -85,6 +85,23 @@ const getItineraries = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const getItineraryById = async (req, res) => {
+    try {
+        const itinerary = await Itinerary.findById(req.params.id)
+            .populate('activities', 'name')
+            .populate('tags', 'Name')
+            .populate('createdBy', 'username')
+            .populate('ratings.tourist', 'username')
+            .populate('comments.tourist', 'username');
+        if (!itinerary) {
+            return res.status(404).json({ message: 'Itinerary not found' });
+        }
+        res.json(itinerary);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // update an Itinerary
 const updateItinerary = async (req, res) => {
@@ -341,6 +358,7 @@ const checkItineraryRatingAndComment = async (req, res) => {
   };
 
 module.exports = {
+    getItineraryById,
     createItinerary,
     getItinerary,
     getItineraries,

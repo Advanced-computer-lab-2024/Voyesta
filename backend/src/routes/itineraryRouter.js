@@ -1,5 +1,6 @@
 const express = require('express');
 const {
+    getItineraryById,
     createItinerary,  
     getItinerary, 
     updateItinerary, 
@@ -14,6 +15,7 @@ let _ = express.Router();
 
 _.post('/add', createItinerary);
 _.get('/get/:id', getItinerary);
+_.get('/getById/:id', getItineraryById);
 _.get('/getByGuide', getItineraries);
 _.delete('/delete/:id', deleteItinerary);
 _.patch('/update/:id', updateItinerary);
