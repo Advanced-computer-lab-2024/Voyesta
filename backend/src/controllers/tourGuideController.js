@@ -40,14 +40,17 @@ const getTourGuides = async (req, res) => {
 // Update a Tour Guide profile
 const updateTourGuide = async (req, res) => {
     const id = req.user.id; // Extract email from URL parameters
-    const {  mobileNumber,
+    const {  
+        mobileNumber,
         yearsOfExperience,
-        previousWork,} = req.body;
+        previousWork,
+        email} = req.body;
 
         const updates = {};
         if (mobileNumber)  updates.mobileNumber = mobileNumber;
         if (yearsOfExperience) updates.yearsOfExperience = yearsOfExperience;
         if (previousWork) updates.previousWork = previousWork;
+        if (email) updates.email = email
 
     try {
         const tourGuide = await tourGuideModel.findOneAndUpdate(

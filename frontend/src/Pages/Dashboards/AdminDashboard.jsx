@@ -8,6 +8,8 @@ import ProductsView from "../../newComponents/ProuductView";
 import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import ProductSalesView from "../../newComponents/ProductSalesView";
+import PendingUsers from "../../newComponents/PendingUsers";
+
 
 
 const navLinks = [
@@ -17,6 +19,7 @@ const navLinks = [
   { path: "/admin/itineraries", label: "Itineraries" },
   { path: "/admin/complaints", label: "Complaints" },
   { path: "/admin/sales", label: "Sales" },
+  { path: "/admin/pendingUsers", label: "Pending Users" },
   { path: "/admin/account-management", label: "Account Management" }
 ];
 
@@ -55,6 +58,9 @@ function AdminDashboard(){
 
         <Route path="/sales" element={
           <ProductSalesView userType="admin" />
+        }/>
+        <Route path="/pendingUsers" element={
+          <PendingUsers baseUrl= "http://localhost:3000/api/admin" />
         }/>
         <Route path="/account-management" element={
           <AdminAccountManagementNavbar

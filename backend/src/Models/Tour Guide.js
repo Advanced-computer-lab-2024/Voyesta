@@ -68,12 +68,24 @@ const tourGuideSchema = new Schema({
       required: true,
       min:0,
       max:5
-    },
-  }],
+    },
+  }],
   status: {
     type: String,
-    enum: ['pending', 'active', 'deleted'],
-    default: 'active'
+    enum: ['pending', 'active', 'deleted', 'rejected'], // Add 'rejected' status
+    default: 'pending'
+  },
+  profilePicture: {
+    type: String,
+    required: false
+  },
+  personalId: {
+    type: String,
+    required: false
+  },
+  additionalDocument: {
+    type: String,
+    required: false
   }
 }, { timestamps: true });
 

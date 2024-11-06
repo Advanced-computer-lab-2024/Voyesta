@@ -1,6 +1,9 @@
 const adminModel = require('../Models/Admin');
 const TourismGovernor = require('../Models/tourismGovernor');
 const { generateToken } = require('../utils/jwt');
+const TourGuide = require('../Models/Tour Guide');
+const Seller = require('../Models/Seller');
+const Advertiser = require('../Models/Advertiser');
 
 
 // Create a new Admin profile
@@ -104,6 +107,31 @@ const createTourismGovernor = async (req, res) => {
     }
 };
 
+// Fetch all pending users from TourGuide, Seller, and Advertiser collections
+const getPendingUsers = async (req, res) => {
+    try {
+        const pendingTourGuides = await TourGuide.find({ status: 'pending' });
+        const pendingSellers = await Seller.find({ status: 'pending' });
+        const pendingAdvertisers = await Advertiser.find({ status: 'pending' });
 
+        const formatUser = (user, userType) => ({
+            userType,
+            name: user.username,
+            id: user._id,
+            personalId: user.personalId || null,
+            additionalDocument: user.additionalDocument || null
+        });
 
-module.exports = { createAdmin, updatePassword, deleteAccount ,sendOTPadmin, createTourismGovernor};
+        const pendingUsers = [
+            ...pendingTourGuides.map(user => formatUser(user, 'TourGuide')),
+            ...pendingSellers.map(user => formatUser(user, 'Seller')),
+            ...pendingAdvertisers.map(user => formatUser(user, 'Advertiser'))
+        ];
+
+        res.status(200).json(pendingUsers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers };

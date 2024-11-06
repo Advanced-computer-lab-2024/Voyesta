@@ -19,7 +19,7 @@ const productController = require('../controllers/productController');
 const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToComplaint } = require('../controllers/complaintController');
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
-const { changePassword, setStatusToActive, deleteAccount, getDeletedUsers } = require('../controllers/accountController');
+const { changePassword, setStatusToActive, setStatusToRejected, setStatusToDeleted, deleteAccount, getDeletedUsers } = require('../controllers/accountController');
 
 
 // ------------- Not testedd ---------------
@@ -68,7 +68,13 @@ _.patch('/replyToComplaint/:id', addReplyToComplaint);
 
 _.patch('/changePassword', changePassword);
 _.patch('/setStatusToActive/:id', setStatusToActive);
-_.delete('/deleteAccount/:id', deleteAccount);
+_.patch('/setStatusToRejected/:id', setStatusToRejected);
+// _.patch('/setStatusToDeleted/:id', setStatusToDeleted);
+_.delete('/deleteAccount/:id', authenticate, deleteAccount);
 _.get('/getDeletedUsers', getDeletedUsers);
+
+
+_.get('/pending-users', adminController.getPendingUsers);
+
 
 module.exports = _;

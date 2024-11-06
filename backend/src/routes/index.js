@@ -39,6 +39,7 @@ const categoryRouter = require("./activityCategoryRouter");
 const authenticate = require('../middleware/authenticate');
 const bookingRouter = require('./bookingRouter');
 const purchaseRouter = require('./purchaseRouter');
+const cloudinaryRouter = require('./cloudinaryRouter');
 
 
 _.use("/advertiser",  advertiserRouter);
@@ -53,6 +54,8 @@ _.use('/category', categoryRouter);
 _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 _.use('/bookings', bookingRouter);
 _.use('/purchase', purchaseRouter);
+_.use('/cloudinary', cloudinaryRouter);
+
 
 
 _.get("/user",authenticate,  (req, res) => {

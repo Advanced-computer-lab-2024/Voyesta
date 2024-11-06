@@ -121,6 +121,28 @@ const setStatusToDeleted = async (req, res) => {
   }
 };
 
+const setStatusToRejected = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    let user = await TourGuide.findById(id) ||
+                await Advertiser.findById(id) ||
+                await Seller.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    user.status = 'rejected';
+    await user.save();
+
+    res.status(200).json({ message: 'Status set to rejected successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
 const setStatusToActive = async (req, res) => {
   const { id } = req.params;
 
@@ -199,6 +221,7 @@ const getDeletedUsers = async (req, res) => {
 module.exports = {
   changePassword,
   setStatusToDeleted,
+  setStatusToRejected,
   setStatusToActive,
   deleteAccount,
   getDeletedUsers,
