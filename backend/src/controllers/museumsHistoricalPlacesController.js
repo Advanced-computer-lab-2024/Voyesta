@@ -27,6 +27,20 @@ const create = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const getMuseumOrHistoricalPlaceById = async (req, res) => {
+    try {
+        const place = await museumsHistoricalPlacesModel.findById(req.params.id)
+            .populate('tags', 'Name')
+            .populate('createdBy', 'username')
+            .select('name description pictures location.address location.city location.country location.coordinates.lat location.coordinates.lng openingHours ticketPrices.foreigner ticketPrices.native ticketPrices.student tags createdBy');
+        if (!place) {
+            return res.status(404).json({ message: 'Place of interest not found' });
+        }
+        res.json(place);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 
 const get = async (req, res) => {
@@ -130,6 +144,6 @@ const filterByTag = async (req, res) => {
     }
 };
 
-module.exports = { create, get, update, remove, addTag, search, filterByTag};
+module.exports = { create, getMuseumOrHistoricalPlaceById,get, update, remove, addTag, search, filterByTag};
 
 
