@@ -5,7 +5,7 @@ import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
 
-const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
+const ActivityItem = ({ fetchActivities, activity, role, baseUrl, transportation }) => {
   const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState(activity);
@@ -314,16 +314,18 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
             : activity.category?.Name || 'Unknown category'}
           </p>
           
+          
           {Array.isArray(activity.tags) ? (
-            <p>Tags: {mappedTags.join(', ')}</p>
+            !transportation && <p>Tags: {mappedTags.join(', ')}</p>
           ) : (
             <p>Tags: No tags available</p>
           )}
 
           <p>Rating: {averageRating}</p>
           <p>Special Discount: {activity.specialDiscount}</p>
+          
 
-          {role === 'tourist' && (
+          {(role === 'tourist' && (!transportation)) && (
             <>
               <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
                 Book Activity

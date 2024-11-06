@@ -15,7 +15,7 @@ const DropdownMenu = () => {
 
     return (
         <div className="dropdown" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <Link to="/bookings" className="dropdown-link">Bookings</Link>
+            <Link to="/tourist/bookings" className="dropdown-link">Bookings</Link>
             {isOpen && (
                 <div className="dropdown-content">
                     <Link to="/tourist/flight">Book Flight</Link>
