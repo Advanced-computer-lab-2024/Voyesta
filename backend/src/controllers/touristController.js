@@ -9,7 +9,7 @@ const {generateToken} = require('../utils/jwt');
 const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
 
 
-
+//console.log(amadeus);
 
 
 
@@ -259,13 +259,23 @@ const bookFlight = async (req, res) => {
 
 
 
-// Search for hotels
-const searchHotels = async (req, res) => {
+const searchHotelsByCity = async (req, res) => {
     const { cityCode, checkInDate, checkOutDate, adults } = req.query;
 
     try {
+        // Step 1: Get list of hotels in the city
+        const hotelList = await amadeus.referenceData.locations.hotels.byCity.get({ cityCode:'NYC', max: 10 });
+        
+        if (!hotelList.data || hotelList.data.length === 0) {
+            return res.status(404).json({ message: "No hotels found for the specified city." });
+        }
+        console.log(hotelList.data);
+
+        // Step 2: Retrieve offers for each hotel using the hotel IDs
+        const hotelIds = hotelList.data.map(hotel => hotel.hotelId);
+        console.log(hotelIds);
         const response = await amadeus.shopping.hotelOffers.get({
-            cityCode,
+            hotelIds: hotelIds.join(','), // Convert array of hotel IDs to a comma-separated string
             checkInDate,
             checkOutDate,
             adults
@@ -273,11 +283,16 @@ const searchHotels = async (req, res) => {
 
         res.status(200).json(response.data);
     } catch (error) {
-        console.error("Error searching for flights:", error);
-        const { status, message } = handleAmadeusError(error);
-        res.status(status).json({ error: message });
+        console.error("Error searching hotels by city:", error);
+        const { status, message } = handleAmadeusError(error); // Use custom error handling if needed
+        res.status(status).json({ error: message || "An error occurred while searching hotels by city." });
     }
 };
+
+
+
+
+
 
 const confirmHotelPrice = async (req, res) => {
     const { hotelOfferId } = req.body; // ID of the selected hotel offer
@@ -300,4 +315,4 @@ const bookHotel = async (req, res) => {
 
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotels,confirmFlightPrice,confirmHotelPrice,bookFlight,bookHotel}; // Export the controller functions
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,confirmHotelPrice,bookFlight,bookHotel}; // Export the controller functions
