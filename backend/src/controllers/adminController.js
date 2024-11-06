@@ -7,7 +7,7 @@ const Advertiser = require('../Models/Advertiser');
 
 
 // Create a new Admin profile
-const createAdmin = async (req, res) => {
+const createAdmin = async (req , res) => {
     const { username, password } = req.body;
 
     try {
