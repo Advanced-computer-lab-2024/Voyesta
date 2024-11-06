@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ChangePassword from '../../newComponents/ChangePassword';
+import UploadDocuments from '../../newComponents/UploadDocuments';
+
 
 function TourGuideProfile() {
   const [activeTab, setActiveTab] = useState("viewProfile");
@@ -12,8 +14,9 @@ function TourGuideProfile() {
   const [previousWork, setPreviousWork] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null); // State to handle error messages
+  const [picture, setPicture] = useState(null); // State for profile picture
 
-  const url = "http://localhost:3000/api/tourGuide/get"; // Adjust based on your backend
+  const url = "http://localhost:3000/api/tourGuide"; // Adjust based on your backend
 
   const token = localStorage.getItem('token');
   const getAuthHeaders = () => {
@@ -27,7 +30,8 @@ function TourGuideProfile() {
   // Fetch tour guide profile
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(url, getAuthHeaders());
+      const response = await axios.get("http://localhost:3000/api/tourGuide/get", getAuthHeaders());
+      console.log(response.data);
       setProfile(response.data);
       setUsername(response.data.username);
       setEmail(response.data.email);
@@ -47,16 +51,20 @@ function TourGuideProfile() {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     const updatedData = { username, email, mobileNumber, yearsOfExperience, previousWork };
-
-    try {
-      await axios.put(url + '/update', updatedData, getAuthHeaders());
-      setMessage('Profile updated successfully.');
-      fetchProfile();
-      setActiveTab("viewProfile");
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to update profile.');
-      console.error(error);
-    }
+    console.log(updatedData);
+    // try {
+      axios.put(url + '/update', updatedData, getAuthHeaders())
+      .then(res => {
+        setMessage('Profile updated successfully.');
+        fetchProfile();
+        setActiveTab("viewProfile");
+      })
+      .catch(err => console.log(err));
+      
+    // } catch (error) {
+    //   setError(error.response?.data?.message || 'Failed to update profile.');
+    //   console.error(error);
+    // }
   };
 
   const handleRequestAccountDeletion = async () => {
@@ -68,6 +76,23 @@ function TourGuideProfile() {
     } catch (error) {
       console.error('Error requesting account deletion:', error);
       setError(error.response?.data?.message || "Error requesting account deletion.");
+    }
+  };
+
+  const handlePictureUpload = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('picture', picture);
+
+    try {
+      const res = await axios.post('http://localhost:3000/api/cloudinary/upload', formData, getAuthHeaders());
+      setMessage('Profile picture uploaded successfully!');
+      fetchProfile();
+      // console.log(res.data);
+    } catch (err) {
+      setMessage('Failed to upload profile picture.');
+      console.error(err);
     }
   };
 
@@ -99,12 +124,27 @@ function TourGuideProfile() {
         >
           Change Password
         </button>
+        <button
+          className={`p-2 ${activeTab === 'picture' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('picture')}
+        >
+
+          Profile Picture
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'uploadDocuments' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('uploadDocuments')}
+        >
+          
+          Upload Documents
+        </button>
       </div>
 
       {/* Content based on Active Tab */}
       {activeTab === "viewProfile" && (
         profile ? (
           <div>
+            <img src={profile.profilePicture} alt="Profile" className="w-20 h-20 rounded-full mx-auto" />
             <p><strong>Username:</strong> {profile.username}</p>
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Mobile Number:</strong> {profile.mobileNumber}</p>
@@ -197,6 +237,21 @@ function TourGuideProfile() {
             Update Profile
           </button>
         </form>
+      )}
+
+      {activeTab === 'picture' && (
+        <div className="picture-tab">
+          <h2 className="text-lg font-bold">Upload Profile Picture</h2>
+          <form onSubmit={handlePictureUpload}>
+            <input type="file" onChange={(e) => setPicture(e.target.files[0])} required />
+            <button type="submit" className="bg-blue-500 text-white rounded p-2 mt-2">Upload</button>
+          </form>
+          {message && <p>{message}</p>}
+        </div>
+      )}
+
+      {activeTab === 'uploadDocuments' && ( 
+          <UploadDocuments userType='tourGuide' /> 
       )}
 
       {/* Display Message */}
