@@ -69,4 +69,9 @@ _.post('/confirmHotelPrice', authenticate, confirmHotelPrice);
 _.post('/bookFlight', authenticate, bookFlight);
 _.post('/bookHotel', authenticate, bookHotel);
 
+_.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
+
+
+
+
 module.exports = _;

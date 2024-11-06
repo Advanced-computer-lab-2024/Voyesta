@@ -382,4 +382,23 @@ const checkActivityRatingAndComment = async (req, res) => {
     }
 };
 
-module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment };
+// Get activities in the Transportation category for tourists
+const getTransportationActivities = async (req, res) => {
+    if (req.user.type !== 'tourist') {
+        return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const transportationCategory = await Category.findOne({ Name: 'Transportation' });
+        if (!transportationCategory) {
+            return res.status(404).json({ error: 'Transportation category not found' });
+        }
+
+        const activities = await Activity.find({ category: transportationCategory._id }).populate('category tags advertiser');
+        res.status(200).json(activities);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities };
