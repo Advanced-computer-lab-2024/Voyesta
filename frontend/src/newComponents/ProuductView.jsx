@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import PriceFilterBar from "./PriceFilterBar";
 import ProductCard from "./ProductCard";
-import axios from "axios";
+import CurrencyConverter from "./CurrencyConverter";
 
 function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
+  const [prices, setPrices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
@@ -12,7 +14,6 @@ function ProductsView({ role, baseUrl }) {
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
-
   const token = localStorage.getItem('token');
 
   const getAuthHeaders = () => {
@@ -48,6 +49,7 @@ function ProductsView({ role, baseUrl }) {
     axios.get(url, getAuthHeaders())
       .then(res => {
         setProducts(res.data.data);
+        setPrices(res.data.data.map(product => product.price));
         setLoading(false);
       })
       .catch(err => {
@@ -79,20 +81,18 @@ function ProductsView({ role, baseUrl }) {
   const handleSortOrderChange = (e) => {
     const newSortOrder = e.target.value;
     setSortOrder(newSortOrder);
-
     const sortedProducts = [...products].sort((a, b) => {
       const avgRatingA = a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length;
       const avgRatingB = b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length;
-
       if (isNaN(avgRatingA) || isNaN(avgRatingB)) {
         return 0;
       }
-
       if (newSortOrder === 'asc') {
         return avgRatingA - avgRatingB;
       } else if (newSortOrder === 'desc') {
         return avgRatingB - avgRatingA;
       }
+      return 0;
     });
     setProducts(sortedProducts);
   };
@@ -110,11 +110,9 @@ function ProductsView({ role, baseUrl }) {
     <div className="flex">
       <div className="w-1/5 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-
         <div className="mb-4">
           <PriceFilterBar products={products} setProducts={setProducts} />
         </div>
-
         <div className="mb-4 text-center">
           <label>Sort Order:</label>
           <select value={sortOrder} onChange={handleSortOrderChange} className="w-full p-2 border border-gray-400 rounded">
@@ -123,8 +121,10 @@ function ProductsView({ role, baseUrl }) {
             <option value="desc">Descending (by ratings)</option>
           </select>
         </div>
+        <div className="mb-4">
+          <CurrencyConverter prices={prices} />
+        </div>
       </div>
-
       <div className="w-4/5 pl-4 pt-5">
         <div className="mb-4 w-1/2 mx-auto">
           <input
@@ -135,7 +135,6 @@ function ProductsView({ role, baseUrl }) {
             className="w-full p-2 border border-gray-400 rounded-lg"
           />
         </div>
-
         {loading ? (
           <div className="text-center text-lg">Loading products...</div>
         ) : (
@@ -145,10 +144,16 @@ function ProductsView({ role, baseUrl }) {
             ) : (
               products.length > 0 ? (
                 products.map((product) => (
-                  <ProductCard key={product._id} fetchProducts={fetchProducts} oldProduct={product} onEdit={handleEdit} userType={user?.type} userId={user?.id} />
+                  <ProductCard
+                    key={product._id}
+                    fetchProducts={fetchProducts}
+                    oldProduct={product}
+                    onEdit={handleEdit}
+                    userId={user?._id}
+                  />
                 ))
               ) : (
-                <p className="text-center text-lg">No products available.</p>
+                <p className="text-center text-lg">No products found</p>
               )
             )}
           </div>
