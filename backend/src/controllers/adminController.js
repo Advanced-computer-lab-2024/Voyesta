@@ -4,7 +4,7 @@ const { generateToken } = require('../utils/jwt');
 
 
 // Create a new Admin profile
-const createAdmin = async (req, res) => {
+const createAdmin = async (req , res) => {
     const { username, password } = req.body;
 
     try {
@@ -103,7 +103,4 @@ const createTourismGovernor = async (req, res) => {
         return res.status(500).json({ message: 'Error creating Tourism Governor', error: error.message });
     }
 };
-
-
-
 module.exports = { createAdmin, updatePassword, deleteAccount ,sendOTPadmin, createTourismGovernor};
