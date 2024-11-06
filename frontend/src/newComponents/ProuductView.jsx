@@ -7,7 +7,6 @@ import CurrencyConverter from "./CurrencyConverter";
 function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
   const [prices, setPrices] = useState([]);
-  const [convertedPrices, setConvertedPrices] = useState([]); // New state for converted prices
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
@@ -123,7 +122,7 @@ function ProductsView({ role, baseUrl }) {
           </select>
         </div>
         <div className="mb-4">
-          <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} /> {/* Pass setConvertedPrices */}
+          <CurrencyConverter prices={prices} />
         </div>
       </div>
       <div className="w-4/5 pl-4 pt-5">
@@ -144,14 +143,13 @@ function ProductsView({ role, baseUrl }) {
               <p className="text-center text-red-400 text-lg">{errorMsg}</p>
             ) : (
               products.length > 0 ? (
-                products.map((product, index) => (
+                products.map((product) => (
                   <ProductCard
                     key={product._id}
                     fetchProducts={fetchProducts}
                     oldProduct={product}
                     onEdit={handleEdit}
                     userId={user?._id}
-                    convertedPrice={convertedPrices[index]} // Pass convertedPrice
                   />
                 ))
               ) : (
