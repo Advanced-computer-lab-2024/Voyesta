@@ -5,6 +5,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 const PendingUsers = ({ baseUrl }) => {
   const [users, setUsers] = useState([]);
   const [url, setUrl] = useState('');
+  const [trigger, setTrigger] = useState(false);
 
   useEffect(() => {
     // Fetch pending users from the API
@@ -15,7 +16,7 @@ const PendingUsers = ({ baseUrl }) => {
       .catch(error => {
         console.error('There was an error fetching the pending users!', error);
       });
-  }, [baseUrl]);
+  }, [baseUrl, trigger]);
 
   const handleViewClick = (url) => {
     // window.open(url, '_blank');
@@ -27,6 +28,8 @@ const PendingUsers = ({ baseUrl }) => {
     axios.patch(`${baseUrl}/setStatusToActive/${userId}`).
     then(response => {
       console.log(response.data);
+      setUrl('');
+      setTrigger(!trigger);
     })
     .catch(error => {
       console.error('There was an error accepting the user!', error);
@@ -39,6 +42,8 @@ const PendingUsers = ({ baseUrl }) => {
     axios.patch(`${baseUrl}/setStatusToRejected/${userId}`).
     then(response => {
       console.log(response.data);
+      setUrl('');
+      setTrigger(!trigger);
     })
     .catch(error => {
       console.error('There was an error rejecting the user!', error);

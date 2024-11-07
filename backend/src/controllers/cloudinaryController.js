@@ -2,6 +2,8 @@ const cloudinary = require('cloudinary').v2;
 const dotenv = require('dotenv');
 const upload = require('../middleware/upload');
 const TourGuide = require('../Models/Tour Guide');
+const Seller = require('../Models/Seller');
+const Advertiser = require('../Models/Advertiser');
 dotenv.config();
 
 cloudinary.config({ 
@@ -21,9 +23,15 @@ const uploadImage = async (req, res) => {
                 if (error) return res.status(400).json({ message: 'Cloudinary upload failed', error });
 
                 const imageUrl = result.secure_url;
-                console.log(imageUrl);
+            
                 if (req.user.type === 'tourGuide') {
                     await TourGuide.findByIdAndUpdate(req.user.id, { profilePicture: imageUrl });
+                }
+                if (req.user.type === 'seller') {
+                    await Seller.findByIdAndUpdate(req.user.id, { profilePicture: imageUrl });
+                }
+                if (req.user.type === 'advertiser') {
+                    await Advertiser.findByIdAndUpdate(req.user.id, { profilePicture: imageUrl });
                 }
 
                 res.status(200).json({ message: "File uploaded successfully!", url: imageUrl });
@@ -41,8 +49,6 @@ const uploadId = async (req, res) => {
         }
 
         try {
-            // Define the file name with .pdf extension
-            // const fileName = `user_${req.user.id}_idDocument_${Date.now()}`;
 
             const stream = cloudinary.uploader.upload_stream(
                 {format: 'png'},
@@ -56,6 +62,10 @@ const uploadId = async (req, res) => {
                     // Update the user's document URL in the database
                     if (req.user.type === 'tourGuide') {
                         await TourGuide.findByIdAndUpdate(req.user.id, { personalId: pdfUrl });
+                    }if (req.user.type === 'seller') {
+                        await Seller.findByIdAndUpdate(req.user.id, { personalId: pdfUrl });
+                    }if (req.user.type === 'advertiser') {
+                        await Advertiser.findByIdAndUpdate(req.user.id, { personalId: pdfUrl });
                     }
 
                     res.status(200).json({ message: "ID uploaded successfully as PDF!", url: pdfUrl });
@@ -69,9 +79,6 @@ const uploadId = async (req, res) => {
         }
     });
 };
-
-
-
 
 const uploadAdditionalDocument = async (req, res) => {
     upload(req, res, async (err) => {
@@ -88,9 +95,15 @@ const uploadAdditionalDocument = async (req, res) => {
                 // const imageUrl = result.secure_url;
                 const imageUrl = result.secure_url;
 
-                console.log(imageUrl);
+                
                 if (req.user.type === 'tourGuide') {
                     await TourGuide.findByIdAndUpdate(req.user.id, { additionalDocument: imageUrl });
+                }
+                if (req.user.type === 'seller') {
+                    await Seller.findByIdAndUpdate(req.user.id, { additionalDocument: imageUrl });
+                }
+                if (req.user.type === 'advertiser') {
+                    await Advertiser.findByIdAndUpdate(req.user.id, { additionalDocument: imageUrl });
                 }
 
                 res.status(200).json({ message: "File uploaded successfully!", url: imageUrl });

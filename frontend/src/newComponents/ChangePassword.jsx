@@ -29,7 +29,7 @@ const ChangePassword = ({ baseUrl }) => {
   };
 
   return (
-    <div className="relative text-center bg-white shadow rounded p-3 w-1/5 mx-auto">
+    <div className="relative text-center bg-white shadow rounded p-3 mx-auto">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">Old Password</label>

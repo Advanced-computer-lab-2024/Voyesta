@@ -11,7 +11,7 @@ const {
     unarchiveProduct
 } = require('../controllers/productController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
-
+const cloudinaryController = require('../controllers/cloudinaryController');
 
 
 _.post("/add", createSeller);
@@ -34,5 +34,7 @@ _.patch('/unarchiveProduct/:id', authenticate, unarchiveProduct);
 
 _.patch('/changePassword', authenticate, changePassword);
 _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
+_.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
+
 
 module.exports = _;

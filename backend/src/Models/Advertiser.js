@@ -38,14 +38,22 @@ const advertSchema = new Schema({
         type: [String], // Array to list services the company offers
         required: false,
     },
-    otp: {
-        type: String,
-        required: false,
-    },
     status: {
       type: String,
-      enum: ['pending', 'active', 'deleted'],
-      default: 'active'
+      enum: ['pending', 'active', 'deleted', 'rejected'],
+      default: 'pending'
+    },
+    profilePicture: {
+        type: String,
+        required: false
+    },
+    personalId: {
+        type: String,
+        required: false
+    },
+    additionalDocument: {
+        type: String,
+        required: false
     }
 }, { timestamps: true });
 

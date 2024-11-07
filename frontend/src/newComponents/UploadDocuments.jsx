@@ -16,14 +16,14 @@ const UploadDocuments = ({ userType }) => {
 	try {
 		let formData = new FormData();			
 		formData.append('idDocument', idDocument);
-	  const resID = await axios.post(`http://localhost:3000/api/cloudinary/uploadId`, formData, getAuthHeaders());
+	  	const resID = await axios.post(`http://localhost:3000/api/cloudinary/uploadId`, formData, getAuthHeaders());
 	  
 		formData = new FormData();
 		formData.append('additionalDocument', additionalDocument);
 		const resDocument = await axios.post(`http://localhost:3000/api/cloudinary/uploadAdditionalDocument`, formData, getAuthHeaders());
 	  
 		setMessage('Documents uploaded successfully!');
-	  console.log(resID.data);
+	  	console.log(resID.data);
 		console.log(resDocument.data);
 	} catch (err) {
 	  setMessage('Failed to upload documents.');

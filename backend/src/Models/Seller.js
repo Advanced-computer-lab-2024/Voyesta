@@ -30,15 +30,23 @@ const sellerSchema = new Schema({
         required: false, // Description is optional
         trim: true, // Ensures no extra spaces are stored
     },
-    otp: {
-        type: String,
-        required: false,
-    },
     status: {
       type: String,
-      enum: ['pending', 'active', 'deleted'],
-      default: 'active'
-    }
+      enum: ['pending', 'active', 'deleted', 'rejected'],
+      default: 'pending'
+    },
+    profilePicture: {
+        type: String,
+        required: false
+      },
+      personalId: {
+        type: String,
+        required: false
+      },
+      additionalDocument: {
+        type: String,
+        required: false
+      }
 }, { timestamps: true });
 
 

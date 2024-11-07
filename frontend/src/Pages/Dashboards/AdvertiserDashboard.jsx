@@ -1,9 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-
-import AdvertiserProfile from '../../components/AdvertiserComponents/AvertiserProfie';
 import NavBar from '../../components/NavBar';
 import ActivitiesView from '../../newComponents/ActivitiesView';
+import ProfileManagement from '../../newComponents/ProfileManagement';
 
 
 const navLinks = [
@@ -20,7 +19,11 @@ function AdvertiserDashboard() {
           <Routes>
             <Route exact path="/" element={<div>Home</div>}/>
             <Route path="/profile" element={
-              <AdvertiserProfile />
+              // <AdvertiserProfile />
+              <ProfileManagement 
+                userType="advertiser" 
+                baseUrl="http://localhost:3000/api/advertiser"
+              />
               
             } />
             <Route path="/activity" element={

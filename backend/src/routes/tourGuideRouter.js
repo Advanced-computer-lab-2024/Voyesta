@@ -20,6 +20,9 @@ const {
 
 const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = require("../controllers/tourGuideController");
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
+const cloudinaryController = require('../controllers/cloudinaryController');
+
+
 
 _.post("/add", createTourGuide);
 _.get("/get", authenticate, getTourGuides);
@@ -42,5 +45,6 @@ _.get('/getPlaces', get);
 
 _.patch('/changePassword', authenticate, changePassword);
 _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
+_.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
 
 module.exports = _;

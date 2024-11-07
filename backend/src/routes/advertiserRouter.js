@@ -8,7 +8,7 @@ const {createActivity, deleteActivity, updateActivity, getAllActivitiesByAdverti
 const { getActivityCategory } = require("../controllers/activityCategoryController");
 const { getPreferenceTags } = require("../controllers/preferenceTagContoller");
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
-
+const cloudinaryController = require('../controllers/cloudinaryController');
 
 _.post("/add", createAdvertiser);
 _.get("/get", authenticate, getAdvertisers);
@@ -26,5 +26,6 @@ _.get("/getPreferenceTags", authenticate, getPreferenceTags);
 
 _.patch('/changePassword', authenticate, changePassword);
 _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
+_.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
 
 module.exports = _;

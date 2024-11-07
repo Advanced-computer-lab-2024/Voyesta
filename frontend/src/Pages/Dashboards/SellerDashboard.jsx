@@ -2,10 +2,10 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import SellerCreateProduct from '../../components/sellerComponents/SellerCreateProduct';
-import SellerProfile from '../../components/sellerComponents/SellerProfileMangement';
 import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
 import ProductSalesView from "../../newComponents/ProductSalesView";
+import ProfileManagement from "../../newComponents/ProfileManagement";
 
 
 const navLinks = [
@@ -45,10 +45,11 @@ function SellerDashboard(){
         }/>
         
         <Route path="/profile" element={
-          <SellerProfile
-            baseUrl="http://localhost:3000/api/seller"
-            title = "My Profile" 
-          />
+          // <SellerProfile
+          //   baseUrl="http://localhost:3000/api/seller"
+          //   title = "My Profile" 
+          // />
+          <ProfileManagement userType="seller" baseUrl="http://localhost:3000/api/seller" />
         }/>
     </Routes>       
     </div>
