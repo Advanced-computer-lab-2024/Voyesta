@@ -261,26 +261,31 @@ const bookFlight = async (req, res) => {
 
 const searchHotelsByCity = async (req, res) => {
     const { cityCode, checkInDate, checkOutDate, adults } = req.query;
-
+    const MAX_HOTELS = 10; // Maximum number of hotels to retrieve
     try {
         // Step 1: Get list of hotels in the city
-        const hotelList = await amadeus.referenceData.locations.hotels.byCity.get({ cityCode:'NYC', max: 10 });
-        
+        const hotelList = await amadeus.referenceData.locations.hotels.byCity.get({ cityCode});
         if (!hotelList.data || hotelList.data.length === 0) {
             return res.status(404).json({ message: "No hotels found for the specified city." });
         }
-        console.log(hotelList.data);
+        //console.log(hotelList.data);
+        const hotelIds = hotelList.data.map(hotel => hotel.hotelId).slice(0, MAX_HOTELS);
+
+        if (hotelIds.length === 0) {
+            return res.status(404).json({ message: "No hotels found for the specified city." });
+        }
+
 
         // Step 2: Retrieve offers for each hotel using the hotel IDs
-        const hotelIds = hotelList.data.map(hotel => hotel.hotelId);
-        console.log(hotelIds);
-        const response = await amadeus.shopping.hotelOffers.get({
+       
+       console.log(hotelIds);
+        const response = await amadeus.shopping.hotelOffersSearch.get({
             hotelIds: hotelIds.join(','), // Convert array of hotel IDs to a comma-separated string
             checkInDate,
             checkOutDate,
             adults
         });
-
+        console.log(response.data);
         res.status(200).json(response.data);
     } catch (error) {
         console.error("Error searching hotels by city:", error);

@@ -60,12 +60,13 @@ const BookHotel = ({ baseUrl }) => {
 
             <div>
                 {hotels.length > 0 && hotels.map((hotel) => (
-                    <div key={hotel.id} style={{ border: '1px solid black', padding: '10px', margin: '10px' }}>
+                    <div key={hotel.hotel.hotelId} style={{ border: '1px solid black', padding: '10px', margin: '10px' }}>
                         <h2>{hotel.hotel.name}</h2>
-                        <p>Address: {hotel.hotel.address.lines.join(', ')}</p>
-                        <p>Rating: {hotel.hotel.rating}</p>
-                        {hotel.offers?.map((offer, index) => (
-                            <div key={index}>
+                        <p>Address: Latitude {hotel.hotel.latitude}, Longitude {hotel.hotel.longitude}</p>
+                        <p>Available: {hotel.available ? "Yes" : "No"}</p>
+                        <h3>Offers:</h3>
+                        {hotel.offers?.map((offer) => (
+                            <div key={offer.id} style={{ marginLeft: '20px' }}>
                                 <p>Room Type: {offer.room.description.text}</p>
                                 <p>Price: {offer.price.total} {offer.price.currency}</p>
                             </div>
