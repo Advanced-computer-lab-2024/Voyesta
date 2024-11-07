@@ -47,7 +47,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
     let filtered = [...activities];
 
     if (category) {
-      filtered = filtered.filter(activity => activity.category === category);
+      filtered = filtered.filter(activity => activity.category._id === category);
     }
     if (rating) {
       filtered = filtered.filter(activity => activity.rating === rating);
@@ -74,14 +74,12 @@ const ActivitiesView = ({ baseUrl, role }) => {
     setFilteredActivities(sorted);
   };
 
-  
-
   return (
     <div className="flex">
       {role === 'tourist' && (
         <div className="w-1/5 p-4 bg-red-300">
           <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-          <PriceFilterBar products={activities} setProducts={setFilteredActivities} convertedPrices={convertedPrices} />
+          <PriceFilterBar items={activities} setItems={setFilteredActivities} convertedPrices={convertedPrices} priceProperty="price" />
           <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
           <RatingFilter setSelectedRating={setRating} />
           <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
@@ -137,7 +135,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
             </div>
 
             {activeTab === 'viewActivity' ? (
-              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={activities} role={role} />
+              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
             ) : (
               <CreateActivity />
             )}
@@ -145,10 +143,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
         )}
 
         {role !== 'advertiser' && (
-          <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} />
+          <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
         )}
-
-        
       </div>
     </div>
   );

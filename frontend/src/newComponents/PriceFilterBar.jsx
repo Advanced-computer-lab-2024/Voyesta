@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import '../css/PriceFilterBar.css';
 
-const PriceFilterBar = ({ products, setProducts, convertedPrices = [] }) => {
+const PriceFilterBar = ({ items = [], setItems, convertedPrices = [], priceProperty = 'price' }) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [minVal, setMinVal] = useState(minPrice);
   const [maxVal, setMaxVal] = useState(maxPrice);
 
   useEffect(() => {
-    const prices = convertedPrices.length > 0 ? convertedPrices : products.map((product) => product.price);
-    const min = Math.min(...prices).toFixed(2);
-    const max = Math.max(...prices).toFixed(2);
-    setMinPrice(min);
-    setMaxPrice(max);
-    setMinVal(min);
-    setMaxVal(max);
-  }, [products, convertedPrices]);
+    if (items.length > 0) {
+      const prices = convertedPrices.length > 0 ? convertedPrices : items.map((item) => item[priceProperty]);
+      const min = Math.min(...prices).toFixed(2);
+      const max = Math.max(...prices).toFixed(2);
+      setMinPrice(min);
+      setMaxPrice(max);
+      setMinVal(min);
+      setMaxVal(max);
+    }
+  }, [items, convertedPrices, priceProperty]);
 
   const onFilter = () => {
-    const filteredProducts = products.filter((product, index) => {
-      const price = convertedPrices.length > 0 ? convertedPrices[index] : product.price;
+    const filteredItems = items.filter((item, index) => {
+      const price = convertedPrices.length > 0 ? convertedPrices[index] : item[priceProperty];
       return price >= minVal && price <= maxVal;
     });
-    setProducts(filteredProducts);
+    setItems(filteredItems);
   };
 
   const handleMinChange = (e) => {

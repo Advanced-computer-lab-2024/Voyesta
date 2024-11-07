@@ -53,7 +53,7 @@ const ItineraryView = ({ baseUrl, role }) => {
 
     // Filter by selected preference
     if (selectedPreference) {
-      filtered = filtered.filter(itinerary => itinerary.preferences.includes(selectedPreference));
+      filtered = filtered.filter(itinerary => itinerary.preferences && itinerary.preferences.includes(selectedPreference));
     }
 
     // Sort after filtering
@@ -62,8 +62,8 @@ const ItineraryView = ({ baseUrl, role }) => {
 
   const sortItineraries = (itinerariesToSort) => {
     const sorted = [...itinerariesToSort].sort((a, b) => {
-      if (sortOption === 'priceAsc') return a.price - b.price;
-      if (sortOption === 'priceDesc') return b.price - a.price;
+      if (sortOption === 'priceAsc') return a.tourPrice - b.tourPrice;
+      if (sortOption === 'priceDesc') return b.tourPrice - a.tourPrice;
       if (sortOption === 'ratingAsc') return a.rating - b.rating;
       if (sortOption === 'ratingDesc') return b.rating - a.rating;
       return 0; // Default case, no sorting
@@ -76,8 +76,7 @@ const ItineraryView = ({ baseUrl, role }) => {
       {role === 'tourist' && (
         <div className="w-1/5 p-4 bg-red-300">
           <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-
-          <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} convertedPrices={convertedPrices} />
+          <PriceFilterBar items={itineraries} setItems={setFilteredItineraries} convertedPrices={convertedPrices} priceProperty="tourPrice" />
           <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
           <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
           
@@ -132,11 +131,9 @@ const ItineraryView = ({ baseUrl, role }) => {
               </button>
             </div>
 
-            {activeTab === 'viewItineraries' && (
+            {activeTab === 'viewItineraries' ? (
               <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
-            )}
-
-            {activeTab === 'createItinerary' && (
+            ) : (
               <CreateItinerary />
             )}
           </>

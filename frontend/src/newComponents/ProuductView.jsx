@@ -113,7 +113,7 @@ function ProductsView({ role, baseUrl }) {
       <div className="w-1/5 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
         <div className="mb-4">
-          <PriceFilterBar products={products} setProducts={setProducts} convertedPrices={convertedPrices} />
+          <PriceFilterBar items={products} setItems={setProducts} convertedPrices={convertedPrices} priceProperty="price" />
         </div>
         <div className="mb-4 text-center">
           <label>Sort Order:</label>

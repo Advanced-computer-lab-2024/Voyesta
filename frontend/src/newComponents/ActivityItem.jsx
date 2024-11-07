@@ -5,7 +5,7 @@ import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
 
-const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
+const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice, targetCurrency }) => {
   const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState(activity);
@@ -77,24 +77,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl }) => {
 
   const handleEdit = () => {
     setIsEditing(true);
-  };
-
-  const handleCopyLink = (link) => {
-    navigator.clipboard.writeText(link).then(() => {
-      alert('Link copied to clipboard');
-    }).catch((err) => {
-      console.error('Failed to copy link: ', err);
-    });
-  };
-
-  const handleShareViaEmail = (link) => {
-    window.location.href = `mailto:?subject=Check this out&body=${link}`;
-  };
-
-  const generateShareLink = (activityId) => {
-    const link = `${window.location.origin}/activity/${activityId}`;
-    setShareLink(link);
-    return link;
   };
 
   const handleCancel = () => {
