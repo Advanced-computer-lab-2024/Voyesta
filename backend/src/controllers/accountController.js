@@ -171,12 +171,38 @@ const deleteAccount = async (req, res) => {
   const { id } = req.params;
 
   try {
-    let user = await Tourist.findByIdAndDelete(id) ||
-               await TourGuide.findByIdAndDelete(id) ||
-               await Advertiser.findByIdAndDelete(id) ||
-               await TourismGovernor.findByIdAndDelete(id) ||
-               await Admin.findByIdAndDelete(id) ||
-               await Seller.findByIdAndDelete(id);
+    let user;
+    let userType;
+
+    user = await Tourist.findByIdAndDelete(id);
+    if (user) {
+      userType = 'tourist';
+    } else {
+      user = await TourGuide.findByIdAndDelete(id);
+      if (user) {
+        userType = 'tourGuide';
+      } else {
+        user = await Advertiser.findByIdAndDelete(id);
+        if (user) {
+          userType = 'advertiser';
+        } else {
+          user = await TourismGovernor.findByIdAndDelete(id);
+          if (user) {
+            userType = 'tourismGovernor';
+          } else {
+            user = await Admin.findByIdAndDelete(id);
+            if (user) {
+              userType = 'admin';
+            } else {
+              user = await Seller.findByIdAndDelete(id);
+              if (user) {
+                userType = 'seller';
+              }
+            }
+          }
+        }
+      }
+    }
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
