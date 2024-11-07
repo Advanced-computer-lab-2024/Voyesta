@@ -6,6 +6,7 @@ const activityController = require('../controllers/activityController');
 activityRouter.post('/add', activityController.createActivity);
 // Get all activities
 activityRouter.get('/get', activityController.getActivity);
+activityRouter.get('/getActivity/:id', activityController.getActivityById);
 
 activityRouter.get('/getByAdvertiser', activityController.getAllActivitiesByAdvertiser);
 // Update an activity

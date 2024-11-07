@@ -3,6 +3,7 @@ import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 
 const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, convertedPrices, targetCurrency }) => {
+  const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlace, setEditedPlace] = useState(place);
 
@@ -25,7 +26,7 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.patch(`${baseUrl}/update/${place._id}`, editedPlace, {
+      const response = await axios.patch(`${baseUrl}/updatePlace/${place._id}`, editedPlace, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -39,15 +40,33 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${baseUrl}/delete/${id}`, {
+      await axios.delete(`${baseUrl}/deletePlace/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       fetchPlaces();
     } catch (error) {
-      console.error('Error deleting place:', error);
+      console.log(error);
     }
+  };
+
+  const handleCopyLink = (link) => {
+    navigator.clipboard.writeText(link).then(() => {
+      alert('Link copied to clipboard');
+    }).catch((err) => {
+      console.error('Failed to copy link: ', err);
+    });
+  };
+
+  const handleShareViaEmail = (link) => {
+    window.location.href = `mailto:?subject=Check this out&body=${link}`;
+  };
+
+  const generateShareLink = (placeId) => {
+    const link = `${window.location.origin}/museumHistoricalPlace/${placeId}`;
+    setShareLink(link);
+    return link;
   };
 
   return (
@@ -166,7 +185,17 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
           ) : (
             <p>Tags: No tags available</p>
           )}
-
+          { role === 'tourist' &&
+            <>
+          <button onClick={() => {
+            const link = generateShareLink(place._id);
+            handleCopyLink(link);
+          }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">Share via Copy Link</button>
+          <button onClick={() => {
+            const link = generateShareLink(place._id);
+            handleShareViaEmail(link);
+          }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">Share via Email</button>
+          </>}
           {role === 'tourismGovernor' && (
             <div className="flex gap-2 mt-2 h-6">
               <img

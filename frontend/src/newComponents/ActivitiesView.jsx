@@ -74,6 +74,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
     setFilteredActivities(sorted);
   };
 
+  
+
   return (
     <div className="flex">
       {role === 'tourist' && (
@@ -116,7 +118,37 @@ const ActivitiesView = ({ baseUrl, role }) => {
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
         <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Activities</h1>
         {message && <div className="text-red-500 mb-4">{message}</div>}
-        <ActivitiesList activities={filteredActivities} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
+
+        {role === 'advertiser' && (
+          <>
+            <div className="flex justify-around border-b mb-4">
+              <button
+                className={`p-2 ${activeTab === 'viewActivity' ? 'border-b-2 border-blue-500' : ''}`}
+                onClick={() => setActiveTab('viewActivity')}
+              >
+                View Activity
+              </button>
+              <button
+                className={`p-2 ${activeTab === 'createActivity' ? 'border-b-2 border-blue-500' : ''}`}
+                onClick={() => setActiveTab('createActivity')}
+              >
+                Create Activity
+              </button>
+            </div>
+
+            {activeTab === 'viewActivity' ? (
+              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={activities} role={role} />
+            ) : (
+              <CreateActivity />
+            )}
+          </>
+        )}
+
+        {role !== 'advertiser' && (
+          <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} />
+        )}
+
+        
       </div>
     </div>
   );

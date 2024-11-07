@@ -5,6 +5,12 @@ const Tag = require('../Models/PreferenceTag')
 const Activity = require('../Models/Activity');
 
 const {generateToken} = require('../utils/jwt');
+//const amadeus = require('../utils/amadeusClient').amadeus;
+const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
+
+
+
+
 
 
 const createTourist = async (req, res) => {
@@ -181,4 +187,117 @@ const redeemPoints = async (req, res) => {
     }
 };
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints}; // Export the controller functions
+
+
+const searchFlights = async (req, res) => {
+    const { origin, destination, departureDate, returnDate, adults } = req.query;
+
+    
+
+    
+
+
+    try {
+        const response = await amadeus.shopping.flightOffersSearch.get({
+            originLocationCode: origin,
+            destinationLocationCode: destination,
+            departureDate,
+            returnDate,
+            adults,
+            max: 10 // Limit the results
+        });
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Error searching for flights:", error);
+        const { status, message } = handleAmadeusError(error);
+        res.status(status).json({ error: message });
+    }
+};
+
+const confirmFlightPrice = async (req, res) => {
+    const { flightOffer } = req.body; // flightOffer should be the selected offer details
+
+    const requestData = {
+        data: {
+            type: "flight-offers-pricing",
+            flightOffers: [flightOffer] // Flight offer should be inside the flightOffers array
+        }
+    };
+    
+    try {
+        const response = await amadeus.shopping.flightOffers.pricing.post(requestData)
+        
+        const priceDetails = response.data.flightOffers[0]?.price;
+
+        if (!priceDetails) {
+            return res.status(404).json({ error: "Price details not found." });
+        }
+
+        // Prepare the price info to send only grandTotal and currency
+        const priceInfo = {
+            grandTotal: priceDetails.grandTotal,
+            currency: priceDetails.currency
+        };
+
+        // Sending the extracted price details to the frontend
+        res.status(200).json({ price: priceInfo });
+    } catch (error) {
+        console.error("Error confirming flight price:", error);
+        res.status(500).json({ error: "An error occurred while confirming flight price." });
+    }
+};
+
+const bookFlight = async (req, res) => {
+    // Just a simulation; real booking logic would go here if required.
+    res.status(200).json({ message: 'Flight booked successfully!' });
+};
+
+
+
+
+
+
+
+// Search for hotels
+const searchHotels = async (req, res) => {
+    const { cityCode, checkInDate, checkOutDate, adults } = req.query;
+
+    try {
+        const response = await amadeus.shopping.hotelOffers.get({
+            cityCode,
+            checkInDate,
+            checkOutDate,
+            adults
+        });
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Error searching for flights:", error);
+        const { status, message } = handleAmadeusError(error);
+        res.status(status).json({ error: message });
+    }
+};
+
+const confirmHotelPrice = async (req, res) => {
+    const { hotelOfferId } = req.body; // ID of the selected hotel offer
+
+    try {
+        const response = await amadeus.shopping.hotelOffer(hotelOfferId).get();
+        
+        res.status(200).json({ price: response.data.offers[0].price });
+    } catch (error) {
+        console.error("Error confirming hotel price:", error);
+        res.status(500).json({ error: "An error occurred while confirming hotel price." });
+    }
+};
+
+const bookHotel = async (req, res) => {
+    // Just a simulation; real booking logic would go here if required.
+    res.status(200).json({ message: 'Hotel booked successfully!' });
+};
+
+
+
+
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotels,confirmFlightPrice,confirmHotelPrice,bookFlight,bookHotel}; // Export the controller functions
