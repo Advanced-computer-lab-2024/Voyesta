@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { assets } from '../assets/assets';
+import axios from 'axios';
+import { assets } from '../assets/assets'; // Adjust the import path as necessary
 
-const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl, convertedPrices, targetCurrency }) => {
+const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, convertedPrices, targetCurrency }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlace, setEditedPlace] = useState(place);
 
@@ -16,11 +17,37 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl, conve
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedPlace({ ...editedPlace, [name]: value });
+    setEditedPlace((prevPlace) => ({
+      ...prevPlace,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async () => {
-    // Handle submit logic here
+    try {
+      const response = await axios.patch(`${baseUrl}/update/${place._id}`, editedPlace, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      fetchPlaces();
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating place:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      fetchPlaces();
+    } catch (error) {
+      console.error('Error deleting place:', error);
+    }
   };
 
   return (
@@ -32,7 +59,7 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl, conve
             name="name"
             value={editedPlace.name}
             onChange={handleChange}
-            className="font-bold text-lg"
+            className="w-full mt-2"
           />
           <textarea
             name="description"

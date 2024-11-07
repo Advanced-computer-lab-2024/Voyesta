@@ -12,7 +12,7 @@ const MuseumsAndHistoricalPlacesList = ({ fetchPlaces, places, role, baseUrl, co
             baseUrl={baseUrl}
             place={place}
             role={role}
-            convertedPrice={convertedPrices[index]} // Pass convertedPrice
+            convertedPrices={convertedPrices[index]} // Pass convertedPrices
             targetCurrency={targetCurrency} // Pass targetCurrency
           />
         ))

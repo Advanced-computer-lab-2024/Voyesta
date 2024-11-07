@@ -28,7 +28,11 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
       });
       setPlaces(response.data);
       setFilteredPlaces(response.data); // Initialize filtered places
-      setPrices(response.data.map(place => place.ticketPrices.foreigner)); // Assuming foreigner price for conversion
+      setPrices(response.data.map(place => ({
+        foreigner: place.ticketPrices.foreigner,
+        native: place.ticketPrices.native,
+        student: place.ticketPrices.student
+      })));
     } catch (error) {
       console.error('Error fetching places:', error);
       setMessage("Error fetching places.");
@@ -79,14 +83,14 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
               Apply Filters
             </button>
             <div className="mb-4">
-              <CurrencyConverter prices={prices} convertedPrices={convertedPrices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+              <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
             </div>
           </div>
         </>
       )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Museums and Historical Places</h1>
+        <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Museums and Historical Places</h1>
 
         {message && <div className="text-red-500 mb-4">{message}</div>}
 
@@ -107,7 +111,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
               </button>
             </div>
 
-            {activeTab === 'viewPlaces' ? (
+            {activeTab === 'viewPlaces' && (
               <MuseumsAndHistoricalPlacesList
                 fetchPlaces={fetchPlaces}
                 baseUrl={baseUrl}
@@ -116,7 +120,9 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
                 convertedPrices={convertedPrices}
                 targetCurrency={targetCurrency}
               />
-            ) : (
+            )}
+
+            {activeTab === 'createPlace' && (
               <CreateMuseumAndHistoricalPlace getAuthHeaders={() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })} />
             )}
           </>

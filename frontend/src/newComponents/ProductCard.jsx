@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { assets } from '../assets/assets';
-import ProductLabel from './ProductLabel';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { assets } from '../assets/assets'; // Adjust the import path as necessary
+import ProductLabel from './ProductLabel';
 
 function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice, targetCurrency }) {
   const [product, setProduct] = useState(oldProduct);
@@ -22,6 +22,21 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       .then(res => setUserType(res.data.user.type))
       .catch(err => console.log(err));
   }, []);
+
+  useEffect(() => {
+    if (product.ratings) {
+      if (product.ratings.length === 0) {
+        setAverageRating(0);
+        return;
+      }
+      const ratings = product.ratings.map((rating) => rating.rating);
+      const sum = ratings.reduce((acc, current) => acc + current, 0);
+      const average = sum / ratings.length;
+      setAverageRating(average.toFixed(1)); // round to 1 decimal place
+    } else {
+      setAverageRating(0);
+    }
+  }, [product.ratings]);
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -49,21 +64,6 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       alert('You do not have permission to archive this product.');
     }
   };
-
-  useEffect(() => {
-    if (product.ratings) {
-      if(product.ratings.length === 0){
-        setAverageRating(0);
-        return;
-      }
-      const ratings = product.ratings.map((rating) => rating.rating);
-      const sum = ratings.reduce((acc, current) => acc + current, 0);
-      const average = sum / ratings.length;
-      setAverageRating(average.toFixed(0)); // round to 1 decimal place
-    }else{
-      setAverageRating(0);
-    }
-  }, [oldProduct.ratings]);
 
   const isEditable = userType === 'admin' || (
     product.createdBy?._id === userId && product.createdBy?.role === 'seller'
@@ -106,7 +106,6 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
           )}
         </div>
       </div>
-
       <div className={`flex justify-between flex-col h-full text-sm ${editMode ? null : 'hidden'}`}>
         <div className="edit-mode">
           <ProductLabel
@@ -154,7 +153,6 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
             }}
           />
         </div>
-
         <div className="relative flex flex-row justify-end">
           <div className='w-8 h-8'>
           </div>
