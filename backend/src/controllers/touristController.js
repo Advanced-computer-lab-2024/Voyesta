@@ -56,7 +56,7 @@ const getTourists = async (req, res) => {
     const {id} = req.user.id;
 
     try{
-     const tourist = await touristModel.findById(id);
+     const tourist = await touristModel.findById(id).populate('preferences');
      if(!tourist){
         return res.status(404).json({error:'Tourist not found'});
      }  
@@ -70,7 +70,7 @@ const getTourists = async (req, res) => {
 
 
  const updateTourist = async (req, res) => {
-   const { Email, Password, Number, DOB, Nationality, Job } = req.body;
+   const { Email, Password, Number, DOB, Nationality, Job ,preferenceIds  } = req.body;
    const id = req.user.id; // Extract ID from URL parameters
    
    // Create an object containing the fields to update
@@ -81,6 +81,7 @@ const getTourists = async (req, res) => {
     if (DOB) updateFields.DOB = DOB;
     if (Nationality) updateFields.Nationality = Nationality;
     if (Job) updateFields.Job = Job;
+    if (preferenceIds) updateFields.preferences = preferenceIds;
    
    try {
        // Use findOneAndUpdate to update the tourist by Email
@@ -102,6 +103,8 @@ const getTourists = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
 
 
 const deleteTourist = async (req, res) => {

@@ -57,7 +57,7 @@ const BookHotel = ({ baseUrl }) => {
 
     const handleBookHotel = (hotel) => {
         // Redirect to the confirmation page with hotel details
-        navigate('/hotel-booking-confirmation', { state: { hotel } });
+        navigate('/tourist/hotel-booking-confirmation', { state: { hotel } });
     };
 
     return (

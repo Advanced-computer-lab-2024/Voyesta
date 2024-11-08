@@ -12,8 +12,8 @@ import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import TouristPurchasesView from "../../newComponents/TouristPurchaseView";
 import BookFlight from "../../newComponents/BookFlight";
 import BookHotel from "../../newComponents/BookHotel";
-import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmation';
-import FlightBookingConfirmation from '../../newComponents/FlightBookingConfirmation';
+import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmaton';
+//import FlightBookingConfirmation from '../../newComponents/FlightBookingConfirmation';
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },

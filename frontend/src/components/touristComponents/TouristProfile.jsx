@@ -18,7 +18,7 @@ function TouristProfile() {
   const [password, setPassword] = useState(""); // For account creation
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null); // State to handle error messages
-
+  const [preferences, setPreferences] = useState([]);
   const baseUrl = "http://localhost:3000/api/tourist/get"; // Adjust based on your backend
 
   // Load token from local storage (or wherever you store it)
@@ -51,11 +51,24 @@ function TouristProfile() {
       setLevel(data.level);
       setAccumulatedPoints(data.accumulatedPoints);
       setCurrentPoints(data.currentPoints);
+      setPreferences(data.preferences);
     } catch (error) {
       console.error('Error fetching profile:', error);
       setMessage("Error fetching profile.");
     }
   };
+
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/tourist/getTags", getAuthHeaders()); // Update with correct API endpoint
+      setTags(response.data); // Assume the response contains an array of tag objects
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      setMessage("Error fetching tags.");
+    }
+  };
+
+
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -65,7 +78,8 @@ function TouristProfile() {
       mobileNumber,
       nationality,
       dob,
-      job
+      job,
+      preferences
     };
 
     try {
@@ -89,7 +103,8 @@ function TouristProfile() {
         mobileNumber,
         nationality,
         dob,
-        job
+        job,
+        preferences
       };
 
       try {
@@ -163,6 +178,7 @@ function TouristProfile() {
             <p><strong>Level:</strong> {profile.level}</p>
             <p><strong>Accumulated Points:</strong> {profile.accumulatedPoints}</p>
             <p><strong>Current Points:</strong> {profile.currentPoints}</p>
+            <p><strong>Preferences (Tags):</strong> {preferences.length > 0 ? preferences.join(", ") : "None"}</p> {/* Display tags */}
             <button
               onClick={handleRequestAccountDeletion}
               className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
