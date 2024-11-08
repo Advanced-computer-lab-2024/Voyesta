@@ -248,11 +248,6 @@ const confirmFlightPrice = async (req, res) => {
     }
 };
 
-const bookFlight = async (req, res) => {
-    // Just a simulation; real booking logic would go here if required.
-    res.status(200).json({ message: 'Flight booked successfully!' });
-};
-
 
 
 
@@ -285,7 +280,7 @@ const searchHotelsByCity = async (req, res) => {
             checkOutDate,
             adults
         });
-        console.log(response.data);
+        
         res.status(200).json(response.data);
     } catch (error) {
         console.error("Error searching hotels by city:", error);
@@ -299,25 +294,9 @@ const searchHotelsByCity = async (req, res) => {
 
 
 
-const confirmHotelPrice = async (req, res) => {
-    const { hotelOfferId } = req.body; // ID of the selected hotel offer
-
-    try {
-        const response = await amadeus.shopping.hotelOffer(hotelOfferId).get();
-        
-        res.status(200).json({ price: response.data.offers[0].price });
-    } catch (error) {
-        console.error("Error confirming hotel price:", error);
-        res.status(500).json({ error: "An error occurred while confirming hotel price." });
-    }
-};
-
-const bookHotel = async (req, res) => {
-    // Just a simulation; real booking logic would go here if required.
-    res.status(200).json({ message: 'Hotel booked successfully!' });
-};
 
 
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,confirmHotelPrice,bookFlight,bookHotel}; // Export the controller functions
+
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice};

@@ -66,8 +66,5 @@ _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
 _.get('/searchFlights', authenticate, searchFlights);
 _.get('/searchHotels', authenticate, searchHotelsByCity);
 _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
-_.post('/confirmHotelPrice', authenticate, confirmHotelPrice);
-_.post('/bookFlight', authenticate, bookFlight);
-_.post('/bookHotel', authenticate, bookHotel);
 
 module.exports = _;

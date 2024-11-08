@@ -12,6 +12,8 @@ import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import TouristPurchasesView from "../../newComponents/TouristPurchaseView";
 import BookFlight from "../../newComponents/BookFlight";
 import BookHotel from "../../newComponents/BookHotel";
+import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmation';
+import FlightBookingConfirmation from '../../newComponents/FlightBookingConfirmation';
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -55,6 +57,7 @@ function TouristDashboard(){
          <Route path="/hotel" element={<BookHotel baseUrl="http://localhost:3000/api/tourist" />} />
           <Route path="/transport" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
           <Route path="/bookings" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
+          <Route path="/hotel-booking-confirmation" element={<HotelBookingConfirmation />} />
          <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
