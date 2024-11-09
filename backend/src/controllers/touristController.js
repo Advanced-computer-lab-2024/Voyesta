@@ -42,7 +42,8 @@ const createTourist = async (req, res) => {
 const getTourists = async (req, res) => {
     const id = req.user.id;
    try{
-    const tourist=await touristModel.findById(id);
+    const tourist=await touristModel.findById(id).populate('preferences');
+    
     res.status(200).json(tourist);
  
    
@@ -57,6 +58,7 @@ const getTourists = async (req, res) => {
 
     try{
      const tourist = await touristModel.findById(id).populate('preferences');
+    
      if(!tourist){
         return res.status(404).json({error:'Tourist not found'});
      }  
@@ -70,18 +72,18 @@ const getTourists = async (req, res) => {
 
 
  const updateTourist = async (req, res) => {
-   const { Email, Password, Number, DOB, Nationality, Job ,preferenceIds  } = req.body;
+   const { email, password, Number, DOB, Nationality, Job ,preferences  } = req.body;
    const id = req.user.id; // Extract ID from URL parameters
    
    // Create an object containing the fields to update
    const updateFields = {};
-    if (Email) updateFields.Email = Email;
-    if (Password) updateFields.Password = Password;
+    if (email) updateFields.email = email;
+    if (password) updateFields.password = password;
     if (Number) updateFields.Number = Number;
     if (DOB) updateFields.DOB = DOB;
     if (Nationality) updateFields.Nationality = Nationality;
     if (Job) updateFields.Job = Job;
-    if (preferenceIds) updateFields.preferences = preferenceIds;
+    if (preferences) updateFields.preferences = preferences;
    
    try {
        // Use findOneAndUpdate to update the tourist by Email

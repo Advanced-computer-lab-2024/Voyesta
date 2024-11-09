@@ -19,11 +19,18 @@ function TouristProfile() {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null); // State to handle error messages
   const [preferences, setPreferences] = useState([]);
+  const [allTags, setAllTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const baseUrl = "http://localhost:3000/api/tourist/get"; // Adjust based on your backend
 
   // Load token from local storage (or wherever you store it)
   useEffect(() => {
-    fetchProfile();
+    const fetchData = async () => {
+      await fetchTags(); // Ensure tags are fetched first
+      await fetchProfile(); // Then fetch profile
+    };
+  
+    fetchData();
   }, []);
 
   const token = localStorage.getItem('token');
@@ -52,6 +59,8 @@ function TouristProfile() {
       setAccumulatedPoints(data.accumulatedPoints);
       setCurrentPoints(data.currentPoints);
       setPreferences(data.preferences);
+     setSelectedTags(data.preferences.map(tag => tag._id));
+    
     } catch (error) {
       console.error('Error fetching profile:', error);
       setMessage("Error fetching profile.");
@@ -61,12 +70,23 @@ function TouristProfile() {
   const fetchTags = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/tourist/getTags", getAuthHeaders()); // Update with correct API endpoint
-      setTags(response.data); // Assume the response contains an array of tag objects
+  
+
+      setAllTags(response.data);
     } catch (error) {
       console.error('Error fetching tags:', error);
       setMessage("Error fetching tags.");
     }
   };
+
+// see which tags are already selected and update the state accordingly also to help remove tags 
+  const handleTagSelection = (tagId) => {
+    setSelectedTags(prevSelectedTags =>
+        prevSelectedTags.includes(tagId)
+            ? prevSelectedTags.filter(id => id !== tagId)
+            : [...prevSelectedTags, tagId]
+    );
+};
 
 
 
@@ -79,9 +99,9 @@ function TouristProfile() {
       nationality,
       dob,
       job,
-      preferences
+      preferences : selectedTags
     };
-
+   
     try {
       await axios.put("http://localhost:3000/api/tourist/update", updatedData, getAuthHeaders());
       setMessage("Profile updated successfully.");
@@ -104,7 +124,7 @@ function TouristProfile() {
         nationality,
         dob,
         job,
-        preferences
+        preferences : selectedTags
       };
 
       try {
@@ -178,7 +198,7 @@ function TouristProfile() {
             <p><strong>Level:</strong> {profile.level}</p>
             <p><strong>Accumulated Points:</strong> {profile.accumulatedPoints}</p>
             <p><strong>Current Points:</strong> {profile.currentPoints}</p>
-            <p><strong>Preferences (Tags):</strong> {preferences.length > 0 ? preferences.join(", ") : "None"}</p> {/* Display tags */}
+            <p><strong>Preferences:</strong> {profile.preferences.map(tag => tag.Name).join(', ')}</p>
             <button
               onClick={handleRequestAccountDeletion}
               className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
@@ -275,6 +295,22 @@ function TouristProfile() {
               className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
             />
           </div>
+
+          <div>
+                        <label htmlFor="preferences" className="block text-sm font-medium text-gray-700" >Preferences:</label>
+                        <div>
+                            {allTags.map(tag => (
+                                <div key={tag._id}>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedTags.includes(tag._id)}
+                                        onChange={() => handleTagSelection(tag._id)}
+                                    />
+                                    <label>{tag.Name}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
           <button
             type="submit"
