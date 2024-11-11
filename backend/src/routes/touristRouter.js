@@ -10,7 +10,8 @@ const { createTourist, getTourists, updateTourist,
     confirmFlightPrice,
     confirmHotelPrice,
     bookFlight,
-    bookHotel  } = require("../controllers/touristController");
+    bookHotel,  
+    searchHotelsByCity} = require("../controllers/touristController");
 const { get } = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const itineraryController = require('../controllers/itineraryController');
@@ -63,11 +64,8 @@ _.patch('/changePassword', authenticate, changePassword);
 _.patch('/setStatusToDeleted', authenticate, setStatusToDeleted);
 
 _.get('/searchFlights', authenticate, searchFlights);
-_.get('/searchHotels', authenticate, searchHotels);
+_.get('/searchHotels', authenticate, searchHotelsByCity);
 _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
-_.post('/confirmHotelPrice', authenticate, confirmHotelPrice);
-_.post('/bookFlight', authenticate, bookFlight);
-_.post('/bookHotel', authenticate, bookHotel);
 
 _.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
 

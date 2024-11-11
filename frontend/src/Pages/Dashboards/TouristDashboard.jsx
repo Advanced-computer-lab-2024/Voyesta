@@ -10,8 +10,10 @@ import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistor
 import BookingsPage from "../../newComponents/BookingPage";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import TouristPurchasesView from "../../newComponents/TouristPurchaseView";
-import BookingDropDownMenu from "../../newComponents/BookingDropDownMenu";
 import BookFlight from "../../newComponents/BookFlight";
+import BookHotel from "../../newComponents/BookHotel";
+import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmaton';
+//import FlightBookingConfirmation from '../../newComponents/FlightBookingConfirmation';
 import BookTransportation from "../../newComponents/BookTransportation";
 
 const navLinks = [
@@ -46,14 +48,15 @@ function TouristDashboard(){
         <Route path="/museums" element={
           <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
         }/>
-        {/* <Route path="/bookings" element={<BookingDropDownMenu />}
+       {/*  {/* <Route path="/bookings" element={<BookingDropDownMenu />}
         />  */}
         <Route path="/flight" element={<BookFlight baseUrl="http://localhost:3000/api/tourist" />} />
-        <Route path="/hotel" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
+        <Route path="/hotel" element={<BookHotel baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path="/transport" element={
           <BookTransportation baseUrl="http://localhost:3000/api/tourist" role={"tourist"} />
         } />
         <Route path="/bookings" element={<BookingsPage baseUrl="http://localhost:3000/api/tourist" />} />
+          <Route path="/hotel-booking-confirmation" element={<HotelBookingConfirmation />} />
         <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>

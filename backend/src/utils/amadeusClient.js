@@ -10,8 +10,8 @@ const amadeus = new Amadeus({
 
 const handleAmadeusError = (error) => {
   if (error.response) {
-      const statusCode = error.response.status;
-      const errorMsg = error.response.data.errors?.[0].detail || error.message;
+      const statusCode = error.response?.status || 500;
+      const errorMsg = error.response?.data?.errors?.[0]?.detail || error.message;
 
       switch (statusCode) {
           case 400:

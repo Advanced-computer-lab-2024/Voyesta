@@ -9,7 +9,7 @@ const {generateToken} = require('../utils/jwt');
 const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
 
 
-
+//console.log(amadeus);
 
 
 
@@ -42,7 +42,8 @@ const createTourist = async (req, res) => {
 const getTourists = async (req, res) => {
     const id = req.user.id;
    try{
-    const tourist=await touristModel.findById(id);
+    const tourist=await touristModel.findById(id).populate('preferences');
+    
     res.status(200).json(tourist);
  
    
@@ -56,7 +57,8 @@ const getTourists = async (req, res) => {
     const {id} = req.user.id;
 
     try{
-     const tourist = await touristModel.findById(id);
+     const tourist = await touristModel.findById(id).populate('preferences');
+    
      if(!tourist){
         return res.status(404).json({error:'Tourist not found'});
      }  
@@ -70,17 +72,18 @@ const getTourists = async (req, res) => {
 
 
  const updateTourist = async (req, res) => {
-   const { Email, Password, Number, DOB, Nationality, Job } = req.body;
+   const { email, password, Number, DOB, Nationality, Job ,preferences  } = req.body;
    const id = req.user.id; // Extract ID from URL parameters
    
    // Create an object containing the fields to update
    const updateFields = {};
-    if (Email) updateFields.Email = Email;
-    if (Password) updateFields.Password = Password;
+    if (email) updateFields.email = email;
+    if (password) updateFields.password = password;
     if (Number) updateFields.Number = Number;
     if (DOB) updateFields.DOB = DOB;
     if (Nationality) updateFields.Nationality = Nationality;
     if (Job) updateFields.Job = Job;
+    if (preferences) updateFields.preferences = preferences;
    
    try {
        // Use findOneAndUpdate to update the tourist by Email
@@ -102,6 +105,8 @@ const getTourists = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
 
 
 const deleteTourist = async (req, res) => {
@@ -248,56 +253,55 @@ const confirmFlightPrice = async (req, res) => {
     }
 };
 
-const bookFlight = async (req, res) => {
-    // Just a simulation; real booking logic would go here if required.
-    res.status(200).json({ message: 'Flight booked successfully!' });
-};
 
 
 
 
 
 
-
-// Search for hotels
-const searchHotels = async (req, res) => {
+const searchHotelsByCity = async (req, res) => {
     const { cityCode, checkInDate, checkOutDate, adults } = req.query;
-
+    const MAX_HOTELS = 10; // Maximum number of hotels to retrieve
     try {
-        const response = await amadeus.shopping.hotelOffers.get({
-            cityCode,
+        // Step 1: Get list of hotels in the city
+        const hotelList = await amadeus.referenceData.locations.hotels.byCity.get({ cityCode});
+        if (!hotelList.data || hotelList.data.length === 0) {
+            return res.status(404).json({ message: "No hotels found for the specified city." });
+        }
+        //console.log(hotelList.data);
+        const hotelIds = hotelList.data.map(hotel => hotel.hotelId).slice(0, MAX_HOTELS);
+
+        if (hotelIds.length === 0) {
+            return res.status(404).json({ message: "No hotels found for the specified city." });
+        }
+
+
+        // Step 2: Retrieve offers for each hotel using the hotel IDs
+       
+       console.log(hotelIds);
+        const response = await amadeus.shopping.hotelOffersSearch.get({
+            hotelIds: hotelIds.join(','), // Convert array of hotel IDs to a comma-separated string
             checkInDate,
             checkOutDate,
             adults
         });
-
+        
         res.status(200).json(response.data);
     } catch (error) {
-        console.error("Error searching for flights:", error);
-        const { status, message } = handleAmadeusError(error);
-        res.status(status).json({ error: message });
+        console.error("Error searching hotels by city:", error);
+        const { status, message } = handleAmadeusError(error); // Use custom error handling if needed
+        res.status(status).json({ error: message || "An error occurred while searching hotels by city." });
     }
 };
 
-const confirmHotelPrice = async (req, res) => {
-    const { hotelOfferId } = req.body; // ID of the selected hotel offer
-
-    try {
-        const response = await amadeus.shopping.hotelOffer(hotelOfferId).get();
-        
-        res.status(200).json({ price: response.data.offers[0].price });
-    } catch (error) {
-        console.error("Error confirming hotel price:", error);
-        res.status(500).json({ error: "An error occurred while confirming hotel price." });
-    }
-};
-
-const bookHotel = async (req, res) => {
-    // Just a simulation; real booking logic would go here if required.
-    res.status(200).json({ message: 'Hotel booked successfully!' });
-};
 
 
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotels,confirmFlightPrice,confirmHotelPrice,bookFlight,bookHotel}; // Export the controller functions
+
+
+
+
+
+
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice};
