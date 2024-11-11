@@ -44,13 +44,15 @@ const updateTourGuide = async (req, res) => {
         mobileNumber,
         yearsOfExperience,
         previousWork,
-        email} = req.body;
+        email,
+        termsAccepted} = req.body;
 
         const updates = {};
         if (mobileNumber)  updates.mobileNumber = mobileNumber;
         if (yearsOfExperience) updates.yearsOfExperience = yearsOfExperience;
         if (previousWork) updates.previousWork = previousWork;
         if (email) updates.email = email
+        if (termsAccepted) updates.termsAccepted = termsAccepted;
 
     try {
         const tourGuide = await tourGuideModel.findOneAndUpdate(

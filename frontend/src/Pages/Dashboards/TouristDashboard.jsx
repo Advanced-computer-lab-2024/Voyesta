@@ -60,7 +60,7 @@ function TouristDashboard(){
         <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
-    </Routes>       
+      </Routes>       
     </div>
   );
 }

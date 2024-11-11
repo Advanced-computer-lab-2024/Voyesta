@@ -25,7 +25,9 @@ import ItineraryDetail from './newComponents/ItineraryDetail'; // Import the new
 function App() {
   return (
     <Routes>
-      <Route exact path="/" element={<Signup />} />
+
+      <Route exact path="/*" element={<Dashboard />} />
+      <Route exact path="/signup" element={<Signup />} />
       <Route exact path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/admin/*" element={<AdminDashboard />} />
@@ -34,6 +36,7 @@ function App() {
       <Route path='/seller/*' element={< SellerDashboard />} />
       <Route path='/tourismGovernor/*' element={< TourismGovernorDashboard />} />
       <Route path='/tourist/*' element={< TouristDashboard />} />
+      <Route path='/guest/*' element={< Dashboard />} />
       <Route path='/map' element={<MapView lat="30.0648" lng="31.5102" />} />
       <Route path='/activities' element={<ActivitiesView />} />
       <Route path='/activity/:id' element={<ActivityDetail />} />

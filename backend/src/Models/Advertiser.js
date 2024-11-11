@@ -54,6 +54,11 @@ const advertSchema = new Schema({
     additionalDocument: {
         type: String,
         required: false
+    },
+    termsAccepted:{
+        type: Boolean,
+        required: false,
+        default: false
     }
 }, { timestamps: true });
 

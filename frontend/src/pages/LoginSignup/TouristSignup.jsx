@@ -2,13 +2,15 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function TouristSignup({username, email, password}){
+function TouristSignup({user}) {
 
     const [mobileNumber, setMobileNumber] = useState(''); // Add a state variable for mobile number
     const [nationality, setNationality] = useState(''); // Add a state variable for nationality
     const [dob, setDob] = useState(''); // Add a state variable for date of birth
     const [jobStudent, setJobStudent] = useState('');
     const [errors, setErrors] = useState({});
+
+    console.log(user);
     
     const navigate = useNavigate();
 
@@ -16,9 +18,9 @@ function TouristSignup({username, email, password}){
       event.preventDefault();
       if (validate()) {
         axios.post('http://localhost:3000/api/tourist/add',{
-          Username: username, 
-          Email: email, 
-          Password: password, 
+          username: user.username, 
+          email: user.email, 
+          password: user.password, 
           Number: mobileNumber, 
           Nationality: nationality, 
           DOB: dob, 
@@ -28,7 +30,7 @@ function TouristSignup({username, email, password}){
           console.log(res);
           const token = res.data.token;
           localStorage.setItem('token', token);
-          navigate("/dashboard");
+          navigate("/tourist");
         })
         .catch(e => console.log(e));
       }
@@ -71,7 +73,7 @@ function TouristSignup({username, email, password}){
 
     return(
         <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Signup</h1>
+        <h1 className="text-2xl text-gray-600 font-bold mb-3">Additional Info</h1>
         <form onSubmit={handleSubmit}className="flex flex-col gap-4">
           <div>
             <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">

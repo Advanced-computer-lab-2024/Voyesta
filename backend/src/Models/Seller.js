@@ -36,17 +36,22 @@ const sellerSchema = new Schema({
       default: 'pending'
     },
     profilePicture: {
-        type: String,
-        required: false
-      },
-      personalId: {
-        type: String,
-        required: false
-      },
-      additionalDocument: {
-        type: String,
-        required: false
-      }
+      type: String,
+      required: false
+    },
+    personalId: {
+      type: String,
+      required: false
+    },
+    additionalDocument: {
+      type: String,
+      required: false
+    },
+    termsAccepted:{
+      type: Boolean,
+      required: false,
+      default: false
+    }
 }, { timestamps: true });
 
 

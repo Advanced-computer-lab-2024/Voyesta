@@ -146,12 +146,12 @@ function ProfileManagement({ userType, baseUrl }) {
         >
           Profile Picture
         </button>
-        <button
+        {/* <button
           className={`p-2 ${activeTab === 'uploadDocuments' ? 'border-b-2 border-blue-500' : ''}`}
           onClick={() => {setActiveTab('uploadDocuments');setMessage(null);setError(null);}}
         >
           Upload Documents
-        </button>
+        </button> */}
       </div>
 
       {/* Content based on Active Tab */}

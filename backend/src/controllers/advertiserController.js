@@ -44,7 +44,7 @@ const getAdvertisers = async (req, res) => {
 // Update an Advertiser profile
 const updateAdvertiser = async (req, res) => {
     const id = req.user.id; // Extract email from URL parameters
-    const {email,password,website,hotline,companyProfile,servicesOffered}= req.body;
+    const {email,password,website,hotline,companyProfile,servicesOffered,termsAccepted}= req.body;
     const updates = {};
     if (email) updates.email = email;
     if (password) updates.password = password;
@@ -52,6 +52,7 @@ const updateAdvertiser = async (req, res) => {
     if (hotline) updates.hotline = hotline;
     if (companyProfile) updates.companyProfile = companyProfile;
     if (servicesOffered) updates.servicesOffered = servicesOffered;
+    if (termsAccepted) updates.termsAccepted = termsAccepted;
 
 
     try {
