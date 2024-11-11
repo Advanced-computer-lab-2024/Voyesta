@@ -78,12 +78,11 @@ const cancelBooking = async (req, res) => {
             return res.status(400).json({ error: 'Bookings can only be cancelled at least 48 hours before the event date' });
         }
 
-        booking.status = 'cancelled';
-        await booking.save();
+        await Booking.deleteOne({ _id: id, tourist: touristId });
 
-        res.status(200).json({ message: 'Booking cancelled successfully', booking });
+        res.status(200).json({ message: 'Booking cancelled and deleted successfully' });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
