@@ -8,7 +8,8 @@ const {
     getProducts,
     getProductSales,
     archiveProduct,
-    unarchiveProduct
+    unarchiveProduct,
+    searchProductByName
 } = require('../controllers/productController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 const cloudinaryController = require('../controllers/cloudinaryController');
@@ -28,7 +29,7 @@ _.put('/updateProduct/:id', authenticate , updateProduct);
 _.patch('/archiveProduct/:id', authenticate, archiveProduct);
 _.patch('/unarchiveProduct/:id', authenticate, unarchiveProduct);
 
-// _.get('/searchProductByName', searchProductByName);
+_.get('/searchProductByName', searchProductByName);
 // _.get('/filterProductsByPrice', filterProductsByPrice);
 // _.get('/sortProductsByRatings', sortProductsByRatings);
 

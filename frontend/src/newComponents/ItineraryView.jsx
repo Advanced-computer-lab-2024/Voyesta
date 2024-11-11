@@ -40,6 +40,14 @@ const ItineraryView = ({ baseUrl, role }) => {
     }
   };
 
+  const resetFilters = () => {
+    setStartDate('');
+    setEndDate('');
+    setSelectedPreference('');
+    setSortOption('');
+    fetchItineraries();
+  };
+
   const applyFilters = () => {
     let filtered = [...itineraries];
 
@@ -53,7 +61,9 @@ const ItineraryView = ({ baseUrl, role }) => {
 
     // Filter by selected preference
     if (selectedPreference) {
-      filtered = filtered.filter(itinerary => itinerary.preferences && itinerary.preferences.includes(selectedPreference));
+      filtered = filtered.filter(itinerary => 
+        itinerary.tags && itinerary.tags.some(tag => tag.Name === selectedPreference)
+      );
     }
 
     // Sort after filtering
@@ -76,6 +86,7 @@ const ItineraryView = ({ baseUrl, role }) => {
       {role === 'tourist' && (
         <div className="w-1/5 p-4 bg-red-300">
           <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+          <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">Reset Filters</button>
           <PriceFilterBar items={itineraries} setItems={setFilteredItineraries} convertedPrices={convertedPrices} priceProperty="tourPrice" />
           <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
           <PreferencesFilter setSelectedPreferences={setSelectedPreference} />

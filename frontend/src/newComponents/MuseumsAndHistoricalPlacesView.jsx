@@ -39,6 +39,11 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
     }
   };
 
+  const resetFilters = () => {
+    setSelectedTags('');
+    fetchPlaces();
+  };
+
   const applyTagFilter = () => {
     console.log("applyTagFilter called"); // Debug log
     let filtered = [...places];
@@ -73,12 +78,13 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
 
       {role === 'tourist' && (
         <>
-          <div className="w-1/5 p-4 bg-red-300">
-            <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter by Tags</h2>
+          <div className="w-1/5 p-4 bg-[#004080] text-[#f5e1b4]">
+            <h2 className="text-lg font-bold mb-4 p-2 text-[#f5e1b4]">Filter by Tags</h2>
+            <button onClick={resetFilters} className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Reset Filters</button>
             <PreferencesFilter setSelectedPreferences={setSelectedTags} />
             <button
               onClick={applyTagFilter}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Apply Filters
             </button>

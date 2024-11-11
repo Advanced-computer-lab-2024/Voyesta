@@ -50,7 +50,12 @@ const ActivitiesView = ({ baseUrl, role }) => {
       filtered = filtered.filter(activity => activity.category._id === category);
     }
     if (rating) {
-      filtered = filtered.filter(activity => activity.rating === rating);
+      filtered = filtered.filter(activity => {
+        const avgRating = activity.ratings.length > 0
+          ? activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length
+          : 0;
+        return avgRating === parseFloat(rating);
+      });
     }
     if (startDate) {
       filtered = filtered.filter(activity => new Date(activity.date) >= new Date(startDate));
@@ -63,12 +68,28 @@ const ActivitiesView = ({ baseUrl, role }) => {
     sortActivities(sortOption, filtered); // Sort after filtering
   };
 
+  const resetFilters = () => {
+    setCategory('');
+    setRating('');
+    setStartDate('');
+    setEndDate('');
+    setSortOption('');
+    fetchActivities();
+  };
+
   const sortActivities = (option, activitiesToSort) => {
     const sorted = [...activitiesToSort].sort((a, b) => {
+      const avgRatingA = a.ratings.length > 0
+        ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length
+        : 0;
+      const avgRatingB = b.ratings.length > 0
+        ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length
+        : 0;
+
       if (option === 'priceAsc') return a.price - b.price;
       if (option === 'priceDesc') return b.price - a.price;
-      if (option === 'ratingAsc') return a.rating - b.rating;
-      if (option === 'ratingDesc') return b.rating - a.rating;
+      if (option === 'ratingAsc') return avgRatingA - avgRatingB;
+      if (option === 'ratingDesc') return avgRatingB - avgRatingA;
       return 0; // Default case, no sorting
     });
     setFilteredActivities(sorted);
@@ -79,6 +100,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
       {role === 'tourist' && (
         <div className="w-1/5 p-4 bg-red-300">
           <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+          <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">Reset Filters</button>
           <PriceFilterBar items={activities} setItems={setFilteredActivities} convertedPrices={convertedPrices} priceProperty="price" />
           <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
           <RatingFilter setSelectedRating={setRating} />
@@ -106,7 +128,6 @@ const ActivitiesView = ({ baseUrl, role }) => {
           >
             Apply Filters
           </button>
-
           <div className="mb-4">
             <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
           </div>

@@ -80,21 +80,28 @@ function ProductsView({ role, baseUrl }) {
       });
   };
 
+  const resetFilters = () => {
+    setSearchTerm('');
+    setMinPrice('');
+    setMaxPrice('');
+    setSortOrder('');
+    fetchProducts(role === 'admin' ? 'http://localhost:3000/api/admin/getProducts' : 'http://localhost:3000/api/seller/getAllProducts');
+  };
+
   const handleSortOrderChange = (e) => {
     const newSortOrder = e.target.value;
     setSortOrder(newSortOrder);
     const sortedProducts = [...products].sort((a, b) => {
-      const avgRatingA = a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length;
-      const avgRatingB = b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length;
-      if (isNaN(avgRatingA) || isNaN(avgRatingB)) {
-        return 0;
-      }
+      const avgRatingA = a.ratings.length > 0 ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length : 0;
+      const avgRatingB = b.ratings.length > 0 ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length : 0;
+
       if (newSortOrder === 'asc') {
         return avgRatingA - avgRatingB;
       } else if (newSortOrder === 'desc') {
         return avgRatingB - avgRatingA;
+      } else {
+        return 0;
       }
-      return 0;
     });
     setProducts(sortedProducts);
   };
@@ -112,7 +119,7 @@ function ProductsView({ role, baseUrl }) {
     <div className="flex">
       <div className="w-1/5 bg-red-300">
         <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-        <div className="mb-4">
+        <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">Reset Filters</button>        <div className="mb-4">
           <PriceFilterBar items={products} setItems={setProducts} convertedPrices={convertedPrices} priceProperty="price" />
         </div>
         <div className="mb-4 text-center">
