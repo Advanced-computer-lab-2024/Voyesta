@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 import BookingPopup from './BookingPopup';
+import ErrorPopup from './ErrorPopup'; // Import the ErrorPopup component
+
 
 const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPrice, targetCurrency }) => {
 
@@ -27,6 +29,8 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
   const [inappropriate, setInappropriate] = useState(itinerary.inappropriate);
   const [showPopup, setShowPopup] = useState(false);
   const [shareLink, setShareLink] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false); // State for error popup
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -43,6 +47,8 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
       await axios.delete(url, getAuthHeaders());
       fetchItineraries();
     } catch (error) {
+      setErrorMessage(error.response.data.error); // Set the error message
+      setIsErrorPopupOpen(true); // Open the error popup
       console.log(error);
     }
   };
@@ -283,12 +289,14 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
               src={assets.toggleIcon}
               className="w-6 h-6 cursor-pointer"
             />
-            <img
+            {role === 'admin' && <img
               onClick={flagAsInappropriate}
               src={assets.flagIcon}
               className="w-6 h-6 cursor-pointer"
             />
-          </div>}
+          }
+          </div>
+          }
           {role === "tourist" && (
             <>
               <button
@@ -320,6 +328,14 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
             </>
           )}
         </>
+      )}
+
+      {/* Error Popup */}
+      {isErrorPopupOpen && (
+        <ErrorPopup
+          message={errorMessage}
+          onClose={() => setIsErrorPopupOpen(false)}
+        />
       )}
     </div>
   );

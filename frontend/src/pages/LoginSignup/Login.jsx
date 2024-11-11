@@ -106,16 +106,15 @@ function Login(){
           >
             Login
           </button>
-
-          {/* <div className='text-gray-500 flex flex-row justify-center text-sm gap-1 cursor-default'>
+          <div className='text-gray-500 flex flex-row justify-center text-sm gap-1 cursor-default'>
             <p>Already have an account? </p>
             <p 
               className='font-bold cursor-pointer text-gray-800'
-              onClick={() => {console.log("navigate to Login");}}
+              onClick={() => {navigate("/");}}
             >
-              Login
+              Sign Up
             </p>
-          </div> */}
+          </div>
         </form>
       </div>
     );

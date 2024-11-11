@@ -135,18 +135,24 @@ const updateItinerary = async (req, res) => {
 const deleteItinerary = async (req, res) => {
     const { id } = req.params;
     const guideId = req.user.id;
-    
+
     try {
-        const itinerary = await Itinerary.findOneAndDelete({ _id: id , createdBy: guideId });
+        // Check if there are any bookings associated with the itinerary
+        const bookings = await Booking.find({ bookable: id, bookableModel: 'Itinerary' });
+        if (bookings.length > 0) {
+            return res.status(400).json({ error: 'Cannot delete itinerary with existing bookings' });
+        }
+
+        // Find and delete the itinerary
+        const itinerary = await Itinerary.findOneAndDelete({ _id: id, createdBy: guideId });
         if (!itinerary) {
             return res.status(404).json({ error: 'Itinerary not found or you do not have access' });
         }
+
         res.status(200).json({ message: 'Itinerary deleted successfully', itinerary });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
-
 };
 
 // Update booking status
