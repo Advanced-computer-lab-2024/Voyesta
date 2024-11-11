@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 import NavBar from '../../components/NavBar';
 import ActivitiesView from '../../newComponents/ActivitiesView';
 import ProfileManagement from '../../newComponents/ProfileManagement';
-
+import UploadDocuments from '../../newComponents/UploadDocuments';
+import AdditionalInfoForm from '../LoginSignup/AdditionalInfoForm';
+import TermsAndConditions from '../LoginSignup/TermsAndConditions';
 
 const navLinks = [
   { path: "/advertiser/", label: "Home" },
@@ -11,33 +14,94 @@ const navLinks = [
   { path: "/advertiser/activity", label: "Activity" }
 ];
 
-
 function AdvertiserDashboard() {
-    return (
-      <div>
-         <NavBar navLinks={navLinks} />
+  const [advertiser, setAdvertiser] = useState([]);
+  const [isDocumentsUploaded, setDocumentsUploaded] = useState(false);
+  const [isAdditionalInfoSubmitted, setAdditionalInfoSubmitted] = useState(false);
+  const [isActive, setActive] = useState(false);
+  const [isTermsAccepted, setTermsAccepted] = useState(false);
+
+  const getAuthHeader = () => {
+    return {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    }
+  }
+
+  const fetchAdvertiser = () => {
+    axios.get("http://localhost:3000/api/advertiser/get", getAuthHeader())
+      .then(res => {
+        console.log(res.data);
+        setAdvertiser(res.data);
+      })
+      .catch(e => console.log(e));
+  }
+
+  useEffect(() => {
+    fetchAdvertiser();
+  }, []);
+
+  useEffect(() => {
+    if (advertiser.personalId)
+      setDocumentsUploaded(true);
+    if (advertiser.website)
+      setAdditionalInfoSubmitted(true);
+    if (advertiser.status === 'active')
+      setActive(true);
+    if (advertiser.termsAccepted)
+      setTermsAccepted(true);
+  }, [advertiser]);
+
+  return (
+    <div>
+      {
+        !isDocumentsUploaded && <UploadDocuments userType={"advertiser"} />
+      }
+
+      {
+        isDocumentsUploaded && !isActive &&
+        <div className="text-2xl text-center p-52">Wait for admin approval</div>
+      }
+
+      {
+        isDocumentsUploaded && isActive && !isTermsAccepted &&
+        <TermsAndConditions onAccept={() => {
+          axios.put("http://localhost:3000/api/advertiser/update", { ...advertiser, termsAccepted: true }, getAuthHeader())
+            .then(res => {
+              console.log(res);
+              fetchAdvertiser();
+            })
+            .catch(e => console.log(e));
+        }} />
+      }
+
+      {
+        isDocumentsUploaded && isActive && isTermsAccepted && !isAdditionalInfoSubmitted &&
+        <AdditionalInfoForm userType="advertiser" user={advertiser} setUser={setAdvertiser} fetchUser={fetchAdvertiser} />
+      }
+
+      {
+        isDocumentsUploaded && isActive && isAdditionalInfoSubmitted && isTermsAccepted &&
+        <div>
+          <NavBar navLinks={navLinks} />
+
           <Routes>
-            <Route exact path="/" element={<div>Home</div>}/>
+            <Route exact path="/" element={<div>Home</div>} />
             <Route path="/profile" element={
-              // <AdvertiserProfile />
-              <ProfileManagement 
-                userType="advertiser" 
+              <ProfileManagement
+                userType="advertiser"
                 baseUrl="http://localhost:3000/api/advertiser"
               />
-              
             } />
             <Route path="/activity" element={
-              
-              // <ActivityProfile  
-              //   baseUrl="http://localhost:3000/api/advertiser"
-              //   title = "Advertiser" 
-              // /> 
-              
               <ActivitiesView baseUrl="http://localhost:3000/api/advertiser" role="advertiser" />
             } />
           </Routes>
         </div>
-    );
-  }
-  
-  export default AdvertiserDashboard;
+      }
+    </div>
+  );
+}
+
+export default AdvertiserDashboard;

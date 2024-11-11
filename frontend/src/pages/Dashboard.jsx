@@ -1,38 +1,56 @@
 import axios from "axios";
 import React, { useEffect, useState} from "react";
+import NavBar from "../components/NavBar";
+import { Routes, Route } from "react-router-dom";
+
+import ActivitiesView from "../newComponents/ActivitiesView";
+import ItineraryView from "../newComponents/ItineraryView";
+import MuseumsAndHistoricalPlacesView from "../newComponents/MuseumsAndHistoricalPlacesView";
+import LandingPage from "./LandingPage";
+
+
+const navLinks = [
+    { path: "/guest/activities", label: "Activities" },
+    { path: "/guest/itineraries", label: "Itineraries" },
+    { path: "/guest/museums", label: "Museums" },
+    { path: "/guest", label: "Home" }
+  ];
+
 
 function Dashboard(){
 
-    const [token,  setToken] = useState();
-    const  [user,  setUser] = useState("");
 
-    useEffect(()=>{
-        setToken(localStorage.getItem('token'));
-    }, []);
-
-    useEffect( () =>{
-        axios.get("http://localhost:3000/api/userType", getAuthHeaders())
-        .then(res => {
-            console.log(res);
-            setUser(res.data.userType);
-        }).catch(e => console.log(e));
-    },[token]);
 
     const getAuthHeaders = () =>{
         console.log(token);
         return {
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${localStorage.getItem('token')}`
         }}
     };
 
+    
+
 
     return (
-        <div>
-            {
-                user === "tourist" ? <h1>Tourist</h1> : <h1>Nothing</h1>
-            }
-        </div>
+        <>
+            <NavBar navLinks={navLinks} />
+            <Routes>
+                
+                    <Route path="/activities" element={
+                        <ActivitiesView baseUrl="http://localhost:3000/api/tourist" role="tourist"/>
+                    }/>
+                    <Route path="/itineraries" element={
+                        <ItineraryView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+                    }/>
+                    <Route path="/museums" element={
+                        <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+                    }/>
+                    <Route path="/" element={
+                        <LandingPage />
+                    }/>
+                </Routes>
+        </>
     );
 }
 

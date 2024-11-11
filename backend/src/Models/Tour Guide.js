@@ -86,6 +86,16 @@ const tourGuideSchema = new Schema({
   additionalDocument: {
     type: String,
     required: false
+  },
+  additionalInfo:{
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  termsAccepted:{
+    type: Boolean,
+    required: false,
+    default: false
   }
 }, { timestamps: true });
 
