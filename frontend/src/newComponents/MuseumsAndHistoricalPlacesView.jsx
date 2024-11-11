@@ -3,6 +3,7 @@ import axios from 'axios';
 import MuseumsAndHistoricalPlacesList from './MuseumsAndHistoricalPlacesList';
 import CreateMuseumAndHistoricalPlace from './CreateMuseumAndHistoricalPlace';
 import PreferencesFilter from './PreferencesFilter'; // Import the preferences component
+import CurrencyConverter from './CurrencyConverter';
 
 const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [places, setPlaces] = useState([]);
@@ -10,6 +11,9 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [message, setMessage] = useState(null);
   const [activeTab, setActiveTab] = useState('viewPlaces');
   const [selectedTags, setSelectedTags] = useState(''); // Initialize as a string
+  const [prices, setPrices] = useState([]);
+  const [convertedPrices, setConvertedPrices] = useState([]);
+  const [targetCurrency, setTargetCurrency] = useState('USD');
 
   useEffect(() => {
     fetchPlaces();
@@ -24,6 +28,11 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
       });
       setPlaces(response.data);
       setFilteredPlaces(response.data); // Initialize filtered places
+      setPrices(response.data.map(place => ({
+        foreigner: place.ticketPrices.foreigner,
+        native: place.ticketPrices.native,
+        student: place.ticketPrices.student
+      })));
     } catch (error) {
       console.error('Error fetching places:', error);
       setMessage("Error fetching places.");
@@ -64,22 +73,24 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
 
       {role === 'tourist' && (
         <>
-            {/* Tag Filtering Section */}
-        <div className="w-1/5 p-4 bg-red-300">
-          <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter by Tags</h2>
-          <PreferencesFilter setSelectedPreferences={setSelectedTags} />
-          <button
-            onClick={applyTagFilter}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Apply Filters
-          </button>
-        </div>
+          <div className="w-1/5 p-4 bg-red-300">
+            <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter by Tags</h2>
+            <PreferencesFilter setSelectedPreferences={setSelectedTags} />
+            <button
+              onClick={applyTagFilter}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Apply Filters
+            </button>
+            <div className="mb-4">
+              <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+            </div>
+          </div>
         </>
       )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Museums and Historical Places</h1>
+        <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Museums and Historical Places</h1>
 
         {message && <div className="text-red-500 mb-4">{message}</div>}
 
@@ -100,14 +111,18 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
               </button>
             </div>
 
-            {activeTab === 'viewPlaces' ? (
+            {activeTab === 'viewPlaces' && (
               <MuseumsAndHistoricalPlacesList
                 fetchPlaces={fetchPlaces}
                 baseUrl={baseUrl}
                 places={filteredPlaces}
                 role={role}
+                convertedPrices={convertedPrices}
+                targetCurrency={targetCurrency}
               />
-            ) : (
+            )}
+
+            {activeTab === 'createPlace' && (
               <CreateMuseumAndHistoricalPlace getAuthHeaders={() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })} />
             )}
           </>
@@ -119,10 +134,11 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
             baseUrl={baseUrl}
             places={filteredPlaces}
             role={role}
+            convertedPrices={convertedPrices}
+            targetCurrency={targetCurrency}
           />
         )}
       </div>
-
     </div>
   );
 };

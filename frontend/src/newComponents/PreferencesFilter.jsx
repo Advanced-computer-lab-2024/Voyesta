@@ -1,4 +1,3 @@
-// PreferencesFilter.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -6,11 +5,20 @@ const PreferencesFilter = ({ setSelectedPreferences }) => {
   const [preferences, setPreferences] = useState([]);
   const [selectedPreference, setSelectedPreference] = useState('');
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  };
+
   useEffect(() => {
     // Fetch preferences from the database or an API
     const fetchPreferences = async () => {
       try {
-        const response = await axios.get('http://localhost:5173/api/tourist/getTags'); // Adjust the URL to your API endpoint
+        const response = await axios.get('http://localhost:5173/api/tourist/getTags', getAuthHeaders()); // Adjust the URL to your API endpoint
         setPreferences(response.data);
       } catch (error) {
         console.error('Error fetching preferences:', error);

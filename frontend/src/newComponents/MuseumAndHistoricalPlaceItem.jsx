@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { assets } from '../assets/assets';
+import { assets } from '../assets/assets'; // Adjust the import path as necessary
 
-const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => {
+const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, convertedPrices, targetCurrency }) => {
   const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlace, setEditedPlace] = useState(place);
-
-  const getAuthHeaders = () => {
-    return {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    };
-  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -26,24 +18,33 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedPlace({ ...editedPlace, [name]: value });
+    setEditedPlace((prevPlace) => ({
+      ...prevPlace,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async () => {
     try {
-      const url = `${baseUrl}/updatePlace/${place._id}`;
-      await axios.patch(url, editedPlace, getAuthHeaders());
+      const response = await axios.patch(`${baseUrl}/updatePlace/${place._id}`, editedPlace, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       fetchPlaces();
       setIsEditing(false);
     } catch (error) {
-      console.log(error);
+      console.error('Error updating place:', error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const url = `${baseUrl}/deletePlace/${id}`;
-      await axios.delete(url, getAuthHeaders());
+      await axios.delete(`${baseUrl}/deletePlace/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       fetchPlaces();
     } catch (error) {
       console.log(error);
@@ -77,13 +78,13 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
             name="name"
             value={editedPlace.name}
             onChange={handleChange}
-            className="font-bold text-lg"
+            className="w-full mt-2"
           />
           <textarea
             name="description"
             value={editedPlace.description}
             onChange={handleChange}
-            className="w-full"
+            className="w-full mt-2"
           />
           <input
             type="text"
@@ -171,9 +172,9 @@ const MuseumAndHistoricalPlaceItem = ({ fetchPlaces, place, role, baseUrl }) => 
 
           {typeof place.ticketPrices === 'object' ? (
             <>
-              <p>Foreigner Price: ${place.ticketPrices.foreigner || '0'}</p>
-              <p>Native Price: ${place.ticketPrices.native || '0'}</p>
-              <p>Student Price: ${place.ticketPrices.student || '0'}</p>
+              <p>Foreigner Price: {convertedPrices && convertedPrices.foreigner ? `${convertedPrices.foreigner.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.foreigner.toFixed(2)} USD`}</p>
+              <p>Native Price: {convertedPrices && convertedPrices.native ? `${convertedPrices.native.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.native.toFixed(2)} USD`}</p>
+              <p>Student Price: {convertedPrices && convertedPrices.student ? `${convertedPrices.student.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.student.toFixed(2)} USD`}</p>
             </>
           ) : (
             <p>Ticket Prices: Not available</p>

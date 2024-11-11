@@ -5,6 +5,7 @@ import CreateItinerary from './CreateItinerary';
 import PriceFilterBar from './PriceFilterBar';
 import DateRangeFilter from './DateRangeFilter';
 import PreferencesFilter from './PreferencesFilter';
+import CurrencyConverter from './CurrencyConverter';
 
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
@@ -15,6 +16,9 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [endDate, setEndDate] = useState('');
   const [selectedPreference, setSelectedPreference] = useState('');
   const [sortOption, setSortOption] = useState(''); // State for selected sort option
+  const [prices, setPrices] = useState([]);
+  const [convertedPrices, setConvertedPrices] = useState([]);
+  const [targetCurrency, setTargetCurrency] = useState('USD');
 
   useEffect(() => {
     fetchItineraries();
@@ -29,6 +33,7 @@ const ItineraryView = ({ baseUrl, role }) => {
       });
       setItineraries(response.data);
       setFilteredItineraries(response.data); // Initialize filtered itineraries
+      setPrices(response.data.map(itinerary => itinerary.tourPrice));
     } catch (error) {
       console.error('Error fetching itineraries:', error);
       setMessage("Error fetching itineraries.");
@@ -48,7 +53,7 @@ const ItineraryView = ({ baseUrl, role }) => {
 
     // Filter by selected preference
     if (selectedPreference) {
-      filtered = filtered.filter(itinerary => itinerary.preferences.includes(selectedPreference));
+      filtered = filtered.filter(itinerary => itinerary.preferences && itinerary.preferences.includes(selectedPreference));
     }
 
     // Sort after filtering
@@ -57,8 +62,8 @@ const ItineraryView = ({ baseUrl, role }) => {
 
   const sortItineraries = (itinerariesToSort) => {
     const sorted = [...itinerariesToSort].sort((a, b) => {
-      if (sortOption === 'priceAsc') return a.price - b.price;
-      if (sortOption === 'priceDesc') return b.price - a.price;
+      if (sortOption === 'priceAsc') return a.tourPrice - b.tourPrice;
+      if (sortOption === 'priceDesc') return b.tourPrice - a.tourPrice;
       if (sortOption === 'ratingAsc') return a.rating - b.rating;
       if (sortOption === 'ratingDesc') return b.rating - a.rating;
       return 0; // Default case, no sorting
@@ -70,35 +75,38 @@ const ItineraryView = ({ baseUrl, role }) => {
     <div className="flex">
       {role === 'tourist' && (
         <div className="w-1/5 p-4 bg-red-300">
-        <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+          <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
+          <PriceFilterBar items={itineraries} setItems={setFilteredItineraries} convertedPrices={convertedPrices} priceProperty="tourPrice" />
+          <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+          <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
+          
+          {/* Sorting Dropdown */}
+          <div className="mb-4">
+            <label className="block mb-2">Sort by</label>
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="w-full p-2 border"
+            >
+              <option value="">Sort</option>
+              <option value="priceAsc">Price: Low to High</option>
+              <option value="priceDesc">Price: High to Low</option>
+              <option value="ratingAsc">Rating: Low to High</option>
+              <option value="ratingDesc">Rating: High to Low</option>
+            </select>
+          </div>
 
-        {/* <PriceFilterBar products={itineraries} setProducts={setFilteredItineraries} />
-        <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-        {/* <PreferencesFilter setSelectedPreferences={setSelectedPreference} /> */}
-        
-        {/* Sorting Dropdown */}
-        <div className="mb-4">
-          <label className="block mb-2">Sort by</label>
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="w-full p-2 border"
+          <button
+            onClick={applyFilters}
+            className="w-full p-2 bg-blue-500 text-white rounded"
           >
-            <option value="">Sort</option>
-            <option value="priceAsc">Price: Low to High</option>
-            <option value="priceDesc">Price: High to Low</option>
-            <option value="ratingAsc">Rating: Low to High</option>
-            <option value="ratingDesc">Rating: High to Low</option>
-          </select>
-        </div>
+            Apply Filters
+          </button>
 
-        <button
-          onClick={applyFilters}
-          className="w-full p-2 bg-blue-500 text-white rounded"
-        >
-          Apply Filters
-        </button>
-      </div>
+          <div className="mb-4">
+            <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+          </div>
+        </div>
       )}
 
       <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
@@ -123,18 +131,16 @@ const ItineraryView = ({ baseUrl, role }) => {
               </button>
             </div>
 
-            {activeTab === 'viewItineraries' && (
-              <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} />
-            )}
-
-            {activeTab === 'createItinerary' && (
+            {activeTab === 'viewItineraries' ? (
+              <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
+            ) : (
               <CreateItinerary />
             )}
           </>
         )}
 
         {role !== 'tourGuide' && (
-          <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} />
+          <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
         )}
       </div>
     </div>
