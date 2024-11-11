@@ -17,7 +17,7 @@ const CategoryFilter = ({ baseUrl, setSelectedCategory }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/getActivityCategory`, getAuthHeaders());
+        const response = await axios.get(`${baseUrl}/getCategory`, getAuthHeaders());
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
