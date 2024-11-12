@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import BookingDropDownMenu from '../newComponents/BookingDropDownMenu'; // Import the BookingDropDownMenu component
 
-function NavBar({ navLinks}) {
+function NavBar({ navLinks, role }) {
     const [visible, setVisible] = useState(false);
+    const navigate = useNavigate();
+    
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+      };
 
     return (
         <div className="flex items-center justify-between text-[#f5e1b4] bg-[#003366] px-5 py-5 font-medium">
@@ -29,6 +35,13 @@ function NavBar({ navLinks}) {
                         {index < navLinks.length - 1 && <div className="w-0 border-r border-[#f5e1b4]" />}
                     </React.Fragment>
                 ))}
+                {role !== 'guest' && 
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                    >
+                    Logout
+                </button>}
             </ul>
 
             {/* Sidebar Menu for small screens */}
