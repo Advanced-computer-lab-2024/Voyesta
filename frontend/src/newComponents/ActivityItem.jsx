@@ -133,6 +133,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
 
   const handleBooking = async (eventDate) => {
     try {
+      console.log(baseUrl);
       const url = `${baseUrl}/bookEvent/${activity._id}`;
       await axios.post(url, { bookableModel: 'Activity', eventDate }, getAuthHeaders());
       alert('Booking successful!');

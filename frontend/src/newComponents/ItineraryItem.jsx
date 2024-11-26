@@ -289,13 +289,14 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
               src={assets.toggleIcon}
               className="w-6 h-6 cursor-pointer"
             />
-            {role === 'admin' && <img
+          </div>
+          }
+          {role === 'admin' && <img
               onClick={flagAsInappropriate}
               src={assets.flagIcon}
               className="w-6 h-6 cursor-pointer"
+              alt="Flag Icon"
             />
-          }
-          </div>
           }
           {role === "tourist" && (
             <>
