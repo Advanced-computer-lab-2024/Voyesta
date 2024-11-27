@@ -1,15 +1,18 @@
-// frontend/src/pages/BookingsPage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EventCard from '../newComponents/EventCard';
 
 const BookingsPage = ({ baseUrl }) => {
   const [bookings, setBookings] = useState([]);
+  const [upcomingPaidEvents, setUpcomingPaidEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+    if (activeTab === 'upcoming-paid') {
+      fetchUpcomingPaidEvents();
+    }
+  }, [activeTab]);
 
   const fetchBookings = async () => {
     try {
@@ -21,6 +24,19 @@ const BookingsPage = ({ baseUrl }) => {
       setBookings(response.data);
     } catch (error) {
       console.error('Error fetching bookings:', error);
+    }
+  };
+
+  const fetchUpcomingPaidEvents = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/viewallpaidupcomingbookings`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUpcomingPaidEvents(response.data);
+    } catch (error) {
+      console.error('Error fetching upcoming paid events:', error);
     }
   };
 
@@ -73,6 +89,12 @@ const BookingsPage = ({ baseUrl }) => {
         >
           Attended Events
         </button>
+        <button
+          className={`p-2 ${activeTab === 'upcoming-paid' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('upcoming-paid')}
+        >
+          Upcoming Paid Events
+        </button>
       </div>
       {activeTab === 'upcoming' ? (
         <div>
@@ -90,7 +112,7 @@ const BookingsPage = ({ baseUrl }) => {
             ))
           )}
         </div>
-      ) : (
+      ) : activeTab === 'attended' ? (
         <div>
           {attendedBookings.length === 0 ? (
             <p>No attended bookings found.</p>
@@ -106,7 +128,23 @@ const BookingsPage = ({ baseUrl }) => {
             ))
           )}
         </div>
-      )}
+      ) : activeTab === 'upcoming-paid' ? (
+        <div>
+          {upcomingPaidEvents.length === 0 ? (
+            <p>No upcoming paid events found.</p>
+          ) : (
+            upcomingPaidEvents.map((event) => (
+              <EventCard
+                key={event._id}
+                booking={event}
+                baseUrl={baseUrl}
+                handlePayment={handlePayment}
+                handleCancel={handleCancel}
+              />
+            ))
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };

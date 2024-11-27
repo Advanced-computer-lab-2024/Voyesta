@@ -52,7 +52,11 @@ const getBookings = async (req, res) => {
     const touristId = req.user.id;
 
     try {
-        const bookings = await Booking.find({ tourist: touristId }).populate('tourist').populate('bookable');
+        // Fetch all bookings for the tourist excluding confirmed events
+        const bookings = await Booking.find({ tourist: touristId, status: { $ne: 'confirmed' } })
+            .populate('tourist')
+            .populate('bookable');
+
         res.status(200).json(bookings);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -149,11 +153,20 @@ const viewallpaidupcomingbookings = async (req, res) => {
     const touristId = req.user.id;
 
     try {
-        const bookings = await Booking.find({ tourist: touristId, status: 'confirmed', eventDate: { $gte: new Date() } });
-        res.status(200).json(bookings);
+        // Fetch all confirmed bookings with a future event date
+        const paidEvents = await Booking.find({
+            tourist: touristId,
+            status: 'confirmed',
+            eventDate: { $gte: new Date() },
+        })
+            .populate('bookable')
+            .populate('tourist');
+
+        res.status(200).json(paidEvents);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
+
 
 module.exports = { createBooking, getBookings, cancelBooking, payForBooking, viewallpaidupcomingbookings };
