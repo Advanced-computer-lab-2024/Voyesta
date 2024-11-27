@@ -19,7 +19,7 @@ const productController = require('../controllers/productController');
 const { getActivityCategory } = require('../controllers/activityCategoryController');
 const { TourGuideComments, rateTourGuide, checkTourGuideRatingAndComment } = require('../controllers/tourGuideController');
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
-const { createBooking, getBookings, cancelBooking, payForBooking } = require('../controllers/bookingController');
+const { createBooking, getBookings, cancelBooking, payForBooking ,viewallpaidupcomingbookings } = require('../controllers/bookingController');
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 
@@ -54,6 +54,7 @@ _.post('/BookEvent/:id', authenticate, createBooking);
 _.get('/getBookings', authenticate, getBookings);
 _.patch('/cancelBooking/:id', authenticate, cancelBooking);
 _.patch('/payForBooking/:id', authenticate, payForBooking);
+_.get('/viewallpaidupcomingbookings', authenticate, viewallpaidupcomingbookings);
 _.patch('/redeemPoints', authenticate, redeemPoints);
 
 _.post('/createComplaint', authenticate, createComplaint);

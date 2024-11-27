@@ -145,4 +145,15 @@ const payForBooking = async (req, res) => {
     }
 };
 
-module.exports = { createBooking, getBookings, cancelBooking, payForBooking };
+const viewallpaidupcomingbookings = async (req, res) => {
+    const touristId = req.user.id;
+
+    try {
+        const bookings = await Booking.find({ tourist: touristId, status: 'confirmed', eventDate: { $gte: new Date() } });
+        res.status(200).json(bookings);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = { createBooking, getBookings, cancelBooking, payForBooking, viewallpaidupcomingbookings };
