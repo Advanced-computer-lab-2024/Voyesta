@@ -4,7 +4,7 @@ import EventCard from '../newComponents/EventCard';
 
 const BookingsPage = ({ baseUrl }) => {
   const [bookings, setBookings] = useState([]);
-  const [upcomingPaidEvents, setUpcomingPaidEvents] = useState([]);
+  const [PaidEvents, setUpcomingPaidEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
 
   useEffect(() => {
@@ -72,6 +72,8 @@ const BookingsPage = ({ baseUrl }) => {
 
   const upcomingBookings = bookings.filter(booking => new Date(booking.eventDate) >= new Date());
   const attendedBookings = bookings.filter(booking => new Date(booking.eventDate) < new Date());
+  const upcomingPaidEvents = PaidEvents.filter(event => new Date(event.eventDate) >= new Date());
+  const recentPaidEvents = PaidEvents.filter(event => new Date(event.eventDate) < new Date());
 
   return (
     <div className="p-4">
@@ -94,6 +96,12 @@ const BookingsPage = ({ baseUrl }) => {
           onClick={() => setActiveTab('upcoming-paid')}
         >
           Upcoming Paid Events
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'recent-paid' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('recent-paid')}
+        >
+          Recent Paid Events
         </button>
       </div>
       {activeTab === 'upcoming' ? (
@@ -134,6 +142,22 @@ const BookingsPage = ({ baseUrl }) => {
             <p>No upcoming paid events found.</p>
           ) : (
             upcomingPaidEvents.map((event) => (
+              <EventCard
+                key={event._id}
+                booking={event}
+                baseUrl={baseUrl}
+                handlePayment={handlePayment}
+                handleCancel={handleCancel}
+              />
+            ))
+          )}
+        </div>
+      ) : activeTab === 'recent-paid' ? (
+        <div>
+          {recentPaidEvents.length === 0 ? (
+            <p>No recent paid events found.</p>
+          ) : (
+            recentPaidEvents.map((event) => (
               <EventCard
                 key={event._id}
                 booking={event}
