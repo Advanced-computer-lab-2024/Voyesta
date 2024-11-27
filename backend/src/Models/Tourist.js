@@ -66,6 +66,12 @@ const touristSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'
     }],
+    cart: [
+        {
+          productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+          quantity: { type: Number, default: 1 }
+        }
+      ]
 }, { timestamps: true });
 
 // Age validation
