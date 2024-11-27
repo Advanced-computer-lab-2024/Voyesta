@@ -1,5 +1,6 @@
 const Product = require('../Models/product');
 const Seller = require('../Models/Seller');
+const touristModel = require('../Models/Tourist'); // Adjust the path as necessary
 const upload = require('../middleware/upload');
 const Purchase = require('../models/purchase');
 
@@ -362,6 +363,50 @@ const reviewProduct = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+// Add item to cart
+const addCart = async (req, res) => {
+    const userId = req.user.id;
+    const { productId, quantity } = req.body;
+  
+    try {
+      const tourist = await touristModel.findById(userId);
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      const cartItem = tourist.cart.find(item => item.productId.toString() === productId);
+      if (cartItem) {
+        cartItem.quantity += quantity;
+      } else {
+        tourist.cart.push({ productId, quantity });
+      }
+  
+      await tourist.save();
+      res.status(200).json(tourist.cart);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+  
+  // Remove item from cart
+  const removeCart = async (req, res) => {
+    const userId = req.user.id;
+    const { productId } = req.body;
+  
+    try {
+      const tourist = await touristModel.findById(userId);
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      tourist.cart = tourist.cart.filter(item => item.productId.toString() !== productId);
+  
+      await tourist.save();
+      res.status(200).json(tourist.cart);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 
 const archiveProduct = async (req, res) => {
     const { id } = req.params;
@@ -441,5 +486,7 @@ module.exports = {
     reviewProduct,
     archiveProduct,
     unarchiveProduct,
-    getProductSales
+    getProductSales,
+    removeCart,
+    addCart
 };
