@@ -1,6 +1,7 @@
 const express = require("express");
 const authenticate = require("../middleware/authenticate");
 let _ = express.Router();
+const { redeemPromoCode } = require('../controllers/touristController.js');
 
 const { createTourist, getTourists, updateTourist, 
     deleteTourist, 
@@ -68,6 +69,7 @@ _.get('/searchHotels', authenticate, searchHotelsByCity);
 _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
 
 _.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
+_.post('/redeemPromoCode', redeemPromoCode);
 
 
 

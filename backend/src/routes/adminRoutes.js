@@ -2,6 +2,7 @@ const express = require('express');
 const _ = express.Router();
 const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
+const { createGlobalPromoCode } = require('../controllers/adminController');
 
 const {
     createActivityCategory, 
@@ -75,6 +76,9 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
+_.post('/createPromoCode', adminController.createPromoCode);
+_.get('/getPromoCodes', adminController.getPromoCodes);
+_.post('/createGlobalPromoCode', adminController.createGlobalPromoCode);
 
 
 module.exports = _;

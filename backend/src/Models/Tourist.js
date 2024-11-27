@@ -66,7 +66,21 @@ const touristSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'
     }],
+    birthdayPromoCode: {
+        code: { type: String }, // Unique code
+        discount: { type: Number }, // Discount percentage
+        validFrom: { type: Date }, // Start date of validity
+        validUntil: { type: Date }, // End date of validity
+        status: { 
+            type: String, 
+            enum: ['active', 'used', 'expired'], 
+            default: 'active' 
+        },
+    },
 }, { timestamps: true });
+
+
+
 
 // Age validation
 touristSchema.pre('save', function(next) {

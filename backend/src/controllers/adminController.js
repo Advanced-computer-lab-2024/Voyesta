@@ -133,5 +133,181 @@ const getPendingUsers = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+const createPromoCode = async (req, res) => {
+    const { code, discount, validFrom, validUntil, usageLimit } = req.body;
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers };
+    // Validate the required fields
+    if (!code || !discount || !validFrom || !validUntil) {
+        return res.status(400).json({ message: 'All fields are required: code, discount, validFrom, validUntil' });
+    }
+
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: 'Discount must be between 0 and 100' });
+    }
+
+    try {
+        // Find the Admin document (assuming a single admin manages the promo codes)
+        const admin = await adminModel.findOne();
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        // Check if the promo code already exists
+        const existingPromoCode = admin.promoCodes.find((promo) => promo.code === code);
+        if (existingPromoCode) {
+            return res.status(400).json({ message: 'Promo code already exists' });
+        }
+
+        // Add the promo code to the admin's promoCodes array
+        const promoCode = {
+            code,
+            discount,
+            validFrom: new Date(validFrom),
+            validUntil: new Date(validUntil),
+            usageLimit,
+        };
+
+        admin.promoCodes.push(promoCode);
+
+        await admin.save();
+
+        res.status(201).json({ message: 'Promo code created successfully', promoCode });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating promo code', error: error.message });
+    }
+};
+const getPromoCodes = async (req, res) => {
+    try {
+        const admin = await adminModel.findOne();
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        res.status(200).json(admin.promoCodes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching promo codes', error: error.message });
+    }
+};
+
+
+
+const assignBirthdayPromoCode = async (req, res) => {
+    const { touristId, email, code, discount } = req.body; // Accept tourist ID or email, promo code, and discount
+
+    if (!touristId && !email) {
+        return res.status(400).json({ message: 'Tourist ID or email is required' });
+    }
+    if (!code || !discount) {
+        return res.status(400).json({ message: 'Promo code and discount are required' });
+    }
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: 'Discount must be between 0 and 100' });
+    }
+
+    try {
+        // Find the tourist by ID or email
+        const tourist = await touristModel.findOne(touristId ? { _id: touristId } : { email });
+        if (!tourist) {
+            return res.status(404).json({ message: 'Tourist not found' });
+        }
+
+        const today = new Date();
+        const birthDate = new Date(tourist.DOB);
+
+        // Check if today is the tourist's birthday
+        if (today.getMonth() === birthDate.getMonth() && today.getDate() === birthDate.getDate()) {
+            // Assign the birthday promo code
+            tourist.birthdayPromoCode = {
+                code,
+                discount,
+                validFrom: today,
+                validUntil: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7), // Valid for 7 days
+                status: 'active',
+            };
+
+            await tourist.save();
+
+            res.status(200).json({ message: 'Birthday promo code assigned successfully', birthdayPromoCode: tourist.birthdayPromoCode });
+        } else {
+            res.status(400).json({ message: 'Today is not the tourist\'s birthday' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error assigning birthday promo code', error: error.message });
+    }
+};
+
+
+
+
+const createGlobalPromoCode = async (req, res) => {
+    const { code, discount, validFrom, validUntil } = req.body;
+
+    if (!code || !discount || !validFrom || !validUntil) {
+        return res.status(400).json({ message: 'All fields are required: code, discount, validFrom, validUntil' });
+    }
+
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: 'Discount must be between 0 and 100' });
+    }
+
+    try {
+        const admin = await adminModel.findOne();
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        // Check if the promo code already exists
+        const existingPromoCode = admin.globalPromoCodes.find((promo) => promo.code === code);
+
+        if (existingPromoCode) {
+            return res.status(400).json({ message: 'Promo code already exists' });
+        }
+
+        // Add the new promo code
+        admin.globalPromoCodes.push({
+            code,
+            discount,
+            validFrom: new Date(validFrom),
+            validUntil: new Date(validUntil),
+            redeemedBy: [],
+            status: 'active', // Explicitly set valid status
+        });
+
+        await admin.save();
+
+        res.status(201).json({ message: 'Promo code created successfully', code, discount });
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Promo code already exists' });
+        }
+        res.status(500).json({ message: 'Error creating promo code', error: error.message });
+    }
+};
+
+const validateGlobalPromoCodes = async () => {
+    const admin = await adminModel.findOne();
+    if (!admin) {
+        console.log('No admin document found.');
+        return;
+    }
+
+    for (let promo of admin.globalPromoCodes) {
+        if (!['active', 'inactive', 'expired'].includes(promo.status)) {
+            console.log(`Fixing invalid status for promo code: ${promo.code}`);
+            promo.status = 'active'; // Set to default valid status
+        }
+    }
+
+    await admin.save();
+    console.log('Validation completed, invalid statuses fixed.');
+};
+
+validateGlobalPromoCodes();
+
+
+
+
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,assignBirthdayPromoCode,createGlobalPromoCode};
