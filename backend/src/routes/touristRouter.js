@@ -69,7 +69,8 @@ _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
 
 _.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
 
-
+_.post('/addToCart', authenticate, productController.addCart);
+_.post('/removefromCart', authenticate, productController.removeCart);
 
 
 module.exports = _;
