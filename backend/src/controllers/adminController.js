@@ -4,8 +4,8 @@ const { generateToken } = require('../utils/jwt');
 const TourGuide = require('../Models/Tour Guide');
 const Seller = require('../Models/Seller');
 const Advertiser = require('../Models/Advertiser');
-const User = require('../Models/User'); // Correct path to the User model
-
+const Tourist = require('../Models/Tourist'); 
+const User=require('../Models/User'); 
 
 // Create a new Admin profile
 const createAdmin = async (req , res) => {
@@ -112,49 +112,148 @@ const createTourismGovernor = async (req, res) => {
 
 const getUserStats = async (req, res) => {
     try {
-        // Log to check if the connection to MongoDB and schema is working
         console.log('Fetching user stats...');
-        
-        // Total number of users
-        const totalUsers = await User.countDocuments();
-        console.log("Total Users:", totalUsers); // Log the result of total users query
 
-        // Aggregation to group users by month and count the number of users
-        const monthlyStats = await User.aggregate([
+        // Count documents in each collection for total users
+        const touristCount = await Tourist.countDocuments();
+        const advertiserCount = await Advertiser.countDocuments();
+        const sellerCount = await Seller.countDocuments();
+        const tourGuideCount = await TourGuide.countDocuments();
+
+        // Total number of all roles
+        const totalUsers = touristCount + advertiserCount + sellerCount + tourGuideCount;
+
+        console.log("Counts by Role:");
+        console.log("Tourists:", touristCount);
+        console.log("Advertisers:", advertiserCount);
+        console.log("Sellers:", sellerCount);
+        console.log("Tour Guides:", tourGuideCount);
+        console.log("Total Users:", totalUsers);
+
+        // Aggregation to count the number of new tourists by month
+        const monthlyTouristStats = await Tourist.aggregate([
             {
                 $group: {
                     _id: {
                         year: { $year: "$createdAt" }, // Extract year
                         month: { $month: "$createdAt" } // Extract month
                     },
-                    count: { $sum: 1 } // Count users
+                    count: { $sum: 1 } // Count new tourists per month
                 }
             },
             {
-                $sort: { "_id.year": 1, "_id.month": 1 } // Sort by year and month
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
             }
         ]);
 
-        console.log("Monthly Stats:", monthlyStats); // Log monthly stats for debugging
+        // Aggregation to count the number of new advertisers by month
+        const monthlyAdvertiserStats = await Advertiser.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new advertisers per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
 
-        // Format the monthly stats for better readability
-        const formattedMonthlyStats = monthlyStats.map(stat => ({
+        // Aggregation to count the number of new sellers by month
+        const monthlySellerStats = await Seller.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new sellers per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
+
+        // Aggregation to count the number of new tour guides by month
+        const monthlyTourGuideStats = await TourGuide.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new tour guides per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
+
+        // Format the stats for better readability
+        const formattedMonthlyTouristStats = monthlyTouristStats.map(stat => ({
             year: stat._id.year,
             month: stat._id.month,
             count: stat.count
         }));
 
-        // Return both total users and monthly stats as a response
+        const formattedMonthlyAdvertiserStats = monthlyAdvertiserStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        const formattedMonthlySellerStats = monthlySellerStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        const formattedMonthlyTourGuideStats = monthlyTourGuideStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        // Return all stats (total users, role stats, and monthly stats for each role)
         return res.json({
             totalUsers,
-            monthlyStats: formattedMonthlyStats
+            roleStats: {
+                tourists: touristCount,
+                advertisers: advertiserCount,
+                sellers: sellerCount,
+                tourGuides: tourGuideCount
+            },
+            monthlyStats: {
+                tourists: formattedMonthlyTouristStats,
+                advertisers: formattedMonthlyAdvertiserStats,
+                sellers: formattedMonthlySellerStats,
+                tourGuides: formattedMonthlyTourGuideStats
+            }
         });
+
     } catch (error) {
-        // Log the error to see what went wrong
         console.error('Error fetching stats:', error);
         return res.status(500).json({ message: "Error fetching stats" });
     }
 };
+
 
 
 
