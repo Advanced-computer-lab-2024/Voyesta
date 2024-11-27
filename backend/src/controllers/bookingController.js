@@ -157,7 +157,6 @@ const viewallpaidupcomingbookings = async (req, res) => {
         const paidEvents = await Booking.find({
             tourist: touristId,
             status: 'confirmed',
-            eventDate: { $gte: new Date() },
         })
             .populate('bookable')
             .populate('tourist');
