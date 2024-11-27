@@ -15,6 +15,7 @@ import BookHotel from "../../newComponents/BookHotel";
 import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmaton';
 //import FlightBookingConfirmation from '../../newComponents/FlightBookingConfirmation';
 import BookTransportation from "../../newComponents/BookTransportation";
+import BookmarkedActivities from "../../newComponents/BookmarksActivties";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -52,6 +53,7 @@ function TouristDashboard(){
         />  */}
         <Route path="/flight" element={<BookFlight baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path="/hotel" element={<BookHotel baseUrl="http://localhost:3000/api/tourist" />} />
+        <Route path="/bookmarks" element={<BookmarkedActivities baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path="/transport" element={
           <BookTransportation baseUrl="http://localhost:3000/api/tourist" role={"tourist"} />
         } />

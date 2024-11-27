@@ -62,6 +62,10 @@ const touristSchema = new Schema({
         enum: ['pending', 'active', 'deleted'],
         default: 'active'
     },
+    bookmarkedActivities: [{ 
+        type: Schema.Types.ObjectId,
+         ref: 'Activity' 
+    }],
     preferences: [{ // Array of preference tags for req 10.
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'

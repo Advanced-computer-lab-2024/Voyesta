@@ -295,6 +295,66 @@ const searchHotelsByCity = async (req, res) => {
 };
 
 
+const bookmarkActivity = async (req, res) => {
+    const touristId = req.user.id; // Extract tourist ID from the authenticated user
+    const { activityId } = req.body; // Get the activity ID from the request body
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        // Check if the activity is already bookmarked
+        if (!tourist.bookmarkedActivities.includes(activityId)) {
+            tourist.bookmarkedActivities.push(activityId);
+            await tourist.save();
+        }
+
+        res.status(200).json({ message: 'Activity bookmarked successfully', bookmarks: tourist.bookmarkedActivities });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+const unbookmarkActivity = async (req, res) => {
+    const touristId = req.user.id; // Extract tourist ID from the authenticated user
+    const { activityId } = req.body; // Get the activity ID from the request body
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        // Remove the activity from the bookmarks list
+        tourist.bookmarkedActivities = tourist.bookmarkedActivities.filter(
+            (id) => id.toString() !== activityId
+        );
+
+        await tourist.save();
+
+        res.status(200).json({ message: 'Activity unbookmarked successfully', bookmarks: tourist.bookmarkedActivities });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+const getBookmarkedActivities = async (req, res) => {
+    const touristId = req.user.id; // Extract tourist ID from the authenticated user
+
+    try {
+        const tourist = await touristModel.findById(touristId).populate('bookmarkedActivities');
+
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        res.status(200).json(tourist.bookmarkedActivities);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 
@@ -303,5 +363,4 @@ const searchHotelsByCity = async (req, res) => {
 
 
 
-
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice};
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,getBookmarkedActivities};
