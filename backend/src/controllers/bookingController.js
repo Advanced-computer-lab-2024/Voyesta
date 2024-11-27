@@ -149,7 +149,7 @@ const payForBooking = async (req, res) => {
     }
 };
 
-const viewallpaidupcomingbookings = async (req, res) => {
+const viewAllPaidBookings = async (req, res) => {
     const touristId = req.user.id;
 
     try {
@@ -168,4 +168,4 @@ const viewallpaidupcomingbookings = async (req, res) => {
 };
 
 
-module.exports = { createBooking, getBookings, cancelBooking, payForBooking, viewallpaidupcomingbookings };
+module.exports = { createBooking, getBookings, cancelBooking, payForBooking, viewAllPaidBookings };

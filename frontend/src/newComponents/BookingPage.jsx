@@ -29,7 +29,7 @@ const BookingsPage = ({ baseUrl }) => {
 
   const fetchUpcomingPaidEvents = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/viewallpaidupcomingbookings`, {
+      const response = await axios.get(`${baseUrl}/viewAllPaidBookings`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
