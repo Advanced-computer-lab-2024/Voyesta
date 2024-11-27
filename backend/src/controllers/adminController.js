@@ -4,6 +4,7 @@ const { generateToken } = require('../utils/jwt');
 const TourGuide = require('../Models/Tour Guide');
 const Seller = require('../Models/Seller');
 const Advertiser = require('../Models/Advertiser');
+const User = require('../Models/User'); // Correct path to the User model
 
 
 // Create a new Admin profile
@@ -107,6 +108,57 @@ const createTourismGovernor = async (req, res) => {
     }
 };
 
+
+
+const getUserStats = async (req, res) => {
+    try {
+        // Log to check if the connection to MongoDB and schema is working
+        console.log('Fetching user stats...');
+        
+        // Total number of users
+        const totalUsers = await User.countDocuments();
+        console.log("Total Users:", totalUsers); // Log the result of total users query
+
+        // Aggregation to group users by month and count the number of users
+        const monthlyStats = await User.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count users
+                }
+            },
+            {
+                $sort: { "_id.year": 1, "_id.month": 1 } // Sort by year and month
+            }
+        ]);
+
+        console.log("Monthly Stats:", monthlyStats); // Log monthly stats for debugging
+
+        // Format the monthly stats for better readability
+        const formattedMonthlyStats = monthlyStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        // Return both total users and monthly stats as a response
+        return res.json({
+            totalUsers,
+            monthlyStats: formattedMonthlyStats
+        });
+    } catch (error) {
+        // Log the error to see what went wrong
+        console.error('Error fetching stats:', error);
+        return res.status(500).json({ message: "Error fetching stats" });
+    }
+};
+
+
+
+
 // Fetch all pending users from TourGuide, Seller, and Advertiser collections
 const getPendingUsers = async (req, res) => {
     try {
@@ -134,4 +186,4 @@ const getPendingUsers = async (req, res) => {
     }
 };
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers };
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers,getUserStats };

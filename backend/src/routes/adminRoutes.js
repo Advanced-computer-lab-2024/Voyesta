@@ -4,6 +4,7 @@ const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
 
 const {
+    
     createActivityCategory, 
     getActivityCategory, 
     updateActivityCategory, 
@@ -75,6 +76,8 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
+_.get('/getUserStats', adminController.getUserStats);
+
 
 
 module.exports = _;

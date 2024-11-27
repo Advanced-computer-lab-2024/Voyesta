@@ -23,7 +23,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://VoyestaDB:GUC_1234@voyestadb.cvp0i.mongodb.net/?retryWrites=true&w=majority&appName=VoyestaDB", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })

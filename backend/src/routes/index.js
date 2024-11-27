@@ -10,7 +10,6 @@ const preferenceTagRouter = require('./preferenceTagRouter');
 const iteneraryRouter = require('./itineraryRouter');
 
 
-
 // POST route for creating a new tourism governor
 _.use('/admin', adminRouter);
 
@@ -55,6 +54,8 @@ _.use("/museumsHistoricalPlaces",  museumsHistoricalPlacesRouter);
 _.use('/bookings', bookingRouter);
 _.use('/purchase', purchaseRouter);
 _.use('/cloudinary', cloudinaryRouter);
+
+
 
 
 
