@@ -39,7 +39,6 @@ function TourGuideDashboard() {
   const fetchTourGuide = () => {
     axios.get("http://localhost:3000/api/tourGuide/get", getAuthHeader())
     .then(res => {
-      console.log(res.data);
       setTourGuide(res.data);
     })
     .catch(e => console.log(e));

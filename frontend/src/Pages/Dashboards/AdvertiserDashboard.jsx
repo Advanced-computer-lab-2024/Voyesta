@@ -99,7 +99,7 @@ function AdvertiserDashboard() {
             <Route path="/activity" element={
               <ActivitiesView baseUrl="http://localhost:3000/api/advertiser" role="advertiser" />
             } />
-            <Route path="/sales" element={<RevenueSalesView userType="tourGuide" />} />
+            <Route path="/sales" element={<RevenueSalesView userType="advertiser" />} />
           </Routes>
         </div>
       }

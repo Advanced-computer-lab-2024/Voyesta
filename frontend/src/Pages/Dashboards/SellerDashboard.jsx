@@ -109,7 +109,7 @@ function SellerDashboard() {
               <ProductsView role="sellerMyProducts" />
             } />
 
-            <Route path="/sales" element={<RevenueSalesView userType="tourGuide" />} />
+            <Route path="/sales" element={<RevenueSalesView userType="seller" />} />
             <Route path="/profile" element={
               <ProfileManagement userType="seller" baseUrl="http://localhost:3000/api/seller" />
             } />
