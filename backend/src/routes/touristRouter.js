@@ -11,7 +11,8 @@ const { createTourist, getTourists, updateTourist,
     confirmHotelPrice,
     bookFlight,
     bookHotel,  
-    searchHotelsByCity} = require("../controllers/touristController");
+    searchHotelsByCity,
+    createAddress, getAddresses, createOrder,getOrders,getOrder,cancelOrder,pay} = require("../controllers/touristController");
 const { get } = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const itineraryController = require('../controllers/itineraryController');
@@ -69,7 +70,13 @@ _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
 
 _.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
 
-
+_.post('/createAddress', authenticate, createAddress);
+_.get('/getAddresses', authenticate, getAddresses); 
+_.post('/createOrder', authenticate, createOrder);
+_.get('/getOrders', authenticate, getOrders);
+_.get('/getOrder/:id', authenticate, getOrder);
+_.patch('/cancelOrder/:id', authenticate, cancelOrder);
+_.patch('/pay', authenticate, pay);
 
 
 module.exports = _;

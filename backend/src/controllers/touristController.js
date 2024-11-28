@@ -521,4 +521,4 @@ const pay = async (req, res) => {
 
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice};
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,createAddress,getAddresses,createOrder,getOrders,getOrder,cancelOrder,deleteCancelledOrders,pay};
