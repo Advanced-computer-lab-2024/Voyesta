@@ -8,6 +8,7 @@ const {generateToken} = require('../utils/jwt');
 //const amadeus = require('../utils/amadeusClient').amadeus;
 const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
 const { getAddressDetails } = require('../utils/googleMaps');
+const { createPaymentIntent } = require('../utils/stripeUtil');
 
 //console.log(amadeus);
 
@@ -476,6 +477,47 @@ const deleteCancelledOrders = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
+const pay = async (req, res) => {
+    const touristId = req.user.id;
+    const { details, total, paymentMethod , currency } = req.body; // paymentMethod can be 'wallet' or 'card'
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        if (paymentMethod === 'wallet') {
+            // Handle wallet payment
+            if (tourist.Wallet < total) {
+                return res.status(400).json({ error: 'Insufficient wallet balance' });
+            }
+
+            tourist.Wallet -= total;
+            await tourist.save();
+
+            
+            return res.status(201).json({ message: 'paid with wallet', walletBalance: tourist.Wallet });
+        } else if (paymentMethod === 'card') {
+            // Handle card payment using Stripe
+            const paymentIntent = await createPaymentIntent(total, currency); // Assuming USD for simplicity
+            if (!paymentIntent.success) {
+                return res.status(400).json({ error: paymentIntent.error });
+            }
+
+            
+            return res.status(201).json({ message: 'proceed to payment window', clientSecret: paymentIntent.clientSecret });
+        } else {
+            return res.status(400).json({ error: 'Invalid payment method' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 
 
 
