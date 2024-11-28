@@ -71,7 +71,11 @@ const touristSchema = new Schema({
           productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
           quantity: { type: Number, default: 1 }
         }
-      ]
+      ],
+      wishlist: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+    }],
 }, { timestamps: true });
 
 // Age validation
