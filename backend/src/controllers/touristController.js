@@ -7,7 +7,7 @@ const Activity = require('../Models/Activity');
 const {generateToken} = require('../utils/jwt');
 //const amadeus = require('../utils/amadeusClient').amadeus;
 const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
-
+const { getAddressDetails } = require('../utils/googleMaps');
 
 //console.log(amadeus);
 
@@ -294,6 +294,52 @@ const searchHotelsByCity = async (req, res) => {
     }
 };
 
+// create an address
+
+
+const createAddress = async (req, res) => {
+    const touristId = req.user.id;
+    const { address } = req.body;
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        const addressDetails = await getAddressDetails(address);
+
+        const newAddress = {
+            address: addressDetails.address,
+            city: addressDetails.city,
+            country: addressDetails.country,
+            coordinates: addressDetails.coordinates
+        };
+
+        tourist.addresses.push(newAddress);
+        await tourist.save();
+
+        res.status(201).json({ message: 'Address added successfully', address: newAddress });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// get all addresses
+const getAddresses = async (req, res) => {
+    const touristId = req.user.id;
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        res.status(200).json(tourist.addresses);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 
@@ -301,6 +347,135 @@ const searchHotelsByCity = async (req, res) => {
 
 
 
+// create an order should be called after tourist presses checkout in cart page (products only)
+const createOrder = async (req, res) => {
+    const touristId = req.user.id;
+    const { details, total } = req.body;
+    try {
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        const order = new orderModel({
+            details,
+            total,
+            tourist: touristId
+        });
+
+        await order.save();
+        tourist.orders.push(order);
+        await tourist.save();
+
+        res.status(201).json({ message: 'Order created successfully', order });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+
+
+// view all my orders
+const getOrders = async (req, res) => {
+    const touristId = req.user.id;
+    try {
+        const tourist = await touristModel.findById(touristId).populate('orders');
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+        res.status(200).json(tourist.orders);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+// get a specific order by id
+const getOrder = async (req, res) => {
+    const touristId = req.user.id;
+    const { orderId } = req.params;
+    try {
+        const tourist = await touristModel.findById(touristId).populate('orders');
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+        const order = tourist.orders.find(order => order._id === orderId);
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        if(order.tourist.toString() !== touristId){
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        res.status(200).json(order);
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+// cancel an order
+const cancelOrder = async (req, res) => {
+    const touristId = req.user.id;
+    const { orderId } = req.params;
+    try {
+        const tourist = await touristModel.findById(touristId).populate('orders');
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+        const order = tourist.orders.find(order => order._id === orderId);
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        if(order.tourist.toString() !== touristId){
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        if(order.status === 'cancelled'){
+            return res.status(400).json({ error: 'Order already cancelled' });
+        }
+        if(order.status === 'completed'){
+            return res.status(400).json({ error: 'Order already completed' });
+        }
+
+        order.status = 'cancelled';
+        await order.save();
+        // update the tourist's wallet with the total amount
+
+        tourist.Wallet += order.total;
+        await tourist.save();
+
+        res.status(200).json({ message: 'Order cancelled successfully', order });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+};
+
+
+// delete all cancelled orders redundant but useful for a clean database and UI
+const deleteCancelledOrders = async (req, res) => {
+    const touristId = req.user.id;
+    try {
+        const tourist = await touristModel.findById(touristId).populate('orders');
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        const orders = tourist.orders.filter(order => order.status !== 'cancelled');
+        tourist.orders = orders;
+        await tourist.save();
+        res.status(200).json({ message: 'Cancelled orders deleted successfully' });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 

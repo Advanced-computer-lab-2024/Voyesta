@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+
+
+// only need order fields if there are orders
+const addressDetailsRequired = function() {
+    return this.addresses && this.addresses.length > 0;
+};
+
 const touristSchema = new Schema({
     username: {
         type: String,
@@ -66,6 +73,36 @@ const touristSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'
     }],
+    orders: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Orders'
+    }], 
+
+    addresses : [{
+        address: {
+            type: String,
+            required: addressDetailsRequired
+        },
+        city: {
+            type: String,
+            required: addressDetailsRequired
+        },
+        country: {
+            type: String,
+            required: addressDetailsRequired
+        },
+        coordinates: {
+            lat: {
+                type: Number,
+                required: addressDetailsRequired
+            },
+            lng: {
+                type: Number,
+                required: addressDetailsRequired
+            }
+        }
+    }]
+
 }, { timestamps: true });
 
 // Age validation
@@ -78,6 +115,11 @@ touristSchema.pre('save', function(next) {
     }
     next();
 });
+
+
+
+
+
 
 const Tourist = mongoose.model('Tourist', touristSchema);
 module.exports = Tourist;
