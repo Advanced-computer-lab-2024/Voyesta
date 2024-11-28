@@ -3,7 +3,6 @@ const Seller = require('../Models/Seller');
 const touristModel = require('../Models/Tourist'); // Adjust the path as necessary
 const upload = require('../middleware/upload');
 const Purchase = require('../models/purchase');
-
 const addProduct = async (req, res) => {
     upload(req, res, async (err) => {
         if (err) {
@@ -407,6 +406,70 @@ const addCart = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   };
+  const addToWishlist = async (req, res) => {
+    try {
+        const { productId } = req.body;
+
+        // Fetch the authenticated tourist
+        const touristId = req.user?.id; // Ensure req.user is set by authenticate middleware
+        if (!touristId) {
+            return res.status(400).json({ error: 'Invalid tourist ID' });
+        }
+
+        console.log('Authenticated Tourist ID:', touristId);
+
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(touristId)) {
+            return res.status(400).json({ error: 'Invalid tourist ID format' });
+        }
+
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        // Add product to wishlist if not already added
+        if (!tourist.wishlist.includes(productId)) {
+            tourist.wishlist.push(productId);
+            await tourist.save();
+            return res.status(200).json({ success: true, message: 'Product added to wishlist.' });
+        }
+
+        res.status(400).json({ error: 'Product already in wishlist.' });
+    } catch (error) {
+        console.error('Error in addToWishlist:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+const getWishlist = async (req, res) => {
+    try {
+        const tourist = await touristModel.findById(req.user.id).populate('wishlist');
+        if (!tourist) {
+            return res.status(404).json({ success: false, message: 'Tourist not found.' });
+        }
+        res.status(200).json({ success: true, wishlist: tourist.wishlist });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+const removeFromWishlist = async (req, res) => {
+    const userId = req.user.id;
+    const { productId } = req.body;
+  
+    try {
+      const tourist = await touristModel.findById(userId);
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      tourist.wishlist = tourist.wishlist.filter(item => item.toString() !== productId);
+  
+      await tourist.save();
+      res.status(200).json(tourist.wishlist);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 
 const archiveProduct = async (req, res) => {
     const { id } = req.params;
@@ -474,6 +537,54 @@ const getProductSales = async (req, res) => {
     }
 };
 
+const moveWishlistToCart = async (req, res) => {
+    const userId = req.user.id;
+    const { productId } = req.body;
+  
+    try {
+      const tourist = await touristModel.findById(userId);
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      // Check if the product is in the wishlist
+      const wishlistItemIndex = tourist.wishlist.findIndex(item => item.toString() === productId);
+      if (wishlistItemIndex === -1) {
+        return res.status(404).json({ error: 'Product not found in wishlist' });
+      }
+  
+      // Remove the product from the wishlist
+      tourist.wishlist.splice(wishlistItemIndex, 1);
+  
+      // Add the product to the cart
+      const cartItem = tourist.cart.find(item => item.productId.toString() === productId);
+      if (cartItem) {
+        cartItem.quantity += 1;
+      } else {
+        tourist.cart.push({ productId, quantity: 1 });
+      }
+  
+      await tourist.save();
+      res.status(200).json({ success: true, cart: tourist.cart, wishlist: tourist.wishlist });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+  const getCart = async (req, res) => {
+    const userId = req.user.id;
+  
+    try {
+      const tourist = await touristModel.findById(userId).populate('cart.productId');
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      res.status(200).json(tourist.cart);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+
 module.exports = {
     addProduct,
     getProducts,
@@ -488,5 +599,10 @@ module.exports = {
     unarchiveProduct,
     getProductSales,
     removeCart,
-    addCart
+    addCart,
+    addToWishlist,
+    getWishlist,
+    removeFromWishlist,
+    moveWishlistToCart,
+    getCart
 };
