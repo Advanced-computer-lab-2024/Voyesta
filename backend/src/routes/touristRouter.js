@@ -70,7 +70,12 @@ _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
 _.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
 
 _.post('/addToCart', authenticate, productController.addCart);
-_.post('/removefromCart', authenticate, productController.removeCart);
+_.delete('/removefromCart', authenticate, productController.removeCart);
+_.post('/AddToWishList',authenticate,productController.addToWishlist);
+_.get('/ViewList',authenticate,productController.getWishlist);
+_.delete('/deleteWish',authenticate,productController.removeFromWishlist);
+_.post('/moveToCart', authenticate, productController.moveWishlistToCart);
+_.get('/getCart', authenticate, productController.getCart);
 
 
 module.exports = _;
