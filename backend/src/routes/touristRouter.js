@@ -76,6 +76,7 @@ _.get('/ViewList',authenticate,productController.getWishlist);
 _.delete('/deleteWish',authenticate,productController.removeFromWishlist);
 _.post('/moveToCart', authenticate, productController.moveWishlistToCart);
 _.get('/getCart', authenticate, productController.getCart);
+_.post('/updateQuantity', authenticate, productController.updateCartQuantity);
 
 
 module.exports = _;
