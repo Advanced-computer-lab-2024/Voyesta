@@ -2,6 +2,7 @@ const express = require('express');
 const _ = express.Router();
 const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
+const { getRevenue } = require('../controllers/revenueController');
 
 const {
     createActivityCategory, 
@@ -75,6 +76,8 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
+
+_.get('/getRevenue', authenticate, getRevenue);
 
 
 module.exports = _;

@@ -7,11 +7,13 @@ import ProfileManagement from '../../newComponents/ProfileManagement';
 import UploadDocuments from '../../newComponents/UploadDocuments';
 import AdditionalInfoForm from '../LoginSignup/AdditionalInfoForm';
 import TermsAndConditions from '../LoginSignup/TermsAndConditions';
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
 
 const navLinks = [
   { path: "/advertiser/", label: "Home" },
   { path: "/advertiser/profile", label: "Profile" },
-  { path: "/advertiser/activity", label: "Activity" }
+  { path: "/advertiser/activity", label: "Activity" },
+  { path: "/advertiser/sales", label: "Sales" },
 ];
 
 function AdvertiserDashboard() {
@@ -97,6 +99,7 @@ function AdvertiserDashboard() {
             <Route path="/activity" element={
               <ActivitiesView baseUrl="http://localhost:3000/api/advertiser" role="advertiser" />
             } />
+            <Route path="/sales" element={<RevenueSalesView userType="tourGuide" />} />
           </Routes>
         </div>
       }

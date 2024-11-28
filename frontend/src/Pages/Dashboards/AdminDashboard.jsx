@@ -9,8 +9,7 @@ import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import ProductSalesView from "../../newComponents/ProductSalesView";
 import PendingUsers from "../../newComponents/PendingUsers";
-
-
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
 
 const navLinks = [
   { path: "/admin/activity-category", label: "Activity Category" },
@@ -18,9 +17,10 @@ const navLinks = [
   { path: "/admin/products", label: "Products" },
   { path: "/admin/itineraries", label: "Itineraries" },
   { path: "/admin/complaints", label: "Complaints" },
-  { path: "/admin/sales", label: "Sales" },
+  // { path: "/admin/sales", label: "Sales" },
+  { path: "/admin/revenue-sales", label: "Sales" },
   { path: "/admin/pendingUsers", label: "Pending Users" },
-  { path: "/admin/account-management", label: "Account Management" }
+  { path: "/admin/account-management", label: "Account Management" },
 ];
 
 function AdminDashboard(){
@@ -66,6 +66,7 @@ function AdminDashboard(){
           <AdminAccountManagementNavbar
             title = "Account Management" 
           />}/>
+        <Route path="/revenue-sales" element={<RevenueSalesView userType="admin" />} />
       </Routes>       
     </div>
   );

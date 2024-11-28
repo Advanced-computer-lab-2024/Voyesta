@@ -9,12 +9,14 @@ import axios from "axios";
 import UploadDocuments from "../../newComponents/UploadDocuments";
 import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
 
 const navLinks = [
   { path: "/tourGuide/", label: "Home" },
   { path: "/tourGuide/profile", label: "Profile" },
   { path: "/tourGuide/itineraries", label: "Itineraries" },
   { path: "/tourGuide/activities", label: "Activities" },
+  { path: "/tourGuide/sales", label: "Sales" },
   { path: "/tourGuide/museums", label: "Museums" }
 ];
 
@@ -100,6 +102,7 @@ function TourGuideDashboard() {
           <Route path="/itineraries" element={<ItineraryView baseUrl="http://localhost:3000/api/tourGuide" role="tourGuide"/>} />
           <Route path="/activities" element={<ActivitiesView baseUrl="http://localhost:3000/api/tourGuide" />} />
           <Route path="/museums" element={ <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourGuide" /> } />
+          <Route path="/sales" element={<RevenueSalesView userType="tourGuide" />} />
         </Routes>       
       </div>
   }
