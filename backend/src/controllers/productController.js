@@ -584,6 +584,37 @@ const moveWishlistToCart = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   };
+  const updateCartQuantity = async (req, res) => {
+    const userId = req.user.id;
+    const { productId, quantity } = req.body;
+  
+    try {
+      const tourist = await touristModel.findById(userId);
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      const cartItem = tourist.cart.find(item => item.productId.toString() === productId);
+      if (!cartItem) {
+        return res.status(404).json({ error: 'Product not found in cart' });
+      }
+  
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+  
+      if (quantity > product.available_quantity) {
+        return res.status(400).json({ error: 'Quantity exceeds available stock' });
+      }
+  
+      cartItem.quantity = quantity;
+      await tourist.save();
+      res.status(200).json(tourist.cart);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 
 module.exports = {
     addProduct,
@@ -604,5 +635,6 @@ module.exports = {
     getWishlist,
     removeFromWishlist,
     moveWishlistToCart,
-    getCart
+    getCart,
+    updateCartQuantity
 };
