@@ -65,6 +65,31 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
     }
   };
 
+  const handleAddToCart = () => {
+    const url = `http://localhost:3000/api/tourist/addToCart`;
+    axios.post(url, { productId: product._id, quantity: 1 }, getAuthHeaders())
+      .then(res => {
+        if (res.status === 200) {
+          alert('Product added to cart successfully!');
+        } else {
+          alert('There was an error adding the product to the cart.');
+        }
+      })
+      .catch(err => console.log(err));
+  };
+  const handleAddToWishlist = () => {
+    const url = `http://localhost:3000/api/tourist/addToWishlist`;
+    axios.post(url, { productId: product._id }, getAuthHeaders())
+      .then(res => {
+        if (res.status === 200) {
+          alert('Product added to wishlist successfully!');
+        } else {
+          alert('There was an error adding the product to the wishlist.');
+        }
+      })
+      .catch(err => console.log(err));
+  };
+
   const isEditable = userType === 'admin' || (
     product.createdBy?._id === userId && product.createdBy?.role === 'seller'
   );
@@ -101,9 +126,21 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
             <img
               onClick={handleEditClick}
               src={assets.editIcon}
-              className="w-6 h-6 cursor-pointer absolute buttom-2 right-2"
+              className="w-6 h-6 cursor-pointer absolute bottom-2 right-2"
             />
           )}
+          <button
+            onClick={handleAddToCart}
+            className="bg-blue-500 text-white rounded-md p-2 mt-2"
+          >
+            Add to Cart
+          </button>
+          <button
+            onClick={handleAddToWishlist}
+            className="bg-yellow-500 text-white rounded-md p-2 mt-2"
+          >
+            Add to Wishlist
+          </button>
         </div>
       </div>
       <div className={`flex justify-between flex-col h-full text-sm ${editMode ? null : 'hidden'}`}>
@@ -159,8 +196,9 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
           <img
             onClick={handleEditSaveClick}
             src={assets.submitIcon}
-            className="w-8 h-8 cursor-pointer absolute buttom-2 right-2"
+            className="w-8 h-8 cursor-pointer absolute bottom-2 right-2"
           />
+          
         </div>
       </div>
     </div>

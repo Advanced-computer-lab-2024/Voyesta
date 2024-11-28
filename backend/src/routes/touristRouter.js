@@ -77,6 +77,14 @@ _.get('/getOrders', authenticate, getOrders);
 _.get('/getOrder/:id', authenticate, getOrder);
 _.patch('/cancelOrder/:id', authenticate, cancelOrder);
 _.patch('/pay', authenticate, pay);
+_.post('/addToCart', authenticate, productController.addCart);
+_.delete('/removefromCart', authenticate, productController.removeCart);
+_.post('/AddToWishList',authenticate,productController.addToWishlist);
+_.get('/ViewList',authenticate,productController.getWishlist);
+_.delete('/deleteWish',authenticate,productController.removeFromWishlist);
+_.post('/moveToCart', authenticate, productController.moveWishlistToCart);
+_.get('/getCart', authenticate, productController.getCart);
+_.post('/updateQuantity', authenticate, productController.updateCartQuantity);
 
 
 module.exports = _;
