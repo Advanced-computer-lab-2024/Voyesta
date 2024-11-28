@@ -101,7 +101,7 @@ const touristSchema = new Schema({
                 required: addressDetailsRequired
             }
         }
-    }]
+    }],
 
     cart: [
         {
