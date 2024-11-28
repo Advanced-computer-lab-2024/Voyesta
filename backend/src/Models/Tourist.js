@@ -79,6 +79,10 @@ const touristSchema = new Schema({
     }], 
 
     addresses : [{
+        label : {
+            type: String,
+            required: addressDetailsRequired
+        },
         address: {
             type: String,
             required: addressDetailsRequired

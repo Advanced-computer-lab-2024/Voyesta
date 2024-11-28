@@ -300,7 +300,7 @@ const searchHotelsByCity = async (req, res) => {
 
 const createAddress = async (req, res) => {
     const touristId = req.user.id;
-    const { address } = req.body;
+    const { address ,label } = req.body;
 
     try {
         const tourist = await touristModel.findById(touristId);
@@ -311,6 +311,7 @@ const createAddress = async (req, res) => {
         const addressDetails = await getAddressDetails(address);
 
         const newAddress = {
+            label,
             address: addressDetails.address,
             city: addressDetails.city,
             country: addressDetails.country,
