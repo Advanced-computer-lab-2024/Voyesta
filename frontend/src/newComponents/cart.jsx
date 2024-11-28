@@ -5,6 +5,8 @@ function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [quantity, setQuantity] = useState({});
 
   const getAuthHeaders = () => {
     return {
@@ -28,7 +30,12 @@ function Cart() {
 
   const handleDelete = (productId) => {
     const url = `http://localhost:3000/api/tourist/removefromCart`;
-    axios.delete(url, getAuthHeaders(), { productId })
+    axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      },
+      data: { productId }
+    })
       .then(res => {
         if (res.status === 200) {
           setCartItems(cartItems.filter(item => item.productId._id !== productId));
@@ -37,6 +44,23 @@ function Cart() {
         }
       })
       .catch(err => console.log(err));
+  };
+
+  const handleQuantityChange = (productId, newQuantity) => {
+    const url = `http://localhost:3000/api/tourist/updateQuantity`;
+    axios.post(url, { productId, quantity: newQuantity }, getAuthHeaders())
+      .then(res => {
+        if (res.status === 200) {
+          window.location.reload(); // Refresh the window instantly
+        } else {
+          alert('There was an error updating the quantity.');
+        }
+      })
+      .catch(err => console.log(err));
+  };
+
+  const handleQuantityInputChange = (productId, value) => {
+    setQuantity({ ...quantity, [productId]: value });
   };
 
   if (loading) {
@@ -50,6 +74,9 @@ function Cart() {
   return (
     <div className="cart-page">
       <h2 className="text-lg font-bold text-center p-10">Your Cart</h2>
+      {successMessage && (
+        <div className="text-green-500 text-center mb-4">{successMessage}</div>
+      )}
       {cartItems.length === 0 ? (
         <p className="text-center">Your cart is empty</p>
       ) : (
@@ -66,7 +93,22 @@ function Cart() {
             {cartItems.map(item => (
               <tr key={item.productId._id} className='text-center'>
                 <td className="py-2">{item.productId.name}</td>
-                <td className="py-2">{item.quantity}</td>
+                <td className="py-2">
+                  <input
+                    type="number"
+                    value={quantity[item.productId._id] !== undefined ? quantity[item.productId._id] : item.quantity}
+                    min="1"
+                    max={item.productId.available_quantity}
+                    onChange={(e) => handleQuantityInputChange(item.productId._id, parseInt(e.target.value))}
+                    className="w-16 p-1 border border-gray-400 rounded"
+                  />
+                  <button
+                    onClick={() => handleQuantityChange(item.productId._id, quantity[item.productId._id] !== undefined ? quantity[item.productId._id] : item.quantity)}
+                    className="bg-blue-500 text-white rounded-md p-2 ml-2"
+                  >
+                    Update
+                  </button>
+                </td>
                 <td className="py-2">{item.productId.price}</td>
                 <td className="py-2">
                   <button
