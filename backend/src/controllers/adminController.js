@@ -304,9 +304,13 @@ const getGlobalPromoCodes = async (req, res) => {
 };
 
 const updateGlobalPromoCode = async (req, res) => {
-    const { code } = req.params; // Extract code from the URL
+    const { code } = req.params; // Extract code from URL params
     const { discount, validFrom, validUntil, status } = req.body;
 
+    //console.log("Updating promo code:", code);
+    //console.log("Request body:", req.body);
+
+    // Validate discount
     if (discount < 0 || discount > 100) {
         return res.status(400).json({ message: "Discount must be between 0 and 100" });
     }
@@ -322,21 +326,31 @@ const updateGlobalPromoCode = async (req, res) => {
             return res.status(404).json({ message: "Promo code not found" });
         }
 
-        // Update the promo code details
-        admin.globalPromoCodes[promoIndex] = {
-            ...admin.globalPromoCodes[promoIndex],
+        // Make sure the code remains unchanged and only other fields are updated
+        const updatedPromoCode = {
+            ...admin.globalPromoCodes[promoIndex],  // Spread the current promo code
             discount: discount || admin.globalPromoCodes[promoIndex].discount,
             validFrom: validFrom ? new Date(validFrom) : admin.globalPromoCodes[promoIndex].validFrom,
             validUntil: validUntil ? new Date(validUntil) : admin.globalPromoCodes[promoIndex].validUntil,
             status: status || admin.globalPromoCodes[promoIndex].status,
         };
 
+        // Ensure `code` is still present in the updated promo code
+        updatedPromoCode.code = admin.globalPromoCodes[promoIndex].code;
+
+        // Replace the old promo code with the updated one
+        admin.globalPromoCodes[promoIndex] = updatedPromoCode;
+
+        // Save the updated admin document
         await admin.save();
+
         res.status(200).json({ message: "Promo code updated successfully" });
     } catch (error) {
+        //console.error("Error:", error);
         res.status(500).json({ message: "Error updating promo code", error: error.message });
     }
 };
+
 
 
 const deleteGlobalPromoCode = async (req, res) => {

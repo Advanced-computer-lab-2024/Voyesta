@@ -27,27 +27,48 @@ function PromoCodeView({ baseUrl, title }) {
     // Add new promo code
     const handleAddPromoCode = () => {
         console.log("Adding promo code:", newPromoCode); // Debug log
+    
+        // Format the dates to "YYYY-MM-DD" before sending to the backend
+        const formattedPromoCode = {
+            ...newPromoCode,
+            validFrom: formatDate(newPromoCode.validFrom),
+            validUntil: formatDate(newPromoCode.validUntil),
+        };
+    
         axios
-            .post(`${baseUrl}/createGlobalPromoCode`, newPromoCode) // Use the correct endpoint
+            .post("http://localhost:3000/api/admin/createGlobalPromoCode", formattedPromoCode)
             .then((response) => {
-                console.log("Promo code added:", response.data); // Debug log
-                setPromoCodes([...promoCodes, response.data]); // Update state
+                console.log("Promo code added:", response.data); 
+                setPromoCodes((prevPromoCodes) => [...prevPromoCodes, response.data]); // Correctly append
                 setNewPromoCode({ code: "", discount: 0, validFrom: "", validUntil: "" });
             })
             .catch((error) => console.error("Error adding promo code:", error));
     };
     
+    // Helper function to format date to YYYY-MM-DD
+    const formatDate = (date) => {
+        if (!date) return ''; // If no date, return an empty string
+        const d = new Date(date);
+        return d.toISOString().split('T')[0]; // Format date to "YYYY-MM-DD"
+    };
     
+
     // Edit promo code
-    const handleEditPromoCode = (code) => {
-        console.log("Editing promo code:", code, newPromoCode); // Debug log
+    /*
+    const handleEditPromoCode = () => {
+        if (!newPromoCode.code) {
+            console.error("Promo code code is required for editing.");
+            return;
+        }
+
+        console.log("Editing promo code:", newPromoCode.code, newPromoCode); // Debug log
         axios
-            .put(`${baseUrl}/updateGlobalPromoCode/${code}`, newPromoCode) // Use the correct endpoint
+            .put(`http://localhost:3000/api/admin/updateGlobalPromoCode/${newPromoCode.code}`, newPromoCode)
             .then(() => {
-                console.log("Promo code edited successfully"); // Debug log
-                setPromoCodes(
-                    promoCodes.map((promo) =>
-                        promo.code === code ? { ...promo, ...newPromoCode } : promo
+                console.log("Promo code edited successfully");
+                setPromoCodes((prevPromoCodes) =>
+                    prevPromoCodes.map((promo) =>
+                        promo.code === newPromoCode.code ? { ...promo, ...newPromoCode } : promo
                     )
                 );
                 setNewPromoCode({ code: "", discount: 0, validFrom: "", validUntil: "" });
@@ -55,24 +76,28 @@ function PromoCodeView({ baseUrl, title }) {
             })
             .catch((error) => console.error("Error editing promo code:", error));
     };
-    
-        
+     */
+
 
     // Delete promo code
     const handleDeletePromoCode = (code) => {
         console.log("Deleting promo code:", code); // Debug log
         axios
-            .delete(`${baseUrl}/${code}`)
+            .delete(`http://localhost:3000/api/admin/deleteGlobalPromoCode/${code}`)
             .then(() => {
                 console.log("Promo code deleted successfully"); // Debug log
-                setPromoCodes(promoCodes.filter((promo) => promo.code !== code));
+                setPromoCodes((prevPromoCodes) => prevPromoCodes.filter((promo) => promo.code !== code));
             })
             .catch((error) => {
                 console.error("Error deleting promo code:", error); // Debug log
             });
     };
-    
-    
+
+    // Handle Edit click
+    const handleEditClick = (promo) => {
+        setIsEditing(promo.code); // Set the promo code to be edited
+        setNewPromoCode({ ...promo }); // Pre-fill the form with the promo's current values
+    };
 
     return (
         <div className="promo-code-container">
@@ -101,7 +126,7 @@ function PromoCodeView({ baseUrl, title }) {
                     <input
                         type="date"
                         placeholder="Valid From"
-                        value={newPromoCode.validFrom}
+                        value={newPromoCode.validFrom || ""} // Ensure a valid empty string for date
                         onChange={(e) =>
                             setNewPromoCode({ ...newPromoCode, validFrom: e.target.value })
                         }
@@ -110,7 +135,7 @@ function PromoCodeView({ baseUrl, title }) {
                     <input
                         type="date"
                         placeholder="Valid Until"
-                        value={newPromoCode.validUntil}
+                        value={newPromoCode.validUntil || ""} // Ensure a valid empty string for date
                         onChange={(e) =>
                             setNewPromoCode({ ...newPromoCode, validUntil: e.target.value })
                         }
@@ -119,11 +144,7 @@ function PromoCodeView({ baseUrl, title }) {
                 </div>
                 <button
                     className="btn add-btn"
-                    onClick={
-                        isEditing
-                            ? () => handleEditPromoCode(isEditing)
-                            : handleAddPromoCode
-                    }
+                    onClick={isEditing ? handleEditPromoCode : handleAddPromoCode}
                 >
                     {isEditing ? "Update" : "Add"}
                 </button>
@@ -154,12 +175,7 @@ function PromoCodeView({ baseUrl, title }) {
                                 <td>{new Date(promo.validUntil).toLocaleDateString()}</td>
                                 <td>{promo.status}</td>
                                 <td>
-                                    <button
-                                        className="btn edit-btn"
-                                        onClick={() => setIsEditing(promo.code)}  // code hena hyb2a ka2eno ID lel code (esmo asln)
-                                    >
-                                        Edit
-                                    </button>
+                                    
                                     <button
                                         className="btn delete-btn"
                                         onClick={() => handleDeletePromoCode(promo.code)}
@@ -179,5 +195,6 @@ function PromoCodeView({ baseUrl, title }) {
         </div>
     );
 }
+
 
 export default PromoCodeView;

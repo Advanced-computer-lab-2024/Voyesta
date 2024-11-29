@@ -81,8 +81,8 @@ _.post('/createPromoCode', adminController.createPromoCode);
 _.get('/getPromoCodes', adminController.getPromoCodes);
 _.post('/createGlobalPromoCode', adminController.createGlobalPromoCode); // Create promo code
 _.get('/getGlobalPromoCodes', adminController.getGlobalPromoCodes); // Fetch promo codes
-_.put('/updateGlobalPromoCode/:id', adminController.updateGlobalPromoCode); // Update promo code
-_.delete('/deleteGlobalPromoCode/:id', adminController.deleteGlobalPromoCode); // Delete promo code
+_.put('/updateGlobalPromoCode/:code', adminController.updateGlobalPromoCode); // Update promo code
+_.delete('/deleteGlobalPromoCode/:code', adminController.deleteGlobalPromoCode); // Delete promo code
 //console.log('getGlobalPromoCodes:', typeof adminController.getGlobalPromoCodes);
 
 module.exports = _;
