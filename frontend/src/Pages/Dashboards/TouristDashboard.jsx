@@ -17,6 +17,8 @@ import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmato
 import BookTransportation from "../../newComponents/BookTransportation";
 import Cart from "../../newComponents/cart";
 import Wishlist from "../../newComponents/Wishlist";
+import CheckOutPage from "../../newComponents/CheckOutPage";
+
 const navLinks = [
   { path: "/tourist/", label: "Home" },
   { path: "/tourist/profile", label: "Profile" },
@@ -65,6 +67,7 @@ function TouristDashboard(){
         <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
+        <Route path='/checkout' element={<CheckOutPage />} />
       </Routes>       
     </div>
   );
