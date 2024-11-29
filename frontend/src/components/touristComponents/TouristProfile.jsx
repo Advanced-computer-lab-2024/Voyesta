@@ -47,6 +47,7 @@ function TouristProfile() {
     try {
       const response = await axios.get(baseUrl, getAuthHeaders());
       const data = response.data;
+      console.log(data);
       setProfile(data);
       setUsername(data.username);
       setEmail(data.email);
@@ -192,9 +193,9 @@ function TouristProfile() {
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Mobile Number:</strong> {profile.mobileNumber}</p>
             <p><strong>Nationality:</strong> {profile.nationality}</p>
-            <p><strong>Date of Birth:</strong> {profile.dob}</p>
+            <p><strong>Date of Birth:</strong> {profile.DOB}</p>
             <p><strong>Job:</strong> {profile.job}</p>
-            <p><strong>Wallet:</strong> {profile.wallet}</p>
+            <p><strong>Wallet:</strong> {profile.Wallet}</p>
             <p><strong>Level:</strong> {profile.level}</p>
             <p><strong>Accumulated Points:</strong> {profile.accumulatedPoints}</p>
             <p><strong>Current Points:</strong> {profile.currentPoints}</p>
