@@ -1,54 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ActivitiesList from './ActivitiesList';
-import PriceFilterBar from './PriceFilterBar';
-import CategoryFilter from './CategoryFilter';
-import RatingFilter from './RatingFilter';
-import DateRangeFilter from './DateRangeFilter';
-import CurrencyConverter from './CurrencyConverter';
+import ItinerariesList from './ItinerariesList';
 
 const BookmarkedActivities = ({ baseUrl, role }) => {
     const [activities, setActivities] = useState([]);
-    const [filteredActivities, setFilteredActivities] = useState([]);
-    const [message, setMessage] = useState(null);
-    const [category, setCategory] = useState('');
-    const [rating, setRating] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [sortOption, setSortOption] = useState('');
-    const [prices, setPrices] = useState([]);
+    const [itineraries, setItineraries] = useState([]);
     const [convertedPrices, setConvertedPrices] = useState([]);
-    const [targetCurrency, setTargetCurrency] = useState('USD');
+    const [targetCurrency, setTargetCurrency] = useState('USD'); // Default currency
+    const [message, setMessage] = useState(null);
 
     useEffect(() => {
-        fetchBookmarkedActivities();
+        fetchBookmarkedItems();
     }, []);
 
-    const fetchBookmarkedActivities = async () => {
+    const fetchBookmarkedItems = async () => {
         try {
-            const response = await axios.get(`${baseUrl}/bookmarked-activities`, {
+            const response = await axios.get(`${baseUrl}/bookmarked-items`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setActivities(response.data);
-            setFilteredActivities(response.data);
-            setPrices(response.data.map(activity => activity.price));
+            setActivities(response.data.activities);
+            setItineraries(response.data.itineraries);
         } catch (error) {
-            console.error('Error fetching bookmarked activities:', error);
-            setMessage("Error fetching bookmarked activities.");
+            console.error('Error fetching bookmarked items:', error);
+            setMessage("Error fetching bookmarked items.");
         }
     };
-
-   
-
 
     return (
         <div className="flex">
             <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-                <h1 className="text-2xl text-gray-600 font-bold mb-3">Bookmarked Activities</h1>
+                <h1 className="text-2xl text-gray-600 font-bold mb-3">Bookmarked Items</h1>
                 {message && <div className="text-red-500 mb-4">{message}</div>}
-                <ActivitiesList fetchActivities={fetchBookmarkedActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
+                <h2 className="text-xl text-gray-600 font-bold mb-3">Activities</h2>
+                <ActivitiesList fetchActivities={fetchBookmarkedItems} baseUrl={baseUrl} activities={activities} role={role} />
+                <h2 className="text-xl text-gray-600 font-bold mb-3">Itineraries</h2>
+                <ItinerariesList fetchItineraries={fetchBookmarkedItems} baseUrl={baseUrl} itineraries={itineraries} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
             </div>
         </div>
     );

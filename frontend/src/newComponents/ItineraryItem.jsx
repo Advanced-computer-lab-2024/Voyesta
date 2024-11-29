@@ -15,6 +15,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
     return `${year}-${month}-${day}`;
   };
 
+  const [isBookmarked, setIsBookmarked] = useState(itinerary.isBookmarked);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(itinerary.name);
   const [tourLanguage, setTourLanguage] = useState(itinerary.tourLanguage);
@@ -157,6 +158,41 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
     const link = `${window.location.origin}/itinerary/${itineraryId}`;
     setShareLink(link);
     return link;
+  };
+
+  const handleBookmark = async () => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/bookmarkItinerary`,
+        { itineraryId: itinerary._id },
+        getAuthHeaders()
+      );
+      setIsBookmarked(true); // Update UI
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error bookmarking itinerary:', error);
+    }
+  };
+
+  const handleUnbookmark = async () => {
+    try {
+      const response = await axios.delete(`${baseUrl}/bookmarkItinerary`, {
+        data: { itineraryId: itinerary._id },
+        ...getAuthHeaders(),
+      });
+      setIsBookmarked(false); // Update UI
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error unbookmarking itinerary:', error);
+    }
+  };
+
+  const toggleBookmark = () => {
+    if (isBookmarked) {
+      handleUnbookmark();
+    } else {
+      handleBookmark();
+    }
   };
 
   return (
@@ -317,6 +353,12 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
                 handleShareViaEmail(link);
               }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
                 Share via Email
+              </button>
+              <button
+                onClick={toggleBookmark}
+                className="flex items-center gap-2 mt-2 bg-yellow-300 rounded-full p-2 hover:bg-yellow-400"
+              >
+                {isBookmarked ? 'Unbookmark' : 'Bookmark'}
               </button>
               {showPopup && (
                 <BookingPopup
