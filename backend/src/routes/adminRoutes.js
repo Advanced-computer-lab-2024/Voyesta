@@ -3,7 +3,7 @@ const _ = express.Router();
 const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
 const { createGlobalPromoCode } = require('../controllers/adminController');
-
+console.log('Route handler:', adminController.getGlobalPromoCodes);
 const {
     createActivityCategory, 
     getActivityCategory, 
@@ -76,9 +76,13 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
+// ------------------ Promo Codes ------------------ //
 _.post('/createPromoCode', adminController.createPromoCode);
 _.get('/getPromoCodes', adminController.getPromoCodes);
-_.post('/createGlobalPromoCode', adminController.createGlobalPromoCode);
-
+_.post('/createGlobalPromoCode', adminController.createGlobalPromoCode); // Create promo code
+_.get('/getGlobalPromoCodes', adminController.getGlobalPromoCodes); // Fetch promo codes
+_.put('/updateGlobalPromoCode/:id', adminController.updateGlobalPromoCode); // Update promo code
+_.delete('/deleteGlobalPromoCode/:id', adminController.deleteGlobalPromoCode); // Delete promo code
+//console.log('getGlobalPromoCodes:', typeof adminController.getGlobalPromoCodes);
 
 module.exports = _;

@@ -241,6 +241,8 @@ const assignBirthdayPromoCode = async (req, res) => {
 
 
 
+
+// Create a new promo code
 const createGlobalPromoCode = async (req, res) => {
     const { code, discount, validFrom, validUntil } = req.body;
 
@@ -273,7 +275,7 @@ const createGlobalPromoCode = async (req, res) => {
             validFrom: new Date(validFrom),
             validUntil: new Date(validUntil),
             redeemedBy: [],
-            status: 'active', // Explicitly set valid status
+            status: 'active',
         });
 
         await admin.save();
@@ -287,6 +289,80 @@ const createGlobalPromoCode = async (req, res) => {
     }
 };
 
+// Fetch all promo codes
+const getGlobalPromoCodes = async (req, res) => {
+    try {
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        res.status(200).json(admin.globalPromoCodes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching promo codes', error: error.message });
+    }
+};
+
+const updateGlobalPromoCode = async (req, res) => {
+    const { code } = req.params; // Extract code from the URL
+    const { discount, validFrom, validUntil, status } = req.body;
+
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: "Discount must be between 0 and 100" });
+    }
+
+    try {
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        const promoIndex = admin.globalPromoCodes.findIndex((promo) => promo.code === code);
+        if (promoIndex === -1) {
+            return res.status(404).json({ message: "Promo code not found" });
+        }
+
+        // Update the promo code details
+        admin.globalPromoCodes[promoIndex] = {
+            ...admin.globalPromoCodes[promoIndex],
+            discount: discount || admin.globalPromoCodes[promoIndex].discount,
+            validFrom: validFrom ? new Date(validFrom) : admin.globalPromoCodes[promoIndex].validFrom,
+            validUntil: validUntil ? new Date(validUntil) : admin.globalPromoCodes[promoIndex].validUntil,
+            status: status || admin.globalPromoCodes[promoIndex].status,
+        };
+
+        await admin.save();
+        res.status(200).json({ message: "Promo code updated successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating promo code", error: error.message });
+    }
+};
+
+
+const deleteGlobalPromoCode = async (req, res) => {
+    const { code } = req.params; // Extract code from the URL
+
+    try {
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        const promoIndex = admin.globalPromoCodes.findIndex((promo) => promo.code === code);
+        if (promoIndex === -1) {
+            return res.status(404).json({ message: "Promo code not found" });
+        }
+
+        // Remove the promo code from the array
+        admin.globalPromoCodes.splice(promoIndex, 1);
+        await admin.save();
+
+        res.status(200).json({ message: "Promo code deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting promo code", error: error.message });
+    }
+};
+
 const validateGlobalPromoCodes = async () => {
     const admin = await adminModel.findOne();
     if (!admin) {
@@ -297,7 +373,7 @@ const validateGlobalPromoCodes = async () => {
     for (let promo of admin.globalPromoCodes) {
         if (!['active', 'inactive', 'expired'].includes(promo.status)) {
             console.log(`Fixing invalid status for promo code: ${promo.code}`);
-            promo.status = 'active'; // Set to default valid status
+            promo.status = 'active';
         }
     }
 
@@ -305,9 +381,10 @@ const validateGlobalPromoCodes = async () => {
     console.log('Validation completed, invalid statuses fixed.');
 };
 
-validateGlobalPromoCodes();
 
 
 
+// Debugging Logs
+console.log('getGlobalPromoCodes:', typeof getGlobalPromoCodes);
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,assignBirthdayPromoCode,createGlobalPromoCode};
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,assignBirthdayPromoCode,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes,};
