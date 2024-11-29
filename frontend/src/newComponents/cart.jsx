@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -7,6 +8,7 @@ function Cart() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [quantity, setQuantity] = useState({});
+  const navigate = useNavigate();
 
   const getAuthHeaders = () => {
     return {
@@ -27,6 +29,11 @@ function Cart() {
         setLoading(false);
       });
   }, []);
+
+  const handleCheckout = () => {
+    const total = cartItems.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
+    navigate('/tourist/checkout', { state: { total } });
+  };
 
   const handleDelete = (productId) => {
     const url = `http://localhost:3000/api/tourist/removefromCart`;
@@ -80,6 +87,7 @@ function Cart() {
       {cartItems.length === 0 ? (
         <p className="text-center">Your cart is empty</p>
       ) : (
+        <div>
         <table className="min-w-full bg-gray-100 shadow rounded">
           <thead>
             <tr>
@@ -122,6 +130,13 @@ function Cart() {
             ))}
           </tbody>
         </table>
+        <button
+        onClick={handleCheckout}
+        className="mt-4 bg-green-500 text-white rounded-md p-2"
+      >
+        Proceed to Checkout
+      </button>
+      </div>
       )}
     </div>
   );
