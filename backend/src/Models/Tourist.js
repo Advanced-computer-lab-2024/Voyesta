@@ -66,6 +66,10 @@ const touristSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'
     }],
+    notifications: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Notification'
+    }]
 }, { timestamps: true });
 
 // Age validation

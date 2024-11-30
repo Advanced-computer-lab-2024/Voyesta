@@ -22,6 +22,7 @@ const { createTourGuide, getTourGuides, updateTourGuide, deleteTourGuide } = req
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 const cloudinaryController = require('../controllers/cloudinaryController');
 const { getRevenue, getBookingsReport } = require('../controllers/revenueController');
+const { getNotifications } = require('../controllers/NotificationController');
 
 
 
@@ -50,5 +51,6 @@ _.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
 
 _.get('/getRevenue', authenticate, getRevenue);
 _.get('/getBookingsReport', authenticate, getBookingsReport);
+_.get('/getNotifications', authenticate, getNotifications);
 
 module.exports = _;

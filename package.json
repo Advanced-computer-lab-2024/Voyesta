@@ -41,7 +41,8 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.16",
     "react-modal": "^3.16.1",
-    "react-slider": "^2.0.6"
+    "react-slider": "^2.0.6",
+    "sendgrid": "^5.2.3"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.7",

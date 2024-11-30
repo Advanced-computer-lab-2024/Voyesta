@@ -138,8 +138,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
         <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Activities</h1>
         {message && <div className="text-red-500 mb-4">{message}</div>}
 
-        {role === 'advertiser' && (
-          <>
+        {(role === 'advertiser' || role === 'admin') && (
+          <>{ role === 'advertiser' &&
             <div className="flex justify-around border-b mb-4">
               <button
                 className={`p-2 ${activeTab === 'viewActivity' ? 'border-b-2 border-blue-500' : ''}`}
@@ -153,7 +153,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
               >
                 Create Activity
               </button>
-            </div>
+            </div>}
 
             {activeTab === 'viewActivity' ? (
               <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
@@ -163,7 +163,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
           </>
         )}
 
-        {role !== 'advertiser' && (
+        {(role !== 'advertiser' && role !== 'admin') && (
           <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
         )}
       </div>

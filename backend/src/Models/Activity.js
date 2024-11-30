@@ -94,7 +94,11 @@ const activitySchema = new mongoose.Schema({
     comment: {
       type: String,
       required: true
-    }
+    },
+    inappropriate: {
+      type: Boolean,
+      default: false,
+    },
   }],
 }, { timestamps: true });
 

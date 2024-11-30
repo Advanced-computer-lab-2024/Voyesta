@@ -10,6 +10,7 @@ import UploadDocuments from "../../newComponents/UploadDocuments";
 import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
+import Notifications from "../../newComponents/Notifications";
 
 const navLinks = [
   { path: "/tourGuide/", label: "Home" },
@@ -17,7 +18,8 @@ const navLinks = [
   { path: "/tourGuide/itineraries", label: "Itineraries" },
   { path: "/tourGuide/activities", label: "Activities" },
   { path: "/tourGuide/sales", label: "Sales" },
-  { path: "/tourGuide/museums", label: "Museums" }
+  { path: "/tourGuide/museums", label: "Museums" },
+  { path: "/tourGuide/notifications", label: "Notifications" }
 ];
 
 function TourGuideDashboard() {
@@ -102,6 +104,7 @@ function TourGuideDashboard() {
           <Route path="/activities" element={<ActivitiesView baseUrl="http://localhost:3000/api/tourGuide" />} />
           <Route path="/museums" element={ <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourGuide" /> } />
           <Route path="/sales" element={<RevenueSalesView userType="tourGuide" />} />
+          <Route path="/notifications" element={<Notifications baseUrl='http://localhost:3000/api/tourGuide' />} />
         </Routes>       
       </div>
   }

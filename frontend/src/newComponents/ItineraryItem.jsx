@@ -121,6 +121,12 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
     try {
       const url = `${baseUrl}/flagInappropriate/${itinerary._id}`;
       await axios.patch(url, {}, getAuthHeaders());
+
+      const notificationUrl = `${baseUrl}/sendNotification`;
+      const message = `Your itinerary "${itinerary.name}" has been flagged as inappropriate.`;
+      await axios.post(notificationUrl, { userType: 'tourGuide', itemId: itinerary._id, message }, getAuthHeaders());
+      
+      console.log(baseUrl)
       setInappropriate(true);
       fetchItineraries();
     } catch (error) {
