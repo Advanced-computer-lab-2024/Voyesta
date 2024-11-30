@@ -16,6 +16,7 @@ import HotelBookingConfirmation from '../../newComponents/HotelBookingConfirmato
 //import FlightBookingConfirmation from '../../newComponents/FlightBookingConfirmation';
 import BookTransportation from "../../newComponents/BookTransportation";
 import BookmarkedActivities from "../../newComponents/BookmarksActivties";
+import Notifications from "../../newComponents/Notifications";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -26,7 +27,8 @@ const navLinks = [
   { path: "/tourist/complaints", label: "Complaints" },
   { path: "/tourist/museums", label: "Museums" },
   { path: "/tourist/bookings", label: "Bookings" },
-  { path: "/tourist/purchases", label: "Purchases" }
+  { path: "/tourist/purchases", label: "Purchases" },
+  { path: "/tourist/notifications", label: "Notifications" },
 ];
 
 function TouristDashboard(){
@@ -62,6 +64,7 @@ function TouristDashboard(){
         <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
+        <Route path="/notifications" element={<Notifications baseUrl="http://localhost:3000/api/tourist" userType="tourist" />} />
       </Routes>       
     </div>
   );

@@ -21,6 +21,7 @@ const BookmarkedActivities = ({ baseUrl, role }) => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
+            console.log('Bookmarked items:', response.data);
             setActivities(response.data.activities);
             setItineraries(response.data.itineraries);
         } catch (error) {

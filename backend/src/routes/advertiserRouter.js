@@ -4,7 +4,7 @@ const authenticate = require('../middleware/authenticate');
 
 
 const { createAdvertiser, getAdvertisers, updateAdvertiser, deleteAdvertiser } = require("../controllers/advertiserController");
-const {createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser} =require("../controllers/activityController")
+const {createActivity, deleteActivity, updateActivity, getAllActivitiesByAdvertiser, updateBookingEnabledStatus, getBookingStatus} =require("../controllers/activityController")
 const { getActivityCategory } = require("../controllers/activityCategoryController");
 const { getPreferenceTags } = require("../controllers/preferenceTagContoller");
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
@@ -33,5 +33,8 @@ _.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
 _.get('/getRevenue', authenticate, getRevenue);
 _.get('/getBookingsReport', authenticate, getBookingsReport);
 _.get('/getNotifications', authenticate, getNotifications);
+
+_.patch('/updateBookingEnabled/:id', updateBookingEnabledStatus);
+_.get('/:id/booking-status', authenticate, getBookingStatus);
 
 module.exports = _;

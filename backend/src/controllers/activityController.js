@@ -3,7 +3,7 @@ const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag');
 const mongoose = require('mongoose');
 const sendGrid = require('@sendgrid/mail');
-const { sendNotification } = require('./NotificationController');
+const { sendNotification, notifyUsersForBookingEnabled } = require('./NotificationController');
 
 sendGrid.setApiKey('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');
 
@@ -383,6 +383,7 @@ const addRating = async (req, res) => {
 
         activity.ratings.push({ tourist: touristId, rating });
         await activity.save();
+        
         res.status(200).json({ message: 'Rating added successfully', activity });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -428,4 +429,45 @@ const getTransportationActivities = async (req, res) => {
     }
 };
 
-module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities, flagActivityAsInappropriate };
+const updateBookingEnabledStatus = async (req, res) => {
+    const { id } = req.params;
+    const { bookingEnabled } = req.body;
+  
+    try {
+      const activity = await Activity.findById(id);
+      if (!activity) {
+        return res.status(404).json({ message: 'Activity not found' });
+      }
+      if (!activity.bookingEnabled) {
+        activity.bookingEnabled = false;
+      }
+  
+      activity.bookingEnabled = bookingEnabled;
+      await activity.save();
+  
+      if (bookingEnabled) {
+        await notifyUsersForBookingEnabled(id, 'activity');
+      }
+  
+      res.status(200).json(activity);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+  
+  const getBookingStatus = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const activity = await Activity.findById(id);
+      if (!activity) {
+        return res.status(404).json({ message: 'Activity not found' });
+      }
+  
+      res.status(200).json({ bookingEnabled: activity.bookingEnabled });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+  
+module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities, flagActivityAsInappropriate, updateBookingEnabledStatus, getBookingStatus };

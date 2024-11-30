@@ -15,6 +15,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   const [isBookmarked, setIsBookmarked] = useState(activity.isBookmarked );
   const [showPopup, setShowPopup] = useState(false);
   const [inappropriate, setInappropriate] = useState(activity.inappropriate);
+  const [bookingEnabled, setBookingEnabled] = useState(activity.bookingEnabled);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,8 +65,37 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       }
     };
 
+    const fetchBookingEnabledStatus = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/${activity._id}/booking-status`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        console.log(response.data);
+        setBookingEnabled(response.data.bookingEnabled);
+      } catch (error) {
+        console.error('Error fetching booking enabled status:', error);
+      }
+    };
+
     fetchBookmarkStatus();
+    fetchBookingEnabledStatus();
   }, [activity._id, baseUrl]);
+
+  const toggleBookingEnabled = async () => {
+    try {
+      const url = `${baseUrl}/updateBookingEnabled/${activity._id}`;
+      await axios.patch(url, { bookingEnabled: !bookingEnabled }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setBookingEnabled(!bookingEnabled);
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+    }
+  };
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -213,10 +243,21 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       handleBookmark();
     }
   };
-
+  
   const averageRating = activity.ratings.length === 0
     ? 0
     : (activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length).toFixed(1);
+
+    const handleNotifyMe = async () => {
+      try {
+        const url = `${baseUrl}/requestNotification`;
+        await axios.post(url, { itemId: activity._id, itemType: 'activity' }, getAuthHeaders());
+    
+        alert('You will be notified when booking is enabled.');
+      } catch (error) {
+        console.error('Error requesting notification:', error);
+      }
+    };
 
   return (
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
@@ -375,6 +416,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           <p>Rating: {averageRating}</p>
           <p>Special Discount: {activity.specialDiscount}</p>
           <p>Inappropriate: {inappropriate ? "true" : "false"}</p>
+          <p>BookinkStats: {bookingEnabled ? "true" : "false"}</p>
 
           {role === 'admin' && <img
               onClick={flagAsInappropriate}
@@ -386,9 +428,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
 
           {(role === 'tourist' && (!transportation)) && (
             <>
-              <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
+              {bookingEnabled && <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
                 Book Activity
-              </button>
+              </button>}
               <button onClick={() => {
                 const link = generateShareLink(activity._id);
                 handleCopyLink(link);
@@ -407,6 +449,14 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
               >
                 {isBookmarked ? 'Unbookmark' : 'Bookmark'}
               </button>
+              {!bookingEnabled && (
+              <button
+                onClick={handleNotifyMe}
+                className="bg-green-500 text-white rounded-lg p-2 mt-4 hover:bg-green-700"
+              >
+                Notify Me
+              </button>
+            )}
               {showPopup && (
                 <BookingPopup
                   item={activity}
@@ -420,7 +470,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           
 
           {role === 'advertiser' && (
-            <div className="flex gap-2 mt-2 h-6">
+            <div className="flex justify-between mt-2">
 
               <img
                 onClick={handleEdit}
@@ -432,6 +482,12 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
                 src={assets.deleteIcon}
                 className="w-6 h-6 cursor-pointer absolute buttom-0 left-6"
               />
+               <button
+                onClick={toggleBookingEnabled}
+                className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+              >
+                {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
+              </button> 
             </div>
           )}
         </>

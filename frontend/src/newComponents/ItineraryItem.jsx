@@ -32,7 +32,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
   const [shareLink, setShareLink] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false); // State for error popup
-
+  const [bookingEnabled, setBookingEnabled] = useState(itinerary.bookingEnabled);
   useEffect(() => {
     // Fetch bookmark status when the component mounts
     const fetchBookmarkStatus = async () => {
@@ -53,8 +53,23 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
       }
     };
 
+    const fetchBookingEnabledStatus = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/${itinerary._id}/booking-status`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setBookingEnabled(response.data.bookingEnabled);
+      } catch (error) {
+        console.error('Error fetching booking enabled status:', error);
+      }
+    };
+
     fetchBookmarkStatus();
-  }, [itinerary._id, baseUrl]);
+    fetchBookingEnabledStatus();
+    console.log(`Itinerary ${itinerary._id} bookingEnabled:`, bookingEnabled);
+  }, [itinerary._id, baseUrl, bookingEnabled]);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -124,6 +139,16 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
     setPickUpLocation(`${itinerary.pickUpLocation.lat}, ${itinerary.pickUpLocation.lng}`);
     setDropOffLocation(`${itinerary.dropOffLocation.lat}, ${itinerary.dropOffLocation.lng}`);
   };
+  const toggleBookingEnabled = async () => {
+    try {
+      const url = `${baseUrl}/updateBookingEnabled/${itinerary._id}`;
+      await axios.patch(url, { bookingEnabled: !bookingEnabled }, getAuthHeaders());
+      setBookingEnabled(!bookingEnabled);
+      fetchItineraries();
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+    }
+  }; 
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -221,6 +246,17 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
       handleUnbookmark();
     } else {
       handleBookmark();
+    }
+  };
+
+  const handleNotifyMe = async () => {
+    try {
+      const url = `${baseUrl}/requestNotification`;
+      await axios.post(url, { itemId: itinerary._id, itemType: 'itinerary' }, getAuthHeaders());
+  
+      alert('You will be notified when booking is enabled.');
+    } catch (error) {
+      console.error('Error requesting notification:', error);
     }
   };
 
@@ -337,6 +373,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
           <p>Pick-Up Location: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
           <p>Drop-Off Location: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
           <p>Status: {bookingActive ? "Active" : "Inactive"}</p>
+          <p>Status: { bookingEnabled? "Active" : "Inactive"}</p>
           {role === ("admin" || "tourGuide") && <p>Inappropriate: {inappropriate ? "Yes" : "No"}</p>}
           {role === "tourGuide" &&<div className="flex justify-between mt-2 ">  
             <img
@@ -354,6 +391,12 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
               src={assets.toggleIcon}
               className="w-6 h-6 cursor-pointer"
             />
+             <button
+      onClick={toggleBookingEnabled}
+      className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+    >
+      {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
+    </button>
           </div>
           }
           {role === 'admin' && <img
@@ -365,12 +408,12 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
           }
           {role === "tourist" && (
             <>
-              <button
+              {bookingEnabled && <button
                 onClick={() => setShowPopup(true)}
                 className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
               >
                 Book Itinerary
-              </button>
+              </button>}
               <button onClick={() => {
                 const link = generateShareLink(itinerary._id);
                 handleCopyLink(link);
@@ -389,6 +432,14 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
               >
                 {isBookmarked ? 'Unbookmark' : 'Bookmark'}
               </button>
+              {!bookingEnabled && (
+              <button
+                onClick={handleNotifyMe}
+                className="bg-green-500 text-white rounded-lg p-2 mt-4 hover:bg-green-700"
+              >
+                Notify Me
+              </button>
+            )}
               {showPopup && (
                 <BookingPopup
                   item={itinerary}

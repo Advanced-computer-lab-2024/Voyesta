@@ -28,6 +28,7 @@ const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
 const { createBooking, getBookings, cancelBooking, payForBooking ,viewAllPaidBookings } = require('../controllers/bookingController');
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
+const { requestNotification, getNotifications } = require('../controllers/NotificationController');
 
 _.post("/add", createTourist);
 _.get("/get", authenticate, getTourists);
@@ -83,6 +84,7 @@ _.delete('/bookmarkItinerary', authenticate, unbookmarkItinerary);
 _.get('/bookmarked-items', authenticate, getBookmarkedItems);
 _.get('/isBookmarked/:id', authenticate, isBookmarked);
 
-
+_.post('/requestNotification', authenticate, requestNotification);
+_.get('/getNotifications', authenticate, getNotifications);
 
 module.exports = _;

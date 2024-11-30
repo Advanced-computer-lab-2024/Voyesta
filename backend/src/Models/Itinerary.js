@@ -108,8 +108,15 @@ const itinerarySchema = new Schema({
             type: String,
             required: true
         }
-    }]
-    
+    }],
+    bookingEnabled: {
+        type: Boolean,
+        default: false
+    },
+    requestToBeNotified: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tourist'
+      }],
 }, { timestamps: true });
 
 const Itinerary = mongoose.model('Itinerary', itinerarySchema);

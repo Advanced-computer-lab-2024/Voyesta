@@ -7,7 +7,9 @@ const {
     getItineraries,
     getItinerary,
     deleteItinerary,
-    updateBookingStatus
+    updateBookingStatus,
+    updateBookingEnabledStatus,
+    getBookingStatus
 } = require('../controllers/itineraryController');
 
 const {
@@ -52,5 +54,8 @@ _.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
 _.get('/getRevenue', authenticate, getRevenue);
 _.get('/getBookingsReport', authenticate, getBookingsReport);
 _.get('/getNotifications', authenticate, getNotifications);
+
+_.patch('/updateBookingEnabled/:id', updateBookingEnabledStatus);
+_.get('/:id/booking-status', authenticate, getBookingStatus);
 
 module.exports = _;

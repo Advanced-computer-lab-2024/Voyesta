@@ -98,7 +98,15 @@ const activitySchema = new mongoose.Schema({
     inappropriate: {
       type: Boolean,
       default: false,
-    },
+    }
+  }],
+  bookingEnabled: {
+    type: Boolean,
+    default: false
+  },
+  requestToBeNotified: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tourist'
   }],
 }, { timestamps: true });
 

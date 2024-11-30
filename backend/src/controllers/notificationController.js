@@ -89,4 +89,81 @@ const sendNotification = async (req, res) => {
     }
 };
 
-module.exports = { getNotifications, sendNotification };
+const requestNotification = async (req, res) => {
+    const userId = req.user.id;
+    const { itemId, itemType } = req.body;
+    console.log(req.body);
+    try {
+      let item;
+      if (itemType === 'activity') {
+        item = await Activity.findById(itemId);
+      } else if (itemType === 'itinerary') {
+        item = await Itinerary.findById(itemId);
+      } else {
+        return res.status(400).json({ error: 'Invalid item type' });
+      }
+
+      if (!item) {
+        return res.status(404).json({ error: 'Item not found' });
+      }
+
+      if (!item.requestToBeNotified.includes(userId)) {
+        item.requestToBeNotified.push(userId);
+        await item.save();
+      }
+  
+      res.status(200).json({ message: 'Notification request saved successfully' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  const notifyUsersForBookingEnabled = async (itemId, itemType) => {
+    try {
+      let item;
+      if (itemType === 'activity') {
+        item = await Activity.findById(itemId).populate('requestToBeNotified');
+      } else if (itemType === 'itinerary') {
+        item = await Itinerary.findById(itemId).populate('requestToBeNotified');
+      } else {
+        throw new Error('Invalid item type');
+      }
+  
+      if (!item) {
+        throw new Error('Item not found');
+      }
+  
+      const usersToNotify = item.requestToBeNotified;
+
+      for (const userId of usersToNotify) {
+        const user = await Tourist.findById(userId);
+        if (!user) continue;
+
+        const message = `Booking for the ${itemType} you requested has been enabled.`;
+        console.log(message);
+        const notification = new Notification({ message: message });
+        await notification.save();
+
+        user.notifications.push(notification);
+        user.requestToBeNotified = item.requestToBeNotified.filter(item => item.toString() !== itemId.toString());
+        await user.save();
+
+        const emailData = {
+          to: user.email,
+          from: 'voyesta@outlook.com',
+          subject: 'Booking Enabled',
+          text: message
+        };
+
+        await sendGrid.send(emailData);
+      }
+
+      // Clear the requestToBeNotified array after notifying users
+      item.requestToBeNotified = [];
+      await item.save();
+    } catch (error) {
+      console.error('Error notifying users:', error.message);
+    }
+  };
+
+module.exports = { getNotifications, sendNotification, requestNotification, notifyUsersForBookingEnabled };
