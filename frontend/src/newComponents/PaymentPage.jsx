@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation , useNavigate} from "react-router-dom";
 import axios from "axios";
 import '../css/payment.css';
 
@@ -25,7 +25,9 @@ const CheckoutForm = ({ baseUrl }) => {
   const stripe = useStripe();
   const elements = useElements();
   const location = useLocation();
-  const { total, address: passedAddress } = location.state || { total: 0, address: null };
+  const { total, address: passedAddress , details  } = location.state || { total: 0, address: null , details: [] };
+  const navigate = useNavigate();
+
 
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [address, setAddress] = useState(
@@ -73,6 +75,7 @@ const CheckoutForm = ({ baseUrl }) => {
     }
 
     try {
+      const url = baseUrl + '/createOrder';
       const response = await axios.patch(
         `${baseUrl}/pay`,
         {
@@ -118,6 +121,12 @@ const CheckoutForm = ({ baseUrl }) => {
       } else if (paymentMethod === "cod") {
         console.log("Cash on delivery selected");
       }
+
+      const res = await axios.post(url, { details, total , paymentMethod}, getAuthHeaders());
+      console.log('Order created successfully:', res.data);
+
+      navigate('/tourist/orders');
+
     } catch (error) {
       console.error("Error:", error);
     }

@@ -355,7 +355,7 @@ const getAddresses = async (req, res) => {
 // create an order should be called after tourist presses checkout in cart page (products only)
 const createOrder = async (req, res) => {
     const touristId = req.user.id;
-    const { details, total } = req.body;
+    const { details, total, paymentMethod } = req.body;
     try {
         const tourist = await touristModel.findById(touristId);
         if (!tourist) {
@@ -365,7 +365,8 @@ const createOrder = async (req, res) => {
         const order = new orderModel({
             details,
             total,
-            tourist: touristId
+            tourist: touristId,
+            paymentMethod
         });
 
         await order.save();
@@ -424,43 +425,65 @@ const getOrder = async (req, res) => {
 
 // cancel an order
 const cancelOrder = async (req, res) => {
-    const touristId = req.user.id;
-    const { orderId } = req.params;
+    const touristId = req.user.id; // Extracted from authenticated user
+    const { orderId } = req.params; // Extracted from the route parameter
+
+    console.log('Cancel Order Request Received');
+    console.log('Tourist ID:', touristId);
+    console.log('Order ID:', orderId);
+
     try {
+        // Fetch the tourist and their orders
         const tourist = await touristModel.findById(touristId).populate('orders');
+        console.log('Tourist Found:', tourist ? true : false);
+
         if (!tourist) {
+            console.log('Tourist not found');
             return res.status(404).json({ error: 'Tourist not found' });
         }
+
+        // Find the specific order
         const order = tourist.orders.find(order => order._id.toString() === orderId);
+        console.log('Order Found:', order ? true : false);
 
         if (!order) {
+            console.log('Order not found');
             return res.status(404).json({ error: 'Order not found' });
         }
 
-        if(order.tourist.toString() !== touristId){
+        // Check if the order belongs to the authenticated tourist
+        if (order.tourist.toString() !== touristId) {
+            console.log('Unauthorized access attempt');
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        if(order.status === 'cancelled'){
+        // Check if the order is already cancelled or completed
+        if (order.status === 'cancelled') {
+            console.log('Order is already cancelled');
             return res.status(400).json({ error: 'Order already cancelled' });
         }
-        if(order.status === 'completed'){
+
+        if (order.status === 'completed') {
+            console.log('Order is already completed');
             return res.status(400).json({ error: 'Order already completed' });
         }
 
+        // Cancel the order
         order.status = 'cancelled';
         await order.save();
-        // update the tourist's wallet with the total amount
+        console.log('Order status updated to cancelled');
 
+        if(order.paymentMethod !== 'cod'){
+        // Update the tourist's wallet
         tourist.Wallet += order.total;
         await tourist.save();
-
+        console.log('Tourist wallet updated:', tourist.Wallet);
+        }
         res.status(200).json({ message: 'Order cancelled successfully', order });
-
     } catch (error) {
+        console.error('Error while cancelling order:', error.message);
         res.status(400).json({ error: error.message });
     }
-
 };
 
 

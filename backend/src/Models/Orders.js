@@ -22,6 +22,11 @@ const OrderSchema = new Schema({
     tourist: {
         type: Schema.Types.ObjectId,
         ref: 'Tourist'
+    },
+    paymentMethod : {
+        type: String,
+        enum: ['card', 'wallet', 'cod'],
+        required: true
     }
 });
 

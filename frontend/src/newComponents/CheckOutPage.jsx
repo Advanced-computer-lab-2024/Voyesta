@@ -3,7 +3,7 @@ import { useLocation , useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const CheckOutPage = ({baseUrl}) => {
   const location = useLocation();
-  const { total } = location.state || { total: 0 };
+  const { total , details} = location.state || { total: 0 , details: []};
 
   const taxRate = 0.10;
   const tax = total * taxRate;
@@ -52,6 +52,7 @@ const CheckOutPage = ({baseUrl}) => {
         state: {
           total: grandTotal,
           address: formData,
+          details: details,
         }
       });
       // Optionally reset form or navigate to another page
