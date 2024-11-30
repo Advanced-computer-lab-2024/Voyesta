@@ -431,7 +431,8 @@ const cancelOrder = async (req, res) => {
         if (!tourist) {
             return res.status(404).json({ error: 'Tourist not found' });
         }
-        const order = tourist.orders.find(order => order._id === orderId);
+        const order = tourist.orders.find(order => order._id.toString() === orderId);
+
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
         }

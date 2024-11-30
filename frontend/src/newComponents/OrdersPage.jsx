@@ -15,9 +15,9 @@ const OrdersPage = ({baseUrl}) => {
   };
 
   const fetchOrders = async () => {
-    url = `${baseUrl}/getOrders`;
+    const url = `${baseUrl}/getOrders`;
     try {
-      const response = await axios.get(url,getAuthHeaders); // Adjust the endpoint as needed
+      const response = await axios.get(url,getAuthHeaders()); // Adjust the endpoint as needed
       setOrders(response.data);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -30,9 +30,9 @@ const OrdersPage = ({baseUrl}) => {
   }, []);
 
   const cancelOrder = async (orderId) => {
-    url = `${baseUrl}/cancelOrder/${orderId}`;
+   const url = `${baseUrl}/cancelOrder/${orderId}`;
     try {
-      await axios.patch(url,getAuthHeaders); // Adjust the endpoint as needed
+      await axios.patch(url,getAuthHeaders()); // Adjust the endpoint as needed
       setOrders(orders.map(order => 
         order._id === orderId ? { ...order, status: 'cancelled' } : order
       ));
