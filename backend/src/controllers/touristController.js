@@ -341,17 +341,63 @@ const unbookmarkActivity = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-const getBookmarkedActivities = async (req, res) => {
-    const touristId = req.user.id; // Extract tourist ID from the authenticated user
+const bookmarkItinerary = async (req, res) => {
+    const touristId = req.user.id;
+    const { itineraryId } = req.body;
 
     try {
-        const tourist = await touristModel.findById(touristId).populate('bookmarkedActivities');
+        const tourist = await touristModel.findById(touristId);
 
         if (!tourist) {
             return res.status(404).json({ error: 'Tourist not found' });
         }
 
-        res.status(200).json(tourist.bookmarkedActivities);
+        if (!tourist.bookmarkedItineraries.includes(itineraryId)) {
+            tourist.bookmarkedItineraries.push(itineraryId);
+            await tourist.save();
+        }
+
+        res.status(200).json({ message: 'Itinerary bookmarked successfully', bookmarks: tourist.bookmarkedItineraries });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const unbookmarkItinerary = async (req, res) => {
+    const touristId = req.user.id;
+    const { itineraryId } = req.body;
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        tourist.bookmarkedItineraries = tourist.bookmarkedItineraries.filter(
+            (id) => id.toString() !== itineraryId
+        );
+
+        await tourist.save();
+
+        res.status(200).json({ message: 'Itinerary unbookmarked successfully', bookmarks: tourist.bookmarkedItineraries });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const getBookmarkedItems = async (req, res) => {
+    const touristId = req.user.id;
+
+    try {
+        const tourist = await touristModel.findById(touristId)
+            .populate('bookmarkedActivities')
+            .populate('bookmarkedItineraries');
+
+        res.status(200).json({
+            activities: tourist.bookmarkedActivities,
+            itineraries: tourist.bookmarkedItineraries
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -374,4 +420,4 @@ const isBookmarked = async (req, res) => {
     }
   };
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,getBookmarkedActivities, isBookmarked};
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,bookmarkItinerary,unbookmarkItinerary,getBookmarkedItems, isBookmarked};

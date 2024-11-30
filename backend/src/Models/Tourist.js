@@ -66,6 +66,10 @@ const touristSchema = new Schema({
         type: Schema.Types.ObjectId,
          ref: 'Activity' 
     }],
+    bookmarkedItineraries: [{ 
+        type: Schema.Types.ObjectId,
+        ref: 'Itinerary' 
+    }],
     preferences: [{ // Array of preference tags for req 10.
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'
