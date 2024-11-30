@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Cart() {
+function Cart({ baseUrl }) {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [quantity, setQuantity] = useState({});
   const navigate = useNavigate();
-
+  
   const getAuthHeaders = () => {
     return {
       headers: {
@@ -30,8 +30,34 @@ function Cart() {
       });
   }, []);
 
-  const handleCheckout = () => {
-    const total = cartItems.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
+  const handleCheckout =  async () => {
+    const url = baseUrl + '/createOrder';
+    
+    
+    const details = cartItems.map(item => {
+      const name = item.productId.name.substring(0, 10);
+      const quantity = item.quantity;
+      const price = item.productId.price;
+      return `${name}...  ${price} x${quantity} `;
+    }).join(', ');
+
+
+    const total = cartItems.reduce((acc, item) => acc + item.productId.price * item.quantity, 0);
+    try {
+     
+  
+      const response = await axios.post(url, { details, total }, getAuthHeaders());
+  
+      console.log('Order created successfully:', response.data);
+      // Handle successful order creation (e.g., navigate to order confirmation page)
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      // Handle error (e.g., show error message to user)
+    }
+    
+    
+    
+    // const total = cartItems.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
     navigate('/tourist/checkout', { state: { total } });
   };
 

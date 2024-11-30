@@ -3,7 +3,7 @@ const MuseumModel = require('../Models/MusemsAndHistoricalPlaces');
 const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag')
 const Activity = require('../Models/Activity');
-
+const orderModel = require('../Models/Orders');
 const {generateToken} = require('../utils/jwt');
 //const amadeus = require('../utils/amadeusClient').amadeus;
 const {amadeus,handleAmadeusError} = require('../utils/amadeusClient'); // Import the error handler
