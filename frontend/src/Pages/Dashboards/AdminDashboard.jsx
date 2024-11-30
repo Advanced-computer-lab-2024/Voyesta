@@ -9,7 +9,7 @@ import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import ProductSalesView from "../../newComponents/ProductSalesView";
 import PendingUsers from "../../newComponents/PendingUsers";
-
+import UserStats from "../../newComponents/UserStats";
 
 
 const navLinks = [
@@ -20,7 +20,8 @@ const navLinks = [
   { path: "/admin/complaints", label: "Complaints" },
   { path: "/admin/sales", label: "Sales" },
   { path: "/admin/pendingUsers", label: "Pending Users" },
-  { path: "/admin/account-management", label: "Account Management" }
+  { path: "/admin/account-management", label: "Account Management" },
+  { path: "/admin/user-stats", label: "User Stats" }
 ];
 
 function AdminDashboard(){
@@ -65,7 +66,9 @@ function AdminDashboard(){
         <Route path="/account-management" element={
           <AdminAccountManagementNavbar
             title = "Account Management" 
-          />}/>
+          />
+          }/>
+      <Route path="/user-stats" element={<UserStats />} /> {/* Add the UserStats route */}
       </Routes>       
     </div>
   );
