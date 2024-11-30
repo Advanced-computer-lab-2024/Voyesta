@@ -19,6 +19,7 @@ import Cart from "../../newComponents/cart";
 import Wishlist from "../../newComponents/Wishlist";
 import CheckOutPage from "../../newComponents/CheckOutPage";
 import PaymentPage from "../../newComponents/PaymentPage";
+import OrdersPage from "../../newComponents/OrdersPage";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -31,7 +32,8 @@ const navLinks = [
   { path: "/tourist/bookings", label: "Bookings" },
   { path: "/tourist/purchases", label: "Purchases" },
   { path: "/tourist/cart", label: "Cart" },
-  { path: "/tourist/Wishlist", label: "Wishlist" }
+  { path: "/tourist/Wishlist", label: "Wishlist" },
+  { path: "/tourist/orders", label: "My Orders" }
 ];
 
 function TouristDashboard(){
@@ -68,8 +70,9 @@ function TouristDashboard(){
         <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
-        <Route path='/checkout' element={<CheckOutPage  baseUrl="http://localhost:3000/api/tourist" />} />
+        <Route path="/checkout" element={<CheckOutPage  baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path="/payment" element={<PaymentPage baseUrl="http://localhost:3000/api/tourist" />} />
+        <Route path= "/orders" element={<OrdersPage baseUrl="http://localhost:3000/api/tourist" />}/>
       </Routes>       
     </div>
   );
