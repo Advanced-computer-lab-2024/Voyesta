@@ -295,28 +295,17 @@ const searchHotelsByCity = async (req, res) => {
     }
 };
 
+
+
 // create an address
-
-
 const createAddress = async (req, res) => {
     const touristId = req.user.id;
-    // const { address ,label } = req.body;
     const { name, email, address, city, state, zip } = req.body;
     try {
         const tourist = await touristModel.findById(touristId);
         if (!tourist) {
             return res.status(404).json({ error: 'Tourist not found' });
         }
-
-        // const addressDetails = await getAddressDetails(address);
-
-        // const newAddress = {
-        //     label,
-        //     address: addressDetails.address,
-        //     city: addressDetails.city,
-        //     country: addressDetails.country,
-        //     coordinates: addressDetails.coordinates
-        // };
 
         const newAddress = { name, email, address, city, state, zip };
 
@@ -346,6 +335,24 @@ const getAddresses = async (req, res) => {
     }
 };
 
+
+// delete all addresses
+const deleteAddresses = async (req, res) => {
+    const {id} = req.params;  
+    try {
+        const tourist = await touristModel.findById(id);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        tourist.addresses = [];
+        await tourist.save();
+        res.status(200).json({ message: 'Addresses deleted successfully' });
+        console.log('Addresses deleted successfully');
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 
@@ -551,4 +558,4 @@ const pay = async (req, res) => {
 
 
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,createAddress,getAddresses,createOrder,getOrders,getOrder,cancelOrder,deleteCancelledOrders,pay};
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,createAddress,getAddresses,createOrder,getOrders,getOrder,cancelOrder,deleteCancelledOrders,pay, deleteAddresses};

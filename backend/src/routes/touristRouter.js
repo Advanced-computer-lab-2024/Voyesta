@@ -12,7 +12,7 @@ const { createTourist, getTourists, updateTourist,
     bookFlight,
     bookHotel,  
     searchHotelsByCity,
-    createAddress, getAddresses, createOrder,getOrders,getOrder,cancelOrder,pay} = require("../controllers/touristController");
+    createAddress, getAddresses, createOrder,getOrders,getOrder,cancelOrder,pay, deleteAddresses} = require("../controllers/touristController");
 const { get } = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const itineraryController = require('../controllers/itineraryController');
@@ -86,5 +86,6 @@ _.post('/moveToCart', authenticate, productController.moveWishlistToCart);
 _.get('/getCart', authenticate, productController.getCart);
 _.post('/updateQuantity', authenticate, productController.updateCartQuantity);
 
+_.delete('/deleteAddresses/:id', deleteAddresses);
 
 module.exports = _;
