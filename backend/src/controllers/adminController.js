@@ -4,6 +4,9 @@ const { generateToken } = require('../utils/jwt');
 const TourGuide = require('../Models/Tour Guide');
 const Seller = require('../Models/Seller');
 const Advertiser = require('../Models/Advertiser');
+const touristModel = require('../Models/Tourist');
+const cron = require('node-cron');
+const Tourist = require('../Models/Tourist');
 
 
 // Create a new Admin profile
@@ -191,52 +194,62 @@ const getPromoCodes = async (req, res) => {
     }
 };
 
-
-
-const assignBirthdayPromoCode = async (req, res) => {
-    const { touristId, email, code, discount } = req.body; // Accept tourist ID or email, promo code, and discount
-
-    if (!touristId && !email) {
-        return res.status(400).json({ message: 'Tourist ID or email is required' });
-    }
-    if (!code || !discount) {
-        return res.status(400).json({ message: 'Promo code and discount are required' });
-    }
-    if (discount < 0 || discount > 100) {
-        return res.status(400).json({ message: 'Discount must be between 0 and 100' });
-    }
+const createPromoCodeHelper = async (userId, username) => {
+    const code = `BDAY-${username}-${Date.now()}`;
+    const discount = 20; // Example discount value
+    const validFrom = new Date();
+    const validUntil = new Date();
+    validUntil.setMonth(validUntil.getMonth() + 1); // Promo code valid for 1 month
 
     try {
-        // Find the tourist by ID or email
-        const tourist = await touristModel.findOne(touristId ? { _id: touristId } : { email });
-        if (!tourist) {
-            return res.status(404).json({ message: 'Tourist not found' });
+        const admin = await adminModel.findOne({username: 'admin'});
+        console.log(admin.promoCodes);
+
+        if (!admin) {
+            throw new Error('Admin not found');
         }
 
-        const today = new Date();
-        const birthDate = new Date(tourist.DOB);
+        admin.promoCodes.push({ code, discount, validFrom, validUntil, userId });
+        await admin.save();
 
-        // Check if today is the tourist's birthday
-        if (today.getMonth() === birthDate.getMonth() && today.getDate() === birthDate.getDate()) {
-            // Assign the birthday promo code
-            tourist.birthdayPromoCode = {
-                code,
-                discount,
-                validFrom: today,
-                validUntil: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7), // Valid for 7 days
-                status: 'active',
-            };
-
-            await tourist.save();
-
-            res.status(200).json({ message: 'Birthday promo code assigned successfully', birthdayPromoCode: tourist.birthdayPromoCode });
-        } else {
-            res.status(400).json({ message: 'Today is not the tourist\'s birthday' });
-        }
+        return code;
     } catch (error) {
-        res.status(500).json({ message: 'Error assigning birthday promo code', error: error.message });
+        console.error('Error creating promo code:', error);
+        throw error;
     }
 };
+
+// Function to check birthdays and generate promo codes
+const checkBirthdaysAndGeneratePromoCodes = async () => {
+    console.log('Checking birthdays and generating promo codes...');
+    try {
+      const today = new Date();
+      const month = today.getMonth() + 1; // getMonth() returns 0-11
+      const day = today.getDate();
+  
+      console.log(`Today's date: ${today}`);
+      console.log(`Month: ${month}, Day: ${day}`);
+  
+      const tourists = await touristModel.find({
+        $expr: {
+          $and: [
+            { $eq: [{ $month: "$DOB" }, month] },
+            { $eq: [{ $dayOfMonth: "$DOB" }, day] }
+          ]
+        }
+      });
+  
+      console.log(`Found ${tourists.length} tourists with birthdays today.`);
+  
+      for (const tourist of tourists) {
+        const promoCode = await createPromoCodeHelper(tourist._id, tourist.username);
+        console.log(`Promo code created for ${tourist.username}: ${promoCode}`);
+      }
+    } catch (error) {
+      console.error('Error checking birthdays and generating promo codes:', error);
+    }
+  };
+
 
 
 
@@ -401,4 +414,4 @@ const validateGlobalPromoCodes = async () => {
 // Debugging Logs
 console.log('getGlobalPromoCodes:', typeof getGlobalPromoCodes);
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,assignBirthdayPromoCode,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes,};
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,checkBirthdaysAndGeneratePromoCodes,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes,};

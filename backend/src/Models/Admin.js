@@ -18,6 +18,15 @@ const adminSchema = new Schema({
         type: String,
         required: false,
     },
+    promoCodes: [
+    {
+        code: String,
+        discount: Number,
+        validFrom: Date,
+        validUntil: Date,
+        userId: Schema.Types.ObjectId,
+    },
+    ],
     globalPromoCodes: [
         {
             code: { type: String, required: true, unique: true },

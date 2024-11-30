@@ -83,6 +83,6 @@ _.post('/createGlobalPromoCode', adminController.createGlobalPromoCode); // Crea
 _.get('/getGlobalPromoCodes', adminController.getGlobalPromoCodes); // Fetch promo codes
 _.put('/updateGlobalPromoCode/:code', adminController.updateGlobalPromoCode); // Update promo code
 _.delete('/deleteGlobalPromoCode/:code', adminController.deleteGlobalPromoCode); // Delete promo code
-//console.log('getGlobalPromoCodes:', typeof adminController.getGlobalPromoCodes);
+_.post('/BDpromocode/:code', adminController.checkBirthdaysAndGeneratePromoCodes);
 
 module.exports = _;
