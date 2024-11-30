@@ -78,34 +78,35 @@ const touristSchema = new Schema({
         ref: 'Orders'
     }], 
 
-    addresses : [{
-        label : {
-            type: String,
-            required: addressDetailsRequired
-        },
-        address: {
-            type: String,
-            required: addressDetailsRequired
-        },
-        city: {
-            type: String,
-            required: addressDetailsRequired
-        },
-        country: {
-            type: String,
-            required: addressDetailsRequired
-        },
-        coordinates: {
-            lat: {
-                type: Number,
-                required: addressDetailsRequired
-            },
-            lng: {
-                type: Number,
-                required: addressDetailsRequired
-            }
-        }
-    }],
+    // addresses : [{
+    //     label : {
+    //         type: String,
+    //         required: addressDetailsRequired
+    //     },
+    //     address: {
+    //         type: String,
+    //         required: addressDetailsRequired
+    //     },
+    //     city: {
+    //         type: String,
+    //         required: addressDetailsRequired
+    //     },
+    //     country: {
+    //         type: String,
+    //         required: addressDetailsRequired
+        // },
+        // coordinates: {
+        //     lat: {
+        //         type: Number,
+        //         required: addressDetailsRequired
+        //     },
+        //     lng: {
+        //         type: Number,
+        //         required: addressDetailsRequired
+            // }
+    //     }
+    // }],
+    addresses: [{ name : String, email : String ,address : String, city : String, state : String, zip : String}],
 
     cart: [
         {

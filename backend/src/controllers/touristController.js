@@ -300,23 +300,26 @@ const searchHotelsByCity = async (req, res) => {
 
 const createAddress = async (req, res) => {
     const touristId = req.user.id;
-    const { address ,label } = req.body;
-
+    // const { address ,label } = req.body;
+    const { name, email, address, city, state, zip } = req.body;
     try {
         const tourist = await touristModel.findById(touristId);
         if (!tourist) {
             return res.status(404).json({ error: 'Tourist not found' });
         }
 
-        const addressDetails = await getAddressDetails(address);
+        // const addressDetails = await getAddressDetails(address);
 
-        const newAddress = {
-            label,
-            address: addressDetails.address,
-            city: addressDetails.city,
-            country: addressDetails.country,
-            coordinates: addressDetails.coordinates
-        };
+        // const newAddress = {
+        //     label,
+        //     address: addressDetails.address,
+        //     city: addressDetails.city,
+        //     country: addressDetails.country,
+        //     coordinates: addressDetails.coordinates
+        // };
+
+        const newAddress = { name, email, address, city, state, zip };
+
 
         tourist.addresses.push(newAddress);
         await tourist.save();
@@ -482,7 +485,7 @@ const deleteCancelledOrders = async (req, res) => {
 
 const pay = async (req, res) => {
     const touristId = req.user.id;
-    const { details, total, paymentMethod , currency } = req.body; // paymentMethod can be 'wallet' or 'card'
+    const { total, paymentMethod , currency } = req.body; // paymentMethod can be 'wallet' or 'card'
 
     try {
         const tourist = await touristModel.findById(touristId);

@@ -18,6 +18,7 @@ import BookTransportation from "../../newComponents/BookTransportation";
 import Cart from "../../newComponents/cart";
 import Wishlist from "../../newComponents/Wishlist";
 import CheckOutPage from "../../newComponents/CheckOutPage";
+import PaymentPage from "../../newComponents/PaymentPage";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -67,7 +68,8 @@ function TouristDashboard(){
         <Route path="/purchases" element={
           <TouristPurchasesView />
         }/>
-        <Route path='/checkout' element={<CheckOutPage />} />
+        <Route path='/checkout' element={<CheckOutPage  baseUrl="http://localhost:3000/api/tourist" />} />
+        <Route path="/payment" element={<PaymentPage baseUrl={baseUrl} />} />
       </Routes>       
     </div>
   );
