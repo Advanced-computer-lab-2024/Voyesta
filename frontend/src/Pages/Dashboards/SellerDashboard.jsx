@@ -9,6 +9,7 @@ import ProfileManagement from "../../newComponents/ProfileManagement";
 import UploadDocuments from "../../newComponents/UploadDocuments";
 import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
 
 const navLinks = [
   { path: "/seller/", label: "Home" },
@@ -108,10 +109,7 @@ function SellerDashboard() {
               <ProductsView role="sellerMyProducts" />
             } />
 
-            <Route path="/sales" element={
-              <ProductSalesView userType="seller" />
-            } />
-
+            <Route path="/sales" element={<RevenueSalesView userType="seller" />} />
             <Route path="/profile" element={
               <ProfileManagement userType="seller" baseUrl="http://localhost:3000/api/seller" />
             } />

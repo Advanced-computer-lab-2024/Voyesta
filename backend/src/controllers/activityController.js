@@ -2,6 +2,33 @@ const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag');
 const mongoose = require('mongoose');
+const sendGrid = require('@sendgrid/mail');
+const { sendNotification } = require('./NotificationController');
+
+sendGrid.setApiKey('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');
+
+const flagActivityAsInappropriate = async (req, res) => {
+    const { id } = req.params;
+    const userType = req.user.type;
+
+    if (userType !== 'admin') {
+        return res.status(403).json({ error: 'Only admins can flag activities as inappropriate' });
+    }
+
+    try {
+        const activity = await Activity.findById(id).populate('advertiser');
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        activity.inappropriate = true;
+        await activity.save();
+
+        res.status(200).json({ message: 'Activity flagged as inappropriate and notification sent successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 // Create a new Activity
 const createActivity = async (req, res) => {
@@ -401,4 +428,4 @@ const getTransportationActivities = async (req, res) => {
     }
 };
 
-module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities };
+module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities, flagActivityAsInappropriate };

@@ -40,6 +40,7 @@ const authenticate = require('../middleware/authenticate');
 const bookingRouter = require('./bookingRouter');
 const purchaseRouter = require('./purchaseRouter');
 const cloudinaryRouter = require('./cloudinaryRouter');
+const { sendOtp, resetPassword} = require('../controllers/accountController');
 
 
 _.use("/advertiser",  advertiserRouter);
@@ -67,6 +68,7 @@ _.get("/user",authenticate,  (req, res) => {
 const login = require('../controllers/LoginController');
 
 _.post("/login",  login.Login);
-
+_.post('/send-otp', sendOtp);
+_.post('/reset-password', resetPassword);
 
 module.exports = _;

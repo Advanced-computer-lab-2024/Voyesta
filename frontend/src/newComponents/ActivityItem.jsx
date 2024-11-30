@@ -14,6 +14,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   const [tags, setTags] = useState([]);
   const [isBookmarked, setIsBookmarked] = useState(activity.isBookmarked );
   const [showPopup, setShowPopup] = useState(false);
+  const [inappropriate, setInappropriate] = useState(activity.inappropriate);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,6 +74,22 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         Authorization: `Bearer ${token}`,
       },
     };
+  };
+
+  const flagAsInappropriate = async () => {
+    try {
+      const url = `${baseUrl}/flagActivityAsInappropriate/${activity._id}`;
+      await axios.patch(url, {}, getAuthHeaders());
+
+      const notificationUrl = `${baseUrl}/sendNotification`;
+      const message = `Your activity "${activity.name}" has been flagged as inappropriate.`;
+      await axios.post(notificationUrl, { userType: 'advertiser', itemId: activity._id, message }, getAuthHeaders());
+
+      setInappropriate(true);
+      //fetchActivities();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const convertTimeTo24HourFormat = (time) => {
@@ -357,7 +374,15 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
 
           <p>Rating: {averageRating}</p>
           <p>Special Discount: {activity.specialDiscount}</p>
-          
+          <p>Inappropriate: {inappropriate ? "true" : "false"}</p>
+
+          {role === 'admin' && <img
+              onClick={flagAsInappropriate}
+              src={assets.flagIcon}
+              className="w-6 h-6 cursor-pointer"
+              alt="Flag Icon"
+            />
+          }
 
           {(role === 'tourist' && (!transportation)) && (
             <>

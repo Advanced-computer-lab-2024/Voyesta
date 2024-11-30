@@ -2,6 +2,7 @@ const express = require('express');
 const _ = express.Router();
 const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
+const { getRevenue } = require('../controllers/revenueController');
 
 const {
     createActivityCategory, 
@@ -20,7 +21,8 @@ const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToCompla
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
 const { changePassword, setStatusToActive, setStatusToRejected, setStatusToDeleted, deleteAccount, getDeletedUsers } = require('../controllers/accountController');
-
+const { sendNotification } = require('../controllers/NotificationController');
+const { getActivity, flagActivityAsInappropriate } = require('../controllers/activityController');
 
 // ------------- Not testedd ---------------
 _.post('/createTourismGoverner', adminController.createTourismGovernor);
@@ -59,6 +61,7 @@ _.get('/getProductsSales', authenticate, productController.getProductSales);
 // ------------ Itineraries ---------------- //
 _.get('/getItinerary', authenticate, getItineraries);
 _.patch('/flagInappropriate/:id', authenticate, flagInappropriate);
+_.patch('/flagActivityAsInappropriate/:id', authenticate, flagActivityAsInappropriate);
 
 
 _.get('/getComplaints', getComplaints);
@@ -75,6 +78,10 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
+
+_.get('/getRevenue', authenticate, getRevenue);
+_.post('/sendNotification', authenticate, sendNotification);
+_.get('/getActivity', authenticate, getActivity);
 
 
 module.exports = _;

@@ -5,6 +5,8 @@ import './css/index.css';
 // Importing the login & signup components
 import Signup from './Pages/LoginSignup/Signup';
 import Login from './Pages/LoginSignup/Login';
+import ForgotPassword from './Pages/LoginSignup/ForgotPassword';
+import ResetPassword from './Pages/LoginSignup/ResetPassword';
 
 // Importing the main dashboard component
 import Dashboard from './pages/Dashboard';
@@ -28,6 +30,8 @@ function App() {
 
       <Route exact path="/*" element={<Dashboard />} />
       <Route exact path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route exact path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/admin/*" element={<AdminDashboard />} />

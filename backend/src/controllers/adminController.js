@@ -4,6 +4,7 @@ const { generateToken } = require('../utils/jwt');
 const TourGuide = require('../Models/Tour Guide');
 const Seller = require('../Models/Seller');
 const Advertiser = require('../Models/Advertiser');
+const { sendNotification } = require('./notificationController');
 
 
 // Create a new Admin profile
