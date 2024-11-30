@@ -39,10 +39,32 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     .then(res => {
       const tagNames = res.data.map(tag => tag.Name);
       setTags(tagNames);
-      console.log(tagNames);
     })
     .catch(err => console.log(err));
   }, []);
+
+  useEffect(() => {
+    // Fetch bookmark status when the component mounts
+    const fetchBookmarkStatus = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/bookmarked-activities`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const bookmarkedActivities = response.data.map(activity => activity._id);
+        if (bookmarkedActivities.includes(activity._id)) {
+          setIsBookmarked(true);
+        } else {
+          setIsBookmarked(false);
+        }
+      } catch (error) {
+        console.error('Error fetching bookmark status:', error);
+      }
+    };
+
+    fetchBookmarkStatus();
+  }, [activity._id, baseUrl]);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -160,11 +182,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   };
   const handleUnbookmark = async () => {
     try {
-      const response = await axios.delete(`${baseUrl}/bookmark`, {
-        data: { activityId: activity._id },
-        ...getAuthHeaders(),
-      });
-      setIsBookmarked(false); // Update UI
+      const response = await axios.delete(`${baseUrl}/bookmark/${activity._id}`, getAuthHeaders());
+      setIsBookmarked(false);
       alert(response.data.message);
     } catch (error) {
       console.error('Error unbookmarking activity:', error);
@@ -358,11 +377,11 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
                 Share via Email
               </button>
               <button
-          onClick={toggleBookmark}
-          className="flex items-center gap-2 mt-2 bg-yellow-300 rounded-full p-2 hover:bg-yellow-400"
-        >
-          {isBookmarked ? 'Unbookmark' : 'Bookmark'}
-        </button>
+                onClick={toggleBookmark}
+                className="flex items-center gap-2 mt-2 bg-yellow-300 rounded-full p-2 hover:bg-yellow-400"
+              >
+                {isBookmarked ? 'Unbookmark' : 'Bookmark'}
+              </button>
               {showPopup && (
                 <BookingPopup
                   item={activity}

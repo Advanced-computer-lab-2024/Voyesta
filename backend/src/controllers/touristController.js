@@ -319,8 +319,8 @@ const bookmarkActivity = async (req, res) => {
 };
 const unbookmarkActivity = async (req, res) => {
     const touristId = req.user.id; // Extract tourist ID from the authenticated user
-    const { activityId } = req.body; // Get the activity ID from the request body
-
+    const activityId = req.params.id; // Get the activity ID from the request body
+    console.log(activityId);
     try {
         const tourist = await touristModel.findById(touristId);
 
@@ -328,6 +328,7 @@ const unbookmarkActivity = async (req, res) => {
             return res.status(404).json({ error: 'Tourist not found' });
         }
 
+        console.log(tourist.bookmarkedActivities);
         // Remove the activity from the bookmarks list
         tourist.bookmarkedActivities = tourist.bookmarkedActivities.filter(
             (id) => id.toString() !== activityId
@@ -356,11 +357,21 @@ const getBookmarkedActivities = async (req, res) => {
     }
 };
 
+const isBookmarked = async (req, res) => {
+    const touristId = req.user.id;
+    const { activityId } = req.params;
+  
+    try {
+      const tourist = await touristModel.findById(touristId);
+      if (!tourist) {
+        return res.status(404).json({ error: 'Tourist not found' });
+      }
+  
+      const isBookmarked = tourist.bookmarkedActivities.includes(activityId);
+      res.status(200).json({ isBookmarked });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
-
-
-
-
-
-
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,getBookmarkedActivities};
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,getBookmarkedActivities, isBookmarked};

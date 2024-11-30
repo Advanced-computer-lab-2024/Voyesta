@@ -34,6 +34,7 @@ const ItineraryView = ({ baseUrl, role }) => {
       setItineraries(response.data);
       setFilteredItineraries(response.data); // Initialize filtered itineraries
       setPrices(response.data.map(itinerary => itinerary.tourPrice));
+      console.log('Itineraries:', response.data);
     } catch (error) {
       console.error('Error fetching itineraries:', error);
       setMessage("Error fetching itineraries.");
