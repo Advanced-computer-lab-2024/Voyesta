@@ -493,6 +493,8 @@ const pay = async (req, res) => {
             return res.status(404).json({ error: 'Tourist not found' });
         }
 
+        if(paymentMethod === 'cod') return res.status(201).json({ message: 'Cash on delivery selected' });
+
         if (paymentMethod === 'wallet') {
             // Handle wallet payment
             if (tourist.Wallet < total) {

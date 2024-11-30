@@ -8,7 +8,7 @@ const CheckOutPage = ({baseUrl}) => {
   const taxRate = 0.10;
   const tax = total * taxRate;
   const grandTotal = total + tax;
-
+  const navigate = useNavigate();
   // State for form fields
   const [formData, setFormData] = useState({
     name: '',
@@ -48,7 +48,7 @@ const CheckOutPage = ({baseUrl}) => {
       const result = response.data;
       console.log('Address created successfully:', result);
        // Navigate to PaymentPage with necessary information
-       navigate('/payment', {
+       navigate('/tourist/payment', {
         state: {
           total: grandTotal,
           address: formData,

@@ -69,7 +69,7 @@ function TouristDashboard(){
           <TouristPurchasesView />
         }/>
         <Route path='/checkout' element={<CheckOutPage  baseUrl="http://localhost:3000/api/tourist" />} />
-        <Route path="/payment" element={<PaymentPage baseUrl={baseUrl} />} />
+        <Route path="/payment" element={<PaymentPage baseUrl="http://localhost:3000/api/tourist" />} />
       </Routes>       
     </div>
   );
