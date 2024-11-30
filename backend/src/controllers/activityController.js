@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const sendGrid = require('@sendgrid/mail');
 const { sendNotification, notifyUsersForBookingEnabled } = require('./NotificationController');
 
-sendGrid.setApiKey('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');
+sendGrid.setApiKey('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');
 
 const flagActivityAsInappropriate = async (req, res) => {
     const { id } = req.params;

@@ -6,7 +6,7 @@ const Itinerary = require('../Models/Itinerary');
 const sendGrid = require('@sendgrid/mail');
 const Activity = require('../Models/Activity');
 
-sendGrid.setApiKey('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');
+sendGrid.setApiKey('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');
 
 const getNotifications = async (req, res) => {
     // const {userType} = req.body;
@@ -41,8 +41,8 @@ const sendNotification = async (req, res) => {
     try {
         let user;
         if (userType === 'tourist') {
-            const itinerary = await Itinerary.findById(itemId).populate('createdBy');
-            user = itinerary.createdBy;
+            // const itinerary = await Itinerary.findById(itemId).populate('createdBy');
+            // user = itinerary.createdBy;
         } else if (userType === 'tourGuide') {
             const itinerary = await Itinerary.findById(itemId).populate('createdBy');
             user = itinerary.createdBy;

@@ -10,7 +10,7 @@ const Booking = require('../Models/Booking');
 const OTP = require('../Models/OTP');
 const sgMail = require('@sendgrid/mail');
 
-sgMail.setApiKey('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');
+sgMail.setApiKey('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');
 
 const sendOtp = async (req, res) => {
   const { username } = req.body;
