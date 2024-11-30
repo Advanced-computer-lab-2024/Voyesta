@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 import BookingPopup from './BookingPopup';
@@ -32,6 +32,29 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
   const [shareLink, setShareLink] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false); // State for error popup
+
+  useEffect(() => {
+    // Fetch bookmark status when the component mounts
+    const fetchBookmarkStatus = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/bookmarked-items`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const bookmarkedItineraries = response.data.itineraries.map(itinerary => itinerary._id);
+        if (bookmarkedItineraries.includes(itinerary._id)) {
+          setIsBookmarked(true);
+        } else {
+          setIsBookmarked(false);
+        }
+      } catch (error) {
+        console.error('Error fetching bookmark status:', error);
+      }
+    };
+
+    fetchBookmarkStatus();
+  }, [itinerary._id, baseUrl]);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");

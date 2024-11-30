@@ -47,12 +47,12 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     // Fetch bookmark status when the component mounts
     const fetchBookmarkStatus = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/bookmarked-activities`, {
+        const response = await axios.get(`${baseUrl}/bookmarked-items`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        const bookmarkedActivities = response.data.map(activity => activity._id);
+        const bookmarkedActivities = response.data.activities.map(activity => activity._id);
         if (bookmarkedActivities.includes(activity._id)) {
           setIsBookmarked(true);
         } else {
