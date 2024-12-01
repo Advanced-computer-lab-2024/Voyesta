@@ -351,17 +351,6 @@ const redeemPromoCode = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,redeemPromoCode};
-
 const bookmarkActivity = async (req, res) => {
     const touristId = req.user.id; // Extract tourist ID from the authenticated user
     const { activityId } = req.body; // Get the activity ID from the request body
@@ -487,4 +476,4 @@ const isBookmarked = async (req, res) => {
     }
   };
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,bookmarkItinerary,unbookmarkItinerary,getBookmarkedItems, isBookmarked};
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,bookmarkItinerary,unbookmarkItinerary,getBookmarkedItems, isBookmarked, redeemPromoCode};

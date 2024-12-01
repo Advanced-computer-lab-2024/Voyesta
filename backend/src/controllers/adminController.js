@@ -250,12 +250,7 @@ const checkBirthdaysAndGeneratePromoCodes = async () => {
       console.error('Error checking birthdays and generating promo codes:', error);
     }
   };
-
-
-
-
-
-
+  
 // Create a new promo code
 const createGlobalPromoCode = async (req, res) => {
     const { code, discount, validFrom, validUntil } = req.body;
