@@ -7,6 +7,7 @@ const Advertiser = require('../Models/Advertiser');
 const touristModel = require('../Models/Tourist');
 const cron = require('node-cron');
 const Tourist = require('../Models/Tourist');
+const Product = require('../Models/Product');
 
 
 // Create a new Admin profile
@@ -389,6 +390,34 @@ const deleteGlobalPromoCode = async (req, res) => {
         res.status(500).json({ message: "Error deleting promo code", error: error.message });
     }
 };
+const checkProductStockLevels = async () => {
+    try {
+      const outOfStockProducts = await Product.find({ available_quantity: 0 });
+  
+      if (outOfStockProducts.length > 0) {
+        console.log('Out of stock products:');
+        for (const product of outOfStockProducts) {
+          console.log(`Product ${product.name} is out of stock.`);
+          
+          // Notify the seller
+          const seller = await Seller.findById(product.createdBy._id);
+          if (seller) {
+            console.log(`Notifying seller ${seller.username} about out of stock product ${product.name}.`);
+          }
+  
+          // Notify the admin
+          const admin = await adminModel.findOne({ username: 'admin' });
+          if (admin) {
+            console.log(`Notifying admin about out of stock product ${product.name}.`);
+          }
+        }
+      } else {
+        console.log('No products are out of stock.');
+      }
+    } catch (error) {
+      console.error('Error checking product stock levels:', error);
+    }
+  };
 
 const validateGlobalPromoCodes = async () => {
     const admin = await adminModel.findOne();
@@ -406,6 +435,8 @@ const validateGlobalPromoCodes = async () => {
 
     await admin.save();
     console.log('Validation completed, invalid statuses fixed.');
+
+    
 };
 
 
@@ -414,4 +445,4 @@ const validateGlobalPromoCodes = async () => {
 // Debugging Logs
 console.log('getGlobalPromoCodes:', typeof getGlobalPromoCodes);
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,checkBirthdaysAndGeneratePromoCodes,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes,};
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,checkProductStockLevels,getPromoCodes,checkBirthdaysAndGeneratePromoCodes,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes};
