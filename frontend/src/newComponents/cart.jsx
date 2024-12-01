@@ -19,7 +19,8 @@ function Cart({ baseUrl }) {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/tourist/getCart', getAuthHeaders())
+    const url = baseUrl + '/getCart';
+    axios.get(url, getAuthHeaders())
       .then(res => {
         setCartItems(res.data);
         setLoading(false);
@@ -43,22 +44,8 @@ function Cart({ baseUrl }) {
 
 
     const total = cartItems.reduce((acc, item) => acc + item.productId.price * item.quantity, 0);
-    // try {
-     
-  
-    //   const response = await axios.post(url, { details, total }, getAuthHeaders());
-  
-    //   console.log('Order created successfully:', response.data);
-    //   // Handle successful order creation (e.g., navigate to order confirmation page)
-    // } catch (error) {
-    //   console.error('Error during checkout:', error);
-    //   // Handle error (e.g., show error message to user)
-    // }
-    
-    
-    
-    // const total = cartItems.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
-    navigate('/tourist/checkout', { state: { total, details } });
+
+    navigate('/tourist/checkout', { state: { from : 'cart',total, details } });
   };
 
   const handleDelete = (productId) => {
