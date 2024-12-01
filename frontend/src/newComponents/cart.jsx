@@ -19,7 +19,8 @@ function Cart({ baseUrl }) {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/tourist/getCart', getAuthHeaders())
+    const url = baseUrl + '/getCart';
+    axios.get(url, getAuthHeaders())
       .then(res => {
         setCartItems(res.data);
         setLoading(false);
