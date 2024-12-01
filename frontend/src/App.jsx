@@ -29,32 +29,28 @@ import Wishlist from './newComponents/Wishlist'; // Import the Wishlist componen
 function App() {
 
   return (
-    <>
-      <div>
-         {/* <SellerDashboard /> */}
-
           <Routes>
             <Route exact path="/*" element={<Dashboard />} />
-      <Route exact path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route exact path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/admin/*" element={<AdminDashboard />} />
-      <Route path='/tourGuide/*' element={<TourGuideDashboard />} />
-      <Route path='/advertiser/*' element={<AdvertiserDashboard />} />
-      <Route path='/seller/*' element={< SellerDashboard />} />
-      <Route path='/tourismGovernor/*' element={< TourismGovernorDashboard />} />
-      <Route path='/tourist/*' element={< TouristDashboard />} />
-      <Route path='/guest/*' element={< Dashboard />} />
-      <Route path='/map' element={<MapView lat="30.0648" lng="31.5102" />} />
-      <Route path='/activities' element={<ActivitiesView />} />
-      <Route path='/activity/:id' element={<ActivityDetail />} />
-      <Route path='/museumHistoricalPlace/:id' element={<MuseumHistoricalPlaceDetail />} />
-      <Route path='/itinerary/:id' element={<ItineraryDetail />} /> {/* New route for itinerary detail */}
-      <Route path="/cart" element={cart} />
-      <Route path="/wishlist" element={Wishlist} />
-    </Routes>
+            <Route exact path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin/*" element={<AdminDashboard />} />
+            <Route path='/tourGuide/*' element={<TourGuideDashboard />} />
+            <Route path='/advertiser/*' element={<AdvertiserDashboard />} />
+            <Route path='/seller/*' element={< SellerDashboard />} />
+            <Route path='/tourismGovernor/*' element={< TourismGovernorDashboard />} />
+            <Route path='/tourist/*' element={< TouristDashboard />} />
+            <Route path='/guest/*' element={< Dashboard />} />
+            <Route path='/map' element={<MapView lat="30.0648" lng="31.5102" />} />
+            <Route path='/activities' element={<ActivitiesView />} />
+            <Route path='/activity/:id' element={<ActivityDetail />} />
+            <Route path='/museumHistoricalPlace/:id' element={<MuseumHistoricalPlaceDetail />} />
+            <Route path='/itinerary/:id' element={<ItineraryDetail />} /> {/* New route for itinerary detail */}
+            <Route path="/cart" element={cart} />
+            <Route path="/wishlist" element={Wishlist} />
+          </Routes>
   );
 }
 
