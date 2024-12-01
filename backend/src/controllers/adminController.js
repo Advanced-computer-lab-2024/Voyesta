@@ -115,6 +115,156 @@ const createTourismGovernor = async (req, res) => {
     }
 };
 
+
+
+const getUserStats = async (req, res) => {
+    try {
+        console.log('Fetching user stats...');
+
+        // Count documents in each collection for total users
+        const touristCount = await Tourist.countDocuments();
+        const advertiserCount = await Advertiser.countDocuments();
+        const sellerCount = await Seller.countDocuments();
+        const tourGuideCount = await TourGuide.countDocuments();
+
+        // Total number of all roles
+        const totalUsers = touristCount + advertiserCount + sellerCount + tourGuideCount;
+
+        console.log("Counts by Role:");
+        console.log("Tourists:", touristCount);
+        console.log("Advertisers:", advertiserCount);
+        console.log("Sellers:", sellerCount);
+        console.log("Tour Guides:", tourGuideCount);
+        console.log("Total Users:", totalUsers);
+
+        // Aggregation to count the number of new tourists by month
+        const monthlyTouristStats = await Tourist.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new tourists per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
+
+        // Aggregation to count the number of new advertisers by month
+        const monthlyAdvertiserStats = await Advertiser.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new advertisers per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
+
+        // Aggregation to count the number of new sellers by month
+        const monthlySellerStats = await Seller.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new sellers per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
+
+        // Aggregation to count the number of new tour guides by month
+        const monthlyTourGuideStats = await TourGuide.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" }, // Extract year
+                        month: { $month: "$createdAt" } // Extract month
+                    },
+                    count: { $sum: 1 } // Count new tour guides per month
+                }
+            },
+            {
+                $sort: {
+                    "_id.year": 1, // Sort by year
+                    "_id.month": 1 // Then by month
+                }
+            }
+        ]);
+
+        // Format the stats for better readability
+        const formattedMonthlyTouristStats = monthlyTouristStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        const formattedMonthlyAdvertiserStats = monthlyAdvertiserStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        const formattedMonthlySellerStats = monthlySellerStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        const formattedMonthlyTourGuideStats = monthlyTourGuideStats.map(stat => ({
+            year: stat._id.year,
+            month: stat._id.month,
+            count: stat.count
+        }));
+
+        // Return all stats (total users, role stats, and monthly stats for each role)
+        return res.json({
+            totalUsers,
+            roleStats: {
+                tourists: touristCount,
+                advertisers: advertiserCount,
+                sellers: sellerCount,
+                tourGuides: tourGuideCount
+            },
+            monthlyStats: {
+                tourists: formattedMonthlyTouristStats,
+                advertisers: formattedMonthlyAdvertiserStats,
+                sellers: formattedMonthlySellerStats,
+                tourGuides: formattedMonthlyTourGuideStats
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching stats:', error);
+        return res.status(500).json({ message: "Error fetching stats" });
+    }
+};
+
+
+
+
+
 // Fetch all pending users from TourGuide, Seller, and Advertiser collections
 const getPendingUsers = async (req, res) => {
     try {
@@ -496,4 +646,4 @@ const validateGlobalPromoCodes = async () => {
 // Debugging Logs
 console.log('getGlobalPromoCodes:', typeof getGlobalPromoCodes);
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,checkProductStockLevels,getPromoCodes,checkBirthdaysAndGeneratePromoCodes,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes};
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers,getUserStats, createPromoCode,checkProductStockLevels,getPromoCodes,checkBirthdaysAndGeneratePromoCodes,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes};

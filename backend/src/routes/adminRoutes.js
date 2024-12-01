@@ -6,6 +6,7 @@ const { createGlobalPromoCode } = require('../controllers/adminController');
 console.log('Route handler:', adminController.getGlobalPromoCodes);const { getRevenue } = require('../controllers/revenueController');
 
 const {
+    
     createActivityCategory, 
     getActivityCategory, 
     updateActivityCategory, 
@@ -92,6 +93,8 @@ _.get('/getRevenue', authenticate, getRevenue);
 _.post('/sendNotification', authenticate, sendNotification);
 _.get('/getActivity', authenticate, getActivity);
 _.get('/getNotifications', authenticate, getNotifications);
+_.get('/getUserStats', adminController.getUserStats);
+
 
 
 module.exports = _;

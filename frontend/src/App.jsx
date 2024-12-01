@@ -1,6 +1,7 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import './css/index.css';
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import './css/index.css'
+
 
 // Importing the login & signup components
 import Signup from './Pages/LoginSignup/Signup';
@@ -8,8 +9,8 @@ import Login from './Pages/LoginSignup/Login';
 import ForgotPassword from './Pages/LoginSignup/ForgotPassword';
 import ResetPassword from './Pages/LoginSignup/ResetPassword';
 
-// Importing the main dashboard component
-import Dashboard from './pages/Dashboard';
+//importing the main dashboard component
+import Dashboard from './pages/Dashboard'
 
 // Importing the persona dashboard components
 import AdminDashboard from './Pages/Dashboards/AdminDashboard';
@@ -26,10 +27,14 @@ import ItineraryDetail from './newComponents/ItineraryDetail'; // Import the new
 import cart from './newComponents/cart';
 import Wishlist from './newComponents/Wishlist'; // Import the Wishlist component
 function App() {
-  return (
-    <Routes>
 
-      <Route exact path="/*" element={<Dashboard />} />
+  return (
+    <>
+      <div>
+         {/* <SellerDashboard /> */}
+
+          <Routes>
+            <Route exact path="/*" element={<Dashboard />} />
       <Route exact path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />

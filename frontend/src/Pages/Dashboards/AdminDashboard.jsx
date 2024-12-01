@@ -9,7 +9,7 @@ import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import ProductSalesView from "../../newComponents/ProductSalesView";
 import PendingUsers from "../../newComponents/PendingUsers";
-import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
+import UserStats from "../../newComponents/UserStats";import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import ActivityView from '../../newComponents/ActivitiesView';
 import Notifications from "../../newComponents/Notifications";
@@ -25,6 +25,7 @@ const navLinks = [
   { path: "/admin/revenue-sales", label: "Sales" },
   { path: "/admin/pendingUsers", label: "Pending Users" },
   { path: "/admin/account-management", label: "Account Management" },
+  { path: "/admin/user-stats", label: "User Stats" },
   { path: "/admin/promo-codes", label: "Promo Codes" }, // Added promo codes link
   { path: "/admin/notifications", label: "Notifications" } // Added promo codes link
 ];
