@@ -3,6 +3,7 @@ const MuseumModel = require('../Models/MusemsAndHistoricalPlaces');
 const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag')
 const Activity = require('../Models/Activity');
+const adminModel = require('../Models/Admin');
 
 const {generateToken} = require('../utils/jwt');
 //const amadeus = require('../utils/amadeusClient').amadeus;
@@ -294,6 +295,72 @@ const searchHotelsByCity = async (req, res) => {
     }
 };
 
+const redeemPromoCode = async (req, res) => {
+    const { code, touristId } = req.body;
+
+    if (!code || !touristId) {
+        return res.status(400).json({ message: 'Code and Tourist ID are required' });
+    }
+
+    try {
+        // Find the admin to access promo codes
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: 'Promo codes not found' });
+        }
+
+        const promoCode = admin.globalPromoCodes.find(
+            (promo) => promo.code === code && promo.status === 'active'
+        );
+
+        if (!promoCode) {
+            return res.status(400).json({ message: 'Invalid or inactive promo code' });
+        }
+
+        // Find the tourist
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ message: 'Tourist not found' });
+        }
+
+        // Check if today is the tourist's birthday
+        const today = new Date();
+        const birthDate = new Date(tourist.DOB);
+        const currentYear = today.getFullYear();
+
+        if (today.getMonth() !== birthDate.getMonth() || today.getDate() !== birthDate.getDate()) {
+            return res.status(400).json({ message: 'Promo code can only be used on your birthday' });
+        }
+
+        // Check if the tourist has already redeemed this code this year
+        const alreadyRedeemed = promoCode.redeemedBy.find(
+            (entry) => entry.touristId.toString() === touristId && entry.year === currentYear
+        );
+
+        if (alreadyRedeemed) {
+            return res.status(400).json({ message: 'Code already redeemed, see you next year!' });
+        }
+
+        // Mark the promo code as redeemed by this tourist
+        promoCode.redeemedBy.push({ touristId, year: currentYear });
+        await admin.save();
+
+        res.status(200).json({ message: 'Promo code redeemed successfully', discount: promoCode.discount });
+    } catch (error) {
+        res.status(500).json({ message: 'Error redeeming promo code', error: error.message });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,redeemPromoCode};
 
 const bookmarkActivity = async (req, res) => {
     const touristId = req.user.id; // Extract tourist ID from the authenticated user

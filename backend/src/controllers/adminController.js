@@ -5,6 +5,9 @@ const TourGuide = require('../Models/Tour Guide');
 const Seller = require('../Models/Seller');
 const Advertiser = require('../Models/Advertiser');
 const { sendNotification } = require('./notificationController');
+const touristModel = require('../Models/Tourist');
+const cron = require('node-cron');
+const Tourist = require('../Models/Tourist');
 
 
 // Create a new Admin profile
@@ -134,5 +137,282 @@ const getPendingUsers = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+const createPromoCode = async (req, res) => {
+    const { code, discount, validFrom, validUntil, usageLimit } = req.body;
 
-module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers };
+    // Validate the required fields
+    if (!code || !discount || !validFrom || !validUntil) {
+        return res.status(400).json({ message: 'All fields are required: code, discount, validFrom, validUntil' });
+    }
+
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: 'Discount must be between 0 and 100' });
+    }
+
+    try {
+        // Find the Admin document (assuming a single admin manages the promo codes)
+        const admin = await adminModel.findOne();
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        // Check if the promo code already exists
+        const existingPromoCode = admin.promoCodes.find((promo) => promo.code === code);
+        if (existingPromoCode) {
+            return res.status(400).json({ message: 'Promo code already exists' });
+        }
+
+        // Add the promo code to the admin's promoCodes array
+        const promoCode = {
+            code,
+            discount,
+            validFrom: new Date(validFrom),
+            validUntil: new Date(validUntil),
+            usageLimit,
+        };
+
+        admin.promoCodes.push(promoCode);
+
+        await admin.save();
+
+        res.status(201).json({ message: 'Promo code created successfully', promoCode });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating promo code', error: error.message });
+    }
+};
+const getPromoCodes = async (req, res) => {
+    try {
+        const admin = await adminModel.findOne();
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        res.status(200).json(admin.promoCodes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching promo codes', error: error.message });
+    }
+};
+
+const createPromoCodeHelper = async (userId, username) => {
+    const code = `BDAY-${username}-${Date.now()}`;
+    const discount = 20; // Example discount value
+    const validFrom = new Date();
+    const validUntil = new Date();
+    validUntil.setMonth(validUntil.getMonth() + 1); // Promo code valid for 1 month
+
+    try {
+        const admin = await adminModel.findOne({username: 'admin'});
+        console.log(admin.promoCodes);
+
+        if (!admin) {
+            throw new Error('Admin not found');
+        }
+
+        admin.promoCodes.push({ code, discount, validFrom, validUntil, userId });
+        await admin.save();
+
+        return code;
+    } catch (error) {
+        console.error('Error creating promo code:', error);
+        throw error;
+    }
+};
+
+// Function to check birthdays and generate promo codes
+const checkBirthdaysAndGeneratePromoCodes = async () => {
+    console.log('Checking birthdays and generating promo codes...');
+    try {
+      const today = new Date();
+      const month = today.getMonth() + 1; // getMonth() returns 0-11
+      const day = today.getDate();
+  
+      console.log(`Today's date: ${today}`);
+      console.log(`Month: ${month}, Day: ${day}`);
+  
+      const tourists = await touristModel.find({
+        $expr: {
+          $and: [
+            { $eq: [{ $month: "$DOB" }, month] },
+            { $eq: [{ $dayOfMonth: "$DOB" }, day] }
+          ]
+        }
+      });
+  
+      console.log(`Found ${tourists.length} tourists with birthdays today.`);
+  
+      for (const tourist of tourists) {
+        const promoCode = await createPromoCodeHelper(tourist._id, tourist.username);
+        console.log(`Promo code created for ${tourist.username}: ${promoCode}`);
+      }
+    } catch (error) {
+      console.error('Error checking birthdays and generating promo codes:', error);
+    }
+  };
+
+
+
+
+
+
+// Create a new promo code
+const createGlobalPromoCode = async (req, res) => {
+    const { code, discount, validFrom, validUntil } = req.body;
+
+    if (!code || !discount || !validFrom || !validUntil) {
+        return res.status(400).json({ message: 'All fields are required: code, discount, validFrom, validUntil' });
+    }
+
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: 'Discount must be between 0 and 100' });
+    }
+
+    try {
+        const admin = await adminModel.findOne();
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        // Check if the promo code already exists
+        const existingPromoCode = admin.globalPromoCodes.find((promo) => promo.code === code);
+
+        if (existingPromoCode) {
+            return res.status(400).json({ message: 'Promo code already exists' });
+        }
+
+        // Add the new promo code
+        admin.globalPromoCodes.push({
+            code,
+            discount,
+            validFrom: new Date(validFrom),
+            validUntil: new Date(validUntil),
+            redeemedBy: [],
+            status: 'active',
+        });
+
+        await admin.save();
+
+        res.status(201).json({ message: 'Promo code created successfully', code, discount });
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Promo code already exists' });
+        }
+        res.status(500).json({ message: 'Error creating promo code', error: error.message });
+    }
+};
+
+// Fetch all promo codes
+const getGlobalPromoCodes = async (req, res) => {
+    try {
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        res.status(200).json(admin.globalPromoCodes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching promo codes', error: error.message });
+    }
+};
+
+const updateGlobalPromoCode = async (req, res) => {
+    const { code } = req.params; // Extract code from URL params
+    const { discount, validFrom, validUntil, status } = req.body;
+
+    //console.log("Updating promo code:", code);
+    //console.log("Request body:", req.body);
+
+    // Validate discount
+    if (discount < 0 || discount > 100) {
+        return res.status(400).json({ message: "Discount must be between 0 and 100" });
+    }
+
+    try {
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        const promoIndex = admin.globalPromoCodes.findIndex((promo) => promo.code === code);
+        if (promoIndex === -1) {
+            return res.status(404).json({ message: "Promo code not found" });
+        }
+
+        // Make sure the code remains unchanged and only other fields are updated
+        const updatedPromoCode = {
+            ...admin.globalPromoCodes[promoIndex],  // Spread the current promo code
+            discount: discount || admin.globalPromoCodes[promoIndex].discount,
+            validFrom: validFrom ? new Date(validFrom) : admin.globalPromoCodes[promoIndex].validFrom,
+            validUntil: validUntil ? new Date(validUntil) : admin.globalPromoCodes[promoIndex].validUntil,
+            status: status || admin.globalPromoCodes[promoIndex].status,
+        };
+
+        // Ensure `code` is still present in the updated promo code
+        updatedPromoCode.code = admin.globalPromoCodes[promoIndex].code;
+
+        // Replace the old promo code with the updated one
+        admin.globalPromoCodes[promoIndex] = updatedPromoCode;
+
+        // Save the updated admin document
+        await admin.save();
+
+        res.status(200).json({ message: "Promo code updated successfully" });
+    } catch (error) {
+        //console.error("Error:", error);
+        res.status(500).json({ message: "Error updating promo code", error: error.message });
+    }
+};
+
+
+
+const deleteGlobalPromoCode = async (req, res) => {
+    const { code } = req.params; // Extract code from the URL
+
+    try {
+        const admin = await adminModel.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found" });
+        }
+
+        const promoIndex = admin.globalPromoCodes.findIndex((promo) => promo.code === code);
+        if (promoIndex === -1) {
+            return res.status(404).json({ message: "Promo code not found" });
+        }
+
+        // Remove the promo code from the array
+        admin.globalPromoCodes.splice(promoIndex, 1);
+        await admin.save();
+
+        res.status(200).json({ message: "Promo code deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting promo code", error: error.message });
+    }
+};
+
+const validateGlobalPromoCodes = async () => {
+    const admin = await adminModel.findOne();
+    if (!admin) {
+        console.log('No admin document found.');
+        return;
+    }
+
+    for (let promo of admin.globalPromoCodes) {
+        if (!['active', 'inactive', 'expired'].includes(promo.status)) {
+            console.log(`Fixing invalid status for promo code: ${promo.code}`);
+            promo.status = 'active';
+        }
+    }
+
+    await admin.save();
+    console.log('Validation completed, invalid statuses fixed.');
+};
+
+
+
+
+// Debugging Logs
+console.log('getGlobalPromoCodes:', typeof getGlobalPromoCodes);
+
+module.exports = { createAdmin, updatePassword, deleteAccount, sendOTPadmin, createTourismGovernor, getPendingUsers, createPromoCode,getPromoCodes,checkBirthdaysAndGeneratePromoCodes,createGlobalPromoCode,createGlobalPromoCode,getGlobalPromoCodes,updateGlobalPromoCode,deleteGlobalPromoCode,validateGlobalPromoCodes,};

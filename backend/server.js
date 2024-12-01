@@ -1,12 +1,16 @@
 // server.js
 const app = require('./App');
 
-const notifyUpcomingEvents = require('../backend/src/controllers/scheduler'); 
-const cron = require('node-cron');
+const notifyUpcomingEvents = require('../backend/src/controllers/scheduler');
 
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const cron = require('node-cron');
+
+const { checkBirthdaysAndGeneratePromoCodes } = require('./src/controllers/adminController'); // Adjust the path as necessary
+cron.schedule('00 12 * * *', checkBirthdaysAndGeneratePromoCodes);
+console.log('Cron job scheduled to run every day at 10:25 AM');
 // Set the port from the environment variable or use 3000
 const port = process.env.PORT || 3000;
 

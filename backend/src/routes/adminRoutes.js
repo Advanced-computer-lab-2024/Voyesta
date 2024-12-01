@@ -2,7 +2,8 @@ const express = require('express');
 const _ = express.Router();
 const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
-const { getRevenue } = require('../controllers/revenueController');
+const { createGlobalPromoCode } = require('../controllers/adminController');
+console.log('Route handler:', adminController.getGlobalPromoCodes);const { getRevenue } = require('../controllers/revenueController');
 
 const {
     createActivityCategory, 
@@ -78,7 +79,14 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
-
+// ------------------ Promo Codes ------------------ //
+_.post('/createPromoCode', adminController.createPromoCode);
+_.get('/getPromoCodes', adminController.getPromoCodes);
+_.post('/createGlobalPromoCode', adminController.createGlobalPromoCode); // Create promo code
+_.get('/getGlobalPromoCodes', adminController.getGlobalPromoCodes); // Fetch promo codes
+_.put('/updateGlobalPromoCode/:code', adminController.updateGlobalPromoCode); // Update promo code
+_.delete('/deleteGlobalPromoCode/:code', adminController.deleteGlobalPromoCode); // Delete promo code
+_.post('/BDpromocode/:code', adminController.checkBirthdaysAndGeneratePromoCodes);
 _.get('/getRevenue', authenticate, getRevenue);
 _.post('/sendNotification', authenticate, sendNotification);
 _.get('/getActivity', authenticate, getActivity);
