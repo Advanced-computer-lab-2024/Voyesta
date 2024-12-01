@@ -15,6 +15,7 @@ const { changePassword, setStatusToDeleted } = require('../controllers/accountCo
 const cloudinaryController = require('../controllers/cloudinaryController');
 const adminController = require('../controllers/adminController');
 const { getRevenue } = require('../controllers/revenueController');
+const { getNotifications } = require('../controllers/NotificationController');
 
 
 _.post("/add", createSeller);
@@ -41,6 +42,7 @@ _.post('/uploadProfilePicture', authenticate, cloudinaryController.uploadImage);
 _.get('/CheckStock', adminController.checkProductStockLevels);
 
 _.get('/getRevenue', authenticate, getRevenue);
+_.get('/getNotifications', authenticate, getNotifications);
 
 
 module.exports = _;

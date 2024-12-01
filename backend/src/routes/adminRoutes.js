@@ -22,7 +22,7 @@ const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToCompla
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
 const { changePassword, setStatusToActive, setStatusToRejected, setStatusToDeleted, deleteAccount, getDeletedUsers } = require('../controllers/accountController');
-const { sendNotification } = require('../controllers/NotificationController');
+const { sendNotification, getNotifications } = require('../controllers/NotificationController');
 const { getActivity, flagActivityAsInappropriate } = require('../controllers/activityController');
 
 // ------------- Not testedd ---------------
@@ -91,6 +91,7 @@ _.get('/CheckStock', adminController.checkProductStockLevels);
 _.get('/getRevenue', authenticate, getRevenue);
 _.post('/sendNotification', authenticate, sendNotification);
 _.get('/getActivity', authenticate, getActivity);
+_.get('/getNotifications', authenticate, getNotifications);
 
 
 module.exports = _;

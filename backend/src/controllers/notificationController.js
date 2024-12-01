@@ -5,6 +5,8 @@ const Advertiser = require('../Models/Advertiser');
 const Itinerary = require('../Models/Itinerary');
 const sendGrid = require('@sendgrid/mail');
 const Activity = require('../Models/Activity');
+const Admin = require('../Models/Admin');
+const Seller = require('../Models/Seller');
 
 sendGrid.setApiKey('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');
 
@@ -21,7 +23,12 @@ const getNotifications = async (req, res) => {
             user = await TourGuide.findById(userId).populate('notifications');
         } else if (userType === 'advertiser') {
             user = await Advertiser.findById(userId).populate('notifications');
-        } else {
+        } else if (userType === 'admin') {
+            user = await Admin.findById(userId).populate('notifications');
+        } else if (userType === 'seller'){
+          user = await Seller.findById(userId).populate('notifications');
+        }
+        else {
             return res.status(400).json({ error: 'Invalid user type' });
         }
 

@@ -46,6 +46,10 @@ const adminSchema = new Schema({
             },
         },
     ],
+    notifications: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Notification'
+    }]
 });
 const Admin = mongoose.model('Admin', adminSchema);
 adminSchema.index({ 'globalPromoCodes.code': 1 }, { unique: true });

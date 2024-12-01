@@ -12,6 +12,7 @@ import PendingUsers from "../../newComponents/PendingUsers";
 import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import ActivityView from '../../newComponents/ActivitiesView';
+import Notifications from "../../newComponents/Notifications";
 
 const navLinks = [
   { path: "/admin/activity-category", label: "Activity Category" },
@@ -24,7 +25,8 @@ const navLinks = [
   { path: "/admin/revenue-sales", label: "Sales" },
   { path: "/admin/pendingUsers", label: "Pending Users" },
   { path: "/admin/account-management", label: "Account Management" },
-  { path: "/admin/promo-codes", label: "Promo Codes" } // Added promo codes link
+  { path: "/admin/promo-codes", label: "Promo Codes" }, // Added promo codes link
+  { path: "/admin/notifications", label: "Notifications" } // Added promo codes link
 ];
 
 function AdminDashboard() {
@@ -95,6 +97,7 @@ function AdminDashboard() {
         />
         <Route path="/revenue-sales" element={<RevenueSalesView userType="admin" />} />
         <Route path='/activities' element={<ActivityView role='admin' baseUrl='http://localhost:3000/api/admin'/>} />
+        <Route path="/notifications" element={<Notifications baseUrl='http://localhost:3000/api/admin' userType='admin'/>} />
       </Routes>
     </div>
   );

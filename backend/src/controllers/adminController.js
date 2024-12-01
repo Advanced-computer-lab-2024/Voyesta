@@ -9,7 +9,10 @@ const touristModel = require('../Models/Tourist');
 const cron = require('node-cron');
 const Tourist = require('../Models/Tourist');
 const Product = require('../Models/Product');
+const sendGrid = require('@sendgrid/mail');
+const Notification = require('../Models/Notification');
 
+sendGrid.setApiKey('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');
 
 // Create a new Admin profile
 const createAdmin = async (req , res) => {
@@ -205,7 +208,6 @@ const createPromoCodeHelper = async (userId, username) => {
 
     try {
         const admin = await adminModel.findOne({username: 'admin'});
-        console.log(admin.promoCodes);
 
         if (!admin) {
             throw new Error('Admin not found');
@@ -241,11 +243,34 @@ const checkBirthdaysAndGeneratePromoCodes = async () => {
         }
       });
   
-      console.log(`Found ${tourists.length} tourists with birthdays today.`);
-  
       for (const tourist of tourists) {
         const promoCode = await createPromoCodeHelper(tourist._id, tourist.username);
-        console.log(`Promo code created for ${tourist.username}: ${promoCode}`);
+        
+        if (!tourist.notifications){
+            tourist.notifications = [];
+        }
+        const notification = new Notification({ message: `Your promo code is ${promoCode}. Use it whenever you want its your birthdaayyyy!!!` });
+        await notification.save();
+
+        tourist.notifications.push(notification);
+        await tourist.save();
+
+        const emailData = {
+            to: tourist.email,
+            from: 'voyesta@outlook.com',
+            subject: 'Notification',
+            text: `Your promo code is ${promoCode}. Use it whenever you want its your birthdaayyyy!!!`,
+            html: `<p>${`Your promo code is ${promoCode}. Use it whenever you want its your birthdaayyyy!!!`}</p>`,
+        };
+
+        sendGrid
+        .send(emailData)
+        .then(() => console.log('Email sent'))
+        .catch((error) => {
+            console.error('Error:', error);
+            res.status(500).json({ message: 'Error sending message', error });
+        });
+
       }
     } catch (error) {
       console.error('Error checking birthdays and generating promo codes:', error);
@@ -393,18 +418,47 @@ const checkProductStockLevels = async () => {
       if (outOfStockProducts.length > 0) {
         console.log('Out of stock products:');
         for (const product of outOfStockProducts) {
-          console.log(`Product ${product.name} is out of stock.`);
-          
+          const message = `Product ${product.name} is out of stock.`;
+          const notification = new Notification({ message: message });
+          await notification.save();
           // Notify the seller
           const seller = await Seller.findById(product.createdBy._id);
           if (seller) {
-            console.log(`Notifying seller ${seller.username} about out of stock product ${product.name}.`);
+            if (!seller.notifications) {
+                seller.notifications = [];
+            }
+
+            seller.notifications.push(notification);
+            seller.save();
+
+            const emailData = {
+                to: seller.email,
+                from: 'voyesta@outlook.com',
+                subject: 'Notification',
+                text: message,
+                html: `<p>${message}</p>`,
+            };
+    
+            sendGrid
+            .send(emailData)
+            .then(() => console.log('Email sent'))
+            .catch((error) => {
+                console.error('Error:', error);
+                res.status(500).json({ message: 'Error sending message', error });
+            });
           }
   
           // Notify the admin
-          const admin = await adminModel.findOne({ username: 'admin' });
-          if (admin) {
-            console.log(`Notifying admin about out of stock product ${product.name}.`);
+          const adminArray = await adminModel.find();
+          if (adminArray.length > 0) {
+            for (const admin of adminArray) {
+                if (!admin.notifications) {
+                    admin.notifications = [];
+                }
+    
+                admin.notifications.push(notification);
+                admin.save();
+            }
           }
         }
       } else {
