@@ -26,7 +26,8 @@ const { createTourist, getTourists, updateTourist,
     bookmarkItinerary,
     unbookmarkItinerary,
     getBookmarkedItems,
-    isBookmarked} = require("../controllers/touristController");
+    isBookmarked,
+    clearCart} = require("../controllers/touristController");
 const { get } = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const itineraryController = require('../controllers/itineraryController');
@@ -38,6 +39,7 @@ const { createBooking, getBookings, cancelBooking, payForBooking ,viewAllPaidBoo
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 const { requestNotification, getNotifications } = require('../controllers/NotificationController');
+const { sendPaymentReceipt } = require('../controllers/purchaseController');
 
 _.post("/add", createTourist);
 _.get("/get", authenticate, getTourists);
@@ -103,7 +105,7 @@ _.get('/getCart', authenticate, productController.getCart);
 _.post('/updateQuantity', authenticate, productController.updateCartQuantity);
 
 _.delete('/deleteAddresses/:id', deleteAddresses);
-_.post('/redeemPromoCode', redeemPromoCode);
+_.post('/redeemPromoCode', authenticate, redeemPromoCode);
 
 _.post('/bookmark', authenticate,bookmarkActivity);
 _.delete('/bookmark/:id', authenticate,unbookmarkActivity);
@@ -114,5 +116,8 @@ _.get('/isBookmarked/:id', authenticate, isBookmarked);
 
 _.post('/requestNotification', authenticate, requestNotification);
 _.get('/getNotifications', authenticate, getNotifications);
+
+_.post('/sendPaymentReceipt', authenticate, sendPaymentReceipt);
+_.post('/clearCart', authenticate, clearCart);
 
 module.exports = _;

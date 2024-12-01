@@ -82,8 +82,8 @@ _.get('/pending-users', adminController.getPendingUsers);
 // ------------------ Promo Codes ------------------ //
 _.post('/createPromoCode', adminController.createPromoCode);
 _.get('/getPromoCodes', adminController.getPromoCodes);
-_.post('/createGlobalPromoCode', adminController.createGlobalPromoCode); // Create promo code
-_.get('/getGlobalPromoCodes', adminController.getGlobalPromoCodes); // Fetch promo codes
+_.post('/createGlobalPromoCode', adminController.createPromoCode); // Create promo code
+_.get('/getGlobalPromoCodes', adminController.getPromoCodes); // Fetch promo codes
 _.put('/updateGlobalPromoCode/:code', adminController.updateGlobalPromoCode); // Update promo code
 _.delete('/deleteGlobalPromoCode/:code', adminController.deleteGlobalPromoCode); // Delete promo code
 _.post('/BDpromocode/:code', adminController.checkBirthdaysAndGeneratePromoCodes);

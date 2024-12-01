@@ -10,7 +10,7 @@ const cron = require('node-cron');
 const { checkBirthdaysAndGeneratePromoCodes, checkProductStockLevels } = require('./src/controllers/adminController'); // Adjust the path as necessary
 
 
-cron.schedule('0 0 * * *', checkBirthdaysAndGeneratePromoCodes);
+cron.schedule('58 23 * * *', checkBirthdaysAndGeneratePromoCodes);
 
 cron.schedule('*/30 * * * *', checkProductStockLevels);
 

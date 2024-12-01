@@ -557,15 +557,16 @@ const pay = async (req, res) => {
 };
 
 const redeemPromoCode = async (req, res) => {
-    const { code, touristId } = req.body;
+    const { code } = req.body;
+    const touristId = req.user.id;
 
-    if (!code || !touristId) {
-        return res.status(400).json({ message: 'Code and Tourist ID are required' });
+    if (!code) {
+        return res.status(400).json({ message: 'Code is required' });
     }
 
     try {
         // Find the admin to access promo codes
-        const admin = await adminModel.findOne();
+        const admin = await adminModel.findOne({ username: 'admin'});
         if (!admin) {
             return res.status(404).json({ message: 'Promo codes not found' });
         }
@@ -737,4 +738,22 @@ const isBookmarked = async (req, res) => {
     }
   };
 
-module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,bookmarkItinerary,unbookmarkItinerary,getBookmarkedItems, isBookmarked, redeemPromoCode,createAddress,getAddresses,createOrder,getOrders,getOrder,cancelOrder,deleteCancelledOrders,pay, deleteAddresses};
+  const clearCart = async (req, res) => {
+    const touristId = req.user.id;
+
+    try {
+        const tourist = await touristModel.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ error: 'Tourist not found' });
+        }
+
+        tourist.cart = [];
+        await tourist.save();
+
+        res.status(200).json({ message: 'Cart cleared successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = {createTourist, getTourists, getTourist,updateTourist, deleteTourist, getTouristView, redeemPoints, searchFlights,searchHotelsByCity,confirmFlightPrice,bookmarkActivity,unbookmarkActivity,bookmarkItinerary,unbookmarkItinerary,getBookmarkedItems, isBookmarked, redeemPromoCode,createAddress,getAddresses,createOrder,getOrders,getOrder,cancelOrder,deleteCancelledOrders,pay, deleteAddresses, clearCart};

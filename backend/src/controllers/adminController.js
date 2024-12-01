@@ -142,7 +142,7 @@ const getPendingUsers = async (req, res) => {
     }
 };
 const createPromoCode = async (req, res) => {
-    const { code, discount, validFrom, validUntil, usageLimit } = req.body;
+    const { code, discount, validFrom, validUntil } = req.body;
 
     // Validate the required fields
     if (!code || !discount || !validFrom || !validUntil) {
@@ -162,7 +162,7 @@ const createPromoCode = async (req, res) => {
         }
 
         // Check if the promo code already exists
-        const existingPromoCode = admin.promoCodes.find((promo) => promo.code === code);
+        const existingPromoCode = admin.globalPromoCodes.find((promo) => promo.code === code);
         if (existingPromoCode) {
             return res.status(400).json({ message: 'Promo code already exists' });
         }
@@ -173,14 +173,15 @@ const createPromoCode = async (req, res) => {
             discount,
             validFrom: new Date(validFrom),
             validUntil: new Date(validUntil),
-            usageLimit,
+            redeemedBy: [],
+            status: 'active',
         };
 
-        admin.promoCodes.push(promoCode);
+        admin.globalPromoCodes.push(promoCode);
 
         await admin.save();
 
-        res.status(201).json({ message: 'Promo code created successfully', promoCode });
+        res.status(201).json({ message: 'Promo code created successfully', code, discount });
     } catch (error) {
         res.status(500).json({ message: 'Error creating promo code', error: error.message });
     }
@@ -193,7 +194,7 @@ const getPromoCodes = async (req, res) => {
             return res.status(404).json({ message: 'Admin not found' });
         }
 
-        res.status(200).json(admin.promoCodes);
+        res.status(200).json(admin.globalPromoCodes);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching promo codes', error: error.message });
     }
@@ -213,7 +214,7 @@ const createPromoCodeHelper = async (userId, username) => {
             throw new Error('Admin not found');
         }
 
-        admin.promoCodes.push({ code, discount, validFrom, validUntil, userId });
+        admin.globalPromoCodes.push({ code, discount, validFrom, validUntil });
         await admin.save();
 
         return code;

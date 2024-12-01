@@ -9,7 +9,7 @@ const CheckOutPage = ({ baseUrl }) => {
 
   const taxRate = 0.10;
   const tax = total * taxRate;
-  const grandTotal = total + tax;
+  // const grandTotal = total + tax;
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -24,6 +24,10 @@ const CheckOutPage = ({ baseUrl }) => {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [isDuplicateAddress, setIsDuplicateAddress] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(total + tax);
+  const [newTotal, setNewTotal] = useState(grandTotal);
 
   const getAuthHeaders = () => ({
     headers: {
@@ -140,6 +144,25 @@ const CheckOutPage = ({ baseUrl }) => {
     });
   };
 
+  const handleApplyPromoCode = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/tourist/redeemPromoCode', { code: promoCode }, getAuthHeaders());
+      if (response.data && response.data.discount) {
+        const discountAmount = (grandTotal * response.data.discount) / 100;
+        const updatedTotal = grandTotal - discountAmount;
+        setDiscount(discountAmount);
+        setNewTotal(updatedTotal);
+        setGrandTotal(updatedTotal); // Update the grand total
+      } else {
+        // Handle case where promo code is invalid or no discount is returned
+        alert('Invalid promo code or no discount available');
+      }
+    } catch (error) {
+      console.error('Error applying promo code:', error);
+      alert('Error applying promo code');
+    }
+  };
+
   return (
     <section className="bg-blue-100 py-8 antialiased dark:bg-gray-900 md:py-16">
       <form onSubmit={handleSubmit} className="mx-auto flex max-w-screen-xl flex-col gap-8 px-4 lg:flex-row 2xl:px-0">
@@ -216,6 +239,12 @@ const CheckOutPage = ({ baseUrl }) => {
         <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Tax (10%)</dt>
         <dd className="text-base font-medium text-gray-900 dark:text-white">${tax.toFixed(2)}</dd>
       </dl>
+      {discount > 0 && (
+        <dl className="flex items-center justify-between gap-4 py-3">
+            <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Discount:</dt> 
+            <dd className="text-base font-medium text-gray-900 dark:text-white">${discount.toFixed(2)}</dd>
+        </dl>
+      )}
       <dl className="flex items-center justify-between gap-4 py-3">
         <dt className="text-base font-bold text-gray-900 dark:text-white">Total</dt>
         <dd className="text-base font-bold text-gray-900 dark:text-white">${grandTotal.toFixed(2)}</dd>
@@ -235,18 +264,20 @@ const CheckOutPage = ({ baseUrl }) => {
     <input
       type="text"
       id="promoCode"
+      value={promoCode}
+      onChange={(e) => setPromoCode(e.target.value)}
       placeholder="Enter your promo code"
       className="w-full rounded-lg bg-gray-50 p-2.5 pr-20 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-500"
     />
     <button
       type="button"
+      onClick={handleApplyPromoCode}
       className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent px-4 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
     >
       Apply
     </button>
   </div>
 </div>
-
 
 
 

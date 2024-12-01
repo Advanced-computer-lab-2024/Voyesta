@@ -114,12 +114,18 @@ const CheckoutForm = ({ baseUrl }) => {
         } else {
           if (result.paymentIntent.status === "succeeded") {
             console.log("Payment succeeded");
+            await sendPaymentReceiptEmail();
+            await clearCart();
           }
         }
       } else if (paymentMethod === "wallet") {
         console.log("Payment succeeded with wallet");
+        await sendPaymentReceiptEmail();
+        await clearCart();
       } else if (paymentMethod === "cod") {
         console.log("Cash on delivery selected");
+        await sendPaymentReceiptEmail();
+        await clearCart();
       }
 
       const res = await axios.post(url, { details, total , paymentMethod}, getAuthHeaders());
@@ -129,6 +135,29 @@ const CheckoutForm = ({ baseUrl }) => {
 
     } catch (error) {
       console.error("Error:", error);
+    }
+  };
+
+  const sendPaymentReceiptEmail = async () => {
+    try {
+      await axios.post(`${baseUrl}/sendPaymentReceipt`, {
+        email: address.email,
+        total,
+        paymentMethod,
+        details
+      }, getAuthHeaders());
+      console.log('Payment receipt sent successfully');
+    } catch (error) {
+      console.error('Error sending payment receipt:', error);
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      await axios.post(`${baseUrl}/clearCart`, {}, getAuthHeaders());
+      console.log('Cart cleared successfully');
+    } catch (error) {
+      console.error('Error clearing cart:', error);
     }
   };
 

@@ -1,5 +1,7 @@
 // controllers/purchaseController.js
 const Purchase = require('../Models/purchase');
+const sendGrid = require('@sendgrid/mail');
+sendGrid.setApiKey('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');
 
 const createPurchase = async (req, res) => {
     const { productId, touristId, quantity } = req.body;
@@ -61,10 +63,36 @@ const deletePurchase = async (req, res) => {
     }
 };
 
+const sendPaymentReceipt = async (req, res) => {
+    const { email, total, paymentMethod, details } = req.body;
+    
+    const message = {
+        to: email,
+        from: 'voyesta@outlook.com', // Your verified sender email
+        subject: 'Payment Receipt',
+        text: `Thank you for your payment of $${total.toFixed(2)} using ${paymentMethod}.`,
+        html: `
+          <p>Thank you for your payment of <strong>$${total.toFixed(2)}</strong> using <strong>${paymentMethod}</strong>.</p>
+          <h3>Order Details:</h3>
+            <p>${details}</p>
+          <p><strong>Grand Total: $${total.toFixed(2)}</strong></p>
+        `,
+    };
+
+    try {
+        await sendGrid.send(message);
+        res.status(200).json({ message: 'Payment receipt sent successfully' });
+    } catch (error) {
+        console.error('Error sending payment receipt:', error);
+        res.status(500).json({ message: 'Error sending payment receipt', error: error.message });
+    }
+};
+
 module.exports = {
     createPurchase,
     getPurchases,
     getPurchaseById,
     updatePurchase,
-    deletePurchase
+    deletePurchase,
+    sendPaymentReceipt,
 };
