@@ -13,6 +13,14 @@ const { createTourist, getTourists, updateTourist,
     bookFlight,
     bookHotel,  
     searchHotelsByCity,
+    createAddress,
+    getAddresses,
+    createOrder,
+    getOrders,
+    getOrder,
+    cancelOrder,
+    pay, 
+    deleteAddresses,
     bookmarkActivity,
     unbookmarkActivity,
     bookmarkItinerary,
@@ -77,6 +85,24 @@ _.get('/searchHotels', authenticate, searchHotelsByCity);
 _.post('/confirmFlightPrice', authenticate, confirmFlightPrice);
 
 _.get('/transportationActivities', authenticate, activityController.getTransportationActivities);
+
+_.post('/createAddress', authenticate, createAddress);
+_.get('/getAddresses', authenticate, getAddresses); 
+_.post('/createOrder', authenticate, createOrder);
+_.get('/getOrders', authenticate, getOrders);
+_.get('/getOrder/:orderId', authenticate, getOrder);
+_.patch('/cancelOrder/:orderId', authenticate, cancelOrder);
+_.patch('/pay', authenticate, pay);
+_.post('/addToCart', authenticate, productController.addCart);
+_.delete('/removefromCart', authenticate, productController.removeCart);
+_.post('/AddToWishList',authenticate,productController.addToWishlist);
+_.get('/ViewList',authenticate,productController.getWishlist);
+_.delete('/deleteWish',authenticate,productController.removeFromWishlist);
+_.post('/moveToCart', authenticate, productController.moveWishlistToCart);
+_.get('/getCart', authenticate, productController.getCart);
+_.post('/updateQuantity', authenticate, productController.updateCartQuantity);
+
+_.delete('/deleteAddresses/:id', deleteAddresses);
 _.post('/redeemPromoCode', redeemPromoCode);
 
 _.post('/bookmark', authenticate,bookmarkActivity);

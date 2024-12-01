@@ -17,13 +17,14 @@ import TourGuideDashboard from './pages/Dashboards/TourGuideDashboard';
 import AdvertiserDashboard from './pages/Dashboards/AdvertiserDashboard';
 import SellerDashboard from './pages/Dashboards/SellerDashboard';
 import TourismGovernorDashboard from './pages/Dashboards/TourismGovernorDashboard';
-import TouristDashboard from './pages/Dashboards/TouristDashboard';
+import TouristDashboard from './Pages/Dashboards/TouristDashboard';
 import MapView from './newComponents/MapView';
 import ActivitiesView from './newComponents/ActivitiesView';
 import ActivityDetail from './newComponents/ActivityDetail';
 import MuseumHistoricalPlaceDetail from './newComponents/MuseumHistoricalPlaceDetail';
 import ItineraryDetail from './newComponents/ItineraryDetail'; // Import the new component
-
+import cart from './newComponents/cart';
+import Wishlist from './newComponents/Wishlist'; // Import the Wishlist component
 function App() {
   return (
     <Routes>
@@ -46,8 +47,10 @@ function App() {
       <Route path='/activity/:id' element={<ActivityDetail />} />
       <Route path='/museumHistoricalPlace/:id' element={<MuseumHistoricalPlaceDetail />} />
       <Route path='/itinerary/:id' element={<ItineraryDetail />} /> {/* New route for itinerary detail */}
+      <Route path="/cart" element={cart} />
+      <Route path="/wishlist" element={Wishlist} />
     </Routes>
   );
 }
 
-export default App;
+export default App;
