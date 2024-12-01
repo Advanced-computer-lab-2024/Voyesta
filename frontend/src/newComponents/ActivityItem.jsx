@@ -138,7 +138,13 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       await axios.post(url, { bookableModel: 'Activity', eventDate }, getAuthHeaders());
       alert('Booking successful!');
       setShowPopup(false);
-      navigate('/tourist/bookings');
+
+      // Determine the price to pass to navigate
+      // const total = typeof activity.price === 'object' && activity.price !== null
+      // ? activity.price.min
+      // : activity.price;
+
+       navigate('/tourist/bookings');
     } catch (error) {
       console.error('Error booking activity:', error);
       alert('Error booking activity.');

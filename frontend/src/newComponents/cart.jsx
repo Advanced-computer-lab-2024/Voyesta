@@ -58,7 +58,7 @@ function Cart({ baseUrl }) {
     
     
     // const total = cartItems.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
-    navigate('/tourist/checkout', { state: { total, details } });
+    navigate('/tourist/checkout', { state: { from : 'cart',total, details } });
   };
 
   const handleDelete = (productId) => {

@@ -6,7 +6,9 @@ import axios from 'axios';
 const CheckOutPage = ({ baseUrl }) => {
   const location = useLocation();
   const { total, details } = location.state || { total: 0, details: [] };
-
+  const { bookingId } = location.state || { bookingId: '' };
+  const previousPage = location.state?.from || 'unknown'; // can be 'bookings' or 'cart'
+  // console.log('Checkout page from:', previousPage);
   const taxRate = 0.10;
   const tax = total * taxRate;
   const grandTotal = total + tax;
@@ -131,13 +133,28 @@ const CheckOutPage = ({ baseUrl }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/tourist/payment', {
-      state: {
-        total: grandTotal,
-        address: formData,
-        details: details,
-      },
-    });
+    
+    if (previousPage === 'bookings') {
+      navigate('/tourist/payment', {
+        state: {
+          from: 'bookings',
+          total: grandTotal,
+          address: formData,
+          bookingId: bookingId, 
+        },
+      });
+        
+
+    } else {
+      navigate('/tourist/payment', {
+        state: {
+          from: 'cart',
+          total: grandTotal,
+          address: formData,
+          details: details,
+        },
+      });
+    }
   };
 
   return (
@@ -146,7 +163,7 @@ const CheckOutPage = ({ baseUrl }) => {
         {/* Left Section: Form */}
         <div className="flex-1 space-y-8">
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Delivery Details</h3>
+             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{previousPage === 'bookings' ? 'Billing Details' : 'Delivery Details'}</h3> {/*this */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {['name', 'email', 'address', 'city', 'state', 'zip'].map((field) => (
                 <div key={field}>

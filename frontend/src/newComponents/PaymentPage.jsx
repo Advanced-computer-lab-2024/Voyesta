@@ -26,6 +26,8 @@ const CheckoutForm = ({ baseUrl }) => {
   const elements = useElements();
   const location = useLocation();
   const { total, address: passedAddress , details  } = location.state || { total: 0, address: null , details: [] };
+  const { bookingId } = location.state || { bookingId: '' };
+  const previousPage = location.state?.from || 'unknown';
   const navigate = useNavigate();
 
 
@@ -74,6 +76,8 @@ const CheckoutForm = ({ baseUrl }) => {
       return;
     }
 
+
+    if(previousPage === 'cart'){
     try {
       const url = baseUrl + '/createOrder';
       const response = await axios.patch(
@@ -130,6 +134,66 @@ const CheckoutForm = ({ baseUrl }) => {
     } catch (error) {
       console.error("Error:", error);
     }
+  }
+  else if(previousPage === 'bookings'){
+    try{
+      const url = baseUrl +  '/payForBooking/' + bookingId;
+      const response = await axios.patch(
+        `${baseUrl}/pay`,
+        {
+          total,
+          paymentMethod,
+          currency: "usd",
+        },
+        getAuthHeaders()
+      );
+
+      if (response.status !== 201) {
+        throw new Error("Payment initiation failed");
+      }
+
+      if (paymentMethod === "card") {
+        const { clientSecret } = response.data;
+
+        const result = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name: address.name,
+              email: address.email,
+              address: {
+                line1: address.address,
+                city: address.city,
+                state: address.state,
+                postal_code: address.zip,
+              },
+            },
+          },
+        });
+
+        if (result.error) {
+          console.error(result.error.message);
+        } else {
+          if (result.paymentIntent.status === "succeeded") {
+            console.log("Payment succeeded");
+          }
+        }
+      } else if (paymentMethod === "wallet") {
+        console.log("Payment succeeded with wallet");
+      } 
+
+      const res = await axios.patch(url, {}, getAuthHeaders());
+      console.log('booking coned :', res.data);
+
+      navigate('/tourist/bookings');
+
+
+    }
+
+    catch (error) {
+      console.error("Error:", error);
+    }
+  }
   };
 
   return (
@@ -144,7 +208,7 @@ const CheckoutForm = ({ baseUrl }) => {
         >
           <option value="card">Card</option>
           <option value="wallet">Wallet</option>
-          <option value="cod">Cash on Delivery</option>
+          {previousPage !== 'bookings' && <option value="cod">Cash on Delivery</option>}
         </select>
       </div>
 

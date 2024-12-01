@@ -111,6 +111,7 @@ const EventCard = ({ booking, baseUrl, handlePayment, handleCancel }) => {
       )}
       <p>Event Date: {new Date(booking.eventDate).toLocaleDateString()}</p>
       <p>Status: {booking.status}</p>
+      <p>Price: {booking.amount}</p>
 
       {!isEventAttended && (
         <>

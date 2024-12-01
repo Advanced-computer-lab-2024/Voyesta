@@ -1,11 +1,16 @@
 // frontend/src/pages/BookingsPage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate , useLocation } from 'react-router-dom';
 import EventCard from '../newComponents/EventCard';
 
 const BookingsPage = ({ baseUrl }) => {
+  // const location = useLocation();
   const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
+  // const [total, setTotal] = location.state.total || { total: 0 };
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchBookings();
@@ -24,20 +29,35 @@ const BookingsPage = ({ baseUrl }) => {
     }
   };
 
-  const handlePayment = async (bookingId) => {
-    try {
-      const response = await axios.patch(`${baseUrl}/payForBooking/${bookingId}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      alert(response.data.message);
-      fetchBookings(); // Refresh bookings after payment
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      alert(error.response.data.error);
-    }
-  };
+  // const handlePayment = async (bookingId) => {
+  //   try {
+  //     const response = await axios.patch(`${baseUrl}/payForBooking/${bookingId}`, {}, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`
+  //       }
+  //     });
+  //     alert(response.data.message);
+  //     fetchBookings(); // Refresh bookings after payment
+  //   } catch (error) {
+  //     console.error('Error processing payment:', error);
+  //     alert(error.response.data.error);
+  //   }
+  // };
+
+const handlePayment = async (bookingId) => {
+  
+  console.log('Payment for booking:', bookingId);
+  // find a booking by id
+  const booking = bookings.find(booking => booking._id === bookingId);
+  // calculate total
+  const total = booking.amount;
+  console.log('Total:', total ); 
+
+  navigate('/tourist/checkout', { state: { from: 'bookings',bookingId, total } });
+}
+
+
+
 
   const handleCancel = async (bookingId) => {
     try {
