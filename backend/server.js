@@ -10,7 +10,7 @@ require('dotenv').config();
 // Set the port from the environment variable or use 3000
 const port = process.env.PORT || 3000;
 
-cron.schedule('25 1 * * *', notifyUpcomingEvents);
+cron.schedule('0 0 * * *', notifyUpcomingEvents);
 console.log('Scheduler started');
 
  // Starting server
