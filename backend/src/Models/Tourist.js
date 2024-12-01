@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+// const { v4: uuidv4 } = require('uuid');
 
 
 // only need order fields if there are orders
@@ -106,7 +107,7 @@ const touristSchema = new Schema({
             // }
     //     }
     // }],
-    addresses: [{ name : String, email : String ,address : String, city : String, state : String, zip : String}],
+    addresses: [{  name : String, email : String ,address : String, city : String, state : String, zip : String}],
 
     cart: [
         {
