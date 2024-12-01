@@ -87,6 +87,7 @@ _.get('/getGlobalPromoCodes', adminController.getGlobalPromoCodes); // Fetch pro
 _.put('/updateGlobalPromoCode/:code', adminController.updateGlobalPromoCode); // Update promo code
 _.delete('/deleteGlobalPromoCode/:code', adminController.deleteGlobalPromoCode); // Delete promo code
 _.post('/BDpromocode/:code', adminController.checkBirthdaysAndGeneratePromoCodes);
+_.get('/CheckStock', adminController.checkProductStockLevels);
 _.get('/getRevenue', authenticate, getRevenue);
 _.post('/sendNotification', authenticate, sendNotification);
 _.get('/getActivity', authenticate, getActivity);
