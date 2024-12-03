@@ -181,10 +181,10 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
           {isEditable && (
             <>
               <img
-  onClick={() => setEditMode(true)}
-  src={assets.editIcon}
-  className="w-6 h-6 cursor-pointer absolute top-3 right-20"
-/>
+                onClick={() => setEditMode(true)}
+                src={assets.editIcon}
+            className="w-6 h-6 cursor-pointer absolute top-3 right-20"
+            />
 
               <button
                 onClick={handleArchiveToggle}
