@@ -30,16 +30,16 @@ const ActivitiesView = ({ baseUrl, role }) => {
     try {
       const response = await axios.get(`${baseUrl}/getActivity`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       console.log(response.data);
       setActivities(response.data);
       setFilteredActivities(response.data);
-      setPrices(response.data.map(activity => activity.price));
+      setPrices(response.data.map((activity) => activity.price));
     } catch (error) {
       console.error('Error fetching activities:', error);
-      setMessage("Error fetching activities.");
+      setMessage('Error fetching activities.');
     }
   };
 
@@ -47,21 +47,22 @@ const ActivitiesView = ({ baseUrl, role }) => {
     let filtered = [...activities];
 
     if (category) {
-      filtered = filtered.filter(activity => activity.category._id === category);
+      filtered = filtered.filter((activity) => activity.category._id === category);
     }
     if (rating) {
-      filtered = filtered.filter(activity => {
-        const avgRating = activity.ratings.length > 0
-          ? activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length
-          : 0;
+      filtered = filtered.filter((activity) => {
+        const avgRating =
+          activity.ratings.length > 0
+            ? activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length
+            : 0;
         return avgRating === parseFloat(rating);
       });
     }
     if (startDate) {
-      filtered = filtered.filter(activity => new Date(activity.date) >= new Date(startDate));
+      filtered = filtered.filter((activity) => new Date(activity.date) >= new Date(startDate));
     }
     if (endDate) {
-      filtered = filtered.filter(activity => new Date(activity.date) <= new Date(endDate));
+      filtered = filtered.filter((activity) => new Date(activity.date) <= new Date(endDate));
     }
 
     setFilteredActivities(filtered);
@@ -79,12 +80,14 @@ const ActivitiesView = ({ baseUrl, role }) => {
 
   const sortActivities = (option, activitiesToSort) => {
     const sorted = [...activitiesToSort].sort((a, b) => {
-      const avgRatingA = a.ratings.length > 0
-        ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length
-        : 0;
-      const avgRatingB = b.ratings.length > 0
-        ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length
-        : 0;
+      const avgRatingA =
+        a.ratings.length > 0
+          ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length
+          : 0;
+      const avgRatingB =
+        b.ratings.length > 0
+          ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length
+          : 0;
 
       if (option === 'priceAsc') return a.price - b.price;
       if (option === 'priceDesc') return b.price - a.price;
@@ -96,12 +99,25 @@ const ActivitiesView = ({ baseUrl, role }) => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex bg-gray-100 min-h-screen">
       {role === 'tourist' && (
-        <div className="w-1/5 p-4 bg-red-300">
-          <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-          <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">Reset Filters</button>
-          <PriceFilterBar items={activities} setItems={setFilteredActivities} convertedPrices={convertedPrices} priceProperty="price" />
+        <div className="w-1/5 p-4 bg-gray-200 shadow-md">
+
+
+
+
+<div className="flex justify-center items-center mb-4">
+
+          <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">
+            Reset Filters
+          </button>
+          </div>
+          <PriceFilterBar
+            items={activities}
+            setItems={setFilteredActivities}
+            convertedPrices={convertedPrices}
+            priceProperty="price"
+          />
           <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
           <RatingFilter setSelectedRating={setRating} />
           <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
@@ -112,7 +128,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
-              className="w-full p-2 border"
+              className="w-full p-2 border rounded"
             >
               <option value="">Choose...</option>
               <option value="priceAsc">Price: Low to High</option>
@@ -124,18 +140,23 @@ const ActivitiesView = ({ baseUrl, role }) => {
 
           <button
             onClick={applyFilters}
-            className="w-full p-2 bg-blue-500 text-white rounded"
+            className="form_control"
+            style={{direction: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '60px'}}
           >
             Apply Filters
           </button>
           <div className="mb-4">
-            <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+            <CurrencyConverter
+              prices={prices}
+              setConvertedPrices={setConvertedPrices}
+              setTargetCurrency={setTargetCurrency}
+            />
           </div>
         </div>
       )}
 
-      <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Activities</h1>
+      <div className="relative text-center bg-white shadow-md rounded p-6 w-2/3 mx-auto">
+        <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Activities</h1>
         {message && <div className="text-red-500 mb-4">{message}</div>}
 
         {role === 'advertiser' && (
@@ -156,7 +177,14 @@ const ActivitiesView = ({ baseUrl, role }) => {
             </div>
 
             {activeTab === 'viewActivity' ? (
-              <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
+              <ActivitiesList
+                fetchActivities={fetchActivities}
+                baseUrl={baseUrl}
+                activities={filteredActivities}
+                role={role}
+                convertedPrices={convertedPrices}
+                targetCurrency={targetCurrency}
+              />
             ) : (
               <CreateActivity />
             )}
@@ -164,7 +192,14 @@ const ActivitiesView = ({ baseUrl, role }) => {
         )}
 
         {role !== 'advertiser' && (
-          <ActivitiesList fetchActivities={fetchActivities} baseUrl={baseUrl} activities={filteredActivities} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
+          <ActivitiesList
+            fetchActivities={fetchActivities}
+            baseUrl={baseUrl}
+            activities={filteredActivities}
+            role={role}
+            convertedPrices={convertedPrices}
+            targetCurrency={targetCurrency}
+          />
         )}
       </div>
     </div>

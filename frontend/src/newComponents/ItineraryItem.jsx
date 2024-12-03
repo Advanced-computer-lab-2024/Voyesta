@@ -160,7 +160,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
+    <div className="bg-grey shadow-lg rounded-lg  border-gray-200 overflow-hidden hover:scale-105 transition-transform duration-300 mb-6" style={{padding: '20px'}}>
       {isEditing ? (
         <>
           <div>
@@ -259,19 +259,41 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
         </>
       ) : (
         <>
-          <h2 className="text-xl font-bold">{itinerary.name}</h2>
-          <p>Language: {itinerary.tourLanguage}</p>
-          <p>Price: {convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${itinerary.tourPrice.toFixed(2)} USD`}</p>
-          <p>Available Dates: {itinerary.availableDates.map(date => formatDate(date)).join(', ')}</p>
-          <p>Activities: {itinerary.activities.map(activity => activity.name).join(', ')}</p>
+          <h2 className="text-2xl font-bold text-gray-800">{itinerary.name}</h2>
+          <div className="flex flex-wrap justify-between mt-3 text-gray-600">
+          <p className="text-sm">Language: <span className="font-medium">{itinerary.tourLanguage}</span></p>
+          <p className="text-sm">Price: <span className="font-medium">
+            {convertedPrice
+              ? `${convertedPrice.toFixed(2)} ${targetCurrency}`
+              : `${itinerary.tourPrice.toFixed(2)} USD`}
+          </span></p>
+        </div>
+        <div className="mt-2">
+          <p className="text-sm">
+            <span className="font-medium">Available Dates:</span> {itinerary.availableDates.map(formatDate).join(', ')}
+          </p>
+        </div>
+        <div className="mt-2">
+          <p className="text-sm">
+            <span className="font-medium">Activities:</span> {itinerary.activities.map((activity) => activity.name).join(', ')}
+          </p>
+        </div>
           <p>Tags: {itinerary.tags.map(tag => tag.Name).join(', ')}</p>
-          <p>Locations: {itinerary.locations.map(loc => `(${loc.lat}, ${loc.lng})`).join(', ')}</p>
-          <p>Timeline: {itinerary.timeline.join(', ')}</p>
+  {/* Locations */}
+  <div className="mt-2 text-sm">
+          <p>Pick-Up: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
+          <p>Drop-Off: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
+        </div>          <p>Timeline: {itinerary.timeline.join(', ')}</p>
           <p>Durations: {itinerary.durations.join(', ')}</p>
-          <p>Accessibility: {itinerary.accessibility.join(', ')}</p>
-          <p>Pick-Up Location: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
+          <div className="mt-2">
+          <p className="text-sm">
+            <span className="font-medium">Accessibility:</span> {itinerary.accessibility.join(', ')}
+          </p>
+        </div>          <p>Pick-Up Location: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
           <p>Drop-Off Location: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
-          <p>Status: {bookingActive ? "Active" : "Inactive"}</p>
+
+
+
           {role === ("admin" || "tourGuide") && <p>Inappropriate: {inappropriate ? "Yes" : "No"}</p>}
           {role === "tourGuide" &&<div className="flex justify-between mt-2 ">  
             <img
@@ -300,24 +322,28 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
           }
           {role === "tourist" && (
             <>
-              <button
-                onClick={() => setShowPopup(true)}
-                className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-              >
-                Book Itinerary
-              </button>
-              <button onClick={() => {
-                const link = generateShareLink(itinerary._id);
-                handleCopyLink(link);
-              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Share via Copy Link
-              </button>
-              <button onClick={() => {
-                const link = generateShareLink(itinerary._id);
-                handleShareViaEmail(link);
-              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Share via Email
-              </button>
+               <button
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                  onClick={() => setShowPopup(true)}
+                >
+                  Book Now
+                </button>
+              <div className="flex space-x-4">
+                <button
+                  className="bg-gray-200 text-gray-700 p-2 rounded-lg hover:bg-gray-300"
+                  onClick={() => navigator.clipboard.writeText(generateShareLink(itinerary._id))}
+                >
+                  Share Link
+                </button>
+                <button
+                  className="bg-gray-200 text-gray-700 p-2 rounded-lg hover:bg-gray-300"
+                  onClick={() =>
+                    window.location.href = `mailto:?subject=Check this out&body=${generateShareLink(itinerary._id)}`
+                  }
+                >
+                  Email
+                </button>
+              </div>
               {showPopup && (
                 <BookingPopup
                   item={itinerary}

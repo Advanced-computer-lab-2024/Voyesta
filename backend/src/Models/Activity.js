@@ -1,8 +1,7 @@
 const { text } = require('body-parser');
 
-mongoose = require('mongoose');
-const { Schema } = mongoose;
-
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const validatePriceType = (value) => {
   if (typeof value === 'number') {
@@ -14,91 +13,30 @@ const validatePriceType = (value) => {
   return false;
 };
 
-
-const activitySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
+const activitySchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
   location: {
-    lat: {
-        type: Number,
-        required: true
-    },
-    lng: {
-        type: Number,
-        required: true
-    }
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true }
   },
-  date: {
-    type: Date,
-    required: true
-  },
-  time: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Schema.Types.Mixed,
-    required: true,
-    validate : {
-      validator : validatePriceType,
-      message   : 'Price must be a number or an object with min and max properties'
-    }  
-    
-  },
-  specialDiscount: {
-    type: Number,
-    min: 0,
-    max: 100,
-    default: 0
-  },
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: 'ActivityCategory',
-    required: true
-  },
-  tags: [{
-    type: Schema.Types.ObjectId,
-    ref: 'PreferenceTag',
-    required: true
+  price: { type: Number, required: true },
+  specialDiscount: { type: Number },
+  category: { type: Schema.Types.ObjectId, ref: 'ActivityCategory', required: true },
+  tags: [{ type: Schema.Types.ObjectId, ref: 'PreferenceTag' }],
+  advertiser: { type: Schema.Types.ObjectId, ref: 'Advertiser', required: true },
+  imageUrl: { type: String, required: true }, // Add this line
+  ratings: [{
+    tourist: { type: Schema.Types.ObjectId, ref: 'Tourist', required: true },
+    rating: { type: Number, required: true }
   }],
-  advertiser: {
-    type: Schema.Types.ObjectId,
-    ref: 'Advertiser',
-    required: true
-  },
-  ratings:[{
-    tourist: {
-      type: Schema.Types.ObjectId,
-      ref: 'Tourist',
-      required: true
-    },
-    rating: {
-      type: Number,
-      required: true,
-      min:0,
-      max:5
-    }
-  }],
-  comments:[{
-    tourist: {
-      type: Schema.Types.ObjectId,
-      ref: 'Tourist',
-      required: true
-    },
-    comment: {
-      type: String,
-      required: true
-    }
-  }],
+  comments: [{
+    tourist: { type: Schema.Types.ObjectId, ref: 'Tourist', required: true },
+    comment: { type: String, required: true }
+  }]
 }, { timestamps: true });
 
-
-
-const activityModel = mongoose.model('Activity', activitySchema );
-module.exports= activityModel;
+const activityModel = mongoose.model('Activity', activitySchema);
+module.exports = activityModel;
