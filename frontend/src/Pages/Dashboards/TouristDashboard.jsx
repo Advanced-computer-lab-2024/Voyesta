@@ -25,13 +25,18 @@ import Notifications from "../../newComponents/Notifications";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
+  { path: "/tourist/profile", label: "Profile" },
   { path: "/tourist/products", label: "Products" },
   { path: "/tourist/activities", label: "Activities" },
   { path: "/tourist/itineraries", label: "Itineraries" },
+  { path: "/tourist/complaints", label: "Complaints" },
   { path: "/tourist/museums", label: "Museums" },
   { path: "/tourist/bookings", label: "Bookings" },
+  { path: "/tourist/purchases", label: "Purchases" },
+  { path: "/tourist/notifications", label: "Notifications" },,
   { path: "/tourist/cart", label: "Cart" },
-  { path: "/tourist/notifications", label: "Notifications" }
+  { path: "/tourist/Wishlist", label: "Wishlist" },
+  { path: "/tourist/orders", label: "My Orders" }
 ];
 
 function TouristDashboard(){
@@ -54,7 +59,7 @@ function TouristDashboard(){
         <Route path="/museums" element={
           <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
         }/>
-       {/*  {/* <Route path="/bookings" element={<BookingDropDownMenu />}/>
+       {/*  {/* <Route path="/bookings" element={<BookingDropDownMenu />}
         />  */}
         <Route path="/cart" element={<Cart baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path="/Wishlist" element={<Wishlist baseUrl="http://localhost:3000/api/tourist" />} />
