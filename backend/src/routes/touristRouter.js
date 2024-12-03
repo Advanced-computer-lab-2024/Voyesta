@@ -81,7 +81,7 @@ _.post('/addToCart', authenticate, productController.addCart);
 _.delete('/removefromCart', authenticate, productController.removeCart);
 _.post('/AddToWishList',authenticate,productController.addToWishlist);
 _.get('/ViewList',authenticate,productController.getWishlist);
-_.delete('/deleteWish',authenticate,productController.removeFromWishlist);
+_.post('/deleteWish',authenticate,productController.removeFromWishlist);
 _.post('/moveToCart', authenticate, productController.moveWishlistToCart);
 _.get('/getCart', authenticate, productController.getCart);
 _.post('/updateQuantity', authenticate, productController.updateCartQuantity);

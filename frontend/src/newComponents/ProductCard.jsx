@@ -1,13 +1,19 @@
+
+
 import React, { useState, useEffect } from 'react';
+
+
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 import ProductLabel from './ProductLabel';
+import { FaCartPlus, FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
 function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice, targetCurrency }) {
   const [product, setProduct] = useState(oldProduct);
   const [averageRating, setAverageRating] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [userType, setUserType] = useState('');
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   const getAuthHeaders = () => {
     return {
@@ -23,6 +29,9 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       .catch(err => console.log(err));
   }, []);
 
+  console.log(userType);  
+  console.log(userId);
+
   useEffect(() => {
     if (product.ratings) {
       if (product.ratings.length === 0) {
@@ -37,6 +46,12 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       setAverageRating(0);
     }
   }, [product.ratings]);
+  
+  useEffect(() => {
+    const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    setIsWishlisted(storedWishlist.includes(product._id));
+  }, [product._id]);
+  
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -82,68 +97,155 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
     axios.post(url, { productId: product._id }, getAuthHeaders())
       .then(res => {
         if (res.status === 200) {
+          setIsWishlisted(true);
           alert('Product added to wishlist successfully!');
+  
+          // Update localStorage
+          const updatedWishlist = [...JSON.parse(localStorage.getItem('wishlist') || '[]'), product._id];
+          localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
         } else {
           alert('There was an error adding the product to the wishlist.');
         }
       })
       .catch(err => console.log(err));
   };
+  
+  const handleRemoveFromWishlist = () => {
+    const url = `http://localhost:3000/api/tourist/deleteWish`;
+    axios.post(url, { productId: product._id }, getAuthHeaders())
+      .then(res => {
+        if (res.status === 200) {
+          setIsWishlisted(false);
+          alert('Product removed from wishlist successfully!');
+  
+          // Update localStorage
+          const updatedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]').filter(id => id !== product._id);
+          localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        } else {
+          alert('There was an error removing the product from the wishlist.');
+        }
+      })
+      .catch(err => console.log(err));
+  };
+  
 
   const isEditable = userType === 'admin' || (
     product.createdBy?._id === userId && product.createdBy?.role === 'seller'
   );
-
+// setEditMode(true);
   const canToggleArchive = userType === 'admin' || (userType === 'seller' && product.createdBy._id === userId);
+  const canBuy = userType === 'tourist';
+  const renderStars = () => {
+    const fullStars = Math.floor(averageRating);
+    const halfStar = averageRating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
-  return (
-    <div className='bg-[#f5e1b4] shadow-md rounded-md p-4 w-80'>
-      <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : null}`}>
-        <div>
-          <img src={`http://localhost:3000${product.picture}`} alt={product.name} className="w-full h-40 object-cover" />
-          <h2 className="text-lg font-bold">{product.name}</h2>
-          <p className="text-gray-600 ">{product.description}</p>
-          <p className="text-gray-600 "><span className='w-1/2'>Price:</span> <span className='w-1/2'>{convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${product.price.toFixed(2)} USD`}</span></p>
-          <p className="text-gray-600 "><span className='w-1/2'>Seller:</span> {product.seller}</p>
-          <p className="text-gray-600 "><span className='w-1/2'>Ratings:</span> {averageRating} / 5</p>
-          <p className="text-gray-600 "><span className='w-1/2'>Available Quantity:</span> {product.available_quantity}</p>
-          {canToggleArchive && (
-            <div>
-              <p className="text-gray-600 "><span className='w-1/2'>Archived:</span> {product.isArchived ? 'Yes' : 'No'}</p>
-              <button 
-                onClick={handleArchiveToggle} 
+    return (
+      <>
+        {Array(fullStars).fill(<FaStar className="text-yellow-500" />)}
+        {halfStar && <FaStarHalfAlt className="text-yellow-500" />}
+        {Array(emptyStars).fill(<FaRegStar className="text-yellow-500" />)}
+      </>
+    );
+  };
+
+
+  // / Function to render icons based on userType and edit mode
+  const renderIcons = () => {
+    if (userType === 'tourist') {
+      return (
+        <>
+          {isWishlisted ? (
+            <FaHeart
+              onClick={handleRemoveFromWishlist}
+              className="text-red-500 text-2xl cursor-pointer mx-2"
+            />
+          ) : (
+            <FaRegHeart
+              onClick={handleAddToWishlist}
+              className="text-black text-2xl cursor-pointer mx-2"
+            />
+          )}
+          <FaCartPlus
+            onClick={handleAddToCart}
+            className="text-black text-2xl cursor-pointer mx-2"
+          />
+        </>
+      );
+    }
+
+    if (userType === 'seller') {
+      // const isEditable = product.createdBy?._id === userId && product.createdBy?.role === 'seller';
+      return (
+        <>
+          {isEditable && (
+            <>
+              <img
+  onClick={() => setEditMode(true)}
+  src={assets.editIcon}
+  className="w-6 h-6 cursor-pointer absolute top-3 right-20"
+/>
+
+              <button
+                onClick={handleArchiveToggle}
                 className={`bg-${product.isArchived ? 'green' : 'red'}-500 text-white rounded-md p-2 mt-2`}
               >
                 {product.isArchived ? 'Unarchive' : 'Archive'}
               </button>
-            </div>
+            </>
           )}
-        </div>
-        <div className="relative flex flex-row justify-end">
-          <div className='w-6 h-6'>
+        </>
+      );
+    }
+
+    if (userType === 'admin') {
+      return (
+        <>
+          <img
+            onClick={() => setEditMode(true)}
+            src={assets.editIcon}
+            className="w-6 h-6 cursor-pointer absolute top-2 left-2"
+          />
+          <button
+            onClick={handleArchiveToggle}
+            className={`bg-${product.isArchived ? 'green' : 'red'}-500 text-white rounded-md p-2 mt-2`}
+          >
+            {product.isArchived ? 'Unarchive' : 'Archive'}
+          </button>
+        </>
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <div className='bg-white shadow-md rounded-md p-4 w-80'>
+      {/* Display Mode */}
+      <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : ''}`}>
+        <div>
+          <img src={`http://localhost:3000${product.picture}`} alt={product.name} className="w-full h-40 object-cover rounded-md" />
+          <h2 className="text-lg font-bold mt-2">{product.name}</h2>
+          <p className="text-gray-600 mt-1">{product.description}</p>
+          <div className="flex items-center mt-2">
+            <span className="text-gray-600 mr-2">Price:</span>
+            <span className="font-bold">{convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${product.price.toFixed(2)} USD`}</span>
           </div>
-          {isEditable && (
-            <img
-              onClick={handleEditClick}
-              src={assets.editIcon}
-              className="w-6 h-6 cursor-pointer absolute bottom-2 right-2"
-            />
-          )}
-          <button
-            onClick={handleAddToCart}
-            className="bg-blue-500 text-white rounded-md p-2 mt-2"
-          >
-            Add to Cart
-          </button>
-          <button
-            onClick={handleAddToWishlist}
-            className="bg-yellow-500 text-white rounded-md p-2 mt-2"
-          >
-            Add to Wishlist
-          </button>
+          <div className="flex items-center mt-2">
+            <span className="text-gray-600 mr-2">Ratings:</span>
+            <div className="flex">{renderStars()}</div>
+          </div>
+          <p className="text-gray-600 mt-2">Available Quantity: {product.available_quantity}</p>
+        </div>
+  
+        {/* Render editable options and actions */}
+        <div className="relative flex justify-end mt-4">
+          {renderIcons()}
         </div>
       </div>
-      <div className={`flex justify-between flex-col h-full text-sm ${editMode ? null : 'hidden'}`}>
+  
+      {/* Edit Mode */}
+      <div className={`flex justify-between flex-col h-full text-sm ${editMode ? '' : 'hidden'}`}>
         <div className="edit-mode">
           <ProductLabel
             title="Name"
@@ -190,19 +292,19 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
             }}
           />
         </div>
+        
         <div className="relative flex flex-row justify-end">
-          <div className='w-8 h-8'>
-          </div>
           <img
             onClick={handleEditSaveClick}
             src={assets.submitIcon}
             className="w-8 h-8 cursor-pointer absolute bottom-2 right-2"
           />
-          
         </div>
       </div>
     </div>
   );
-}
+}  
 
 export default ProductCard;
+
+
