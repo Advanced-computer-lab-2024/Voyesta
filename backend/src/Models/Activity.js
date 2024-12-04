@@ -1,7 +1,7 @@
 const { text } = require('body-parser');
 
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const Schema = mongoose.Schema;
 
 
 const validatePriceType = (value) => {
@@ -14,25 +14,14 @@ const validatePriceType = (value) => {
   return false;
 };
 
-
-const activitySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
+const activitySchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
   location: {
-    lat: {
-        type: Number,
-        required: true
-    },
-    lng: {
-        type: Number,
-        required: true
-    }
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true }
   },
   date: {
     type: Date,
@@ -110,7 +99,5 @@ const activitySchema = new mongoose.Schema({
   }],
 }, { timestamps: true });
 
-
-
-const activityModel = mongoose.model('Activity', activitySchema );
-module.exports= activityModel;
+const activityModel = mongoose.model('Activity', activitySchema);
+module.exports = activityModel;

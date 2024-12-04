@@ -53,7 +53,7 @@ const CurrencyConverter = ({ prices, setConvertedPrices, setTargetCurrency }) =>
         </div>
         <button
           onClick={handleConvert}
-          className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+          className="form_control"
         >
           Convert Prices
         </button>

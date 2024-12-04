@@ -38,8 +38,8 @@ const PriceFilterBar = ({ items = [], setItems, convertedPrices = [], pricePrope
   };
 
   return (
-    <div className="range_container">
-      <div className="slider_label flex justify-between mx-2">
+<div className="range_container" style={{ marginTop: '-10px' }}>
+<div className="slider_label flex justify-between mx-2">
         <span>{minVal}</span>
         <span>{maxVal}</span>
       </div>

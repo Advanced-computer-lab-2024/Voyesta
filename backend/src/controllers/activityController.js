@@ -32,7 +32,7 @@ const flagActivityAsInappropriate = async (req, res) => {
 
 // Create a new Activity
 const createActivity = async (req, res) => {
-    const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
+    const { name, description, date, time, location, price, specialDiscount, category, tags, imageUrl } = req.body;
     const advertiser = req.user.id;  // Assuming req.user is populated by authentication middleware
     const categoryID = await Category.findOne({ Name: category }).select('_id');
     const tagIds = await Promise.all(tags.map(async (tag) => {
@@ -53,7 +53,8 @@ const createActivity = async (req, res) => {
             specialDiscount,
             category: categoryID,
             tags: tagIds,
-            advertiser
+            advertiser,
+            imageUrl // Add this line
         });
         // console.log(activity);
         await activity.save();
@@ -112,40 +113,27 @@ const getAllActivitiesByAdvertiser = async (req, res) => {
 
 // update an Activity
 const updateActivity = async (req, res) => {
-    const { id } = req.params;
-    const advertiserId =  req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
-    
-    let tagIds = null;
-    const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
+  const { id } = req.params;
+  const advertiserId = req.user.id; // Assuming req.user is populated by authentication middleware
+  const { name, description, date, time, location, price, specialDiscount, category, tags, imageUrl } = req.body;
 
-    // console.log(category);
-    const categoryId = await Category.findOne({ Name: category }).select('_id');
+  const categoryId = await Category.findOne({ Name: category }).select('_id');
+  const tagIds = await Promise.all(tags.map(async (tag) => {
+    const tagId = await Tag.findOne({ Name: tag }).select('_id');
+    return tagId;
+  }));
 
-    if(tags){
-        tagIds = await Promise.all(tags.map(async (tag) => {
-            const tagId = await Tag.findOne({ Name: tag }).select('_id');
-            return tagId;
-        }));
+  const updates = { name, description, date, time, location, price, specialDiscount, category: categoryId, tags: tagIds, imageUrl }; // Add imageUrl here
+
+  try {
+    const activity = await Activity.findByIdAndUpdate(id, updates, { new: true, upsert: false, overwrite: true });
+    if (!activity) {
+      return res.status(404).json({ error: 'Activity not found' });
     }
-    const updates = { name, description, date, time, location, price, specialDiscount, "category": categoryId, "tags": tagIds };
-    console.log(updates);    
-
-    try {
-       const activity = await  Activity.findByIdAndUpdate(id, updates, { new: true, upsert: false, overwrite: true })
-        if (!activity) {
-            return res.status(404).json({ error: 'Activity not found' });
-        }
-
-        // if (activity.advertiser.toString() !== advertiserId.toString()) {
-        //     return res.status(403).json({ error: 'Unauthorized access' });
-        // }
-
-        // Object.assign(activity, updates);
-        // await activity.save();
-        res.status(200).json(activity);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+    res.status(200).json(activity);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 
