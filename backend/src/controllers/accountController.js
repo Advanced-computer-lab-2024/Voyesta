@@ -332,6 +332,29 @@ const getDeletedUsers = async (req, res) => {
   }
 };
 
+const checkUserExists = async (req, res) => {
+  const { username, email } = req.body;
+  
+  try {
+    const [tourist, tourGuide, advertiser, tourismGovernor, admin, seller] = await Promise.all([
+      Tourist.findOne({ $or: [{ username }, { email }] }),
+      TourGuide.findOne({ $or: [{ username }, { email }] }),
+      Advertiser.findOne({ $or: [{ username }, { email }] }),
+      TourismGovernor.findOne({ $or: [{ username }, { email }] }),
+      Admin.findOne({ $or: [{ username }, { email }] }),
+      Seller.findOne({ $or: [{ username }, { email }] })
+    ]);
+
+    if (tourist || tourGuide || advertiser || tourismGovernor || admin || seller) {
+      return res.status(400).json({ message: 'Username or email already exists' });
+    }
+
+    res.status(200).json({ message: 'Username and email are available' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   changePassword,
   setStatusToDeleted,
@@ -340,5 +363,6 @@ module.exports = {
   deleteAccount,
   getDeletedUsers,
   sendOtp,
-  resetPassword
+  resetPassword,
+  checkUserExists
 };

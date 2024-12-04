@@ -39,7 +39,7 @@ const authenticate = require('../middleware/authenticate');
 const bookingRouter = require('./bookingRouter');
 const purchaseRouter = require('./purchaseRouter');
 const cloudinaryRouter = require('./cloudinaryRouter');
-const { sendOtp, resetPassword} = require('../controllers/accountController');
+const { sendOtp, resetPassword, checkUserExists} = require('../controllers/accountController');
 
 
 _.use("/advertiser",  advertiserRouter);
@@ -71,5 +71,6 @@ const login = require('../controllers/LoginController');
 _.post("/login",  login.Login);
 _.post('/send-otp', sendOtp);
 _.post('/reset-password', resetPassword);
+_.post('/check-user-exists', checkUserExists);
 
 module.exports = _;
