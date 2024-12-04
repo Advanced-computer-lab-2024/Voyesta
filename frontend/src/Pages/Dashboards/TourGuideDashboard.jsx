@@ -9,13 +9,17 @@ import axios from "axios";
 import UploadDocuments from "../../newComponents/UploadDocuments";
 import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
+import Notifications from "../../newComponents/Notifications";
 
 const navLinks = [
   { path: "/tourGuide/", label: "Home" },
   { path: "/tourGuide/profile", label: "Profile" },
   { path: "/tourGuide/itineraries", label: "Itineraries" },
   { path: "/tourGuide/activities", label: "Activities" },
-  { path: "/tourGuide/museums", label: "Museums" }
+  { path: "/tourGuide/sales", label: "Sales" },
+  { path: "/tourGuide/museums", label: "Museums" },
+  { path: "/tourGuide/notifications", label: "Notifications" }
 ];
 
 function TourGuideDashboard() {
@@ -37,7 +41,6 @@ function TourGuideDashboard() {
   const fetchTourGuide = () => {
     axios.get("http://localhost:3000/api/tourGuide/get", getAuthHeader())
     .then(res => {
-      console.log(res.data);
       setTourGuide(res.data);
     })
     .catch(e => console.log(e));
@@ -100,6 +103,8 @@ function TourGuideDashboard() {
           <Route path="/itineraries" element={<ItineraryView baseUrl="http://localhost:3000/api/tourGuide" role="tourGuide"/>} />
           <Route path="/activities" element={<ActivitiesView baseUrl="http://localhost:3000/api/tourGuide" />} />
           <Route path="/museums" element={ <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourGuide" /> } />
+          <Route path="/sales" element={<RevenueSalesView userType="tourGuide" />} />
+          <Route path="/notifications" element={<Notifications baseUrl='http://localhost:3000/api/tourGuide' />} />
         </Routes>       
       </div>
   }

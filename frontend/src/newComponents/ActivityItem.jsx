@@ -4,6 +4,8 @@ import axios from 'axios';
 import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShareAlt, faEnvelope, faBookmark, faFlag } from '@fortawesome/free-solid-svg-icons';
 
 const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice, targetCurrency, transportation }) => {
   const [shareLink, setShareLink] = useState('');
@@ -12,7 +14,10 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   const [mappedTags, setMappedTags] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [isBookmarked, setIsBookmarked] = useState(activity.isBookmarked );
   const [showPopup, setShowPopup] = useState(false);
+  const [inappropriate, setInappropriate] = useState(activity.inappropriate);
+  const [bookingEnabled, setBookingEnabled] = useState(activity.bookingEnabled);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,10 +43,61 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     .then(res => {
       const tagNames = res.data.map(tag => tag.Name);
       setTags(tagNames);
-      console.log(tagNames);
     })
     .catch(err => console.log(err));
   }, []);
+
+  useEffect(() => {
+    // Fetch bookmark status when the component mounts
+    const fetchBookmarkStatus = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/bookmarked-items`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const bookmarkedActivities = response.data.activities.map(activity => activity._id);
+        if (bookmarkedActivities.includes(activity._id)) {
+          setIsBookmarked(true);
+        } else {
+          setIsBookmarked(false);
+        }
+      } catch (error) {
+        console.error('Error fetching bookmark status:', error);
+      }
+    };
+
+    const fetchBookingEnabledStatus = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/${activity._id}/booking-status`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        console.log(response.data);
+        setBookingEnabled(response.data.bookingEnabled);
+      } catch (error) {
+        console.error('Error fetching booking enabled status:', error);
+      }
+    };
+
+    fetchBookmarkStatus();
+    fetchBookingEnabledStatus();
+  }, [activity._id, baseUrl]);
+
+  const toggleBookingEnabled = async () => {
+    try {
+      const url = `${baseUrl}/updateBookingEnabled/${activity._id}`;
+      await axios.patch(url, { bookingEnabled: !bookingEnabled }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setBookingEnabled(!bookingEnabled);
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+    }
+  };
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -50,6 +106,54 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         Authorization: `Bearer ${token}`,
       },
     };
+  };
+
+  const flagAsInappropriate = async () => {
+    try {
+      const url = `${baseUrl}/flagActivityAsInappropriate/${activity._id}`;
+      await axios.patch(url, {}, getAuthHeaders());
+
+      const notificationUrl = `${baseUrl}/sendNotification`;
+      const message = `Your activity "${activity.name}" has been flagged as inappropriate.`;
+      await axios.post(notificationUrl, { userType: 'advertiser', itemId: activity._id, message }, getAuthHeaders());
+
+      setInappropriate(true);
+      //fetchActivities();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleBookmark = async () => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/bookmark`,
+        { activityId: activity._id },
+        getAuthHeaders()
+      );
+      setIsBookmarked(true); // Update UI
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error bookmarking activity:', error);
+    }
+  };
+
+  const handleUnbookmark = async () => {
+    try {
+      const response = await axios.delete(`${baseUrl}/bookmark/${activity._id}`, getAuthHeaders());
+      setIsBookmarked(false);
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error unbookmarking activity:', error);
+    }
+  };
+
+  const toggleBookmark = () => {
+    if (isBookmarked) {
+      handleUnbookmark();
+    } else {
+      handleBookmark();
+    }
   };
 
   const convertTimeTo24HourFormat = (time) => {
@@ -151,12 +255,38 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     }
   };
 
+  const handleCopyLink = (link) => {
+    navigator.clipboard.writeText(link);
+    alert('Link copied to clipboard');
+  };
+
+  const handleShareViaEmail = (link) => {
+    window.location.href = `mailto:?subject=Check out this activity&body=Here is the link: ${link}`;
+  };
+
+  const generateShareLink = (id) => {
+    return `${window.location.origin}/activity/${id}`;
+  };
+
   const averageRating = activity.ratings.length === 0
     ? 0
     : (activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length).toFixed(1);
 
+  const fallbackImage = "https://cdn.britannica.com/10/241010-049-3EB67AA2.jpg";
+
+  const handleNotifyMe = async () => {
+    try {
+      const url = `${baseUrl}/requestNotification`;
+      await axios.post(url, { itemId: activity._id, itemType: 'activity' }, getAuthHeaders());
+  
+      alert('You will be notified when booking is enabled.');
+    } catch (error) {
+      console.error('Error requesting notification:', error);
+    }
+  };
+
   return (
-    <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
+    <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
       {isEditing ? (
         <>
           <div className=''>
@@ -276,74 +406,117 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         </>
       ) : (
         <>
-          <h3 className="font-bold text-lg">{activity.name}</h3>
-          <p>{activity.description || 'No description available'}</p>
-          
-          {activity.location && typeof activity.location === 'object' ? (
-            <p>Location: 
-              {activity.location.lat || 'Unknown latitude'}, 
-              {activity.location.lng || 'Unknown longitude'}
-            </p>
-          ) : (
-            <p>Location information not available</p>
-          )}
+          <div className="activity-item flex flex-col h-full">
+          <img 
+    src={fallbackImage} 
+    alt={activity.name} 
+    className="w-full h-48 object-cover"
+  />
+  <div className="p-4 flex flex-col space-y-3">
+    {/* Activity Name */}
+    <h3 className="font-bold text-xl text-gray-800">{activity.name}</h3>
 
-          <p>Date: {activity.date ? new Date(activity.date).toLocaleDateString() : 'Unknown date'}</p>
-          <p>Time: {activity.time || 'Unknown time'}</p>
+    {/* Tags */}
+    {Array.isArray(activity.tags) && activity.tags.length > 0 ? (
+      <p className="text-sm text-gray-600">
+        <span className="font-medium text-gray-800">Tags:</span> {mappedTags.join(', ')}
+      </p>
+    ) : (
+      <p className="text-sm text-gray-600">
+        <span className="font-medium text-gray-800">Tags:</span> No tags available
+      </p>
+    )}
 
-          {typeof activity.price === 'object' ? (
-            <p>Price Range: {convertedPrice ? `${convertedPrice.min.toFixed(2)} - ${convertedPrice.max.toFixed(2)} ${targetCurrency}` : `${activity.price.min || '0'} - ${activity.price.max || '0'} USD`}</p>
-          ) : (
-            <p>Price: {convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${activity.price.toFixed(2)} USD`}</p>
-          )}
+    {/* Rating */}
+    <p className="text-gray-800 textStyle">
+      <span className="font-bold">Rating:</span> {averageRating}
+    </p>
 
-          <p>Category: {typeof activity.category === 'string' 
-            ? activity.category 
-            : activity.category?.Name || 'Unknown category'}
-          </p>
-          
-          
-          {Array.isArray(activity.tags) ? (
-            !transportation && <p>Tags: {mappedTags.join(', ')}</p>
-          ) : (
-            <p>Tags: No tags available</p>
-          )}
+    {/* Price */}
+    <p className="text-gray-800">
+      <span className="font-bold">Price:</span> {activity.price}
+    </p>
 
-          <p>Rating: {averageRating}</p>
-          <p>Special Discount: {activity.specialDiscount}</p>
+    {/* Special Discount */}
+    <p className="text-sm text-gray-600">
+      <span className="font-medium text-gray-800">Special Discount:</span> {activity.specialDiscount}
+    </p>
+  </div>
+        {role === 'admin' && 
+        <div className="flex space-x-4">
           
+        <div 
+          onClick={flagAsInappropriate} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faFlag}
+          style={{ cursor: 'pointer', color: inappropriate ? 'red' : 'gray' }}
+        />
+        </div>
+      </div>
+          }
+            {role === 'tourist' && !transportation && (
+  <div className="flex flex-col h-full justify-between mt-4">
+    <div className="flex justify-between items-center mt-auto">
+      {/* Booking Button */}
+      <button 
+        onClick={() => setShowPopup(true)} 
+        className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg py-2 px-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out"
+      >
+        Book Activity
+      </button>
 
-          {(role === 'tourist' && (!transportation)) && (
-            <>
-              <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Book Activity
-              </button>
-              <button onClick={() => {
-                const link = generateShareLink(activity._id);
-                handleCopyLink(link);
-              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Share via Copy Link
-              </button>
-              <button onClick={() => {
-                const link = generateShareLink(activity._id);
-                handleShareViaEmail(link);
-              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Share via Email
-              </button>
-              {showPopup && (
-                <BookingPopup
-                  item={activity}
-                  itemType="activity"
-                  onClose={() => setShowPopup(false)}
-                  onBook={handleBooking}
-                />
-              )}
-            </>
-          )}
-          
+      {/* Share and Email Icons */}
+      <div className="flex space-x-4">
+        {/* Share Link */}
+        <div 
+          onClick={() => {
+            const link = generateShareLink(activity._id);
+            handleCopyLink(link);
+          }} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faShareAlt} className="text-xl" />
+        </div>
+        <div 
+          onClick={toggleBookmark} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon
+          icon={faBookmark}
+          style={{ cursor: 'pointer', color: isBookmarked ? 'gold' : 'gray' }}
+        />
+        </div>
+        
+        {/* Email Link */}
+        <div 
+          onClick={() => {
+            const link = generateShareLink(activity._id);
+            handleShareViaEmail(link);
+          }} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faEnvelope} className="text-xl" />
+        </div>
+      </div>
+    </div>
+
+    {/* Booking Popup */}
+    {showPopup && (
+      <BookingPopup
+        item={activity}
+        itemType="activity"
+        onClose={() => setShowPopup(false)}
+        onBook={handleBooking}
+      />
+    )}
+  </div>
+)}
+
+          </div>
 
           {role === 'advertiser' && (
-            <div className="flex gap-2 mt-2 h-6">
+            <div className="flex justify-between mt-2">
 
               <img
                 onClick={handleEdit}
@@ -355,6 +528,12 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
                 src={assets.deleteIcon}
                 className="w-6 h-6 cursor-pointer absolute buttom-0 left-6"
               />
+               <button
+                onClick={toggleBookingEnabled}
+                className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+              >
+                {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
+              </button> 
             </div>
           )}
         </>
@@ -362,5 +541,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     </div>
   );
 };
+
+const textStyle = {
+  marginLeft : '-20px',
+}
 
 export default ActivityItem;

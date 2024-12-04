@@ -115,6 +115,11 @@ function Login(){
               Sign Up
             </p>
           </div>
+          <div className="text-gray-500 flex flex-row justify-center text-sm gap-1 cursor-default">
+            <a href="#" onClick={() => navigate('/forgot-password')} className="text-blue-500 hover:underline">
+              Forgot Password?
+            </a>
+          </div>
         </form>
       </div>
     );

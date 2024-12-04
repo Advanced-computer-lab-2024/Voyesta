@@ -1,6 +1,7 @@
 const express = require("express");
 const authenticate = require("../middleware/authenticate");
 let _ = express.Router();
+const { redeemPromoCode } = require('../controllers/touristController.js');
 
 const { createTourist, getTourists, updateTourist, 
     deleteTourist, 
@@ -12,7 +13,21 @@ const { createTourist, getTourists, updateTourist,
     bookFlight,
     bookHotel,  
     searchHotelsByCity,
-    createAddress, getAddresses, createOrder,getOrders,getOrder,cancelOrder,pay, deleteAddresses} = require("../controllers/touristController");
+    createAddress,
+    getAddresses,
+    createOrder,
+    getOrders,
+    getOrder,
+    cancelOrder,
+    pay, 
+    deleteAddresses,
+    bookmarkActivity,
+    unbookmarkActivity,
+    bookmarkItinerary,
+    unbookmarkItinerary,
+    getBookmarkedItems,
+    isBookmarked,
+    clearCart} = require("../controllers/touristController");
 const { get } = require("../controllers/museumsHistoricalPlacesController");
 const activityController = require('../controllers/activityController');
 const itineraryController = require('../controllers/itineraryController');
@@ -20,9 +35,11 @@ const productController = require('../controllers/productController');
 const { getActivityCategory } = require('../controllers/activityCategoryController');
 const { TourGuideComments, rateTourGuide, checkTourGuideRatingAndComment } = require('../controllers/tourGuideController');
 const { getPreferenceTags } = require('../controllers/preferenceTagContoller');
-const { createBooking, getBookings, cancelBooking, payForBooking } = require('../controllers/bookingController');
+const { createBooking, getBookings, cancelBooking, payForBooking ,viewAllPaidBookings } = require('../controllers/bookingController');
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
+const { requestNotification, getNotifications } = require('../controllers/NotificationController');
+const { sendPaymentReceipt } = require('../controllers/purchaseController');
 
 _.post("/add", createTourist);
 _.get("/get", authenticate, getTourists);
@@ -55,6 +72,7 @@ _.post('/BookEvent/:id', authenticate, createBooking);
 _.get('/getBookings', authenticate, getBookings);
 _.patch('/cancelBooking/:id', authenticate, cancelBooking);
 _.patch('/payForBooking/:id', authenticate, payForBooking);
+_.get('/viewAllPaidBookings', authenticate, viewAllPaidBookings);
 _.patch('/redeemPoints', authenticate, redeemPoints);
 
 _.post('/createComplaint', authenticate, createComplaint);
@@ -87,5 +105,19 @@ _.get('/getCart', authenticate, productController.getCart);
 _.post('/updateQuantity', authenticate, productController.updateCartQuantity);
 
 _.delete('/deleteAddresses/:id', deleteAddresses);
+_.post('/redeemPromoCode', authenticate, redeemPromoCode);
+
+_.post('/bookmark', authenticate,bookmarkActivity);
+_.delete('/bookmark/:id', authenticate,unbookmarkActivity);
+_.post('/bookmarkItinerary', authenticate, bookmarkItinerary);
+_.delete('/bookmarkItinerary', authenticate, unbookmarkItinerary);
+_.get('/bookmarked-items', authenticate, getBookmarkedItems);
+_.get('/isBookmarked/:id', authenticate, isBookmarked);
+
+_.post('/requestNotification', authenticate, requestNotification);
+_.get('/getNotifications', authenticate, getNotifications);
+
+_.post('/sendPaymentReceipt', authenticate, sendPaymentReceipt);
+_.post('/clearCart', authenticate, clearCart);
 
 module.exports = _;

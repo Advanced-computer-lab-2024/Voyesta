@@ -1,4 +1,3 @@
-// frontend/src/pages/BookingsPage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate , useLocation } from 'react-router-dom';
@@ -7,6 +6,7 @@ import EventCard from '../newComponents/EventCard';
 const BookingsPage = ({ baseUrl }) => {
   // const location = useLocation();
   const [bookings, setBookings] = useState([]);
+  const [PaidEvents, setUpcomingPaidEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
   // const [total, setTotal] = location.state.total || { total: 0 };
   const navigate = useNavigate();
@@ -14,7 +14,10 @@ const BookingsPage = ({ baseUrl }) => {
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+    if (activeTab === 'upcoming-paid') {
+      fetchUpcomingPaidEvents();
+    }
+  }, [activeTab]);
 
   const fetchBookings = async () => {
     try {
@@ -29,35 +32,30 @@ const BookingsPage = ({ baseUrl }) => {
     }
   };
 
-  // const handlePayment = async (bookingId) => {
-  //   try {
-  //     const response = await axios.patch(`${baseUrl}/payForBooking/${bookingId}`, {}, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`
-  //       }
-  //     });
-  //     alert(response.data.message);
-  //     fetchBookings(); // Refresh bookings after payment
-  //   } catch (error) {
-  //     console.error('Error processing payment:', error);
-  //     alert(error.response.data.error);
-  //   }
-  // };
+  const fetchUpcomingPaidEvents = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/viewAllPaidBookings`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUpcomingPaidEvents(response.data);
+    } catch (error) {
+      console.error('Error fetching upcoming paid events:', error);
+    }
+  };
 
-const handlePayment = async (bookingId) => {
+  const handlePayment = async (bookingId) => {
   
-  console.log('Payment for booking:', bookingId);
-  // find a booking by id
-  const booking = bookings.find(booking => booking._id === bookingId);
-  // calculate total
-  const total = booking.amount;
-  console.log('Total:', total ); 
-
-  navigate('/tourist/checkout', { state: { from: 'bookings',bookingId, total } });
-}
-
-
-
+    console.log('Payment for booking:', bookingId);
+    // find a booking by id
+    const booking = bookings.find(booking => booking._id === bookingId);
+    // calculate total
+    const total = booking.amount;
+    console.log('Total:', total ); 
+  
+    navigate('/tourist/checkout', { state: { from: 'bookings',bookingId, total } });
+  }
 
   const handleCancel = async (bookingId) => {
     try {
@@ -76,6 +74,8 @@ const handlePayment = async (bookingId) => {
 
   const upcomingBookings = bookings.filter(booking => new Date(booking.eventDate) >= new Date());
   const attendedBookings = bookings.filter(booking => new Date(booking.eventDate) < new Date());
+  const upcomingPaidEvents = PaidEvents.filter(event => new Date(event.eventDate) >= new Date());
+  const recentPaidEvents = PaidEvents.filter(event => new Date(event.eventDate) < new Date());
 
   return (
     <div className="p-4">
@@ -92,6 +92,18 @@ const handlePayment = async (bookingId) => {
           onClick={() => setActiveTab('attended')}
         >
           Attended Events
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'upcoming-paid' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('upcoming-paid')}
+        >
+          Upcoming Paid Events
+        </button>
+        <button
+          className={`p-2 ${activeTab === 'recent-paid' ? 'border-b-2 border-blue-500' : ''}`}
+          onClick={() => setActiveTab('recent-paid')}
+        >
+          Recent Paid Events
         </button>
       </div>
       {activeTab === 'upcoming' ? (
@@ -110,7 +122,7 @@ const handlePayment = async (bookingId) => {
             ))
           )}
         </div>
-      ) : (
+      ) : activeTab === 'attended' ? (
         <div>
           {attendedBookings.length === 0 ? (
             <p>No attended bookings found.</p>
@@ -126,7 +138,39 @@ const handlePayment = async (bookingId) => {
             ))
           )}
         </div>
-      )}
+      ) : activeTab === 'upcoming-paid' ? (
+        <div>
+          {upcomingPaidEvents.length === 0 ? (
+            <p>No upcoming paid events found.</p>
+          ) : (
+            upcomingPaidEvents.map((event) => (
+              <EventCard
+                key={event._id}
+                booking={event}
+                baseUrl={baseUrl}
+                handlePayment={handlePayment}
+                handleCancel={handleCancel}
+              />
+            ))
+          )}
+        </div>
+      ) : activeTab === 'recent-paid' ? (
+        <div>
+          {recentPaidEvents.length === 0 ? (
+            <p>No recent paid events found.</p>
+          ) : (
+            recentPaidEvents.map((event) => (
+              <EventCard
+                key={event._id}
+                booking={event}
+                baseUrl={baseUrl}
+                handlePayment={handlePayment}
+                handleCancel={handleCancel}
+              />
+            ))
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };

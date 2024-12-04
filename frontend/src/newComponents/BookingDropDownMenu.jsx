@@ -22,6 +22,7 @@ const DropdownMenu = () => {
                     <Link to="/tourist/hotel">Book Hotel</Link>
                     <Link to="/tourist/transport">Book Transportation</Link>
                     <Link to="/tourist/bookings">My Bookings</Link>
+                    <Link to="/tourist/bookmarks">My Bookmarks</Link>
                 </div>
             )}
         </div>

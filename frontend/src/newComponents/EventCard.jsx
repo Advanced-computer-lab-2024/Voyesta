@@ -96,24 +96,20 @@ const EventCard = ({ booking, baseUrl, handlePayment, handleCancel }) => {
 
   const isEventAttended = new Date(booking.eventDate) < new Date();
 
+  // Check if the event is an upcoming paid event (assuming 'confirmed' status is used for paid events)
+  const isUpcomingPaidEvent = booking.status === 'confirmed' && new Date(booking.eventDate) >= new Date();
+
   return (
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
       <p>Booking ID: {booking._id}</p>
       <p>Event Type: {bookableModel}</p>
-      {bookableModel === 'Activity' ? (
-        <>
-          <p>Name: {bookable.name}</p>
-        </>
-      ) : (
-        <>
-          <p>Name: {bookable.name}</p>
-        </>
-      )}
+      <p>Name: {bookable.name}</p>
       <p>Event Date: {new Date(booking.eventDate).toLocaleDateString()}</p>
       <p>Status: {booking.status}</p>
       <p>Price: {booking.amount}</p>
 
-      {!isEventAttended && (
+      {/* Hide payment and cancel buttons for upcoming paid events */}
+      {!isUpcomingPaidEvent && !isEventAttended && (
         <>
           <button onClick={() => handlePayment(booking._id)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
             Pay Now

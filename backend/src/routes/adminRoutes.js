@@ -2,8 +2,11 @@ const express = require('express');
 const _ = express.Router();
 const adminController = require('../controllers/adminController');
 const authenticate = require("../middleware/authenticate");
+const { createGlobalPromoCode } = require('../controllers/adminController');
+console.log('Route handler:', adminController.getGlobalPromoCodes);const { getRevenue } = require('../controllers/revenueController');
 
 const {
+    
     createActivityCategory, 
     getActivityCategory, 
     updateActivityCategory, 
@@ -20,7 +23,8 @@ const { getComplaints, getComplaintById, updateComplaintStatus, addReplyToCompla
 
 const { getItineraries, flagInappropriate} = require('../controllers/itineraryController');
 const { changePassword, setStatusToActive, setStatusToRejected, setStatusToDeleted, deleteAccount, getDeletedUsers } = require('../controllers/accountController');
-
+const { sendNotification, getNotifications } = require('../controllers/NotificationController');
+const { getActivity, flagActivityAsInappropriate } = require('../controllers/activityController');
 
 // ------------- Not testedd ---------------
 _.post('/createTourismGoverner', adminController.createTourismGovernor);
@@ -59,6 +63,7 @@ _.get('/getProductsSales', authenticate, productController.getProductSales);
 // ------------ Itineraries ---------------- //
 _.get('/getItinerary', authenticate, getItineraries);
 _.patch('/flagInappropriate/:id', authenticate, flagInappropriate);
+_.patch('/flagActivityAsInappropriate/:id', authenticate, flagActivityAsInappropriate);
 
 
 _.get('/getComplaints', getComplaints);
@@ -75,6 +80,21 @@ _.get('/getDeletedUsers', getDeletedUsers);
 
 
 _.get('/pending-users', adminController.getPendingUsers);
+// ------------------ Promo Codes ------------------ //
+_.post('/createPromoCode', adminController.createPromoCode);
+_.get('/getPromoCodes', adminController.getPromoCodes);
+_.post('/createGlobalPromoCode', adminController.createPromoCode); // Create promo code
+_.get('/getGlobalPromoCodes', adminController.getPromoCodes); // Fetch promo codes
+_.put('/updateGlobalPromoCode/:code', adminController.updateGlobalPromoCode); // Update promo code
+_.delete('/deleteGlobalPromoCode/:code', adminController.deleteGlobalPromoCode); // Delete promo code
+_.post('/BDpromocode/:code', adminController.checkBirthdaysAndGeneratePromoCodes);
+_.get('/CheckStock', adminController.checkProductStockLevels);
+_.get('/getRevenue', authenticate, getRevenue);
+_.post('/sendNotification', authenticate, sendNotification);
+_.get('/getActivity', authenticate, getActivity);
+_.get('/getNotifications', authenticate, getNotifications);
+_.get('/getUserStats', adminController.getUserStats);
+
 
 
 module.exports = _;

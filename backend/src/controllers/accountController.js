@@ -7,6 +7,93 @@ const Seller = require('../Models/Seller');
 const Activity = require('../Models/Activity');
 const Itinerary = require('../Models/Itinerary');
 const Booking = require('../Models/Booking');
+const OTP = require('../Models/OTP');
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey('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');
+
+const sendOtp = async (req, res) => {
+  const { username } = req.body;
+  try {
+    let user;
+    let email;
+
+    // Check in all personas
+    user = await Tourist.findOne({ username }) ||
+           await TourGuide.findOne({ username }) ||
+           await Advertiser.findOne({ username }) ||
+           await TourismGovernor.findOne({ username }) ||
+           await Admin.findOne({ username }) ||
+           await Seller.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    email = user.email;
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const existingOtp = await OTP.findOne({ email });
+    if (existingOtp) {
+      existingOtp.otp = otp;
+      await existingOtp.save();
+    } else {
+      await OTP.create({ username, email, otp });
+    }
+
+    const resetPasswordUrl = `http://localhost:5173/reset-password?otp=${otp}`;
+
+    const msg = {
+      to: email, // Recipient
+      from: 'voyesta@outlook.com', // Verified sender
+      subject: 'Reset Your Password',
+      text: `Your OTP code is ${otp}. Click the button below to reset your password.`,
+      html: `<strong>Your OTP code is ${otp}</strong><br/><a href="${resetPasswordUrl}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>`,
+    };
+    console.log(msg);
+    sgMail
+      .send(msg)
+      .then(() => console.log('Email sent'))
+      .catch((error) => {
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Error sending OTP', error });
+      });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { otp, newPassword, confirmNewPassword } = req.body;
+  if (newPassword !== confirmNewPassword) {
+    return res.status(400).json({ message: 'Passwords do not match' });
+  }
+  try {
+    const otpRecord = await OTP.findOne({ otp });
+    if (!otpRecord) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    let user;
+    user = await Tourist.findOne({ username: otpRecord.username }) ||
+           await TourGuide.findOne({ username: otpRecord.username }) ||
+           await Advertiser.findOne({ username: otpRecord.username }) ||
+           await TourismGovernor.findOne({ username: otpRecord.username }) ||
+           await Admin.findOne({ username: otpRecord.username }) ||
+           await Seller.findOne({ username: otpRecord.username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+    await OTP.deleteOne({ otp });
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
 
 const changePassword = async (req, res) => {
   const { oldPassword, newPassword, confirmNewPassword } = req.body;
@@ -252,4 +339,6 @@ module.exports = {
   setStatusToActive,
   deleteAccount,
   getDeletedUsers,
+  sendOtp,
+  resetPassword
 };

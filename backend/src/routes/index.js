@@ -10,7 +10,6 @@ const preferenceTagRouter = require('./preferenceTagRouter');
 const iteneraryRouter = require('./itineraryRouter');
 
 
-
 // POST route for creating a new tourism governor
 _.use('/admin', adminRouter);
 
@@ -40,6 +39,7 @@ const authenticate = require('../middleware/authenticate');
 const bookingRouter = require('./bookingRouter');
 const purchaseRouter = require('./purchaseRouter');
 const cloudinaryRouter = require('./cloudinaryRouter');
+const { sendOtp, resetPassword} = require('../controllers/accountController');
 
 
 _.use("/advertiser",  advertiserRouter);
@@ -58,6 +58,8 @@ _.use('/cloudinary', cloudinaryRouter);
 
 
 
+
+
 _.get("/user",authenticate,  (req, res) => {
     res.status(200).json({
         user: req.user
@@ -67,6 +69,7 @@ _.get("/user",authenticate,  (req, res) => {
 const login = require('../controllers/LoginController');
 
 _.post("/login",  login.Login);
-
+_.post('/send-otp', sendOtp);
+_.post('/reset-password', resetPassword);
 
 module.exports = _;

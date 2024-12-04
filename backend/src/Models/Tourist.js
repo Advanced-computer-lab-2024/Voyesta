@@ -70,6 +70,14 @@ const touristSchema = new Schema({
         enum: ['pending', 'active', 'deleted'],
         default: 'active'
     },
+    bookmarkedActivities: [{ 
+        type: Schema.Types.ObjectId,
+         ref: 'Activity' 
+    }],
+    bookmarkedItineraries: [{ 
+        type: Schema.Types.ObjectId,
+        ref: 'Itinerary' 
+    }],
     preferences: [{ // Array of preference tags for req 10.
         type: Schema.Types.ObjectId,
         ref: 'PreferenceTag'
@@ -119,7 +127,25 @@ const touristSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Product',
     }],
+    birthdayPromoCode: {
+        code: { type: String }, // Unique code
+        discount: { type: Number }, // Discount percentage
+        validFrom: { type: Date }, // Start date of validity
+        validUntil: { type: Date }, // End date of validity
+        status: { 
+            type: String, 
+            enum: ['active', 'used', 'expired'], 
+            default: 'active' 
+        },
+    },
+    notifications: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Notification'
+    }]
 }, { timestamps: true });
+
+
+
 
 // Age validation
 touristSchema.pre('save', function(next) {

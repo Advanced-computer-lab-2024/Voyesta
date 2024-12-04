@@ -3,6 +3,7 @@ const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
 const PreferenceTag = require('../Models/PreferenceTag');
 const Booking = require('../Models/Booking');
+const { notifyUsersForBookingEnabled } = require('../controllers/NotificationController');
 
 
 
@@ -69,12 +70,12 @@ const getItineraries = async (req, res) => {
             itineraries = await Itinerary.find({ createdBy: userId }).populate('activities tags');
         } else if (userType === 'tourist') {
             // Find itineraries that are not booked with status "pending" or "confirmed"
+            
             const bookedItineraryIds = await Booking.find({ status: { $in: ['pending', 'confirmed'] } }).distinct('bookable');
-            itineraries = await Itinerary.find({ 
-                _id: { $nin: bookedItineraryIds },
-                bookingActive: true,
-                inappropriate: false
-            }).populate('activities tags');
+            
+            itineraries = await Itinerary.find({ bookingActive: true })
+            .populate('activities tags');          
+
         } else if (userType === 'admin') {
             itineraries = await Itinerary.find().populate('activities tags');
         } else {
@@ -363,6 +364,44 @@ const checkItineraryRatingAndComment = async (req, res) => {
     }
   };
 
+  const updateBookingEnabledStatus = async (req, res) => {
+    const { id } = req.params;
+    const { bookingEnabled } = req.body;
+  
+    try {
+      const itinerary = await Itinerary.findById(id);
+      if (!itinerary) {
+        return res.status(404).json({ message: 'Itinerary not found' });
+      }
+  
+      itinerary.bookingEnabled = bookingEnabled;
+      await itinerary.save();
+
+      if (bookingEnabled) {
+        notifyUsersForBookingEnabled(id, 'itinerary');
+      }
+  
+      res.status(200).json(itinerary);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+
+  const getBookingStatus = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const itinerary = await Itinerary.findById(id);
+      if (!itinerary) {
+        return res.status(404).json({ message: 'Itinerary not found' });
+      }
+  
+      res.status(200).json({ bookingEnabled: itinerary.bookingEnabled });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+
 module.exports = {
     getItineraryById,
     createItinerary,
@@ -377,5 +416,7 @@ module.exports = {
     flagInappropriate,
     addItineraryRating,
     addItineraryComment,
-    checkItineraryRatingAndComment
+    checkItineraryRatingAndComment,
+    updateBookingEnabledStatus,
+    getBookingStatus
 };

@@ -51,7 +51,11 @@ const sellerSchema = new Schema({
       type: Boolean,
       required: false,
       default: false
-    }
+    },
+    notifications: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Notification'
+    }]
 }, { timestamps: true });
 
 

@@ -9,6 +9,8 @@ import ProfileManagement from "../../newComponents/ProfileManagement";
 import UploadDocuments from "../../newComponents/UploadDocuments";
 import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
+import Notifications from "../../newComponents/Notifications";
 
 const navLinks = [
   { path: "/seller/", label: "Home" },
@@ -16,7 +18,8 @@ const navLinks = [
   { path: "/seller/view-products", label: "All Products" },
   { path: "/seller/view-my-products", label: "My Products" },
   { path: "/seller/sales", label: "Sales" },
-  { path: "/seller/profile", label: "Profile" }
+  { path: "/seller/profile", label: "Profile" },
+  { path: "/seller/notifications", label: "Notifications" },
 ];
 
 function SellerDashboard() {
@@ -108,13 +111,11 @@ function SellerDashboard() {
               <ProductsView role="sellerMyProducts" />
             } />
 
-            <Route path="/sales" element={
-              <ProductSalesView userType="seller" />
-            } />
-
+            <Route path="/sales" element={<RevenueSalesView userType="seller" />} />
             <Route path="/profile" element={
               <ProfileManagement userType="seller" baseUrl="http://localhost:3000/api/seller" />
             } />
+            <Route path='notifications' element={<Notifications baseUrl="http://localhost:3000/api/seller" userType='seller' />}/>
           </Routes>
         </div>
       }

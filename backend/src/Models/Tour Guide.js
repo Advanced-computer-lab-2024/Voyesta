@@ -96,7 +96,11 @@ const tourGuideSchema = new Schema({
     type: Boolean,
     required: false,
     default: false
-  }
+  },
+  notifications: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Notification'
+  }]
 }, { timestamps: true });
 
 const TourGuide = mongoose.model('TourGuide', tourGuideSchema);

@@ -7,11 +7,15 @@ import ProfileManagement from '../../newComponents/ProfileManagement';
 import UploadDocuments from '../../newComponents/UploadDocuments';
 import AdditionalInfoForm from '../LoginSignup/AdditionalInfoForm';
 import TermsAndConditions from '../LoginSignup/TermsAndConditions';
+import RevenueSalesView from '../../newComponents/RevenueSalesView';
+import Notifications from '../../newComponents/Notifications';
 
 const navLinks = [
   { path: "/advertiser/", label: "Home" },
   { path: "/advertiser/profile", label: "Profile" },
-  { path: "/advertiser/activity", label: "Activity" }
+  { path: "/advertiser/activity", label: "Activity" },
+  { path: "/advertiser/sales", label: "Sales" },
+  { path: "/advertiser/notifications", label: "Notifications" },
 ];
 
 function AdvertiserDashboard() {
@@ -32,7 +36,6 @@ function AdvertiserDashboard() {
   const fetchAdvertiser = () => {
     axios.get("http://localhost:3000/api/advertiser/get", getAuthHeader())
       .then(res => {
-        console.log(res.data);
         setAdvertiser(res.data);
       })
       .catch(e => console.log(e));
@@ -97,6 +100,8 @@ function AdvertiserDashboard() {
             <Route path="/activity" element={
               <ActivitiesView baseUrl="http://localhost:3000/api/advertiser" role="advertiser" />
             } />
+            <Route path="/sales" element={<RevenueSalesView userType="advertiser" />} />
+            <Route path="/notifications" element={<Notifications baseUrl="http://localhost:3000/api/advertiser" userType="advertiser" />} />
           </Routes>
         </div>
       }

@@ -2,10 +2,37 @@ const Activity = require('../Models/Activity');
 const Category = require('../Models/ActivityCategory');
 const Tag = require('../Models/PreferenceTag');
 const mongoose = require('mongoose');
+const sendGrid = require('@sendgrid/mail');
+const { sendNotification, notifyUsersForBookingEnabled } = require('./NotificationController');
+
+sendGrid.setApiKey('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');
+
+const flagActivityAsInappropriate = async (req, res) => {
+    const { id } = req.params;
+    const userType = req.user.type;
+
+    if (userType !== 'admin') {
+        return res.status(403).json({ error: 'Only admins can flag activities as inappropriate' });
+    }
+
+    try {
+        const activity = await Activity.findById(id).populate('advertiser');
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        activity.inappropriate = true;
+        await activity.save();
+
+        res.status(200).json({ message: 'Activity flagged as inappropriate and notification sent successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 // Create a new Activity
 const createActivity = async (req, res) => {
-    const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
+    const { name, description, date, time, location, price, specialDiscount, category, tags, imageUrl } = req.body;
     const advertiser = req.user.id;  // Assuming req.user is populated by authentication middleware
     const categoryID = await Category.findOne({ Name: category }).select('_id');
     const tagIds = await Promise.all(tags.map(async (tag) => {
@@ -26,7 +53,8 @@ const createActivity = async (req, res) => {
             specialDiscount,
             category: categoryID,
             tags: tagIds,
-            advertiser
+            advertiser,
+            imageUrl // Add this line
         });
         // console.log(activity);
         await activity.save();
@@ -85,40 +113,27 @@ const getAllActivitiesByAdvertiser = async (req, res) => {
 
 // update an Activity
 const updateActivity = async (req, res) => {
-    const { id } = req.params;
-    const advertiserId =  req.user.id; // hard coded for now, will be replaced with req.user._id  after authentication
-    
-    let tagIds = null;
-    const { name, description, date, time, location, price, specialDiscount, category, tags } = req.body;
+  const { id } = req.params;
+  const advertiserId = req.user.id; // Assuming req.user is populated by authentication middleware
+  const { name, description, date, time, location, price, specialDiscount, category, tags, imageUrl } = req.body;
 
-    // console.log(category);
-    const categoryId = await Category.findOne({ Name: category }).select('_id');
+  const categoryId = await Category.findOne({ Name: category }).select('_id');
+  const tagIds = await Promise.all(tags.map(async (tag) => {
+    const tagId = await Tag.findOne({ Name: tag }).select('_id');
+    return tagId;
+  }));
 
-    if(tags){
-        tagIds = await Promise.all(tags.map(async (tag) => {
-            const tagId = await Tag.findOne({ Name: tag }).select('_id');
-            return tagId;
-        }));
+  const updates = { name, description, date, time, location, price, specialDiscount, category: categoryId, tags: tagIds, imageUrl }; // Add imageUrl here
+
+  try {
+    const activity = await Activity.findByIdAndUpdate(id, updates, { new: true, upsert: false, overwrite: true });
+    if (!activity) {
+      return res.status(404).json({ error: 'Activity not found' });
     }
-    const updates = { name, description, date, time, location, price, specialDiscount, "category": categoryId, "tags": tagIds };
-    console.log(updates);    
-
-    try {
-       const activity = await  Activity.findByIdAndUpdate(id, updates, { new: true, upsert: false, overwrite: true })
-        if (!activity) {
-            return res.status(404).json({ error: 'Activity not found' });
-        }
-
-        // if (activity.advertiser.toString() !== advertiserId.toString()) {
-        //     return res.status(403).json({ error: 'Unauthorized access' });
-        // }
-
-        // Object.assign(activity, updates);
-        // await activity.save();
-        res.status(200).json(activity);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+    res.status(200).json(activity);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 
@@ -356,6 +371,7 @@ const addRating = async (req, res) => {
 
         activity.ratings.push({ tourist: touristId, rating });
         await activity.save();
+        
         res.status(200).json({ message: 'Rating added successfully', activity });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -401,4 +417,45 @@ const getTransportationActivities = async (req, res) => {
     }
 };
 
-module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities };
+const updateBookingEnabledStatus = async (req, res) => {
+    const { id } = req.params;
+    const { bookingEnabled } = req.body;
+  
+    try {
+      const activity = await Activity.findById(id);
+      if (!activity) {
+        return res.status(404).json({ message: 'Activity not found' });
+      }
+      if (!activity.bookingEnabled) {
+        activity.bookingEnabled = false;
+      }
+  
+      activity.bookingEnabled = bookingEnabled;
+      await activity.save();
+  
+      if (bookingEnabled) {
+        await notifyUsersForBookingEnabled(id, 'activity');
+      }
+  
+      res.status(200).json(activity);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+  
+  const getBookingStatus = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const activity = await Activity.findById(id);
+      if (!activity) {
+        return res.status(404).json({ message: 'Activity not found' });
+      }
+  
+      res.status(200).json({ bookingEnabled: activity.bookingEnabled });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+  
+module.exports = { createActivity,getActivityById, getActivity, getAllActivitiesByAdvertiser, updateActivity, addRating, addComment, deleteActivity, sortactivitestsByPrice, sortactivitestsByRatings, filterActivities, filterTouristActivities, search, checkActivityRatingAndComment, getTransportationActivities, flagActivityAsInappropriate, updateBookingEnabledStatus, getBookingStatus };
