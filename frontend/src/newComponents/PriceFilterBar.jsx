@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import '../css/PriceFilterBar.css';
 
-const PriceFilterBar = ({ items = [], setItems, convertedPrices = [], priceProperty = 'price' }) => {
+const PriceFilterBar = ({
+  items = [],
+  setItems,
+  convertedPrices = [],
+  priceProperty = 'price',
+}) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [minVal, setMinVal] = useState(minPrice);
@@ -38,33 +42,42 @@ const PriceFilterBar = ({ items = [], setItems, convertedPrices = [], pricePrope
   };
 
   return (
-    <div className="range_container">
-      <div className="slider_label flex justify-between mx-2">
-        <span>{minVal}</span>
-        <span>{maxVal}</span>
+    <form className="max-w-[24rem] mx-auto p-4 bg-white shadow-lg rounded-lg dark:bg-gray-800">
+      <div className="mb-4">
+        <label className="block text-gray-700 dark:text-gray-200 mb-2">Price Range</label>
+        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+          <span>${minVal}</span>
+          <span>${maxVal}</span>
+        </div>
+        <div className="relative flex items-center">
+          <input
+            type="range"
+            className="range-input absolute w-full z-10"
+            value={minVal}
+            min={minPrice}
+            max={maxPrice}
+            step="0.01"
+            onChange={handleMinChange}
+          />
+          <input
+            type="range"
+            className="range-input absolute w-full z-20"
+            value={maxVal}
+            min={minPrice}
+            max={maxPrice}
+            step="0.01"
+            onChange={handleMaxChange}
+          />
+        </div>
       </div>
-      <div className="sliders_control">
-        <input
-          id="fromSlider"
-          type="range"
-          value={minVal}
-          min={minPrice}
-          max={maxPrice}
-          step="0.01"
-          onChange={handleMinChange}
-        />
-        <input
-          id="toSlider"
-          type="range"
-          value={maxVal}
-          min={minPrice}
-          max={maxPrice}
-          step="0.01"
-          onChange={handleMaxChange}
-        />
-      </div>
-      <button className='form_control' onClick={onFilter}>Filter</button>
-    </div>
+      <button
+        type="button"
+        className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+        onClick={onFilter}
+      >
+        Filter
+      </button>
+    </form>
   );
 };
 
