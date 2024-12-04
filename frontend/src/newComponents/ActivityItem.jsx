@@ -4,6 +4,8 @@ import axios from 'axios';
 import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShareAlt, faEnvelope, faBookmark, faFlag } from '@fortawesome/free-solid-svg-icons';
 
 const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice, targetCurrency, transportation }) => {
   const [shareLink, setShareLink] = useState('');
@@ -122,6 +124,38 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     }
   };
 
+  const handleBookmark = async () => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/bookmark`,
+        { activityId: activity._id },
+        getAuthHeaders()
+      );
+      setIsBookmarked(true); // Update UI
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error bookmarking activity:', error);
+    }
+  };
+
+  const handleUnbookmark = async () => {
+    try {
+      const response = await axios.delete(`${baseUrl}/bookmark/${activity._id}`, getAuthHeaders());
+      setIsBookmarked(false);
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error unbookmarking activity:', error);
+    }
+  };
+
+  const toggleBookmark = () => {
+    if (isBookmarked) {
+      handleUnbookmark();
+    } else {
+      handleBookmark();
+    }
+  };
+
   const convertTimeTo24HourFormat = (time) => {
     const [timePart, modifier] = time.split(' ');
     let [hours, minutes] = timePart.split(':');
@@ -220,53 +254,39 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       alert('Error booking activity.');
     }
   };
-  const handleBookmark = async () => {
-    try {
-      const response = await axios.post(
-        `${baseUrl}/bookmark`,
-        { activityId: activity._id },
-        getAuthHeaders()
-      );
-      setIsBookmarked(true); // Update UI
-      alert(response.data.message);
-    } catch (error) {
-      console.error('Error bookmarking activity:', error);
-    }
+
+  const handleCopyLink = (link) => {
+    navigator.clipboard.writeText(link);
+    alert('Link copied to clipboard');
   };
-  const handleUnbookmark = async () => {
-    try {
-      const response = await axios.delete(`${baseUrl}/bookmark/${activity._id}`, getAuthHeaders());
-      setIsBookmarked(false);
-      alert(response.data.message);
-    } catch (error) {
-      console.error('Error unbookmarking activity:', error);
-    }
+
+  const handleShareViaEmail = (link) => {
+    window.location.href = `mailto:?subject=Check out this activity&body=Here is the link: ${link}`;
   };
-  const toggleBookmark = () => {
-    if (isBookmarked) {
-      handleUnbookmark();
-    } else {
-      handleBookmark();
-    }
+
+  const generateShareLink = (id) => {
+    return `${window.location.origin}/activity/${id}`;
   };
-  
+
   const averageRating = activity.ratings.length === 0
     ? 0
     : (activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) / activity.ratings.length).toFixed(1);
 
-    const handleNotifyMe = async () => {
-      try {
-        const url = `${baseUrl}/requestNotification`;
-        await axios.post(url, { itemId: activity._id, itemType: 'activity' }, getAuthHeaders());
-    
-        alert('You will be notified when booking is enabled.');
-      } catch (error) {
-        console.error('Error requesting notification:', error);
-      }
-    };
+  const fallbackImage = "https://cdn.britannica.com/10/241010-049-3EB67AA2.jpg";
+
+  const handleNotifyMe = async () => {
+    try {
+      const url = `${baseUrl}/requestNotification`;
+      await axios.post(url, { itemId: activity._id, itemType: 'activity' }, getAuthHeaders());
+  
+      alert('You will be notified when booking is enabled.');
+    } catch (error) {
+      console.error('Error requesting notification:', error);
+    }
+  };
 
   return (
-    <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
+    <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
       {isEditing ? (
         <>
           <div className=''>
@@ -386,94 +406,114 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         </>
       ) : (
         <>
-          <h3 className="font-bold text-lg">{activity.name}</h3>
-          <p>{activity.description || 'No description available'}</p>
+          <div className="activity-item flex flex-col h-full">
+          <img 
+    src={fallbackImage} 
+    alt={activity.name} 
+    className="w-full h-48 object-cover"
+  />
+  <div className="p-4 flex flex-col space-y-3">
+    {/* Activity Name */}
+    <h3 className="font-bold text-xl text-gray-800">{activity.name}</h3>
+
+    {/* Tags */}
+    {Array.isArray(activity.tags) && activity.tags.length > 0 ? (
+      <p className="text-sm text-gray-600">
+        <span className="font-medium text-gray-800">Tags:</span> {mappedTags.join(', ')}
+      </p>
+    ) : (
+      <p className="text-sm text-gray-600">
+        <span className="font-medium text-gray-800">Tags:</span> No tags available
+      </p>
+    )}
+
+    {/* Rating */}
+    <p className="text-gray-800 textStyle">
+      <span className="font-bold">Rating:</span> {averageRating}
+    </p>
+
+    {/* Price */}
+    <p className="text-gray-800">
+      <span className="font-bold">Price:</span> {activity.price}
+    </p>
+
+    {/* Special Discount */}
+    <p className="text-sm text-gray-600">
+      <span className="font-medium text-gray-800">Special Discount:</span> {activity.specialDiscount}
+    </p>
+  </div>
+        {role === 'admin' && 
+        <div className="flex space-x-4">
           
-          {activity.location && typeof activity.location === 'object' ? (
-            <p>Location: 
-              {activity.location.lat || 'Unknown latitude'}, 
-              {activity.location.lng || 'Unknown longitude'}
-            </p>
-          ) : (
-            <p>Location information not available</p>
-          )}
-
-          <p>Date: {activity.date ? new Date(activity.date).toLocaleDateString() : 'Unknown date'}</p>
-          <p>Time: {activity.time || 'Unknown time'}</p>
-
-          {typeof activity.price === 'object' ? (
-            <p>Price Range: {convertedPrice ? `${convertedPrice.min.toFixed(2)} - ${convertedPrice.max.toFixed(2)} ${targetCurrency}` : `${activity.price.min || '0'} - ${activity.price.max || '0'} USD`}</p>
-          ) : (
-            <p>Price: {convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${activity.price.toFixed(2)} USD`}</p>
-          )}
-
-          <p>Category: {typeof activity.category === 'string' 
-            ? activity.category 
-            : activity.category?.Name || 'Unknown category'}
-          </p>
-          
-          
-          {Array.isArray(activity.tags) ? (
-            !transportation && <p>Tags: {mappedTags.join(', ')}</p>
-          ) : (
-            <p>Tags: No tags available</p>
-          )}
-
-          <p>Rating: {averageRating}</p>
-          <p>Special Discount: {activity.specialDiscount}</p>
-          <p>Inappropriate: {inappropriate ? "true" : "false"}</p>
-          <p>BookinkStats: {bookingEnabled ? "true" : "false"}</p>
-
-          {role === 'admin' && <img
-              onClick={flagAsInappropriate}
-              src={assets.flagIcon}
-              className="w-6 h-6 cursor-pointer"
-              alt="Flag Icon"
-            />
+        <div 
+          onClick={flagAsInappropriate} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faFlag}
+          style={{ cursor: 'pointer', color: inappropriate ? 'red' : 'gray' }}
+        />
+        </div>
+      </div>
           }
+            {role === 'tourist' && !transportation && (
+  <div className="flex flex-col h-full justify-between mt-4">
+    <div className="flex justify-between items-center mt-auto">
+      {/* Booking Button */}
+      <button 
+        onClick={() => setShowPopup(true)} 
+        className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg py-2 px-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out"
+      >
+        Book Activity
+      </button>
 
-          {(role === 'tourist' && (!transportation)) && (
-            <>
-              {bookingEnabled && <button onClick={() => setShowPopup(true)} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Book Activity
-              </button>}
-              <button onClick={() => {
-                const link = generateShareLink(activity._id);
-                handleCopyLink(link);
-              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Share via Copy Link
-              </button>
-              <button onClick={() => {
-                const link = generateShareLink(activity._id);
-                handleShareViaEmail(link);
-              }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">
-                Share via Email
-              </button>
-              <button
-                onClick={toggleBookmark}
-                className="flex items-center gap-2 mt-2 bg-yellow-300 rounded-full p-2 hover:bg-yellow-400"
-              >
-                {isBookmarked ? 'Unbookmark' : 'Bookmark'}
-              </button>
-              {!bookingEnabled && (
-              <button
-                onClick={handleNotifyMe}
-                className="bg-green-500 text-white rounded-lg p-2 mt-4 hover:bg-green-700"
-              >
-                Notify Me
-              </button>
-            )}
-              {showPopup && (
-                <BookingPopup
-                  item={activity}
-                  itemType="activity"
-                  onClose={() => setShowPopup(false)}
-                  onBook={handleBooking}
-                />
-              )}
-            </>
-          )}
-          
+      {/* Share and Email Icons */}
+      <div className="flex space-x-4">
+        {/* Share Link */}
+        <div 
+          onClick={() => {
+            const link = generateShareLink(activity._id);
+            handleCopyLink(link);
+          }} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faShareAlt} className="text-xl" />
+        </div>
+        <div 
+          onClick={toggleBookmark} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon
+          icon={faBookmark}
+          style={{ cursor: 'pointer', color: isBookmarked ? 'gold' : 'gray' }}
+        />
+        </div>
+        
+        {/* Email Link */}
+        <div 
+          onClick={() => {
+            const link = generateShareLink(activity._id);
+            handleShareViaEmail(link);
+          }} 
+          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faEnvelope} className="text-xl" />
+        </div>
+      </div>
+    </div>
+
+    {/* Booking Popup */}
+    {showPopup && (
+      <BookingPopup
+        item={activity}
+        itemType="activity"
+        onClose={() => setShowPopup(false)}
+        onBook={handleBooking}
+      />
+    )}
+  </div>
+)}
+
+          </div>
 
           {role === 'advertiser' && (
             <div className="flex justify-between mt-2">
@@ -501,5 +541,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     </div>
   );
 };
+
+const textStyle = {
+  marginLeft : '-20px',
+}
 
 export default ActivityItem;

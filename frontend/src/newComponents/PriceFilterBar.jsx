@@ -42,33 +42,10 @@ const PriceFilterBar = ({
   };
 
   return (
-    <form className="max-w-[24rem] mx-auto p-4 bg-white shadow-lg rounded-lg dark:bg-gray-800">
-      <div className="mb-4">
-        <label className="block text-gray-700 dark:text-gray-200 mb-2">Price Range</label>
-        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-          <span>${minVal}</span>
-          <span>${maxVal}</span>
-        </div>
-        <div className="relative flex items-center">
-          <input
-            type="range"
-            className="range-input absolute w-full z-10"
-            value={minVal}
-            min={minPrice}
-            max={maxPrice}
-            step="0.01"
-            onChange={handleMinChange}
-          />
-          <input
-            type="range"
-            className="range-input absolute w-full z-20"
-            value={maxVal}
-            min={minPrice}
-            max={maxPrice}
-            step="0.01"
-            onChange={handleMaxChange}
-          />
-        </div>
+<div className="range_container" style={{ marginTop: '-10px' }}>
+<div className="slider_label flex justify-between mx-2">
+        <span>{minVal}</span>
+        <span>{maxVal}</span>
       </div>
       <button
         type="button"
@@ -77,7 +54,7 @@ const PriceFilterBar = ({
       >
         Filter
       </button>
-    </form>
+    </div>
   );
 };
 

@@ -27,7 +27,7 @@ const CategoryFilter = ({ baseUrl, setSelectedCategory }) => {
   }, [baseUrl]);
 
   return (
-    <div className="mb-4">
+    <div className="mb-4" style={{marginTop : '-100px'}}>
       <label className="block mb-2">Category</label>
       <select
         className="w-full p-2 border"
