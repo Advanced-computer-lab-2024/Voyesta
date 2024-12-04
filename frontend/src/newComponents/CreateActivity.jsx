@@ -18,7 +18,8 @@ const CreateActivity = (props) => {
     category: '',
     tags: [],
     specialDiscounts: '',
-    bookingOpen: false
+    bookingOpen: false,
+    imageUrl: '' // Add this line
   });
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -134,6 +135,20 @@ const CreateActivity = (props) => {
         <textarea
           id="description"
           value={activity.description}
+          onChange={handleChange}
+          className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700">
+          Image URL
+        </label>
+        <input
+          type="text"
+          id="imageUrl"
+          value={activity.imageUrl}
           onChange={handleChange}
           className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
           required

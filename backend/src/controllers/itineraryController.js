@@ -70,12 +70,12 @@ const getItineraries = async (req, res) => {
             itineraries = await Itinerary.find({ createdBy: userId }).populate('activities tags');
         } else if (userType === 'tourist') {
             // Find itineraries that are not booked with status "pending" or "confirmed"
+            
             const bookedItineraryIds = await Booking.find({ status: { $in: ['pending', 'confirmed'] } }).distinct('bookable');
-            itineraries = await Itinerary.find({ 
-                _id: { $nin: bookedItineraryIds },
-                bookingActive: true,
-                inappropriate: false
-            }).populate('activities tags');
+            
+            itineraries = await Itinerary.find({ bookingActive: true })
+            .populate('activities tags');          
+
         } else if (userType === 'admin') {
             itineraries = await Itinerary.find().populate('activities tags');
         } else {
