@@ -1,24 +1,53 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const OrdersPage = ({ baseUrl }) => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const getAuthHeaders = () => {
     return {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+      'Authorization': `Bearer ${localStorage.getItem("token")}`,
+      'Content-Type': 'application/json'
     };
   };
 
   const fetchOrders = async () => {
     const url = `${baseUrl}/getOrders`;
     try {
-      const response = await axios.get(url, getAuthHeaders());
-      setOrders(response.data);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders()
+      });
+      const data = await response.json();
+      setOrders(data);
+      setLoading(false);
+      await deleteCancelledOrders(); // Automatically delete cancelled orders after fetching
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      setError('Error fetching orders');
+      setLoading(false);
+    }
+  };
+
+  const deleteCancelledOrders = async () => {
+    const url = `${baseUrl}/deleteCancelledOrders`;
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (response.ok) {
+        setOrders(prevOrders => prevOrders.filter(order => order.status !== 'cancelled'));
+        setSuccessMessage('Cancelled orders deleted successfully!');
+        setTimeout(() => setSuccessMessage(''), 3000); // Clear message after 3 seconds
+      } else {
+        throw new Error('Failed to delete cancelled orders');
+      }
+    } catch (error) {
+      setError('Error deleting cancelled orders');
     }
   };
 
@@ -28,42 +57,72 @@ const OrdersPage = ({ baseUrl }) => {
 
   const cancelOrder = async (orderId) => {
     const url = `${baseUrl}/cancelOrder/${orderId}`;
-    console.log(url);
     try {
-      await axios.patch(url, {}, getAuthHeaders());
-      setOrders(
-        orders.map((order) =>
-          order._id === orderId ? { ...order, status: 'cancelled' } : order
-        )
-      );
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: getAuthHeaders()
+      });
+      if (response.ok) {
+        setOrders(
+          orders.map((order) =>
+            order._id === orderId ? { ...order, status: 'cancelled' } : order
+          )
+        );
+        setSuccessMessage('Order cancelled successfully!');
+        setTimeout(() => setSuccessMessage(''), 3000); // Clear message after 3 seconds
+        await deleteCancelledOrders(); // Call the function to delete cancelled orders
+      } else {
+        throw new Error('Failed to cancel order');
+      }
     } catch (error) {
-      console.error('Error cancelling order:', error);
+      setError('Error cancelling order');
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
-    <div style={styles.pageContainer}>
-      <h1 style={styles.heading}>My Orders</h1>
+    <div className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-center p-10">My Orders</h2>
+      {successMessage && (
+        <div className="text-green-500 text-center mb-4">{successMessage}</div>
+      )}
       {orders.length === 0 ? (
-        <p style={styles.emptyMessage}>You have no orders yet.</p>
+        <p className="text-center text-lg">You have no orders yet.</p>
       ) : (
-        <div style={styles.ordersContainer}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {orders.map((order) => (
-            <div key={order._id} style={styles.orderCard}>
-              <h3 style={styles.orderTitle}>Order #{order._id}</h3>
-              <p><strong>Details:</strong> {order.details}</p>
-              <p><strong>Total:</strong> ${order.total}</p>
-              <p><strong>Status:</strong> 
-                <span style={getStatusStyle(order.status)}>{order.status}</span>
-              </p>
-              {order.status === 'confirmed' && (
-                <button
-                  style={styles.cancelButton}
-                  onClick={() => cancelOrder(order._id)}
-                >
-                  Cancel Order
-                </button>
-              )}
+            <div key={order._id} className="relative flex flex-col bg-white shadow-lg p-6 rounded-lg h-auto w-full border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center">
+                {/* Order Details */}
+                <div className="flex-1">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-semibold text-lg">Order #{order._id}</h3>
+                      <p className="text-sm text-gray-500"><strong>Details:</strong> {order.details}</p>
+                      <p className="text-sm text-gray-500"><strong>Total:</strong> ${order.total}</p>
+                      <p className="text-sm text-gray-500"><strong>Status:</strong> 
+                        <span className={getStatusStyle(order.status)}>{order.status}</span>
+                      </p>
+                    </div>
+                    {/* Cancel Order Icon */}
+                    {order.status === 'confirmed' && (
+                      <button
+                        onClick={() => cancelOrder(order._id)}
+                        className="text-gray-600 hover:text-red-500"
+                      >
+                        <FontAwesomeIcon icon={faTimes} className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -73,66 +132,16 @@ const OrdersPage = ({ baseUrl }) => {
 };
 
 const getStatusStyle = (status) => {
-  const baseStyle = { fontWeight: 'bold', textTransform: 'capitalize' };
   switch (status) {
     case 'confirmed':
-      return { ...baseStyle, color: 'green' };
+      return 'text-green-500 font-bold';
     case 'cancelled':
-      return { ...baseStyle, color: 'red' };
+      return 'text-red-500 font-bold';
     case 'completed':
-      return { ...baseStyle, color: 'blue' };
+      return 'text-blue-500 font-bold';
     default:
-      return baseStyle;
+      return 'font-bold';
   }
 };
 
-const styles = {
-  pageContainer: {
-    padding: '20px',
-    fontFamily: "'Arial', sans-serif",
-    backgroundColor: '#f9f9f9',
-    minHeight: '100vh',
-  },
-  heading: {
-    textAlign: 'center',
-    marginBottom: '20px',
-    color: '#333',
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    color: '#777',
-  },
-  ordersContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '20px',
-    justifyContent: 'center',
-  },
-  orderCard: {
-    backgroundColor: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    padding: '15px',
-    width: '300px',
-    textAlign: 'left',
-  },
-  orderTitle: {
-    marginBottom: '10px',
-    fontSize: '18px',
-    color: '#333',
-  },
-  cancelButton: {
-    backgroundColor: '#ff4d4f',
-    color: '#fff',
-    border: 'none',
-    padding: '10px 15px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginTop: '10px',
-  },
-  cancelButtonHover: {
-    backgroundColor: '#ff7875',
-  },
-};
 export default OrdersPage;
