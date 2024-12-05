@@ -25,17 +25,17 @@ function Login(){
                 setUserType(res.data.userType);
                 
                 if(res.data.userType === "admin"){
-                    navigate("/admin");
+                    navigate("/admin", {state: {user: res.data.userType}});
                 }else if(res.data.userType === "tourismGovernor"){
-                    navigate("/tourismGovernor");
+                    navigate("/tourismGovernor", {state: {user: res.data.userType}});
                 }else if(res.data.userType === "seller"){
-                  navigate("/seller");
+                  navigate("/seller", {state: {user: res.data.userType}});
                 }else if(res.data.userType === "tourGuide"){
-                  navigate("/tourGuide");
+                  navigate("/tourGuide", {state: {user: res.data.userType}});
                 }else if(res.data.userType === "advertiser"){
-                  navigate("/advertiser");
+                  navigate("/advertiser", {state: {user: res.data.userType}});
                 }else if(res.data.userType === "tourist"){
-                  navigate("/tourist");
+                  navigate("/tourist", {state: {user: res.data.userType}});
                 }
                 
                 localStorage.setItem('token', token);
