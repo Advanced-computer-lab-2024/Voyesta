@@ -9,7 +9,8 @@ import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import ProductSalesView from "../../newComponents/ProductSalesView";
 import PendingUsers from "../../newComponents/PendingUsers";
-import UserStats from "../../newComponents/UserStats";import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
+import UserStats from "../../newComponents/UserStats";
+import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import ActivityView from '../../newComponents/ActivitiesView';
 import Notifications from "../../newComponents/Notifications";
@@ -85,6 +86,16 @@ function AdminDashboard() {
           path="/account-management"
           element={
             <AdminAccountManagementNavbar title="Account Management" />
+          }
+        />
+        <Route
+          path="/user-stats"
+          element={
+            <UserStats
+              baseUrl="http://localhost:3000/api/admin/"
+              title="Complaints"
+              role="admin"
+            />
           }
         />
         <Route
