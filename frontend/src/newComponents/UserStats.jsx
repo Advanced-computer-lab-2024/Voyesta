@@ -43,16 +43,16 @@ function UserStats() {
             roleStats.tourGuides
           ],
           backgroundColor: [
-            'rgba(255, 99, 132, 0.6)',
-            'rgba(54, 162, 235, 0.6)',
-            'rgba(255, 206, 86, 0.6)',
-            'rgba(75, 192, 192, 0.6)'
+            'rgb(250, 0, 0)',
+            'rgb(0, 0, 250)',
+            'rgb(255, 223, 0)',
+            'rgb(0, 220, 0)'
           ],
           borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)'
+            'rgb(200, 0, 0)',     // Even darker red for borders
+            'rgb(0, 0, 200)',     // Even darker blue for borders
+            'rgb(204, 179, 0)',   // Even darker goldenrod for borders
+            'rgb(0, 200, 0)'
           ],
           borderWidth: 1
         }
