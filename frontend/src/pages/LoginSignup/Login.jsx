@@ -107,7 +107,7 @@ function Login(){
             Login
           </button>
           <div className='text-gray-500 flex flex-row justify-center text-sm gap-1 cursor-default'>
-            <p>Already have an account? </p>
+            <p>Don't have an account? </p>
             <p 
               className='font-bold cursor-pointer text-gray-800'
               onClick={() => {navigate("/");}}

@@ -222,21 +222,22 @@ function NavBar({ role = 'tourist', user }) {
               count={icon.badge ? eval(icon.badge.key) : 0}
               onClick={() => handleIconClick(icon.path)}
               className={`text-gray-900 dark:text-white ${
-                activeTab === icon.path.split('/').pop() 
+                activeTab === icon.path?.split('/').pop() 
                   ? 'text-blue-700 dark:text-blue-500' 
                   : 'hover:text-blue-700 dark:hover:text-blue-500'
               }`}
+              items={icon.items}
             />
           ))}
 
-          <ProfileDropdown
+          {role !=='admin' && (<ProfileDropdown
             user={user}
             isVisible={activeDropdown === 'profile'}
             items={config.profileMenu?.items || []}
             baseUrl={config.profileMenu?.baseUrl}
             onMouseEnter={() => handleDropdownEnter('profile')}
             onMouseLeave={handleDropdownLeave}
-          />
+          />)}
         </div>
       </div>
     </nav>

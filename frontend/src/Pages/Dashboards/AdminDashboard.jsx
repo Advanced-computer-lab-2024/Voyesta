@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import AdminListView from "../../components/adminComponents/AdminListView";
 import AdminAccountManagementNavbar from "../../components/adminComponents/AdminAccountManagementNavbar";
@@ -31,9 +31,12 @@ const navLinks = [
 ];
 
 function AdminDashboard() {
+
+  const Location = useLocation();
+  const currentUser = Location.state?.user || "tourist";
   return (
     <div>
-      <NavBar navLinks={navLinks} />
+      <NavBar role='admin' user={currentUser} />
       <Routes>
         <Route exact path="/" element={<div>Home</div>} />
         <Route

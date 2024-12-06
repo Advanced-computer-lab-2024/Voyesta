@@ -50,12 +50,13 @@ export interface NavDivider {
 // Interface for right-aligned icons with badges
 export interface NavIcon extends BaseNavItem {
   type: 'icon';
-  path: string;
+  path?: string;
   badge?: {
     count?: number;
     key?: string;
   };
   onClick?: () => void;
+  items?: DropdownItem[];
 }
 
 export interface ProfileMenuItem {

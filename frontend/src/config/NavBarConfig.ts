@@ -363,6 +363,78 @@ export const NavConfig: NavbarConfigs = {
       ],
       baseUrl: '/tourguide'
     }
+  }, admin: {
+    logo: {
+      text: "Voyesta Admin",
+      path: "/admin",
+      image: assets.logo
+    },
+    centerItems: [
+      {
+        type: 'link',
+        label: 'Products',
+        path: '/admin/products'
+      },
+      {
+        type: 'dropdown',
+        label: 'Events',
+        items: [
+          { label: 'Activities', path: '/admin/activities' },
+          { label: 'Itineraries', path: '/admin/itineraries' }
+        ]
+      },
+      {
+        type: 'link',
+        label: 'Complaints',
+        path: '/admin/complaints'
+      }
+    ],
+    rightIcons: [
+      {
+        type: 'icon',
+        label: 'Home',
+        path: '/admin',
+        icon: 'fa-home'
+      },
+      {
+        type: 'icon',
+        label: 'Notifications',
+        path: '/admin/notifications',
+        icon: 'fa-bell',
+        badge: {
+          key: 'notifications'
+        }
+      },
+      {
+        type: 'icon',
+        label: 'Sales',
+        path: '/admin/revenue-sales',
+        icon: 'fa-chart-line'
+      },
+      {
+        type: 'icon',
+        label: 'Site Management',
+        icon: 'fa-cogs',
+        items: [
+          { label: 'Account Management', path: '/admin/account-management' },
+          { label: 'Manage Preference Tags', path: '/admin/preference-tag' },
+          { label: 'Manage Categories', path: '/admin/activity-category' },
+          { label: 'Pending Users', path: '/admin/pendingUsers' },
+          { label: 'User Stats', path: '/admin/user-stats' },
+          { label: 'Promo Codes', path: '/admin/promo-codes' }
+        ]
+      },
+      {
+        type: 'icon',
+        label: 'Logout',
+        path: '/',
+        icon: 'fa-sign-out-alt',
+        onClick: () => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }
+      }
+    ],
   }
 
 
