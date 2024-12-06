@@ -69,9 +69,9 @@ _.patch('/flagActivityAsInappropriate/:id', authenticate, flagActivityAsInapprop
 _.get('/getComplaints', getComplaints);
 _.get('/getComplaintById/:id', getComplaintById);
 _.patch('/updateComplaintStatus/:id', updateComplaintStatus);
-_.patch('/replyToComplaint/:id', addReplyToComplaint);
+_.patch('/replyToComplaint/:id', authenticate, addReplyToComplaint);
 
-_.patch('/changePassword', changePassword);
+_.patch('/changePassword', authenticate, changePassword);
 _.patch('/setStatusToActive/:id', setStatusToActive);
 _.patch('/setStatusToRejected/:id', setStatusToRejected);
 // _.patch('/setStatusToDeleted/:id', setStatusToDeleted);

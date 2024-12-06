@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ChangePassword from '../../newComponents/ChangePassword';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPlus, faKey, faTrashAlt, faCheck, faTimes, faUserCircle  } from '@fortawesome/free-solid-svg-icons';
 
 function AdminAccountManagement() {
   const [activeTab, setActiveTab] = useState("addTourismGovernor");
@@ -34,6 +36,7 @@ function AdminAccountManagement() {
     axios.get(url, getAuthHeaders())
       .then(response => {
         setPendingDeletions(response.data);
+        console.log(response.data);
       })
       .catch(err => setMessage("Error fetching pending deletion requests."));
   };
@@ -58,11 +61,12 @@ function AdminAccountManagement() {
 
   const handleRejectAccountDeletion = (userId) => {
     const url = `${baseUrl}/setStatusToActive/${userId}`;
-
+    // console.log(user)
     axios.patch(url, {}, getAuthHeaders())
       .then(response => {
         setMessage(`Account deletion rejected for user ID: ${userId}.`);
-        setPendingDeletions(pendingDeletions.filter(account => account._id !== userId));
+        // setPendingDeletions(pendingDeletions.filter(account => account._id !== userId));
+        fetchPendingDeletions();
       })
       .catch(err => setMessage(`Error rejecting account deletion for user ID: ${userId}.`));
   };
@@ -77,9 +81,15 @@ function AdminAccountManagement() {
     setShowPopup(false);
   };
 
+  const handleCancelDelete = () => {
+    setShowPopup(false);
+  };
+
   return (
-    <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-      <h1 className="text-2xl text-gray-600 font-bold mb-3">Admin Account Management</h1>
+    <div className="max-w-full mx-auto bg-white shadow-md rounded-lg overflow-hidden relative px-40 pb-40">
+      <div className="flex justify-between items-center p-4 border-b mb-10">
+        <h2 className="text-4xl font-bold text-gray-900">Admin Account Management</h2>
+      </div>
 
       {/* Tab Navigation */}
       <div className="flex justify-around border-b mb-4">
@@ -87,164 +97,167 @@ function AdminAccountManagement() {
           className={`p-2 ${activeTab === "addTourismGovernor" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => { setActiveTab("addTourismGovernor"); setMessage("") }}
         >
+          <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
           Add Tourism Governor
         </button>
         <button
           className={`p-2 ${activeTab === "addAdmin" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => { setActiveTab("addAdmin"); setMessage("") }}
         >
+          <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
           Add Admin
         </button>
         <button
           className={`p-2 ${activeTab === "approveDeletion" ? "border-b-2 border-blue-500" : ""}`}
           onClick={() => { setActiveTab("approveDeletion"); setMessage("") }}
         >
+          <FontAwesomeIcon icon={faTrashAlt} className="mr-2" />
           Approve Account Deletion
         </button>
         <button
           className={`p-2 ${activeTab === 'changePassword' ? 'border-b-2 border-blue-500' : ''}`}
           onClick={() => setActiveTab('changePassword')}
         >
+          <FontAwesomeIcon icon={faKey} className="mr-2" />
           Change Password
         </button>
       </div>
 
-      {/* Form Display based on Active Tab */}
       {activeTab === "addTourismGovernor" && (
-        <form onSubmit={(e) => { e.preventDefault(); handleAddTourismGovernor(); }} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
+        <form onSubmit={(e) => { e.preventDefault(); handleAddTourismGovernor(); }} className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
+          <div className="w-1/3 md:w-1/2">
+            <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900">Username</label>
             <input
               type="text"
               id="username"
+              placeholder='Add username'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+          <div className="w-1/3 md:w-1/2">
+            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
             <input
               type="password"
               id="password"
+              placeholder='Add password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-          >
-            Add Tourism Governor
-          </button>
+          <div className="flex justify-center w-full md:w-1/2">
+            <button
+              type="submit"
+              className="w-full md:w-auto rounded-lg bg-blue-600 py-3 px-6 text-sm font-semibold text-white shadow-md transition duration-200 hover:bg-blue-700"
+            >
+              Add Tourism Governor
+            </button>
+          </div>
         </form>
+      )}
+
+      {activeTab === "addAdmin" && (
+        <form onSubmit={(e) => { e.preventDefault(); handleAddAdmin(); }} className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
+          <div className="w-1/3 md:w-1/2">
+            <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900">Username</label>
+            <input
+              type="text"
+              id="username"
+              placeholder='Add username'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required
+            />
+          </div>
+          <div className="w-1/3 md:w-1/2">
+            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder='Add password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required
+            />
+          </div>
+          <div className="flex justify-center w-full md:w-1/2">
+            <button
+              type="submit"
+              className="w-full md:w-auto rounded-lg bg-blue-600 py-3 px-6 text-sm font-semibold text-white shadow-md transition duration-200 hover:bg-blue-700"
+            >
+              Add Admin
+            </button>
+          </div>
+        </form>
+      )}
+
+      {activeTab === "approveDeletion" && (
+        <div className="flex flex-col gap-4 p-4 max-w-3xl mx-auto">
+          <div className="md:col-span-2">
+            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white mb-4">Pending Deletions</h5>
+          </div>
+          {pendingDeletions.length > 0 ? (
+            pendingDeletions.map(account => (
+              <div key={account._id} className="flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div className="flex-shrink-0">
+                  {account.profilePicture ? (
+                    <img className="w-8 h-8 rounded-full" src={account.profilePicture} alt={`${account.username} image`} />
+                  ) : (
+                    <FontAwesomeIcon icon={faUserCircle} className="w-8 h-8 text-gray-400" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0 ms-4">
+                  <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
+                    {account.username}
+                  </p>
+                  <p className="text-sm text-gray-500 truncate dark:text-gray-400">
+                    {account.email}
+                  </p>
+                </div>
+                <div className="flex space-x-4 pr-5">
+                  <FontAwesomeIcon icon={faCheck} onClick={() => handleDeleteClick(account._id)} className="text-green-500 cursor-pointer hover:text-green-700 text-2xl" />
+                  <FontAwesomeIcon icon={faTimes} onClick={() => handleRejectAccountDeletion(account._id)} className="text-red-500 cursor-pointer hover:text-red-700 text-2xl" />
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400">No pending deletions.</p>
+          )}
+        </div>
       )}
 
       {activeTab === 'changePassword' && (
         <ChangePassword baseUrl={baseUrl} />
       )}
 
-      {activeTab === "addAdmin" && (
-        <form onSubmit={(e) => { e.preventDefault(); handleAddAdmin(); }} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-          >
-            Add Admin
-          </button>
-        </form>
-      )}
-
-      {activeTab === "approveDeletion" && (
-        <div className="flex flex-col gap-4">
-          {/* Display account cards for pending deletions */}
-          {pendingDeletions.length > 0 ? (
-            pendingDeletions.map(account => (
-              <div key={account._id} className="bg-gray-100 p-4 rounded shadow-md flex justify-between items-center">
-                <div>
-                  <p className="font-bold">{account.username}</p>
-                  <p>{account.email}</p>
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleDeleteClick(account._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => handleRejectAccountDeletion(account._id)}
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No pending account deletions.</p>
-          )}
-        </div>
-      )}
-
-      {/* Display Message */}
-      {message && (
-        <p className={`mt-4 ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
-          {message}
-        </p>
-      )}
-
-      {/* Confirmation Popup */}
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md text-center">
-            <p>Are you sure you want to delete this account?</p>
-            <div className="flex justify-center space-x-4 mt-4">
-              <button
-                onClick={handleConfirmDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-              >
-                Confirm
+        <div id="popup-modal" tabIndex="-1" className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50">
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+              <button type="button" className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick={handleCancelDelete}>
+                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span className="sr-only">Close modal</span>
               </button>
-              <button
-                onClick={() => setShowPopup(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
-              >
-                Cancel
-              </button>
+              <div className="p-4 md:p-5 text-center">
+                <svg className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to approve this account deletion?</h3>
+                <button type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center" onClick={handleConfirmDelete}>
+                  Yes, I'm sure
+                </button>
+                <button type="button" className="py-2.5 px-5 ml-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" onClick={handleCancelDelete}>
+                  No, cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>

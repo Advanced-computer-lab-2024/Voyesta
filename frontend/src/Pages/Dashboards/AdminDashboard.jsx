@@ -96,6 +96,7 @@ function AdminDashboard() {
             />
           }
         />
+        <Route path="/user-stats" element={<UserStats baseUrl="http://localhost:3000/api/admin" />} />
         <Route path="/revenue-sales" element={<RevenueSalesView userType="admin" />} />
         <Route path='/activities' element={<ActivityView role='admin' baseUrl='http://localhost:3000/api/admin'/>} />
         <Route path="/notifications" element={<Notifications baseUrl='http://localhost:3000/api/admin' userType='admin'/>} />
