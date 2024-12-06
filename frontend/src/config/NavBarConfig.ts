@@ -142,5 +142,228 @@ export const NavConfig: NavbarConfigs = {
       ],
       baseUrl: '/'
     }
+  },advertiser: {
+    logo: {
+      text: "Voyesta",
+      path: "/advertiser",
+      image: assets.logo
+    },
+    rightIcons: [
+      {
+        type: 'icon',
+        label: 'Home',
+        path: '/advertiser',
+        icon: 'fa-home'
+      },
+      {
+        type: 'icon',
+        label: 'Notifications',
+        path: '/advertiser/notifications',
+        icon: 'fa-bell',
+        badge: {
+          key: 'notifications'
+        }
+      },
+      {
+        type: 'icon',
+        label: 'Add Activity',
+        path: '/advertiser/activity',
+        icon: 'fa-plus'
+      },
+      {
+        type: 'icon',
+        label: 'Sales',
+        path: '/advertiser/sales',
+        icon: 'fa-chart-line'
+      },
+      {
+        type: 'icon',
+        label: 'Logout',
+        path: '/',
+        icon: 'fa-sign-out-alt',
+        onClick: () => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }
+      }
+    ],
+    profileMenu: {
+      items: [
+        { label: 'Profile Management', path: '/profile', icon: 'fa-user-cog' },
+        { 
+          label: 'Logout', 
+          path: '/',
+          icon: 'fa-sign-out-alt',
+          onClick: () => {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+          }
+        }
+      ],
+      baseUrl: '/advertiser'
+    }
+  },seller: {
+    logo: {
+      text: "Voyesta",
+      path: "/seller",
+      image: assets.logo
+    },
+    centerItems: [
+      {
+        type: 'link',
+        label: 'View All Products',
+        path: '/seller/view-products'
+      }
+    ],
+    rightIcons: [
+      {
+        type: 'icon',
+        label: 'Home',
+        path: '/seller',
+        icon: 'fa-home'
+      },
+      {
+        type: 'icon',
+        label: 'Create Product',
+        path: '/seller/create-product',
+        icon: 'fa-plus'
+      },
+      {
+        type: 'icon',
+        label: 'Sales',
+        path: '/seller/sales',
+        icon: 'fa-chart-line'
+      },
+      {
+        type: 'icon',
+        label: 'Notifications',
+        path: '/seller/notifications',
+        icon: 'fa-bell',
+        badge: {
+          key: 'notifications'
+        }
+      },
+      {
+        type: 'icon',
+        label: 'Logout',
+        path: '/',
+        icon: 'fa-sign-out-alt',
+        onClick: () => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }
+      }
+    ],
+    profileMenu: {
+      items: [
+        { label: 'Profile Management', path: '/profile', icon: 'fa-user-cog' },
+        { label: 'My Products', path: '/view-my-products', icon: 'fa-box' }
+      ],
+      baseUrl: '/seller'
+    }
+  },tourismGovernor: {
+    logo: {
+      text: "Voyesta",
+      path: "/tourismGovernor",
+      image: assets.logo
+    },
+    centerItems: [],
+    rightIcons: [
+      {
+        type: 'icon',
+        label: 'Home',
+        path: '/tourismGovernor',
+        icon: 'fa-home'
+      },
+      {
+        type: 'icon',
+        label: 'Add Places of Interest',
+        path: '/tourismGovernor/places-of-interest',
+        icon: 'fa-plus'
+      },
+      {
+        type: 'icon',
+        label: 'Logout',
+        path: '/',
+        icon: 'fa-sign-out-alt',
+        onClick: () => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }
+      }
+    ],
+    profileMenu: {
+      items: [
+        { label: 'Profile', path: '/account-list', icon: 'fa-user' },
+        { label: 'Create Tags', path: '/create-tag', icon: 'fa-tags' }
+      ],
+      baseUrl: '/tourismGovernor'
+    }
+  },
+  tourguide: {
+    logo: {
+      text: "Voyesta",
+      path: "/tourguide",
+      image: assets.logo
+    },
+    centerItems: [
+      {
+        type: 'link',
+        label: 'Museums',
+        path: '/tourguide/museums'
+      },
+      {
+        type: 'link',
+        label: 'Activities',
+        path: '/tourguide/activities'
+      }
+    ],
+    rightIcons: [
+      {
+        type: 'icon',
+        label: 'Home',
+        path: '/tourguide',
+        icon: 'fa-home'
+      },
+      {
+        type: 'icon',
+        label: 'Add',
+        path: '/tourguide/itineraries',
+        icon: 'fa-plus'
+      },
+      {
+        type: 'icon',
+        label: 'Notifications',
+        path: '/tourguide/notifications',
+        icon: 'fa-bell',
+        badge: {
+          key: 'notifications'
+        }
+      },
+      {
+        type: 'icon',
+        label: 'Sales',
+        path: '/tourguide/sales',
+        icon: 'fa-chart-line'
+      },
+      {
+        type: 'icon',
+        label: 'Logout',
+        path: '/',
+        icon: 'fa-sign-out-alt',
+        onClick: () => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }
+      }
+    ],
+    profileMenu: {
+      items: [
+        { label: 'Profile', path: '/profile', icon: 'fa-user' }
+      ],
+      baseUrl: '/tourguide'
+    }
   }
+
+
 };

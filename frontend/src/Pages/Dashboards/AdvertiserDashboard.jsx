@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route , useLocation } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../../components/NavBar';
 import ActivitiesView from '../../newComponents/ActivitiesView';
@@ -24,6 +24,9 @@ function AdvertiserDashboard() {
   const [isAdditionalInfoSubmitted, setAdditionalInfoSubmitted] = useState(false);
   const [isActive, setActive] = useState(false);
   const [isTermsAccepted, setTermsAccepted] = useState(false);
+  const Location = useLocation();
+  const currentUser = Location.state?.user || "tourist";
+
 
   const getAuthHeader = () => {
     return {
@@ -87,7 +90,7 @@ function AdvertiserDashboard() {
       {
         isDocumentsUploaded && isActive && isAdditionalInfoSubmitted && isTermsAccepted &&
         <div>
-          <NavBar navLinks={navLinks} />
+          <NavBar role= 'advertiser' user={currentUser} />
 
           <Routes>
             <Route exact path="/" element={<div>Home</div>} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route , useLocation } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../../components/NavBar";
 import SellerCreateProduct from '../../components/sellerComponents/SellerCreateProduct';
@@ -28,6 +28,10 @@ function SellerDashboard() {
   const [isAdditionalInfoSubmitted, setAdditionalInfoSubmitted] = useState(false);
   const [isActive, setActive] = useState(false);
   const [isTermsAccepted, setTermsAccepted] = useState(false);
+  const Location = useLocation();
+  const currentUser = Location.state?.user || "tourist";
+
+
 
   const getAuthHeader = () => {
     return {
@@ -92,7 +96,7 @@ function SellerDashboard() {
       {
         isDocumentsUploaded && isActive && isAdditionalInfoSubmitted && isTermsAccepted &&
         <div>
-          <NavBar navLinks={navLinks} />
+          <NavBar role='seller' user={currentUser} />
 
           <Routes>
             <Route exact path="/" element={<div>Home</div>} />
@@ -115,7 +119,7 @@ function SellerDashboard() {
             <Route path="/profile" element={
               <ProfileManagement userType="seller" baseUrl="http://localhost:3000/api/seller" />
             } />
-            <Route path='notifications' element={<Notifications baseUrl="http://localhost:3000/api/seller" userType='seller' />}/>
+            <Route path='/notifications' element={<Notifications baseUrl="http://localhost:3000/api/seller" userType='seller' />}/>
           </Routes>
         </div>
       }

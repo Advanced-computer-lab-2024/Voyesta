@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route , useLocation } from "react-router-dom";
 
 import NavBar from "../../components/NavBar";
 import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";
@@ -13,10 +13,14 @@ const navLinks = [
 ];
 
 function TourismGovernorDashboard(){
-  
+  const Location = useLocation();
+  const currentUser = Location.state?.user || "tourist";
+
+
+
   return(
     <div>
-    <NavBar navLinks={navLinks} />
+    <NavBar role='tourismGovernor' user={currentUser} />
             
       <Routes>
         <Route exact path="/" element={<div>Tourism Governor Home</div>}/>

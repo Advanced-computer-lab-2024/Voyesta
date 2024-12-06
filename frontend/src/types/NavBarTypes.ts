@@ -62,6 +62,7 @@ export interface ProfileMenuItem {
   label: string;
   path: string;
   icon?: string;
+  onClick?: () => void;
 }
 
 export interface MobileMenuItem {
