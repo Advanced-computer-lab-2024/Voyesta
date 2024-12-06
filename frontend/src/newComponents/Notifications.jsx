@@ -4,7 +4,6 @@ import axios from 'axios';
 const Notifications = ({ baseUrl, userType, userId }) => {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState('');
-
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
     return {
@@ -20,6 +19,13 @@ const Notifications = ({ baseUrl, userType, userId }) => {
         const response = await axios.get(`${baseUrl}/getNotifications`, getAuthHeaders(), { userType: userType, userId: userId});
         console.log(response);
         setNotifications(response.data);
+
+        if (!sessionStorage.getItem('reloaded')) {
+          sessionStorage.setItem('reloaded', 'true');
+          window.location.reload();
+        }
+
+
       } catch (error) {
         setError('Failed to fetch notifications');
         console.error('Error fetching notifications:', error);
@@ -27,6 +33,7 @@ const Notifications = ({ baseUrl, userType, userId }) => {
     };
 
     fetchNotifications();
+  
   }, [baseUrl, userType, userId]);
 
   return (

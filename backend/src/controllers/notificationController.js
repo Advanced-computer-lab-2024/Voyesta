@@ -36,11 +36,63 @@ const getNotifications = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
+        // set all notifications to read
+        user.notifications.forEach(notification => {
+          if (!notification.read) {
+            notification.read = true;
+            notification.save();
+          }
+        });
+
         res.status(200).json(user.notifications);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+// get unread count
+const getUnreadNotifications = async (req, res) => {
+    const userId = req.user.id;
+    const userType = req.user.type;
+    let unreadCount = 0;
+
+    try {
+      let user;
+      if (userType === 'tourist') {
+          user = await Tourist.findById(userId).populate('notifications');
+      } else if (userType === 'tourGuide') {
+          user = await TourGuide.findById(userId).populate('notifications');
+      } else if (userType === 'advertiser') {
+          user = await Advertiser.findById(userId).populate('notifications');
+      } else if (userType === 'admin') {
+          user = await Admin.findById(userId).populate('notifications');
+      } else if (userType === 'seller'){
+        user = await Seller.findById(userId).populate('notifications');
+      }
+      else {
+          return res.status(400).json({ error: 'Invalid user type' });
+      }
+
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+      user.notifications.forEach(notification => {
+          if (!notification.read) {
+              unreadCount++;
+          }
+      });
+
+      res.status(200).json({ unreadCount });
+
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+
+};
+    
+
+
 
 const sendNotification = async (req, res) => {
     const { userType, itemId, message } = req.body;
@@ -173,4 +225,4 @@ const requestNotification = async (req, res) => {
     }
   };
 
-module.exports = { getNotifications, sendNotification, requestNotification, notifyUsersForBookingEnabled };
+module.exports = { getNotifications, sendNotification, requestNotification, notifyUsersForBookingEnabled, getUnreadNotifications };

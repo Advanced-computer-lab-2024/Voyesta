@@ -36,17 +36,47 @@ function Login() {
   };
 
   const validate = () => {
-    const errors = {};
-    if (username.trim() === '') {
-      errors.username = 'Username is required';
-    }
-    if (password.trim() === '') {
-      errors.password = 'Password is required';
-    } else if (password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long';
-    }
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+            axios.post("http://localhost:3000/api/login",{
+                username,
+                password
+            }).then(res =>{
+                const token = res.data.token;
+                console.log(res.data);
+                setUserType(res.data.userType);
+                
+                if(res.data.userType === "admin"){
+                    navigate("/admin", {state: {user: res.data.userType}});
+                }else if(res.data.userType === "tourismGovernor"){
+                    navigate("/tourismGovernor", {state: {user: res.data.userType}});
+                }else if(res.data.userType === "seller"){
+                  navigate("/seller", {state: {user: res.data.userType}});
+                }else if(res.data.userType === "tourGuide"){
+                  navigate("/tourGuide", {state: {user: res.data.userType}});
+                }else if(res.data.userType === "advertiser"){
+                  navigate("/advertiser", {state: {user: res.data.userType}});
+                }else if(res.data.userType === "tourist"){
+                  navigate("/tourist", {state: {user: res.data.userType}});
+                }
+                
+                localStorage.setItem('token', token);
+            }).catch(err => console.log(err));
+
+
+        }
+
+
+    const validate1 = () => {
+      const errors = {};
+      if (username.trim() === '') {
+        errors.username = 'Username is required';
+      }
+      if (password.trim() === '') {
+        errors.password = 'Password is required';
+      } else if (password.length < 8) {
+        errors.password = 'Password must be at least 8 characters long';
+      }
+      setErrors(errors);
+      return Object.keys(errors).length === 0;
   };
 
   return (
