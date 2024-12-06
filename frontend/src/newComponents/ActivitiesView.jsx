@@ -101,27 +101,31 @@ const ActivitiesView = ({ baseUrl, role }) => {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       {role === 'tourist' && (
-        <div className="w-1/5 p-4 bg-gray-200 shadow-md">
+        <div className="w-1/5 p-4 bg-gray-200 shadow-md space-y-4">
 
 
 
 
-<div className="flex justify-center items-center mb-4">
+          <div className="flex justify-center items-center mb-4">
 
           <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">
             Reset Filters
           </button>
           </div>
+          <div className="flex justify-center items-center mb-4">
           <PriceFilterBar
             items={activities}
             setItems={setFilteredActivities}
             convertedPrices={convertedPrices}
             priceProperty="price"
           />
+          </div>
+          <div className="flex justify-center items-center mb-50 ">
           <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
+          </div>  
           <RatingFilter setSelectedRating={setRating} />
           <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-
+          
           {/* Sorting Dropdown */}
           <div className="mb-4">
             <label className="block mb-2">Sort by</label>

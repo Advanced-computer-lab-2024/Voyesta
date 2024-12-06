@@ -415,7 +415,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   <div className="p-4 flex flex-col space-y-3">
     {/* Activity Name */}
     <h3 className="font-bold text-xl text-gray-800">{activity.name}</h3>
-
+  
     {/* Tags */}
     {Array.isArray(activity.tags) && activity.tags.length > 0 ? (
       <p className="text-sm text-gray-600">
@@ -426,17 +426,17 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         <span className="font-medium text-gray-800">Tags:</span> No tags available
       </p>
     )}
-
+  
     {/* Rating */}
     <p className="text-gray-800 textStyle">
       <span className="font-bold">Rating:</span> {averageRating}
     </p>
-
+  
     {/* Price */}
     <p className="text-gray-800">
       <span className="font-bold">Price:</span> {activity.price}
     </p>
-
+  
     {/* Special Discount */}
     <p className="text-sm text-gray-600">
       <span className="font-medium text-gray-800">Special Discount:</span> {activity.specialDiscount}
@@ -447,11 +447,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           
         <div 
           onClick={flagAsInappropriate} 
-          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+          className="cursor-pointer hover:text-red-500 transition duration-300 ease-in-out"
         >
-          <FontAwesomeIcon icon={faFlag}
-          style={{ cursor: 'pointer', color: inappropriate ? 'red' : 'gray' }}
-        />
+          <FontAwesomeIcon icon={faFlag} className="text-blue-600" />
         </div>
       </div>
           }
@@ -465,7 +463,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       >
         Book Activity
       </button>
-
+  
       {/* Share and Email Icons */}
       <div className="flex space-x-4">
         {/* Share Link */}
@@ -474,17 +472,18 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
             const link = generateShareLink(activity._id);
             handleCopyLink(link);
           }} 
-          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+          className="cursor-pointer hover:text-blue-700 transition duration-300 ease-in-out"
         >
-          <FontAwesomeIcon icon={faShareAlt} className="text-xl" />
+          <FontAwesomeIcon icon={faShareAlt} className="text-blue-600 text-xl" />
         </div>
         <div 
           onClick={toggleBookmark} 
-          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+          className="cursor-pointer hover:text-yellow-400 transition duration-300 ease-in-out"
         >
           <FontAwesomeIcon
           icon={faBookmark}
-          style={{ cursor: 'pointer', color: isBookmarked ? 'gold' : 'gray' }}
+          className="text-xl"
+          style={{ color: isBookmarked ? 'gold' : 'gray' }}
         />
         </div>
         
@@ -494,13 +493,13 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
             const link = generateShareLink(activity._id);
             handleShareViaEmail(link);
           }} 
-          className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+          className="cursor-pointer hover:text-blue-700 transition duration-300 ease-in-out"
         >
-          <FontAwesomeIcon icon={faEnvelope} className="text-xl" />
+          <FontAwesomeIcon icon={faEnvelope} className="text-blue-600 text-xl" />
         </div>
       </div>
     </div>
-
+  
     {/* Booking Popup */}
     {showPopup && (
       <BookingPopup
@@ -511,13 +510,13 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       />
     )}
   </div>
-)}
-
+  )}
+  
           </div>
-
+  
           {role === 'advertiser' && (
             <div className="flex justify-between mt-2">
-
+  
               <img
                 onClick={handleEdit}
                 src={assets.editIcon}

@@ -47,14 +47,15 @@
     "node-cron": "^3.0.3",
     "react": "^18.3.1",
     "react-modal": "^3.16.1",
+    "react-rating-stars-component": "^2.2.0",
     "react-slider": "^2.0.6",
     "sendgrid": "^5.2.3"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.7",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13"
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16"
   },
   "main": "index.js"
 }

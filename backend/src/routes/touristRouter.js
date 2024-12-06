@@ -11,7 +11,8 @@ const { createTourist, getTourists, updateTourist,
     confirmFlightPrice,
     confirmHotelPrice,
     bookFlight,
-    bookHotel,  
+    bookHotel,
+    deleteCancelledOrders,  
     searchHotelsByCity,
     createAddress,
     getAddresses,
@@ -119,5 +120,6 @@ _.get('/getNotifications', authenticate, getNotifications);
 
 _.post('/sendPaymentReceipt', authenticate, sendPaymentReceipt);
 _.post('/clearCart', authenticate, clearCart);
+_.delete('/deleteCancelledOrders', authenticate, deleteCancelledOrders);
 
 module.exports = _;

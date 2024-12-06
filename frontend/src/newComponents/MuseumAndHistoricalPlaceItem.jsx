@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faEdit, faShareAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 
 const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, convertedPrices, targetCurrency }) => {
@@ -26,7 +28,7 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.patch(`${baseUrl}/updatePlace/${place._id}`, editedPlace, {
+      await axios.patch(`${baseUrl}/updatePlace/${place._id}`, editedPlace, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -70,7 +72,7 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
+    <div className="relative flex flex-col bg-white shadow-lg p-8 pr-12 rounded-lg h-auto border border-gray-200 hover:shadow-xl transition-shadow duration-300 mb-6">
       {isEditing ? (
         <>
           <input
@@ -144,72 +146,79 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
             <img
               onClick={handleSubmit}
               src={assets.submitIcon}
-              className="w-9 h-9 cursor-pointer absolute buttom-2 right-6"
+              className="w-9 h-9 cursor-pointer absolute bottom-2 right-6"
             />
             <img
               onClick={handleCancel}
               src={assets.cancelIcon}
-              className="w-7 h-7 cursor-pointer absolute buttom-2 left-6"
+              className="w-7 h-7 cursor-pointer absolute bottom-2 left-6"
             />
           </div>
         </>
       ) : (
         <>
-          <h3 className="font-bold text-lg">{place.name}</h3>
-          <p>{place.description || 'No description available'}</p>
-          
-          {place.location && typeof place.location === 'object' ? (
-            <p>Location: 
-              {place.location.address || 'Unknown address'}, 
-              {place.location.city || 'Unknown city'}, 
-              {place.location.country || 'Unknown country'}
-            </p>
-          ) : (
-            <p>Location information not available</p>
-          )}
-
-          <p>Opening Hours: {place.openingHours || 'Unknown hours'}</p>
-
-          {typeof place.ticketPrices === 'object' ? (
-            <>
-              <p>Foreigner Price: {convertedPrices && convertedPrices.foreigner ? `${convertedPrices.foreigner.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.foreigner.toFixed(2)} USD`}</p>
-              <p>Native Price: {convertedPrices && convertedPrices.native ? `${convertedPrices.native.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.native.toFixed(2)} USD`}</p>
-              <p>Student Price: {convertedPrices && convertedPrices.student ? `${convertedPrices.student.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.student.toFixed(2)} USD`}</p>
-            </>
-          ) : (
-            <p>Ticket Prices: Not available</p>
-          )}
-
-          {Array.isArray(place.tags) ? (
-            <p>Tags: {place.tags.join(', ')}</p>
-          ) : (
-            <p>Tags: No tags available</p>
-          )}
-          { role === 'tourist' &&
-            <>
-          <button onClick={() => {
-            const link = generateShareLink(place._id);
-            handleCopyLink(link);
-          }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">Share via Copy Link</button>
-          <button onClick={() => {
-            const link = generateShareLink(place._id);
-            handleShareViaEmail(link);
-          }} className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700">Share via Email</button>
-          </>}
-          {role === 'tourismGovernor' && (
-            <div className="flex gap-2 mt-2 h-6">
-              <img
-                onClick={handleEdit}
-                src={assets.editIcon}
-                className="w-6 h-6 cursor-pointer absolute buttom-0 right-6"
-              />
-              <img
-                onClick={() => handleDelete(place._id)}
-                src={assets.deleteIcon}
-                className="w-6 h-6 cursor-pointer absolute buttom-0 left-6"
-              />
+          <div className="flex items-center">
+            <div className="flex-1">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold text-lg">{place.name}</h3>
+                  <p className="text-sm text-gray-500">{place.description || 'No description available'}</p>
+                  {place.location && typeof place.location === 'object' ? (
+                    <p className="text-sm text-gray-500">Location: 
+                      {place.location.address || 'Unknown address'}, 
+                      {place.location.city || 'Unknown city'}, 
+                      {place.location.country || 'Unknown country'}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-500">Location information not available</p>
+                  )}
+                  <p className="text-sm text-gray-500">Opening Hours: {place.openingHours || 'Unknown hours'}</p>
+                  {typeof place.ticketPrices === 'object' ? (
+                    <>
+                      <p className="text-sm text-gray-500">Foreigner Price: {convertedPrices && convertedPrices.foreigner ? `${convertedPrices.foreigner.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.foreigner.toFixed(2)} USD`}</p>
+                      <p className="text-sm text-gray-500">Native Price: {convertedPrices && convertedPrices.native ? `${convertedPrices.native.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.native.toFixed(2)} USD`}</p>
+                      <p className="text-sm text-gray-500">Student Price: {convertedPrices && convertedPrices.student ? `${convertedPrices.student.toFixed(2)} ${targetCurrency}` : `${place.ticketPrices.student.toFixed(2)} USD`}</p>
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500">Ticket Prices: Not available</p>
+                  )}
+                  {Array.isArray(place.tags) ? (
+                    <p className="text-sm text-gray-500">Tags: {place.tags.join(', ')}</p>
+                  ) : (
+                    <p className="text-sm text-gray-500">Tags: No tags available</p>
+                  )}
+                </div>
+                <div className="flex space-x-2">
+                  {role === 'tourist' && (
+                    <>
+                      <button onClick={() => {
+                        const link = generateShareLink(place._id);
+                        handleCopyLink(link);
+                      }} className="text-blue-500 hover:text-blue-700">
+                        <FontAwesomeIcon icon={faShareAlt} className="w-5 h-5" />
+                      </button>
+                      <button onClick={() => {
+                        const link = generateShareLink(place._id);
+                        handleShareViaEmail(link);
+                      }} className="text-blue-500 hover:text-blue-700">
+                        <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
+                  {role === 'tourismGovernor' && (
+                    <>
+                      <button onClick={handleEdit} className="text-gray-600 hover:text-blue-500">
+                        <FontAwesomeIcon icon={faEdit} className="w-5 h-5" />
+                      </button>
+                      <button onClick={() => handleDelete(place._id)} className="text-gray-600 hover:text-red-500">
+                        <FontAwesomeIcon icon={faTrash} className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </>
       )}
     </div>
