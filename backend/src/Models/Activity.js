@@ -97,6 +97,10 @@ const activitySchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tourist'
   }],
+  inappropriate: {
+    type: Boolean,
+    default: false
+  },
 }, { timestamps: true });
 
 const activityModel = mongoose.model('Activity', activitySchema);
