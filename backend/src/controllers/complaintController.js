@@ -42,7 +42,7 @@ const getComplaints = async (req, res) => {
         complaints = await Complaint.find().populate('tourist');
       }
       if (!complaints.length) {
-        return res.status(404).send();
+        return res.status(404).send('There are no complaints');
       }
       res.status(200).json(complaints);
     } catch (error) {

@@ -22,7 +22,6 @@ const CombinedComplaints = ({ baseUrl, role }) => {
       });
       setComplaints(response.data);
     } catch (error) {
-      setMessage('Error fetching complaints.');
       console.error('Error fetching complaints:', error);
     }
   };
