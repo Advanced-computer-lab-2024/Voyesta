@@ -1,4 +1,3 @@
-// BookTransportation.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,16 +10,20 @@ const BookTransportation = ({ baseUrl, role }) => {
 
   useEffect(() => {
     // Fetch transportation activities from the API
-    axios.get(`${baseUrl}/transportationActivities`, {
+    axios
+      .get(`${baseUrl}/transportationActivities`, {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-      .then(response => {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      .then((response) => {
         setActivities(response.data);
       })
-      .catch(error => {
-        console.error('There was an error fetching the transportation activities!', error);
+      .catch((error) => {
+        console.error(
+          'There was an error fetching the transportation activities!',
+          error
+        );
       });
   }, [baseUrl]);
 
@@ -35,12 +38,23 @@ const BookTransportation = ({ baseUrl, role }) => {
   };
 
   return (
-    <div className="flex p-6">
-      <div className="w-3/5">
-        <h1 className="text-2xl font-bold mb-4">Transportation Activities</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {activities.map(activity => (
-            <div className='hover:shadow-2xl' key={activity._id} onClick={() => handleSelectActivity(activity)}>
+    <div className="flex flex-col md:flex-row gap-8 p-8 bg-gray-100 min-h-screen">
+      {/* Transportation List */}
+      <div className="md:w-2/3">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-8">
+          Transportation Options
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {activities.map((activity) => (
+            <div
+              key={activity._id}
+              className={`p-6 rounded-xl shadow-lg border border-gray-300 transition-transform transform hover:scale-105 cursor-pointer ${
+                selectedActivity?._id === activity._id
+                  ? 'ring-4 ring-blue-500'
+                  : ''
+              }`}
+              onClick={() => handleSelectActivity(activity)}
+            >
               <ActivityItem
                 activity={activity}
                 role={role}
@@ -52,20 +66,34 @@ const BookTransportation = ({ baseUrl, role }) => {
           ))}
         </div>
       </div>
-      <div className="w-2/5 p-4 border-l border-gray-200">
+
+      {/* Selected Transportation Details */}
+      <div className="md:w-3/4 bg-white rounded-xl shadow-lg p-8">
         {selectedActivity ? (
-          <div>
-            <h2 className="text-xl font-bold mb-2">{selectedActivity.name}</h2>
-            <p className="mb-4">Price: ${selectedActivity.price}</p>
+          <div className="md:W-1 bg-white rounded-xl shadow-lg p-8" >
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
+              {selectedActivity.name}
+            </h2>
+            <p className="text-gray-700 text-lg mb-8">
+              Price: <span className="text-xl font-bold">${selectedActivity.price}</span>
+            </p>
             <button
-              className="bg-blue-500 text-white py-2 px-4 rounded"
+              className="bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 text-lg rounded-xl shadow-xl transition-transform transform hover:scale-105 w-full"
               onClick={handlePay}
             >
-              Pay
+              Confirm & Pay
             </button>
           </div>
         ) : (
-          <p>Select a transportation activity to view details and pay.</p>
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Select a transportation option
+            </h3>
+            <p className="text-gray-500">
+              Click on any transportation activity to view details and proceed
+              with booking.
+            </p>
+          </div>
         )}
       </div>
     </div>
