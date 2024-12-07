@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DateRangeFilter from './DateRangeFilter';
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 function RevenueSalesView({ userType }) {
   const [salesData, setSalesData] = useState([]);
@@ -198,55 +200,194 @@ function RevenueSalesView({ userType }) {
         <table className="min-w-full bg-gray-100 shadow rounded mt-4">
           <thead>
             <tr>
-              <th className="py-2">Item Name</th>
-              <th className="py-2">Revenue</th>
+              <th className="py-2">Revenue Stats</th>
             </tr>
           </thead>
           <tbody>
             {salesData.map((item, index) => (
               <React.Fragment key={index}>
-                {userType === 'admin' && (
-                  <>
-                    <tr className='text-center'>
-                      <td className="py-2">Product Revenue</td>
-                      <td className="py-2">{item.productRevenue || 0}</td>
-                    </tr>
-                    <tr className='text-center'>
-                      <td className="py-2">Activity Revenue</td>
-                      <td className="py-2">{item.activityRevenue || 0}</td>
-                    </tr>
-                    <tr className='text-center'>
-                      <td className="py-2">Itinerary Revenue</td>
-                      <td className="py-2">{item.itineraryRevenue || 0}</td>
-                    </tr>
-                    <tr className='text-center'>
-                      <td className="py-2">Total Revenue</td>
-                      <td className="py-2">{item.totalRevenue || 0}</td>
-                    </tr>
-                    <tr className='text-center'>
-                      <td className="py-2">Admin Revenue</td>
-                      <td className="py-2">{item.adminRevenue || 0}</td>
-                    </tr>
-                  </>
-                )}
-                {userType === 'seller' && (
-                  <tr className='text-center'>
-                    <td className="py-2">Product Revenue</td>
-                    <td className="py-2">{item.productRevenue || 0}</td>
-                  </tr>
-                )}
+{userType === 'admin' && (
+  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex justify-between">
+      <div>
+        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.totalRevenue || 0}</h5>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Total Revenue</p>
+      </div>
+      <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
+        23%
+        <svg className="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+        </svg>
+      </div>
+    </div>
+    <div id="data-series-chart" className="w-full h-96">
+      <Bar
+        data={{
+          labels: ['Product Revenue', 'Activity Revenue', 'Itinerary Revenue', 'Admin Revenue', 'Total Revenue'],
+          datasets: [
+            {
+              label: 'Revenue',
+              data: [
+                item.productRevenue || 0,
+                item.activityRevenue || 0,
+                item.itineraryRevenue || 0,
+                item.adminRevenue || 0,
+                item.totalRevenue || 0,
+              ],
+              backgroundColor: [
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+              ],
+              borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+              ],
+              borderWidth: 1,
+            },
+          ],
+        }}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              type: 'logarithmic',
+              beginAtZero: true,
+              ticks: {
+                callback: function(value, index, values) {
+                  return Number(value.toString());
+                }
+              }
+            }
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
+
+{userType === 'seller' && (
+  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex justify-between">
+      <div>
+        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.productRevenue || 0}</h5>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Product Revenue</p>
+      </div>
+    </div>
+    <div id="product-revenue-chart" className="w-full h-96">
+      <Bar
+        data={{
+          labels: ['Product Revenue'],
+          datasets: [
+            {
+              label: 'Revenue',
+              data: [item.productRevenue || 0],
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+            },
+          ],
+        }}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return Number(value.toString());
+                }
+              }
+            }
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
                 {userType === 'advertiser' && (
-                  <tr className='text-center'>
-                    <td className="py-2">Activity Revenue</td>
-                    <td className="py-2">{item.activityRevenue || 0}</td>
-                  </tr>
-                )}
-                {userType === 'tourGuide' && (
-                  <tr className='text-center'>
-                    <td className="py-2">Itinerary Revenue</td>
-                    <td className="py-2">{item.itineraryRevenue || 0}</td>
-                  </tr>
-                )}
+  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex justify-between">
+      <div>
+        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.activityRevenue || 0}</h5>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Activity Revenue</p>
+      </div>
+    </div>
+    <div id="activity-revenue-chart" className="w-full h-96">
+      <Bar
+        data={{
+          labels: ['Activity Revenue'],
+          datasets: [
+            {
+              label: 'Revenue',
+              data: [item.activityRevenue || 0],
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+            },
+          ],
+        }}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return Number(value.toString());
+                }
+              }
+            }
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
+{userType === 'tourGuide' && (
+  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex justify-between">
+      <div>
+        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.itineraryRevenue || 0}</h5>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Itinerary Revenue</p>
+      </div>
+    </div>
+    <div id="itinerary-revenue-chart" className="w-full h-96">
+      <Bar
+        data={{
+          labels: ['Itinerary Revenue'],
+          datasets: [
+            {
+              label: 'Revenue',
+              data: [item.itineraryRevenue || 0],
+              backgroundColor: 'rgba(255, 206, 86, 0.2)',
+              borderColor: 'rgba(255, 206, 86, 1)',
+              borderWidth: 1,
+            },
+          ],
+        }}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return Number(value.toString());
+                }
+              }
+            }
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
               </React.Fragment>
             ))}
           </tbody>
@@ -262,18 +403,83 @@ function RevenueSalesView({ userType }) {
           <tbody>
             {bookingsData.map((item, index) => (
               <React.Fragment key={index}>
-                {userType === 'advertiser' && (
-                  <tr className='text-center'>
-                    <td className="py-2">Activity Bookings</td>
-                    <td className="py-2">{item.activityBookings || 0}</td>
-                  </tr>
-                )}
-                {userType === 'tourGuide' && (
-                  <tr className='text-center'>
-                    <td className="py-2">Itinerary Bookings</td>
-                    <td className="py-2">{item.itineraryBookings || 0}</td>
-                  </tr>
-                )}
+               {userType === 'advertiser' && (
+  <div className="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex justify-between">
+      <div>
+        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">{item.activityBookings || 0}</h5>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Activity Bookings</p>
+      </div>
+    </div>
+    <div id="activity-bookings-chart">
+      <Bar
+        data={{
+          labels: ['Activity Bookings'],
+          datasets: [
+            {
+              label: 'Bookings',
+              data: [item.activityBookings || 0],
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+            },
+          ],
+        }}
+        options={{
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return Number(value.toString());
+                }
+              }
+            }
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
+{userType === 'tourGuide' && (
+  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex justify-between">
+      <div>
+        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">{item.itineraryBookings || 0}</h5>
+        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Itinerary Bookings</p>
+      </div>
+    </div>
+    <div id="itinerary-bookings-chart" className="w-full h-96">
+      <Bar
+        data={{
+          labels: ['Itinerary Bookings'],
+          datasets: [
+            {
+              label: 'Bookings',
+              data: [item.itineraryBookings || 0],
+              backgroundColor: 'rgba(255, 206, 86, 0.2)',
+              borderColor: 'rgba(255, 206, 86, 1)',
+              borderWidth: 1,
+            },
+          ],
+        }}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return Number(value.toString());
+                }
+              }
+            }
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
               </React.Fragment>
             ))}
           </tbody>

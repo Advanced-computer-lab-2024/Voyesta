@@ -3,6 +3,7 @@ const Seller = require('../Models/Seller');
 const touristModel = require('../Models/Tourist'); // Adjust the path as necessary
 const upload = require('../middleware/upload');
 const Purchase = require('../models/purchase');
+const mongoose = require('mongoose');
 const addProduct = async (req, res) => {
     upload(req, res, async (err) => {
         if (err) {
