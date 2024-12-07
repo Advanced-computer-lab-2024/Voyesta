@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route ,useLocation} from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import ActivitiesView from "../../newComponents/ActivitiesView";
 import ItineraryView from "../../newComponents/ItineraryView";
@@ -29,6 +29,8 @@ function TourGuideDashboard() {
   const [isAdditionalInfoSubmitted, setAdditionalInfoSubmitted] = useState(false);
   const [isActive, setActice] = useState(false);
   const [isTermsAccepted, setTermsAccepted] = useState(false);
+  const Location = useLocation();
+  const currentUser = Location.state?.user || "tourist";
 
   const getAuthHeader = () => {
     return {
@@ -91,7 +93,7 @@ function TourGuideDashboard() {
     {
       isDocumentsUploaded && isActive && isAdditionalInfoSubmitted && isTermsAccepted &&
       <div>
-        <NavBar navLinks={navLinks} />
+        <NavBar role='tourguide'  user={currentUser}/>
         
         <Routes>
           <Route exact path="/" element={<div>Welcome to the Tour Guide Dashboard</div>} />

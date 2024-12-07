@@ -6,7 +6,7 @@ import TouristSignup from './TouristSignup';
 function Signup() {
   const [user, setUser] = useState({ username: '', email: '', password: '', userType: '' });
   const [errors, setErrors] = useState({});
-  const errorsDisplayed = '';
+  let errorsDisplayed = '';
   const [signedUp, setSignedUp] = useState(false);
   const [touristSignup, setTouristSignup] = useState(false);
 
@@ -32,7 +32,7 @@ function Signup() {
   };
 
   const handleSubmit = async (event) => {
-
+    errorsDisplayed = '';
     event.preventDefault();
     if (!validate()) return;
     try {
@@ -82,7 +82,7 @@ function Signup() {
           <form onSubmit={handleSubmit} className="w-1/3 mx-auto p-8 space-y-6 bg-white rounded-lg shadow-md">
             <h1 className="text-2xl font-bold text-center text-gray-900">Signup</h1>
             <div className="mb-5">
-              {console.log(errors)}
+              {console.log(errorsDisplayed)}
             {errorsDisplayed === 'Username or email already exists' ? (
             <>
               <label htmlFor="username-error" className="block mb-2 text-sm font-medium text-red-700 dark:text-red-500">Your name</label>

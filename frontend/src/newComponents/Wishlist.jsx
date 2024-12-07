@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faCartPlus } from '@fortawesome/free-solid-svg-icons';
@@ -17,8 +19,8 @@ function Wishlist() {
     }
   };
 
-  useEffect(() => {
-    axios.get('http://localhost:3000/api/tourist/ViewList', getAuthHeaders())
+  const fetchWishlistItems =  () => {
+      axios.get('http://localhost:3000/api/tourist/ViewList', getAuthHeaders())
       .then(res => {
         setWishlistItems(res.data.wishlist);
         setLoading(false);
@@ -27,9 +29,13 @@ function Wishlist() {
         setError('Failed to fetch wishlist items');
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchWishlistItems();
   }, []);
 
-  const handleDelete = (productId) => {
+  const handleDelete =   (productId) => {
     const url = `http://localhost:3000/api/tourist/deleteWish`;
     axios.delete(url, {
       headers: {
@@ -39,7 +45,7 @@ function Wishlist() {
     })
       .then(res => {
         if (res.status === 200) {
-          setWishlistItems(wishlistItems.filter(item => item._id !== productId));
+          fetchWishlistItems();
           setSuccessMessage('Product removed from wishlist successfully!');
           setTimeout(() => setSuccessMessage(''), 3000); // Clear message after 3 seconds
         } else {
@@ -56,7 +62,8 @@ function Wishlist() {
         if (res.status === 200) {
           setWishlistItems(wishlistItems.filter(item => item._id !== productId));
           setSuccessMessage('Product moved to cart successfully!');
-          setTimeout(() => setSuccessMessage(''), 3000); // Clear message after 3 seconds
+          setTimeout(() => setSuccessMessage(''), 3000);
+          // handleDelete(productId); // Clear message after 3 seconds
         } else {
           alert('There was an error moving the product to the cart.');
         }
@@ -128,3 +135,4 @@ function Wishlist() {
 }
 
 export default Wishlist;
+

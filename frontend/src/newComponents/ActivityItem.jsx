@@ -449,7 +449,9 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           onClick={flagAsInappropriate} 
           className="cursor-pointer hover:text-red-500 transition duration-300 ease-in-out"
         >
-          <FontAwesomeIcon icon={faFlag} className="text-blue-600" />
+          <div className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out">
+            <FontAwesomeIcon icon={faFlag} style={{ cursor: 'pointer', color: activity.inappropriate ? 'red' : 'gray' }} />
+          </div>
         </div>
       </div>
           }

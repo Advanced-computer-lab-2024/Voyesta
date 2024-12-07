@@ -58,6 +58,7 @@ const Cart = ({ baseUrl }) => {
       .then(res => {
         if (res.status === 200) {
           setCartItems(cartItems.filter(item => item.productId._id !== productId));
+          window.location.reload(); // Refresh the window instantly
         } else {
           alert('There was an error removing the product from the cart.');
         }

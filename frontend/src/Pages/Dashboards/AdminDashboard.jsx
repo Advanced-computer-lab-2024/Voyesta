@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import AdminListView from "../../components/adminComponents/AdminListView";
 import AdminAccountManagementNavbar from "../../components/adminComponents/AdminAccountManagementNavbar";
@@ -9,7 +9,8 @@ import ItineraryView from "../../newComponents/ItineraryView";
 import CombinedComplaints from "../../newComponents/CombinedComplaints";
 import ProductSalesView from "../../newComponents/ProductSalesView";
 import PendingUsers from "../../newComponents/PendingUsers";
-import UserStats from "../../newComponents/UserStats";import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
+import UserStats from "../../newComponents/UserStats";
+import PromoCodeView from "../../newComponents/PromoCodeView"; // New component for promo codes
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import ActivityView from '../../newComponents/ActivitiesView';
 import Notifications from "../../newComponents/Notifications";
@@ -31,9 +32,12 @@ const navLinks = [
 ];
 
 function AdminDashboard() {
+
+  const Location = useLocation();
+  const currentUser = Location.state?.user || "tourist";
   return (
     <div>
-      <NavBar navLinks={navLinks} />
+      <NavBar role='admin' user={currentUser} />
       <Routes>
         <Route exact path="/" element={<div>Home</div>} />
         <Route
@@ -88,6 +92,16 @@ function AdminDashboard() {
           }
         />
         <Route
+          path="/user-stats"
+          element={
+            <UserStats
+              baseUrl="http://localhost:3000/api/admin/"
+              title="Complaints"
+              role="admin"
+            />
+          }
+        />
+        <Route
           path="/promo-codes"
           element={
             <PromoCodeView
@@ -96,6 +110,7 @@ function AdminDashboard() {
             />
           }
         />
+        <Route path="/user-stats" element={<UserStats baseUrl="http://localhost:3000/api/admin" />} />
         <Route path="/revenue-sales" element={<RevenueSalesView userType="admin" />} />
         <Route path='/activities' element={<ActivityView role='admin' baseUrl='http://localhost:3000/api/admin'/>} />
         <Route path="/notifications" element={<Notifications baseUrl='http://localhost:3000/api/admin' userType='admin'/>} />

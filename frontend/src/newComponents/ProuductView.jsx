@@ -16,6 +16,7 @@ function ProductsView({ role, baseUrl }) {
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
+  
   const token = localStorage.getItem('token');
 
   const getAuthHeaders = () => {
@@ -32,7 +33,8 @@ function ProductsView({ role, baseUrl }) {
         setUser(res.data.user);
       })
       .catch(err => console.log(err));
-  }, []);
+  }, []); 
+  // console.log(user);
 
   useEffect(() => {
     if (role === 'admin') {
@@ -45,6 +47,8 @@ function ProductsView({ role, baseUrl }) {
       fetchProducts('http://localhost:3000/api/tourist/getProducts');
     }
   }, [role]);
+
+
 
   const fetchProducts = (url) => {
     setLoading(true);
@@ -160,9 +164,10 @@ function ProductsView({ role, baseUrl }) {
                     fetchProducts={fetchProducts}
                     oldProduct={product}
                     onEdit={handleEdit}
-                    userId={user?._id}
+                    userId={user?.id}
                     convertedPrice={convertedPrices[index]} // Pass convertedPrice
                     targetCurrency={targetCurrency} // Pass targetCurrency
+                  
                   />
                 ))
               ) : (

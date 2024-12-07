@@ -34,7 +34,7 @@ function Dashboard(){
 
     return (
         <>
-            <NavBar navLinks={navLinks} role='guest' />
+            <NavBar role='guest'  user = {'guest'}/>
             <Routes>
                 
                     <Route path="/activities" element={
