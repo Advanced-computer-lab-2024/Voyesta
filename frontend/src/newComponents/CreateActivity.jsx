@@ -113,7 +113,7 @@ const CreateActivity = (props) => {
   };
 
   return (
-    <form onSubmit={handleCreateActivity} className="flex flex-col gap-4">
+    <form onSubmit={handleCreateActivity} className="flex flex-col gap-4 w-2/3 mx-auto">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
           Name

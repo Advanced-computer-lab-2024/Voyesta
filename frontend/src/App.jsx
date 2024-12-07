@@ -53,5 +53,5 @@ function App() {
           </Routes>
   );
 }
-
+document.body.classList.add('dark');
 export default App;
