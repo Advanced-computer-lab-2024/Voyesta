@@ -4,6 +4,8 @@ const touristModel = require('../Models/Tourist'); // Adjust the path as necessa
 const upload = require('../middleware/upload');
 const Purchase = require('../models/purchase');
 const mongoose = require('mongoose');
+const cloudinary = require('./cloudinaryController');
+
 const addProduct = async (req, res) => {
     upload(req, res, async (err) => {
         if (err) {
@@ -27,7 +29,8 @@ const addProduct = async (req, res) => {
                     message: 'Only sellers or Admins can add products'
                 });
             }
-
+            
+            
             // console.log(name);
 
             if (!name) {
@@ -39,7 +42,7 @@ const addProduct = async (req, res) => {
 
             const newProduct = new Product({
                 name: req.body.name,
-                picture: req.file ? `/uploads/${req.file.filename}` : '', // Save the image URL
+                // picture: req.file ? `/uploads/${req.file.filename}` : '', // Save the image URL
                 price: req.body.price,
                 description: req.body.description,
                 seller: name,
@@ -52,9 +55,12 @@ const addProduct = async (req, res) => {
                 }
             });
 
+
             // console.log(newProduct);
             const savedProduct = await newProduct.save();
             
+            
+
             res.status(201).json({
                 success: true,
                 message: 'Product successfully added!',
@@ -125,11 +131,6 @@ const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id; // Get product ID from URL params
 
-        // check if admin or seller
-        if (req.user.type == 'admin') {
-            // do the logic
-        }
-
         const product = await Product.findOne({
             _id: productId,
             'createdBy._id': req.user.id,    // Check if the product was created by this user
@@ -151,9 +152,6 @@ const updateProduct = async (req, res) => {
                 picture: req.body.picture,
                 price: req.body.price,
                 description: req.body.description,
-                seller: req.body.seller,
-                ratings: req.body.ratings,
-                reviews: req.body.reviews, // Optional field if reviews are included
                 available_quantity: req.body.available_quantity
             },
             { new: true, runValidators: true } // Options: return the updated document, apply validators

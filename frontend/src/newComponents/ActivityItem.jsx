@@ -132,7 +132,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         getAuthHeaders()
       );
       setIsBookmarked(true); // Update UI
-      alert(response.data.message);
+     
     } catch (error) {
       console.error('Error bookmarking activity:', error);
     }
@@ -142,7 +142,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     try {
       const response = await axios.delete(`${baseUrl}/bookmark/${activity._id}`, getAuthHeaders());
       setIsBookmarked(false);
-      alert(response.data.message);
+      
     } catch (error) {
       console.error('Error unbookmarking activity:', error);
     }
@@ -251,7 +251,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
        navigate('/tourist/bookings');
     } catch (error) {
       console.error('Error booking activity:', error);
-      alert('Error booking activity.');
     }
   };
 
@@ -278,8 +277,6 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     try {
       const url = `${baseUrl}/requestNotification`;
       await axios.post(url, { itemId: activity._id, itemType: 'activity' }, getAuthHeaders());
-  
-      alert('You will be notified when booking is enabled.');
     } catch (error) {
       console.error('Error requesting notification:', error);
     }

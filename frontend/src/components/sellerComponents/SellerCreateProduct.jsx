@@ -9,37 +9,54 @@ function AddProduct(props) {
   const [availableQuantity, setAvailableQuantity] = useState('');
   const [message, setMessage] = useState(null);
 
-  const handleAddProduct = async (e) => {
-    e.preventDefault();
+  // frontend/src/components/sellerComponents/SellerCreateProduct.jsx
 
-    const url = props.baseUrl + '/createProduct';
-    const token = localStorage.getItem('token');
+const handleAddProduct = async (e) => {
+  e.preventDefault();
 
-    const getAuthHeaders = () => {
-      return {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+  const url = props.baseUrl + '/createProduct';
+  const token = localStorage.getItem('token');
+
+  const getAuthHeaders = () => {
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       }
-    };
-
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('picture', picture);
-    formData.append('price', price);
-    formData.append('description', description);
-    formData.append('available_quantity', availableQuantity);
-
-    axios.post(url, formData, getAuthHeaders())
-      .then(res => {
-        setMessage("Product created successfully!");
-        console.log(res);
-      })
-      .catch(err => {
-        setMessage(err.response?.data?.message || "Failed to create Product.");
-        console.log(err);
-      });
+    }
   };
+
+  try {
+    // First create product
+    const productFormData = new FormData();
+    productFormData.append('name', name);
+    productFormData.append('price', price);
+    productFormData.append('description', description); 
+    productFormData.append('available_quantity', availableQuantity);
+
+    const productRes = await axios.post(url, productFormData, getAuthHeaders());
+    console.log(productRes.data);
+    if (picture) {
+      // Then upload image if one was selected
+      const imageFormData = new FormData();
+      imageFormData.append('picture', picture);
+      
+      const imageUrl = `http://localhost:3000/api/cloudinary/uploadProductImage/${productRes.data.data._id}`;
+      
+      await axios.post(imageUrl, imageFormData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+    }
+
+    setMessage("Product created successfully!");
+  } catch (err) {
+    setMessage(err.response?.data?.message || "Failed to create Product.");
+    console.log(err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

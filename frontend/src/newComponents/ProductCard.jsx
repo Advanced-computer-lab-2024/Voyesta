@@ -58,8 +58,18 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
   };
 
   const handleEditSaveClick = () => {
-    onEdit(product);
-    setEditMode(false);
+    const url = `http://localhost:3000/api/seller/updateProduct/${product._id}`;
+    axios.put(url, product, getAuthHeaders())
+      .then(res => {
+        if (res.status === 200) {
+          alert('Product updated successfully!');
+          fetchProducts(); // Fetch the updated products
+          setEditMode(false);
+        } else {
+          alert('There was an error updating the product.');
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   const handleArchiveToggle = () => {
@@ -224,7 +234,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       {/* Display Mode */}
       <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : ''}`}>
         <div>
-          <img src={`http://localhost:3000${product.picture}`} alt={product.name} className="w-full h-40 object-cover rounded-md" />
+          <img src={`${product.picture}`} alt={product.name} className="w-full h-40 object-cover rounded-md" />
           <h2 className="text-lg font-bold mt-2">{product.name}</h2>
           <p className="text-gray-600 mt-1">{product.description}</p>
           <div className="flex items-center mt-2">

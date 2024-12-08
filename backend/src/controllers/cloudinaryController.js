@@ -4,6 +4,7 @@ const upload = require('../middleware/upload');
 const TourGuide = require('../Models/Tour Guide');
 const Seller = require('../Models/Seller');
 const Advertiser = require('../Models/Advertiser');
+const Product = require('../Models/Product');
 dotenv.config();
 
 cloudinary.config({ 
@@ -126,10 +127,54 @@ const getDocument = async (req, res) => {
     }
 };
 
+// backend/src/controllers/cloudinaryController.js
+
+const uploadProductImage = async (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: 'Upload failed', error: err });
+        }
+
+        try {
+            // Upload to cloudinary
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'products' },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                
+                uploadStream.end(req.files['picture'][0].buffer);
+            });
+
+            // Update product with image URL
+            const productId = req.params.productId;
+            await Product.findByIdAndUpdate(productId, {
+                picture: result.secure_url
+            });
+
+            res.status(200).json({
+                success: true,
+                message: "Product image uploaded successfully!",
+                url: result.secure_url
+            });
+
+        } catch (error) {
+            res.status(400).json({ 
+                success: false,
+                message: 'Upload failed', 
+                error: error.message 
+            });
+        }
+    });
+};
 
 module.exports = {
     uploadImage,
     uploadId,
     uploadAdditionalDocument,
-    getDocument
+    getDocument,
+    uploadProductImage
 };

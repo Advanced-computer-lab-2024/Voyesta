@@ -9,6 +9,7 @@ _.post('/upload', authenticate, cloudinaryController.uploadImage);
 _.post('/uploadId', authenticate, cloudinaryController.uploadId);
 _.post('/uploadAdditionalDocument', authenticate, cloudinaryController.uploadAdditionalDocument);
 _.post('/uploadِDocument', authenticate, cloudinaryController.uploadImage);
+_.post('/uploadProductImage/:productId', authenticate, cloudinaryController.uploadProductImage);
 _.get('/image/:publicId', cloudinaryController.getDocument);
 
 // Route to get an image by URL
