@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faCartPlus } from '@fortawesome/free-solid-svg-icons';
 
 function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -19,8 +15,8 @@ function Wishlist() {
     }
   };
 
-  const fetchWishlistItems =  () => {
-      axios.get('http://localhost:3000/api/tourist/ViewList', getAuthHeaders())
+  const fetchWishlistItems = () => {
+    axios.get('http://localhost:3000/api/tourist/ViewList', getAuthHeaders())
       .then(res => {
         setWishlistItems(res.data.wishlist);
         setLoading(false);
@@ -35,7 +31,7 @@ function Wishlist() {
     fetchWishlistItems();
   }, []);
 
-  const handleDelete =   (productId) => {
+  const handleDelete = (productId) => {
     const url = `http://localhost:3000/api/tourist/deleteWish`;
     axios.delete(url, {
       headers: {
@@ -63,7 +59,6 @@ function Wishlist() {
           setWishlistItems(wishlistItems.filter(item => item._id !== productId));
           setSuccessMessage('Product moved to cart successfully!');
           setTimeout(() => setSuccessMessage(''), 3000);
-          // handleDelete(productId); // Clear message after 3 seconds
         } else {
           alert('There was an error moving the product to the cart.');
         }
@@ -80,59 +75,54 @@ function Wishlist() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center p-10">Your Wishlist</h2>
-      {successMessage && (
-        <div className="text-green-500 text-center mb-4">{successMessage}</div>
-      )}
-      {wishlistItems.length === 0 ? (
-        <p className="text-center text-lg">Your wishlist is empty</p>
-      ) : (
-        <div className="space-y-6">
-          {wishlistItems.map(item => (
-            <div key={item._id} className="relative flex flex-col bg-white shadow-lg p-6 pr-10 rounded-lg h-40 w-3/4 mx-auto border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center">
-                {/* Product Image */}
-                <img 
-                  src={item.picture} 
-                  alt={item.name} 
-                  className="w-16 h-16 rounded-md object-cover mr-4 hover:opacity-90 transition-opacity duration-300"
-                />
-
-                {/* Product Details */}
-                <div className="flex-1">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="font-semibold text-lg">{item.name}</div>
-                      <div className="text-sm text-gray-500 font-bold">Price: ${item.price}</div>
-                    </div>
-                    <div className="flex flex-col items-center space-y-2">
-                      {/* Bin Icon (Delete) */}
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="text-gray-600 hover:text-red-500"
-                      >
-                        <FontAwesomeIcon icon={faTrash} className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Add to Cart Icon */}
-              <FontAwesomeIcon
-                icon={faCartPlus}
-                className="absolute bottom-2 right-8 text-blue-500 hover:text-blue-700 transition-colors duration-300 cursor-pointer"
-                onClick={() => handleMoveToCart(item._id)}
-                style={{ fontSize: '1.75rem' }}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-800">
+      <div className="container mx-auto p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md flex-grow">
+        <h2 className="text-2xl font-bold text-center p-10 text-white">Your Wishlist</h2>
+        {successMessage && (
+          <div className="text-green-500 text-center mb-4">{successMessage}</div>
+        )}
+        {wishlistItems.length === 0 ? (
+          <p className="text-center text-lg">Your wishlist is empty</p>
+        ) : (
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg flex-grow">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-16 py-3">
+                    <span className="sr-only">Image</span>
+                  </th>
+                  <th scope="col" className="px-6 py-3">Product</th>
+                  <th scope="col" className="px-6 py-3">Price</th>
+                  <th scope="col" className="px-6 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {wishlistItems.map((item) => (
+                  <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td className="p-4">
+                      <img src={item.picture} className="w-16 md:w-32 max-w-full max-h-full" alt={item.name} />
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">{item.name}</td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">${item.price.toFixed(2)}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-4">
+                        <button onClick={() => handleMoveToCart(item._id)} className="text-blue-500 hover:text-blue-700">
+                          Add to Cart
+                        </button>
+                        <button onClick={() => handleDelete(item._id)} className="text-red-500 hover:text-red-700">
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 export default Wishlist;
-
