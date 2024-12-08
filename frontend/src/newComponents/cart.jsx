@@ -41,10 +41,10 @@ const Cart = ({ baseUrl }) => {
       const price = item.productId.price;
       return `${name}...  ${price} x${quantity} `;
     }).join(', ');
-
+  
     const total = cartItems.reduce((acc, item) => acc + item.productId.price * item.quantity, 0);
 
-    navigate('/tourist/checkout', { state: { from : 'cart',total, details } });
+    navigate('/tourist/checkout', { state: { from : 'cart',total, details, cartItems } });
   };
 
   const handleDelete = (productId) => {
@@ -102,89 +102,75 @@ const Cart = ({ baseUrl }) => {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center p-10">Your Cart</h2>
-      {successMessage && (
-        <div className="text-green-500 text-center mb-4">{successMessage}</div>
-      )}
-      {cartItems.length === 0 ? (
-        <p className="text-center text-lg">Your cart is empty</p>
-      ) : (
-        <div className="space-y-6">
-          {cartItems.map(item => (
-            <div key={item.productId._id} className="relative flex flex-col bg-white shadow-lg p-6 pr-10 rounded-lg h-40 w-3/4 mx-auto border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center">
-                {/* Product Image */}
-                <img 
-                  src={item.productId.picture} 
-                  alt={item.productId.name} 
-                  className="w-16 h-16 rounded-md object-cover mr-4 hover:opacity-90 transition-opacity duration-300"
-                />
-
-                {/* Product Details */}
-                <div className="flex-1">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="font-semibold text-lg">{item.productId.name}</div>
-                      <div className="text-sm text-gray-500">Quantity: {item.color}</div>
-                    </div>
-                    {/* Bin Icon (Delete) */}
-                    <button
-                      onClick={() => handleDelete(item.productId._id)}
-                      className="text-gray-600 hover:text-red-500"
-                    >
-                      <FontAwesomeIcon icon={faTrash} className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Quantity Controls */}
-                  <div className="flex items-center space-x-1 mt-2">
-                    <button
-                      type="button"
-                      onClick={() => decrementQuantity(item.productId._id, item.quantity)}
-                      className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-                    >
-                      <svg className="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16" />
-                      </svg>
-                    </button>
-                    <input
-                      type="text"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item.productId._id, Number(e.target.value))}
-                      className="bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-12 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="999"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => incrementQuantity(item.productId._id, item.quantity)}
-                      className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-                    >
-                      <svg className="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Price */}
-              <div className="absolute bottom-2 right-8 font-semibold text-lg">
-                ${item.productId.price.toFixed(2)}
-              </div>
-            </div>
-          ))}
-          <div className="flex justify-center">
-            <button
-              onClick={handleCheckout}
-              className="mt-4 bg-green-500 text-white rounded-md p-2 w-3/4 hover:bg-green-600 transition-colors duration-300"
-            >
-              Proceed to Checkout
-            </button>
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-800">
+      <div className="container mx-auto p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md flex-grow">
+        <h2 className="text-2xl font-bold text-center p-10 text-white">Your Cart</h2>
+        {successMessage && (
+          <div className="text-green-500 text-center mb-4">{successMessage}</div>
+        )}
+        {cartItems.length === 0 ? (
+          <p className="text-center text-lg">Your cart is empty</p>
+        ) : (
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg flex-grow">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-16 py-3">
+                    <span className="sr-only">Image</span>
+                  </th>
+                  <th scope="col" className="px-6 py-3">Product</th>
+                  <th scope="col" className="px-6 py-3">Qty</th>
+                  <th scope="col" className="px-6 py-3">Price</th>
+                  <th scope="col" className="px-6 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cartItems.map((item) => (
+                  <tr key={item.productId._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td className="p-4">
+                      <img src={item.productId.picture} className="w-16 md:w-32 max-w-full max-h-full" alt={item.productId.name} />
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">{item.productId.name}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <button className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button" onClick={() => decrementQuantity(item.productId._id, item.quantity)}>
+                          <span className="sr-only">Quantity button</span>
+                          <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
+                          </svg>
+                        </button>
+                        <div>
+                          <input type="number" className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={item.quantity} onChange={(e) => handleQuantityChange(item.productId._id, Number(e.target.value))} required />
+                        </div>
+                        <button className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button" onClick={() => incrementQuantity(item.productId._id, item.quantity)}>
+                          <span className="sr-only">Quantity button</span>
+                          <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">${item.productId.price.toFixed(2)}</td>
+                    <td className="px-6 py-4">
+                      <button onClick={() => handleDelete(item.productId._id)} className="font-medium text-red-600 dark:text-red-500 hover:underline">Remove</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        )}
+      </div>
+      <div className="fixed bottom-0 left-0 w-full bg-gray-100 dark:bg-gray-800 p-4 shadow-md">
+        <div className="flex justify-center">
+          <button
+            onClick={handleCheckout}
+            className="bg-green-500 text-white rounded-md p-2 w-3/4 hover:bg-green-600 transition-colors duration-300"
+          >
+            Proceed to Checkout
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 };

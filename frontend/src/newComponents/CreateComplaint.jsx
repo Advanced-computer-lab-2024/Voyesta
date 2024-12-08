@@ -26,7 +26,7 @@ const CreateComplaint = ({ baseUrl, onComplaintCreated }) => {
 
   return (
     <div>
-      <h1 className="text-2xl text-gray-600 font-bold mb-3">Create Complaint</h1>
+      <h1 className="text-2xl text-gray-900 font-bold mb-3">Create Complaint</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
@@ -51,7 +51,7 @@ const CreateComplaint = ({ baseUrl, onComplaintCreated }) => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
+          className="text-white bg-blue-700 w-1/4 justify-center hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Submit
         </button>

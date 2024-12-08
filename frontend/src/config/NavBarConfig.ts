@@ -294,8 +294,7 @@ export const NavConfig: NavbarConfigs = {
     ],
     profileMenu: {
       items: [
-        { label: 'Profile', path: '/account-list', icon: 'fa-user' },
-        { label: 'Create Tags', path: '/create-tag', icon: 'fa-tags' }
+        { label: 'Profile', path: '/account-list', icon: 'fa-user' }
       ],
       baseUrl: '/tourismGovernor'
     }

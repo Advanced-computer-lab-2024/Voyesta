@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate , useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import EventCard from '../newComponents/EventCard';
 
 const BookingsPage = ({ baseUrl }) => {
-  // const location = useLocation();
   const [bookings, setBookings] = useState([]);
   const [PaidEvents, setUpcomingPaidEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
-  // const [total, setTotal] = location.state.total || { total: 0 };
   const navigate = useNavigate();
 
-
   useEffect(() => {
-    fetchBookings();
-    if (activeTab === 'upcoming-paid') {
+    if (activeTab === 'upcoming') {
+      fetchBookings();
+    } else if (activeTab === 'upcoming-paid') {
       fetchUpcomingPaidEvents();
     }
   }, [activeTab]);
@@ -46,16 +44,12 @@ const BookingsPage = ({ baseUrl }) => {
   };
 
   const handlePayment = async (bookingId) => {
-  
     console.log('Payment for booking:', bookingId);
-    // find a booking by id
     const booking = bookings.find(booking => booking._id === bookingId);
-    // calculate total
     const total = booking.amount;
-    console.log('Total:', total ); 
-  
-    navigate('/tourist/checkout', { state: { from: 'bookings',bookingId, total } });
-  }
+    console.log('Total:', total);
+    navigate('/tourist/checkout', { state: { from: 'bookings', bookingId, total } });
+  };
 
   const handleCancel = async (bookingId) => {
     try {
@@ -78,40 +72,44 @@ const BookingsPage = ({ baseUrl }) => {
   const recentPaidEvents = PaidEvents.filter(event => new Date(event.eventDate) < new Date());
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <h1 className="text-2xl mb-4">My Bookings</h1>
-      <div className="flex mb-4">
+      <div className="flex justify-around border-b mb-4">
         <button
-          className={`p-2 ${activeTab === 'upcoming' ? 'border-b-2 border-blue-500' : ''}`}
+          className={`p-2 ${activeTab === 'upcoming' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 dark:text-gray-400'}`}
           onClick={() => setActiveTab('upcoming')}
         >
           Upcoming Events
         </button>
         <button
-          className={`p-2 ${activeTab === 'attended' ? 'border-b-2 border-blue-500' : ''}`}
-          onClick={() => setActiveTab('attended')}
-        >
-          Attended Events
-        </button>
-        <button
-          className={`p-2 ${activeTab === 'upcoming-paid' ? 'border-b-2 border-blue-500' : ''}`}
+          className={`p-2 ${activeTab === 'upcoming-paid' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 dark:text-gray-400'}`}
           onClick={() => setActiveTab('upcoming-paid')}
         >
           Upcoming Paid Events
         </button>
         <button
-          className={`p-2 ${activeTab === 'recent-paid' ? 'border-b-2 border-blue-500' : ''}`}
+          className={`p-2 ${activeTab === 'recent-paid' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 dark:text-gray-400'}`}
           onClick={() => setActiveTab('recent-paid')}
         >
-          Recent Paid Events
+          Attended Events
         </button>
       </div>
-      {activeTab === 'upcoming' ? (
-        <div>
-          {upcomingBookings.length === 0 ? (
-            <p>No upcoming bookings found.</p>
-          ) : (
-            upcomingBookings.map((booking) => (
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" className="px-6 py-3">Booking ID</th>
+              <th scope="col" className="px-6 py-3">Event Type</th>
+              <th scope="col" className="px-6 py-3">Name</th>
+              <th scope="col" className="px-6 py-3">Event Date</th>
+              <th scope="col" className="px-6 py-3">Status</th>
+              <th scope="col" className="px-6 py-3">Price</th>
+              {activeTab !== 'recent-paid' && <th scope="col" className="px-6 py-3">Action</th>}
+              {activeTab === 'recent-paid' && <th scope="col" className="px-6 py-3">Rating & Comment</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {activeTab === 'upcoming' && upcomingBookings.map(booking => (
               <EventCard
                 key={booking._id}
                 booking={booking}
@@ -119,15 +117,8 @@ const BookingsPage = ({ baseUrl }) => {
                 handlePayment={handlePayment}
                 handleCancel={handleCancel}
               />
-            ))
-          )}
-        </div>
-      ) : activeTab === 'attended' ? (
-        <div>
-          {attendedBookings.length === 0 ? (
-            <p>No attended bookings found.</p>
-          ) : (
-            attendedBookings.map((booking) => (
+            ))}
+            {activeTab === 'attended' && attendedBookings.map(booking => (
               <EventCard
                 key={booking._id}
                 booking={booking}
@@ -135,15 +126,8 @@ const BookingsPage = ({ baseUrl }) => {
                 handlePayment={handlePayment}
                 handleCancel={handleCancel}
               />
-            ))
-          )}
-        </div>
-      ) : activeTab === 'upcoming-paid' ? (
-        <div>
-          {upcomingPaidEvents.length === 0 ? (
-            <p>No upcoming paid events found.</p>
-          ) : (
-            upcomingPaidEvents.map((event) => (
+            ))}
+            {activeTab === 'upcoming-paid' && upcomingPaidEvents.map(event => (
               <EventCard
                 key={event._id}
                 booking={event}
@@ -151,26 +135,20 @@ const BookingsPage = ({ baseUrl }) => {
                 handlePayment={handlePayment}
                 handleCancel={handleCancel}
               />
-            ))
-          )}
-        </div>
-      ) : activeTab === 'recent-paid' ? (
-        <div>
-          {recentPaidEvents.length === 0 ? (
-            <p>No recent paid events found.</p>
-          ) : (
-            recentPaidEvents.map((event) => (
+            ))}
+            {activeTab === 'recent-paid' && recentPaidEvents.map(event => (
               <EventCard
                 key={event._id}
                 booking={event}
                 baseUrl={baseUrl}
                 handlePayment={handlePayment}
                 handleCancel={handleCancel}
+                showRatingComment={true}
               />
-            ))
-          )}
-        </div>
-      ) : null}
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

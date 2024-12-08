@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 const ViewComplaints = ({
   baseUrl,
@@ -122,13 +122,13 @@ const ViewComplaints = ({
                       {selectedComplaint.status !== 'resolved' && (
                         <>
                           <button
-                            className="bg-green-500 text-white rounded-lg p-2 hover:bg-green-700"
+                            className="bg-teal-900 text-white rounded-lg p-2 hover:bg-green-750"
                             onClick={() => handleStatusChange('resolved')}
                           >
                             Mark as Resolved
                           </button>
                           <button
-                            className="bg-yellow-500 text-white rounded-lg p-2 hover:bg-yellow-700"
+                            className="bg-yellow-600 text-white rounded-lg p-2 hover:bg-yellow-500"
                             onClick={() => handleStatusChange('pending')}
                           >
                             Mark as Pending
