@@ -99,11 +99,15 @@ const EventCard = ({ booking, baseUrl, handlePayment, handleCancel }) => {
   // Check if the event is an upcoming paid event (assuming 'confirmed' status is used for paid events)
   const isUpcomingPaidEvent = booking.status === 'confirmed' && new Date(booking.eventDate) >= new Date();
 
+  // if (!bookable) {
+  //   return <div>Loading...</div>;
+  // }
+
   return (
     <div className="bg-gray-100 p-4 rounded shadow-md mb-2">
       <p>Booking ID: {booking._id}</p>
       <p>Event Type: {bookableModel}</p>
-      <p>Name: {bookable.name}</p>
+      <p>Name: {bookable?.name}</p>
       <p>Event Date: {new Date(booking.eventDate).toLocaleDateString()}</p>
       <p>Status: {booking.status}</p>
       <p>Price: {booking.amount}</p>
