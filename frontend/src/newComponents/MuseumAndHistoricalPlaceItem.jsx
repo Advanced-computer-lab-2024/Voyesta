@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faShareAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 
-const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, convertedPrices, targetCurrency }) => {
+const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, convertedPrices, targetCurrency,setSuccessMessage }) => {
   const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedPlace, setEditedPlace] = useState(place);
@@ -54,11 +54,16 @@ const MuseumAndHistoricalPlaceItem = ({ place, baseUrl, fetchPlaces, role, conve
   };
 
   const handleCopyLink = (link) => {
-    navigator.clipboard.writeText(link).then(() => {
-      alert('Link copied to clipboard');
-    }).catch((err) => {
-      console.error('Failed to copy link: ', err);
-    });
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        setSuccessMessage('Link copied to clipboard!');
+        setTimeout(() => {
+          setSuccessMessage(''); // Clear the success message after 3 seconds
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error('Failed to copy link: ', err);
+      });
   };
 
   const handleShareViaEmail = (link) => {
