@@ -191,7 +191,7 @@ function TouristProfile() {
   };
 
   return (
-    <div className="max-w-full mx-auto bg-white shadow-md rounded-lg overflow-hidden relative px-40 pb-10">
+    <div className="max-w-full mx-auto min-h-screen bg-white shadow-md rounded-lg overflow-hidden relative px-40 pb-10">
       <div className="flex justify-between items-center p-4 border-b mb-10">
         <h2 className="text-4xl font-bold text-gray-900">Profile</h2>
         <div className="flex space-x-4 pe-9">

@@ -72,7 +72,7 @@ const BookingsPage = ({ baseUrl }) => {
   const recentPaidEvents = PaidEvents.filter(event => new Date(event.eventDate) < new Date());
 
   return (
-    <div className="p-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="p-4 bg-gray-100 min-h-screen dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <h1 className="text-2xl mb-4">My Bookings</h1>
       <div className="flex justify-around border-b mb-4">
         <button

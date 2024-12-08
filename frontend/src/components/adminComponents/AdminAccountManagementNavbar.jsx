@@ -86,7 +86,7 @@ function AdminAccountManagement() {
   };
 
   return (
-    <div className="max-w-full mx-auto bg-white shadow-md rounded-lg overflow-hidden relative px-40 pb-40">
+    <div className="max-w-full min-h-screen mx-auto bg-white shadow-md rounded-lg overflow-hidden relative px-40 pb-40">
       <div className="flex justify-between items-center p-4 border-b mb-10">
         <h2 className="text-4xl font-bold text-gray-900">Admin Account Management</h2>
       </div>

@@ -21,7 +21,7 @@ function ProfileView({ userType, baseUrl, toggleUploadModal }) {
   }
 
   return (
-    <div className="max-w-full mx-auto bg-white rounded-lg overflow-hidden relative px-40 pb-40">
+    <div className="max-w-full min-h-screen mx-auto bg-white rounded-lg overflow-hidden relative px-40 pb-40">
       <div className="md:flex shadow-mg rounded-lg">
         <div className="w-full p-4 text-left relative shadow-lg">
           <div className="flex justify-left relative">
