@@ -13,7 +13,7 @@ const CreateItinerary = () => {
   const [dropOffLocation, setDropOffLocation] = useState({ lat: "", lng: "" });
   const [message, setMessage] = useState(null);
   const [activities, setActivities] = useState([]);
-
+  
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
     return {
@@ -66,146 +66,154 @@ const CreateItinerary = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+      <div className="w-full bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Create New Itinerary</h2>
         <form onSubmit={handleCreateItinerary} className="space-y-6 text-left">
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="name"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Name
-            </label>
-          </div>
+          <div className='flex flex-col gap-4 lg:flex-row'>
+            <div className='w-full lg:w-1/2'>
+              <div className="relative z-0 w-full mb-5 group">
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  placeholder=" "
+                  required
+                />
+                <label
+                  htmlFor="name"
+                  className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >
+                  Name
+                </label>
+              </div>
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="tourLanguage"
-              id="tourLanguage"
-              value={tourLanguage}
-              onChange={(e) => setTourLanguage(e.target.value)}
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="tourLanguage"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Tour Language
-            </label>
-          </div>
+              <div className="relative z-0 w-full mb-5 group">
+                <input
+                  type="text"
+                  name="tourLanguage"
+                  id="tourLanguage"
+                  value={tourLanguage}
+                  onChange={(e) => setTourLanguage(e.target.value)}
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  placeholder=" "
+                  required
+                />
+                <label
+                  htmlFor="tourLanguage"
+                  className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >
+                  Tour Language
+                </label>
+              </div>
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="tourPrice"
-              id="tourPrice"
-              value={tourPrice}
-              onChange={(e) => setTourPrice(e.target.value)}
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="tourPrice"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Price
-            </label>
-          </div>
+              <div className="relative z-0 w-full mb-5 group">
+                <input
+                  type="text"
+                  name="tourPrice"
+                  id="tourPrice"
+                  value={tourPrice}
+                  onChange={(e) => setTourPrice(e.target.value)}
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  placeholder=" "
+                  required
+                />
+                <label
+                  htmlFor="tourPrice"
+                  className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >
+                  Price
+                </label>
+              </div>
 
-          <div className="relative z-0 w-full mb-5 group">
-  <input
-    type="text"
-    name="availableDates"
-    id="availableDates"
-    value={availableDates}
-    onChange={(e) => setAvailableDates(e.target.value)}
-    className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-    placeholder=" "
-    required
-  />
-  <label
-    htmlFor="availableDates"
-    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-1 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
-  >
-    Available Dates (Comma-separated, e.g., 2023-12-01, 2023-12-15)
-  </label>
-</div>
+              <div className="relative z-0 w-full mb-5 group">
+              <input
+                type="text"
+                name="availableDates"
+                id="availableDates"
+                value={availableDates}
+                onChange={(e) => setAvailableDates(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="availableDates"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-8 scale-75 top-1 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8"
+              >
+                Available Dates (Comma-separated, e.g. 2022-12-31)
+              </label>
+              </div>
+            </div>
+            
+            <div className='w-full lg:w-1/2'>
+            
+              <div className="relative z-0 w-full mb-5 group">
+                <label
+                  htmlFor="activityNames"
+                  className="block text-sm text-gray-500 mb-2"
+                >
+                  Activity Names
+                </label>
+                <select
+                  id="activityNames"
+                  name="activityNames"
+                  multiple
+                  value={activityNames}
+                  onChange={(e) => setActivityNames(Array.from(e.target.selectedOptions, option => option.value))}
+                  className="bg-gray-50 border h-18 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                  required
+                >
+                  {activities.map(activity => (
+                    <option key={activity._id} value={activity.name}>
+                      {activity.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div className="relative z-0 w-full mb-5 group">
-            <label
-              htmlFor="activityNames"
-              className="block text-sm text-gray-500 mb-2"
-            >
-              Activity Names
-            </label>
-            <select
-              id="activityNames"
-              name="activityNames"
-              multiple
-              value={activityNames}
-              onChange={(e) => setActivityNames(Array.from(e.target.selectedOptions, option => option.value))}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-              required
-            >
-              {activities.map(activity => (
-                <option key={activity._id} value={activity.name}>
-                  {activity.name}
-                </option>
-              ))}
-            </select>
-          </div>
+              <div className="relative z-0 w-full mb-5 group">
+                <input
+                  type="text"
+                  name="durations"
+                  id="durations"
+                  value={durations}
+                  onChange={(e) => setDurations(e.target.value)}
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  placeholder=" "
+                  required
+                />
+                <label
+                  htmlFor="durations"
+                  className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >
+                  Durations (Comma-separated, in minutes)
+                </label>
+              </div>
 
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="durations"
-              id="durations"
-              value={durations}
-              onChange={(e) => setDurations(e.target.value)}
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="durations"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Durations (Comma-separated, in minutes)
-            </label>
+              <div className="relative z-0 w-full mb-5 group">
+              <input
+                type="text"
+                name="accessibility"
+                id="accessibility"
+                value={accessibility}
+                onChange={(e) => setAccessibility(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="accessibility"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                Accessibility (Comma-separated)
+              </label>
+            </div>
+            </div>
           </div>
-
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="accessibility"
-              id="accessibility"
-              value={accessibility}
-              onChange={(e) => setAccessibility(e.target.value)}
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="accessibility"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Accessibility (Comma-separated)
-            </label>
-          </div>
+          
 
           <div className="relative z-0 w-full mb-5 group">
             <input
@@ -283,18 +291,20 @@ const CreateItinerary = () => {
             </label>
           </div>
 
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Create Itinerary
-          </button>
-
           {message && (
-            <p className={`mt-2 ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
+            <div className={`text-center ${message.includes('successfully') ? 'text-green-500' : 'text-red-500'}`}>
               {message}
-            </p>
+            </div>
           )}
+
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            >
+              Create Itinerary
+            </button>
+          </div>
         </form>
       </div>
     </div>

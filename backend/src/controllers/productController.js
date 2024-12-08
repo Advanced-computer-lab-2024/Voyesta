@@ -577,7 +577,7 @@ const moveWishlistToCart = async (req, res) => {
       if (!tourist) {
         return res.status(404).json({ error: 'Tourist not found' });
       }
-  
+      console.log(tourist.cart);
       res.status(200).json(tourist.cart);
     } catch (error) {
       res.status(400).json({ error: error.message });

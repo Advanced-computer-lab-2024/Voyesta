@@ -66,6 +66,12 @@ export const NavConfig: NavbarConfigs = {
       },
       {
         type: 'icon',
+        label: 'Bookmarks',
+        path: '/tourist/bookmarks',
+        icon: 'fa-bookmark'
+      },
+      {
+        type: 'icon',
         label: 'Wishlist',
         path: '/tourist/Wishlist',
         icon: 'fa-heart',
@@ -294,8 +300,7 @@ export const NavConfig: NavbarConfigs = {
     ],
     profileMenu: {
       items: [
-        { label: 'Profile', path: '/account-list', icon: 'fa-user' },
-        { label: 'Create Tags', path: '/create-tag', icon: 'fa-tags' }
+        { label: 'Profile', path: '/account-list', icon: 'fa-user' }
       ],
       baseUrl: '/tourismGovernor'
     }

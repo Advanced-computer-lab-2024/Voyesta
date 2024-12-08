@@ -7,6 +7,8 @@ import DateRangeFilter from './DateRangeFilter';
 import PreferencesFilter from './PreferencesFilter';
 import CurrencyConverter from './CurrencyConverter';
 import { Snackbar } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
@@ -23,6 +25,11 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   useEffect(() => {
     fetchItineraries();
@@ -115,69 +122,74 @@ const ItineraryView = ({ baseUrl, role }) => {
       {role === 'tourist' && (
         <div className="bg-gray-200 shadow-md p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
-            <div className="relative">
-              <button
-                id="dropdownSortButton"
-                className="inline-flex items-center px-3 py-2 mb-3 me-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg md:mb-0 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                type="button"
-                onClick={toggleSortDropdown}
-              >
-                {sortOption || 'Sort by'}
-                <svg className="w-2 h-2 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                </svg>
-              </button>
+            
+            <div className='flex flex-row justify-center space-x-4'>
+              <div className="relative">
+                <button
+                  id="dropdownSortButton"
+                  className="inline-flex items-center px-3 py-2 mb-3 me-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg md:mb-0 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  type="button"
+                  onClick={toggleSortDropdown}
+                >
+                  {sortOption || 'Sort by'}
+                  <svg className="w-2 h-2 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                  </svg>
+                </button>
 
-              {isSortDropdownOpen && (
-                <div id="dropdownSort" className="absolute z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-                  <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSortButton">
-                    <li>
-                      <button 
-                        onClick={() =>  handleSortOptionChange('priceAsc')} 
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Price: Low to High
-                      </button>
-                    </li>
-                    <li>
-                      <button 
-                        onClick={() => handleSortOptionChange('priceDesc')} 
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Price: High to Low
-                      </button>
-                    </li>
-                    <li>
-                      <button 
-                        onClick={() => handleSortOptionChange('ratingAsc')} 
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Rating: Low to High
-                      </button>
-                    </li>
-                    <li>
-                      <button 
-                        onClick={() => handleSortOptionChange('ratingDesc')} 
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Rating: High to Low
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              )}
+                {isSortDropdownOpen && (
+                  <div id="dropdownSort" className="absolute z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSortButton">
+                      <li>
+                        <button 
+                          onClick={() =>  handleSortOptionChange('priceAsc')} 
+                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
+                          Price: Low to High
+                        </button>
+                      </li>
+                      <li>
+                        <button 
+                          onClick={() => handleSortOptionChange('priceDesc')} 
+                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
+                          Price: High to Low
+                        </button>
+                      </li>
+                      <li>
+                        <button 
+                          onClick={() => handleSortOptionChange('ratingAsc')} 
+                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
+                          Rating: Low to High
+                        </button>
+                      </li>
+                      <li>
+                        <button 
+                          onClick={() => handleSortOptionChange('ratingDesc')} 
+                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
+                          Rating: High to Low
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
+              <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+              <button
+                onClick={applyFilters}
+                className="p-2 bg-blue-900 text-white rounded"
+              >
+                Apply Filters
+              </button>
+              <button onClick={resetFilters} className="p-2 bg-red-500 text-white rounded">
+                Reset Filters
+              </button>
             </div>
-            <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
-            <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-            <button
-              onClick={applyFilters}
-              className="p-2 bg-blue-900 text-white rounded"
-            >
-              Apply Filters
-            </button>
-            <button onClick={resetFilters} className="p-2 bg-red-500 text-white rounded">
-              Reset Filters
-            </button>
+
+            
           </div>
         </div>
       )}
@@ -205,9 +217,10 @@ const ItineraryView = ({ baseUrl, role }) => {
             </div>
           )}
 
-          <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
+          <div className={`${role === 'tourist' ? 'w-3/4' : 'w-4/5'} m-auto`}>
             <div className="relative text-center bg-white shadow-md rounded p-6">
               <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Itineraries</h1>
+              
               {message && <div className="text-red-500 mb-4">{message}</div>}
 
               {(role === 'tourGuide' || role === 'admin') && (

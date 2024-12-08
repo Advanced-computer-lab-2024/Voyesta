@@ -35,14 +35,14 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   }, [activity.tags]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/getCategory`, getAuthHeaders())
+    axios.get(`${baseUrl}/getActivityCategories`, getAuthHeaders())
     .then(res =>{
       const categoryNames = res.data.map(category => category.Name);
       setCategories(res.data);
     })
     .catch(err => console.log(err));
 
-    axios.get(`${baseUrl}/getTags`, getAuthHeaders())
+    axios.get(`${baseUrl}/getPreferenceTags`, getAuthHeaders())
     .then(res => {
       const tagNames = res.data.map(tag => tag.Name);
       setTags(tagNames);
@@ -193,12 +193,17 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
 
   const handleChange = (e) => {
     const { name, value, options } = e.target;
-    console.log(name, value);
-    if (name === 'tags') {
+    if (name === "tags") {
       const selectedTags = Array.from(options).filter(option => option.selected).map(option => option.value);
-      setEditedActivity({ ...editedActivity, [name]: selectedTags });
+      setEditedActivity({
+        ...editedActivity,
+        [name]: selectedTags
+      });
     } else {
-      setEditedActivity({ ...editedActivity, [name]: value });
+      setEditedActivity({
+        ...editedActivity,
+        [name]: value
+      });
     }
   };
 
@@ -226,6 +231,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
     } catch (error) {
       console.log(error);
     }
+    window.location.reload();
   };
 
   const handleDelete = async (id) => {
@@ -301,124 +307,218 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
 
   return (
     <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
-      {isEditing ? (
-        <>
-          <div className=''>
-            <input
-              type="text"
-              name="name"
-              value={editedActivity.name}
-              onChange={handleChange}
-              className="font-bold text-lg"
-            />
-          </div>
-          <div>
-            <textarea
-              name="description"
-              value={editedActivity.description}
-              onChange={handleChange}
-              className="w-full mt-2"
-            />
-          </div>
-          <div>
-            <input
-              type="date"
-              name="date"
-              value={convertDateToInputFormat(editedActivity.date)}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <input
-              type="time"
-              name="time"
-              value={convertTimeTo24HourFormat(editedActivity.time)}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <input
-                type="text"
-                name="lat"
-                value={editedActivity.location.lat}
-                onChange={(e) => setEditedActivity({
-                  ...editedActivity,
-                  location: { ...editedActivity.location, lat: e.target.value }
-                })}
-                placeholder="Latitude"
-              />
-              <input
-                type="text"
-                name="lng"
-                value={editedActivity.location.lng}
-                onChange={(e) => setEditedActivity({
-                  ...editedActivity,
-                  location: { ...editedActivity.location, lng: e.target.value }
-                })}
-                placeholder="Longitude"
-              />
-          </div>    
-          <div>
-            <input
-              type="text"
-              name="price"
-              value={editedActivity.price}
-              onChange={handleChange}
-              placeholder="Price"
-            />
-          </div>
-          <div>
-          <select
-            name="category"
-            value={editedActivity.category?.Name}
-            onChange={handleChange}
-            defaultValue={editedActivity.category?.Name}
-          >
-            <option disabled>Select a category</option>
-            {categories.map((category) => (
-              <option key={category.Name} value={category.Name}>
-                {category.Name}
-              </option>
-            ))}
-          </select>
-          </div>
-          <div>
-            <select
-              name="tags"
-              multiple
-              value={editedActivity.tags}
-              onChange={handleChange}
-              className='w-full'
-            >
-              {tags.map((tag, index) => (
-                <option key={index} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <input
-              type="text"
-              name="specialDiscount"
-              value={editedActivity.specialDiscount}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex gap-2 mt-2 h-8">
-            <img
-              onClick={handleSubmit}
-              src={assets.submitIcon}
-              className="w-9 h-9 cursor-pointer absolute buttom-2 right-6"
-            />
-            <img
-              onClick={handleCancel}
-              src={assets.cancelIcon}
-              className="w-7 h-7 cursor-pointer absolute buttom-2 left-6"
-            />
-          </div>
-        </>
-      ) : (
+  {isEditing ? (
+  <>
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="name"
+        value={editedActivity.name}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="name"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Name
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <textarea
+        name="description"
+        value={editedActivity.description}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="description"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Description
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="date"
+        name="date"
+        value={convertDateToInputFormat(editedActivity.date)}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="date"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Date
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="time"
+        name="time"
+        value={convertTimeTo24HourFormat(editedActivity.time)}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="time"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Time
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="lat"
+        value={editedActivity.location.lat}
+        onChange={(e) => setEditedActivity({
+          ...editedActivity,
+          location: { ...editedActivity.location, lat: e.target.value }
+        })}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="lat"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Latitude
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="lng"
+        value={editedActivity.location.lng}
+        onChange={(e) => setEditedActivity({
+          ...editedActivity,
+          location: { ...editedActivity.location, lng: e.target.value }
+        })}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="lng"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Longitude
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="price"
+        value={editedActivity.price}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="price"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Price
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <select
+        name="category"
+        value={editedActivity.category?.Name}
+        onChange={handleChange}
+        defaultValue={editedActivity.category?.Name}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        required
+      >
+        <option disabled>Select a category</option>
+        {categories.map((category) => (
+          <option key={category.Name} value={category.Name}>
+            {category.Name}
+          </option>
+        ))}
+      </select>
+      <label
+        htmlFor="category"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Category
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+        <select
+          name="tags"
+          multiple
+          value={editedActivity.tags}
+          onChange={handleChange}
+          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+          required
+        >
+          {tags.map((tag, index) => (
+            <option key={index} value={tag}>
+              {tag}
+            </option>
+          ))}
+        </select>
+        <label
+          htmlFor="tags"
+          className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          Tags
+        </label>
+      </div>
+
+    <div className="relative z-0 w-full mb-5 group">
+      <input
+        type="text"
+        name="specialDiscount"
+        value={editedActivity.specialDiscount}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="specialDiscount"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Special Discount
+      </label>
+    </div>
+
+    <div className="flex justify-between mt-2 h-8">
+      <img
+        onClick={handleSubmit}
+        src={assets.submitIcon}
+        className="w-9 h-9 cursor-pointer"
+      />
+      <img
+        onClick={handleCancel}
+        src={assets.cancelIcon}
+        className="w-7 h-7 cursor-pointer"
+      />
+    </div>
+  </>
+) : (
         <>
           <div className="activity-item flex flex-col h-full">
           <img 
@@ -531,26 +631,27 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           </div>
   
           {role === 'advertiser' && (
-            <div className="flex justify-between mt-2">
-  
-              <img
-                onClick={handleEdit}
-                src={assets.editIcon}
-                className="w-6 h-6 cursor-pointer absolute buttom-0 right-6"
-              />
-              <img
-                onClick={() => handleDelete(activity._id)}
-                src={assets.deleteIcon}
-                className="w-6 h-6 cursor-pointer absolute buttom-0 left-6"
-              />
-               <button
-                onClick={toggleBookingEnabled}
-                className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-              >
-                {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
-              </button> 
-            </div>
-          )}
+  <div className="flex justify-between mt-2">
+    <div className="flex space-x-4">
+      <img
+        onClick={handleEdit}
+        src={assets.editIcon}
+        className="w-6 h-6 cursor-pointer"
+      />
+      <img
+        onClick={() => handleDelete(activity._id)}
+        src={assets.deleteIcon}
+        className="w-6 h-6 cursor-pointer"
+      />
+    </div>
+    <button
+      onClick={toggleBookingEnabled}
+      className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+    >
+      {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
+    </button>
+  </div>
+)}
         </>
       )}
 

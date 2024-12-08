@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const CreateTag = ({ baseUrl, title }) => {
+const CreateTag = ({ baseUrl, title, fetchTags }) => {
   const [tagName, setTagName] = useState('');
   const [message, setMessage] = useState(null);
 
@@ -15,13 +15,14 @@ const CreateTag = ({ baseUrl, title }) => {
       });
       setMessage(`Tag created successfully: ${response.data.Name}`);
       setTagName('');
+      fetchTags();
     } catch (error) {
       setMessage(`Error creating tag: ${error.response?.data?.message || error.message}`);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div className="h-full mt-10 p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-4">{title}</h1>
       {message && <div className="mb-4 text-red-500">{message}</div>}
       <form onSubmit={handleSubmit}>
