@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const CheckOutPage = ({ baseUrl }) => {
   const location = useLocation();
-  const { total, details } = location.state || { total: 0, details: [] };
+  const { total, details, cartItems } = location.state || { total: 0, details: [] };
   const { bookingId } = location.state || { bookingId: '' };
   const previousPage = location.state?.from || 'unknown'; // can be 'bookings' or 'cart'
   // console.log('Checkout page from:', previousPage);
@@ -144,7 +144,7 @@ const CheckOutPage = ({ baseUrl }) => {
           from: 'bookings',
           total: grandTotal,
           address: formData,
-          bookingId: bookingId, 
+          bookingId: bookingId,
         },
       });
         
@@ -156,6 +156,7 @@ const CheckOutPage = ({ baseUrl }) => {
           total: grandTotal,
           address: formData,
           details: details,
+          cartItems: cartItems,
         },
       });
     }

@@ -14,6 +14,24 @@ const createPurchase = async (req, res) => {
     }
 };
 
+const createPurchasesFromCart = async (req, res) => {
+    const { cartItems } = req.body;
+    const touristId = req.user.id;
+    try {
+        const purchases = [];
+        console.log(cartItems);
+        for (const item of cartItems) {
+            const { productId, quantity } = item;
+            const newPurchase = new Purchase({ productId, touristId, quantity });
+            await newPurchase.save();
+            purchases.push(newPurchase);
+        }
+        res.status(201).json({ success: true, data: purchases });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error creating purchases from cart', error: error.message });
+    }
+};
+
 const getPurchases = async (req, res) => {
     try {
         const purchases = await Purchase.find().populate('productId').populate('touristId');
@@ -95,4 +113,5 @@ module.exports = {
     updatePurchase,
     deletePurchase,
     sendPaymentReceipt,
+    createPurchasesFromCart,
 };

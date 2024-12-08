@@ -40,7 +40,7 @@ const { createBooking, getBookings, cancelBooking, payForBooking ,viewAllPaidBoo
 const { createComplaint, getComplaintById, getComplaints } = require('../controllers/complaintController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 const { requestNotification, getNotifications , getUnreadNotifications } = require('../controllers/NotificationController');
-const { sendPaymentReceipt } = require('../controllers/purchaseController');
+const { sendPaymentReceipt, createPurchasesFromCart } = require('../controllers/purchaseController');
 
 _.post("/add", createTourist);
 _.get("/get", authenticate, getTourists);
@@ -100,7 +100,7 @@ _.post('/addToCart', authenticate, productController.addCart);
 _.delete('/removefromCart', authenticate, productController.removeCart);
 _.post('/AddToWishList',authenticate,productController.addToWishlist);
 _.get('/ViewList',authenticate,productController.getWishlist);
-_.post('/deleteWish',authenticate,productController.removeFromWishlist);
+_.delete('/deleteWish',authenticate,productController.removeFromWishlist);
 _.post('/moveToCart', authenticate, productController.moveWishlistToCart);
 _.get('/getCart', authenticate, productController.getCart);
 _.post('/updateQuantity', authenticate, productController.updateCartQuantity);
@@ -120,6 +120,7 @@ _.get('/getNotifications', authenticate, getNotifications);
 _.get('/getUnreadNotifications', authenticate, getUnreadNotifications);
 
 _.post('/sendPaymentReceipt', authenticate, sendPaymentReceipt);
+_.post('/createPurchase', authenticate, createPurchasesFromCart);
 _.post('/clearCart', authenticate, clearCart);
 _.delete('/deleteCancelledOrders', authenticate, deleteCancelledOrders);
 
