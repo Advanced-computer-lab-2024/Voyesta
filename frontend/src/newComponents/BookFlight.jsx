@@ -4,14 +4,10 @@ import { CircularProgress, TextField, Button, Typography, Snackbar } from '@mui/
 import FlightCard from "../newComponents/FlightCard";
 import {
     Container,
-    TextField,
-    Button,
-    Typography,
     Grid,
     Card,
     CardContent,
     CardActions,
-    CircularProgress,
     Alert,
     Box,
 } from '@mui/material';
