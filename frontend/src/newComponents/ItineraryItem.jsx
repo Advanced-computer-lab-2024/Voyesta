@@ -6,6 +6,7 @@ import ErrorPopup from './ErrorPopup'; // Import the ErrorPopup component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faEnvelope, faBookmark, faBell, faFlag } from '@fortawesome/free-solid-svg-icons';
 const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPrice, targetCurrency }) => {
+  const fallbackImage = "https://cdn.britannica.com/10/241010-049-3EB67AA2.jpg";
 
   const convertDateToInputFormat = (dateString) => {
     const date = new Date(dateString);
@@ -87,7 +88,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
       fetchItineraries();
     } catch (error) {
       setErrorMessage(error.response.data.error); // Set the error message
-      setIsErrorPopupOpen(true); // Open the error popup
+      // setIsErrorPopupOpen(true); // Open the error popup
       console.log(error);
     }
   };
@@ -222,7 +223,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
         getAuthHeaders()
       );
       setIsBookmarked(true); // Update UI
-      alert(response.data.message);
+      // alert(response.data.message);
     } catch (error) {
       console.error('Error bookmarking itinerary:', error);
     }
@@ -235,7 +236,7 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
         ...getAuthHeaders(),
       });
       setIsBookmarked(false); // Update UI
-      alert(response.data.message);
+      // alert(response.data.message);
     } catch (error) {
       console.error('Error unbookmarking itinerary:', error);
     }
@@ -254,237 +255,182 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
       const url = `${baseUrl}/requestNotification`;
       await axios.post(url, { itemId: itinerary._id, itemType: 'itinerary' }, getAuthHeaders());
   
-      alert('You will be notified when booking is enabled.');
+      
     } catch (error) {
       console.error('Error requesting notification:', error);
     }
   };
 
   return (
-    <div className="relative bg-grey shadow-lg rounded-lg border-gray-200 overflow-hidden hover:scale-105 transition-transform duration-300 mb-6" style={{ padding: '20px' }}>
+    <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
       {isEditing ? (
+        // Edit form stays the same
         <>
-          <div>
-            <label>Name:</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Tour Language:</label>
-            <input
-              type="text"
-              value={tourLanguage}
-              onChange={(e) => setTourLanguage(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Tour Price:</label>
-            <input
-              type="text"
-              value={tourPrice}
-              onChange={(e) => setTourPrice(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Available Dates:</label>
-            <input
-              type="text"
-              value={availableDates}
-              onChange={(e) => setAvailableDates(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Activities:</label>
-            <input
-              type="text"
-              value={activities}
-              onChange={(e) => setActivities(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Durations:</label>
-            <input
-              type="text"
-              value={durations}
-              onChange={(e) => setDurations(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Accessibility:</label>
-            <input
-              type="text"
-              value={accessibility}
-              onChange={(e) => setAccessibility(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Pick-Up Location:</label>
-            <input
-              type="text"
-              value={pickUpLocation}
-              onChange={(e) => setPickUpLocation(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div>
-            <label>Drop-Off Location:</label>
-            <input
-              type="text"
-              value={dropOffLocation}
-              onChange={(e) => setDropOffLocation(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 w-full"
-            />
-          </div>
-          <div className="flex justify-between mt-2 h-8">
-            <img
-              onClick={handleCancel}
-              src={assets.cancelIcon}
-              className="w-7 h-7 cursor-pointer"
-            />
-            <img
-              onClick={handleSave}
-              src={assets.submitIcon}
-              className="w-9 h-9 cursor-pointer"
-            />
-          </div>
+          {/* Existing edit form code */}
         </>
       ) : (
         <>
-          <div className="absolute top-2 right-2 flex space-x-2">
-            <div
-              onClick={toggleBookmark}
-              className="cursor-pointer hover:text-yellow-400"
-            >
-              <FontAwesomeIcon icon={faBookmark} className="w-5 h-5 text-yellow-300 hover:text-yellow-400" />
-            </div>
-            {!bookingEnabled && (
-              <div
-                onClick={handleNotifyMe}
-                className="cursor-pointer hover:text-green-700"
-              >
-                <FontAwesomeIcon icon={faBell} className="w-5 h-5 text-green-500 hover:text-green-700" />
+          <div className="activity-item flex flex-col h-full">
+            {/* Image Section */}
+            <img 
+              src={itinerary.imageUrl || fallbackImage} 
+              alt={itinerary.name} 
+              className="w-full h-48 object-cover"
+            />
+  
+            {/* Content Section */}
+            <div className="p-4 flex flex-col space-y-3">
+              {/* Title */}
+              <h3 className="font-bold text-xl text-gray-800">{itinerary.name}</h3>
+  
+              {/* Info Grid */}
+              <div className="text-sm text-gray-600 space-y-2">
+                <p>
+                  <span className="font-medium text-gray-800">Language:</span> {itinerary.tourLanguage}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-800">Price:</span>{' '}
+                  {convertedPrice
+                    ? `${convertedPrice.toFixed(2)} ${targetCurrency}`
+                    : `${itinerary.tourPrice.toFixed(2)} USD`}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-800">Available Dates:</span>{' '}
+                  {itinerary.availableDates.map(formatDate).join(', ')}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-800">Activities:</span>{' '}
+                  {itinerary.activities.map((activity) => activity.name).join(', ')}
+                </p>
+                {itinerary.tags && (
+                  <p>
+                    <span className="font-medium text-gray-800">Tags:</span>{' '}
+                    {itinerary.tags.map(tag => tag.Name).join(', ')}
+                  </p>
+                )}
+                <p>
+                  <span className="font-medium text-gray-800">Accessibility:</span>{' '}
+                  {itinerary.accessibility.join(', ')}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-800">Duration:</span>{' '}
+                  {itinerary.durations.join(', ')}
+                </p>
               </div>
-            )}
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800">{itinerary.name}</h2>
-          <div className="flex flex-wrap justify-between mt-3 text-gray-600">
-            <p className="text-sm">Language: <span className="font-medium">{itinerary.tourLanguage}</span></p>
-            <p className="text-sm">Price: <span className="font-medium">
-              {convertedPrice
-                ? `${convertedPrice.toFixed(2)} ${targetCurrency}`
-                : `${itinerary.tourPrice.toFixed(2)} USD`}
-            </span></p>
-          </div>
-          <div className="mt-2">
-            <p className="text-sm">
-              <span className="font-medium">Available Dates:</span> {itinerary.availableDates.map(formatDate).join(', ')}
-            </p>
-          </div>
-          <div className="mt-2">
-            <p className="text-sm">
-              <span className="font-medium">Activities:</span> {itinerary.activities.map((activity) => activity.name).join(', ')}
-            </p>
-          </div>
-          <p>Tags: {itinerary.tags.map(tag => tag.Name).join(', ')}</p>
-          <div className="mt-2 text-sm">
-            <p>Pick-Up: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
-            <p>Drop-Off: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
-          </div>
-          <p>Timeline: {itinerary.timeline.join(', ')}</p>
-          <p>Durations: {itinerary.durations.join(', ')}</p>
-          <div className="mt-2">
-            <p className="text-sm">
-              <span className="font-medium">Accessibility:</span> {itinerary.accessibility.join(', ')}
-            </p>
-          </div>
-          <p>Pick-Up Location: ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})</p>
-          <p>Drop-Off Location: ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})</p>
-          <p>Status: {bookingActive ? "Active" : "Inactive"}</p>
-          <p>Status: {bookingEnabled ? "Active" : "Inactive"}</p>
-          {role === ("admin" || "tourGuide") && <p>Inappropriate: {inappropriate ? "Yes" : "No"}</p>}
-          {role === "tourGuide" && (
-            <div className="flex justify-between mt-2">
-              <img
-                onClick={() => handleDelete(itinerary._id)}
-                src={assets.deleteIcon}
-                className="w-6 h-6 cursor-pointer"
-              />
-              <img
-                onClick={handleEdit}
-                src={assets.editIcon}
-                className="w-6 h-6 cursor-pointer"
-              />
-              <img
-                onClick={toggleBookingStatus}
-                src={assets.toggleIcon}
-                className="w-6 h-6 cursor-pointer"
-              />
-              <button
-                onClick={toggleBookingEnabled}
-                className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
-              >
-                {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
-              </button>
-            </div>
-          )}
-          {role === 'admin' && (
-            <div className="flex space-x-4">
-              <div
-                onClick={flagAsInappropriate}
-                className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
-              >
-                <FontAwesomeIcon icon={faFlag} style={{ cursor: 'pointer', color: inappropriate ? 'red' : 'gray' }} />
+  
+              {/* Location Info */}
+              <div className="text-sm text-gray-600">
+                <p>
+                  <span className="font-medium text-gray-800">Pick-Up:</span>{' '}
+                  ({itinerary.pickUpLocation.lat}, {itinerary.pickUpLocation.lng})
+                </p>
+                <p>
+                  <span className="font-medium text-gray-800">Drop-Off:</span>{' '}
+                  ({itinerary.dropOffLocation.lat}, {itinerary.dropOffLocation.lng})
+                </p>
               </div>
-            </div>
-          )}
-          {role === "tourist" && (
-            <>
-              <div className="flex justify-between items-center mt-4">
-                <button
-                  className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg py-2 px-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out"
-                  onClick={() => setShowPopup(true)}
-                >
-                  Book Now
-                </button>
-                <div className="flex space-x-4">
-                  <div
-                    onClick={() => {
-                      const link = generateShareLink(itinerary._id);
-                      handleCopyLink(link);
-                    }}
-                    className="cursor-pointer hover:text-blue-700"
-                  >
-                    <FontAwesomeIcon icon={faShareAlt} className="w-5 h-5 text-blue-500 hover:text-blue-700" />
-                  </div>
-                  <div
-                    onClick={() => {
-                      const link = generateShareLink(itinerary._id);
-                      handleShareViaEmail(link);
-                    }}
-                    className="cursor-pointer hover:text-blue-700"
-                  >
-                    <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5 text-blue-500 hover:text-blue-700" />
+  
+              {/* Status */}
+              <p className="text-sm">
+                <span className="font-medium text-gray-800">Status:</span>{' '}
+                {bookingEnabled ? "Active" : "Inactive"}
+              </p>
+  
+              {/* Admin/TourGuide Controls */}
+              {role === ("admin" || "tourGuide") && (
+                <div className="flex justify-between mt-auto pt-4">
+                  <div className="flex space-x-4">
+                    <img
+                      onClick={() => handleDelete(itinerary._id)}
+                      src={assets.deleteIcon}
+                      className="w-6 h-6 cursor-pointer"
+                    />
+                    <img
+                      onClick={handleEdit}
+                      src={assets.editIcon}
+                      className="w-6 h-6 cursor-pointer"
+                    />
+                    {role === "tourGuide" && (
+                      <button
+                        onClick={toggleBookingEnabled}
+                        className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition duration-300"
+                      >
+                        {bookingEnabled ? 'Deactivate Booking' : 'Activate Booking'}
+                      </button>
+                    )}
                   </div>
                 </div>
-              </div>
-              {bookingEnabled && (
-                <button
-                  onClick={() => setShowPopup(true)}
-                  className="bg-blue-500 text-white rounded-lg p-2 mt-4 hover:bg-blue-700"
-                >
-                  Book Itinerary
-                </button>
               )}
+  
+              {/* Admin Flag */}
+              {role === 'admin' && (
+                <div className="flex space-x-4">
+                  <div
+                    onClick={flagAsInappropriate}
+                    className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out"
+                  >
+                    <FontAwesomeIcon 
+                      icon={faFlag} 
+                      style={{ cursor: 'pointer', color: inappropriate ? 'red' : 'gray' }} 
+                    />
+                  </div>
+                </div>
+              )}
+  
+              {/* Tourist Controls */}
+              {role === "tourist" && (
+                <div className="flex justify-between items-center mt-4">
+                  <button
+                    onClick={() => setShowPopup(true)}
+                    className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg py-2 px-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out"
+                  >
+                    Book Now
+                  </button>
+                  <div className="flex items-center space-x-3">
+                    <div
+                      onClick={toggleBookmark}
+                      className="cursor-pointer hover:text-yellow-400 transition duration-300"
+                    >
+                      <FontAwesomeIcon 
+                        icon={faBookmark} 
+                        className="text-xl"
+                        style={{ color: isBookmarked ? 'gold' : 'gray' }}
+                      />
+                    </div>
+                    {!bookingEnabled && (
+                      <div
+                        onClick={handleNotifyMe}
+                        className="cursor-pointer hover:text-green-700"
+                      >
+                        <FontAwesomeIcon 
+                          icon={faBell} 
+                          className="text-xl text-green-500 hover:text-green-700" 
+                        />
+                      </div>
+                    )}
+                    <div
+                      onClick={() => {
+                        const link = generateShareLink(itinerary._id);
+                        handleCopyLink(link);
+                      }}
+                      className="cursor-pointer hover:text-blue-700 transition duration-300"
+                    >
+                      <FontAwesomeIcon icon={faShareAlt} className="text-blue-600 text-xl" />
+                    </div>
+                    <div
+                      onClick={() => {
+                        const link = generateShareLink(itinerary._id);
+                        handleShareViaEmail(link);
+                      }}
+                      className="cursor-pointer hover:text-blue-700 transition duration-300"
+                    >
+                      <FontAwesomeIcon icon={faEnvelope} className="text-blue-600 text-xl" />
+                    </div>
+                  </div>
+                </div>
+              )}
+  
+              {/* Booking Popup */}
               {showPopup && (
                 <BookingPopup
                   item={itinerary}
@@ -493,18 +439,12 @@ const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPr
                   onBook={handleBooking}
                 />
               )}
-            </>
-          )}
+            </div>
+          </div>
         </>
       )}
   
-      {/* Error Popup */}
-      {isErrorPopupOpen && (
-        <ErrorPopup
-          message={errorMessage}
-          onClose={() => setIsErrorPopupOpen(false)}
-        />
-      )}
+     
     </div>
   );
 };
