@@ -23,6 +23,7 @@ import OrdersPage from "../../newComponents/OrdersPage";
 import BookmarkedActivities from "../../newComponents/BookmarksActivties";
 import Notifications from "../../newComponents/Notifications";
 import FlightBookingConfirmation from "../../newComponents/FlightBookingConfirmation";
+import VacationGuide from "../../newComponents/VacGuide";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -86,6 +87,7 @@ function TouristDashboard(){
         <Route path="/payment" element={<PaymentPage baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path= "/orders" element={<OrdersPage baseUrl="http://localhost:3000/api/tourist" />}/>
         <Route path="/notifications" element={<Notifications baseUrl="http://localhost:3000/api/tourist" userType="tourist" />} />
+        <Route path="/guide" element={<VacationGuide userType="tourist" />} />
       </Routes>       
     </div>
   );

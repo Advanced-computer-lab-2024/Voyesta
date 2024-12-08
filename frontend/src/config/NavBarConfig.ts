@@ -12,6 +12,12 @@ export const NavConfig: NavbarConfigs = {
     centerItems: [
       {
         type: 'link',
+        label: 'Vacation Guide',
+        path: '/tourist/guide',
+        icon: 'fa-map-signs' // Using Font Awesome travel/guide icon
+      },
+      {
+        type: 'link',
         label: 'Museums',
         path: '/tourist/museums'
       },
@@ -101,6 +107,12 @@ export const NavConfig: NavbarConfigs = {
       image: assets.logo
     },
     centerItems: [
+      {
+        type: 'link',
+        label: 'Vacation Guide',
+        path: '/guest/guide',
+        icon: 'fa-map-signs' // Using Font Awesome travel/guide icon
+      },
       {
         type: 'link',
         label: 'Museums',
