@@ -131,7 +131,7 @@ function RevenueSalesView({ userType }) {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="revenue-sales-view">
+    <div className="revenue-sales-view px-8">
       <h2 className="text-lg font-bold text-center p-10">Revenue and Sales View</h2>
       <div className="mb-4">
         <button
@@ -168,13 +168,28 @@ function RevenueSalesView({ userType }) {
       )}
       {activeTab === 'revenue' && (
         <>
-          <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-          <button
-            onClick={applyFilters}
-            className="w-full p-2 bg-blue-500 text-white rounded mt-4"
-          >
-            Apply Filters
-          </button>
+         <div id="date-range-picker" date-rangepicker className="flex items-center mb-4">
+  <div className="relative">
+    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+      </svg>
+    </div>
+    <input id="datepicker-range-start" name="start" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start" />
+  </div>
+  <span className="mx-4 text-gray-500">to</span>
+  <div className="relative">
+    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+      </svg>
+    </div>
+    <input id="datepicker-range-end" name="end" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end" />
+  </div>
+</div>
+<button onClick={applyFilters} className="w-full p-2 bg-blue-500 text-white rounded mt-4">
+  Apply Filters
+</button>
         </>
       )}
       {activeTab === 'bookings' && (
@@ -206,111 +221,111 @@ function RevenueSalesView({ userType }) {
           <tbody>
             {salesData.map((item, index) => (
               <React.Fragment key={index}>
-{userType === 'admin' && (
-  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
-    <div className="flex justify-between">
-      <div>
-        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.totalRevenue || 0}</h5>
-        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Total Revenue</p>
-      </div>
-      <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
-        23%
-        <svg className="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
-        </svg>
-      </div>
-    </div>
-    <div id="data-series-chart" className="w-full h-96">
-      <Bar
-        data={{
-          labels: ['Product Revenue', 'Activity Revenue', 'Itinerary Revenue', 'Admin Revenue', 'Total Revenue'],
-          datasets: [
-            {
-              label: 'Revenue',
-              data: [
-                item.productRevenue || 0,
-                item.activityRevenue || 0,
-                item.itineraryRevenue || 0,
-                item.adminRevenue || 0,
-                item.totalRevenue || 0,
-              ],
-              backgroundColor: [
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-              ],
-              borderColor: [
-                'rgba(75, 192, 192, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-              ],
-              borderWidth: 1,
-            },
-          ],
-        }}
-        options={{
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              type: 'logarithmic',
-              beginAtZero: true,
-              ticks: {
-                callback: function(value, index, values) {
-                  return Number(value.toString());
-                }
-              }
-            }
-          }
-        }}
-      />
-    </div>
-  </div>
-)}
+          {userType === 'admin' && (
+          <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+            <div className="flex justify-between">
+              <div>
+                <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.totalRevenue || 0}</h5>
+                <p className="text-base font-normal text-gray-500 dark:text-gray-400">Total Revenue</p>
+              </div>
+              <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
+                23%
+                <svg className="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+                </svg>
+              </div>
+            </div>
+            <div id="data-series-chart" className="w-full h-96">
+              <Bar
+                data={{
+                  labels: ['Product Revenue', 'Activity Revenue', 'Itinerary Revenue', 'Admin Revenue', 'Total Revenue'],
+                  datasets: [
+                    {
+                      label: 'Revenue',
+                      data: [
+                        item.productRevenue || 0,
+                        item.activityRevenue || 0,
+                        item.itineraryRevenue || 0,
+                        item.adminRevenue || 0,
+                        item.totalRevenue || 0,
+                      ],
+                      backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                      ],
+                      borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                      ],
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      type: 'logarithmic',
+                      beginAtZero: true,
+                      ticks: {
+                        callback: function(value, index, values) {
+                          return Number(value.toString());
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
 
-{userType === 'seller' && (
-  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
-    <div className="flex justify-between">
-      <div>
-        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.productRevenue || 0}</h5>
-        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Product Revenue</p>
-      </div>
-    </div>
-    <div id="product-revenue-chart" className="w-full h-96">
-      <Bar
-        data={{
-          labels: ['Product Revenue'],
-          datasets: [
-            {
-              label: 'Revenue',
-              data: [item.productRevenue || 0],
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1,
-            },
-          ],
-        }}
-        options={{
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return Number(value.toString());
-                }
-              }
-            }
-          }
-        }}
-      />
-    </div>
-  </div>
-)}
-                {userType === 'advertiser' && (
+        {userType === 'seller' && (
+          <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+            <div className="flex justify-between">
+              <div>
+                <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.productRevenue || 0}</h5>
+                <p className="text-base font-normal text-gray-500 dark:text-gray-400">Product Revenue</p>
+              </div>
+            </div>
+            <div id="product-revenue-chart" className="w-full h-96">
+              <Bar
+                data={{
+                  labels: ['Product Revenue'],
+                  datasets: [
+                    {
+                      label: 'Revenue',
+                      data: [item.productRevenue || 0],
+                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: function(value) {
+                          return Number(value.toString());
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+            {userType === 'advertiser' && (
   <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
     <div className="flex justify-between">
       <div>
@@ -318,7 +333,7 @@ function RevenueSalesView({ userType }) {
         <p className="text-base font-normal text-gray-500 dark:text-gray-400">Activity Revenue</p>
       </div>
     </div>
-    <div id="activity-revenue-chart" className="w-full h-96">
+    <div id="activity-revenue-chart" className="w-full h-full flex-grow">
       <Bar
         data={{
           labels: ['Activity Revenue'],
@@ -334,6 +349,7 @@ function RevenueSalesView({ userType }) {
         }}
         options={{
           maintainAspectRatio: false,
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
@@ -349,61 +365,55 @@ function RevenueSalesView({ userType }) {
     </div>
   </div>
 )}
-{userType === 'tourGuide' && (
-  <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
-    <div className="flex justify-between">
-      <div>
-        <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.itineraryRevenue || 0}</h5>
-        <p className="text-base font-normal text-gray-500 dark:text-gray-400">Itinerary Revenue</p>
-      </div>
-    </div>
-    <div id="itinerary-revenue-chart" className="w-full h-96">
-      <Bar
-        data={{
-          labels: ['Itinerary Revenue'],
-          datasets: [
-            {
-              label: 'Revenue',
-              data: [item.itineraryRevenue || 0],
-              backgroundColor: 'rgba(255, 206, 86, 0.2)',
-              borderColor: 'rgba(255, 206, 86, 1)',
-              borderWidth: 1,
-            },
-          ],
-        }}
-        options={{
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return Number(value.toString());
-                }
-              }
-            }
-          }
-        }}
-      />
-    </div>
-  </div>
-)}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <table className="min-w-full bg-gray-100 shadow rounded mt-4">
-          <thead>
-            <tr>
-              <th className="py-2">Item Name</th>
-              <th className="py-2">Number of Bookings</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookingsData.map((item, index) => (
-              <React.Fragment key={index}>
-               {userType === 'advertiser' && (
+        {userType === 'tourGuide' && (
+          <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+            <div className="flex justify-between">
+              <div>
+                <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">${item.itineraryRevenue || 0}</h5>
+                <p className="text-base font-normal text-gray-500 dark:text-gray-400">Itinerary Revenue</p>
+              </div>
+            </div>
+            <div id="itinerary-revenue-chart" className="w-full h-96">
+              <Bar
+                data={{
+                  labels: ['Itinerary Revenue'],
+                  datasets: [
+                    {
+                      label: 'Revenue',
+                      data: [item.itineraryRevenue || 0],
+                      backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                      borderColor: 'rgba(255, 206, 86, 1)',
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: function(value) {
+                          return Number(value.toString());
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <table className="min-w-full bg-gray-100 shadow rounded mt-4">
+                  <tbody>
+                    {bookingsData.map((item, index) => (
+                      <React.Fragment key={index}>
+ {userType === 'advertiser' && (
   <div className="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
     <div className="flex justify-between">
       <div>
@@ -411,7 +421,7 @@ function RevenueSalesView({ userType }) {
         <p className="text-base font-normal text-gray-500 dark:text-gray-400">Activity Bookings</p>
       </div>
     </div>
-    <div id="activity-bookings-chart">
+    <div id="activity-bookings-chart" className="w-full h-96">
       <Bar
         data={{
           labels: ['Activity Bookings'],
@@ -426,6 +436,8 @@ function RevenueSalesView({ userType }) {
           ],
         }}
         options={{
+          maintainAspectRatio: false,
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
@@ -457,14 +469,15 @@ function RevenueSalesView({ userType }) {
             {
               label: 'Bookings',
               data: [item.itineraryBookings || 0],
-              backgroundColor: 'rgba(255, 206, 86, 0.2)',
-              borderColor: 'rgba(255, 206, 86, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1,
             },
           ],
         }}
         options={{
           maintainAspectRatio: false,
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
@@ -479,14 +492,13 @@ function RevenueSalesView({ userType }) {
       />
     </div>
   </div>
-)}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
-}
+)}                     </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          );
+        }
 
 export default RevenueSalesView;
