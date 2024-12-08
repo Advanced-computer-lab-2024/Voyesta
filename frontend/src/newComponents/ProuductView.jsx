@@ -16,7 +16,7 @@ function ProductsView({ role, baseUrl }) {
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
-  
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const token = localStorage.getItem('token');
 
   const getAuthHeaders = () => {
@@ -89,25 +89,27 @@ function ProductsView({ role, baseUrl }) {
     setMinPrice('');
     setMaxPrice('');
     setSortOrder('');
+    setTargetCurrency('USD');
     fetchProducts(role === 'admin' ? 'http://localhost:3000/api/admin/getProducts' : 'http://localhost:3000/api/seller/getAllProducts');
   };
 
-  const handleSortOrderChange = (e) => {
-    const newSortOrder = e.target.value;
-    setSortOrder(newSortOrder);
+  const handleSortOrderChange = (order) => {
+    setSortOrder(order);
+    // Existing sorting logic
     const sortedProducts = [...products].sort((a, b) => {
       const avgRatingA = a.ratings.length > 0 ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length : 0;
       const avgRatingB = b.ratings.length > 0 ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length : 0;
 
-      if (newSortOrder === 'asc') {
+      if (order === 'asc') {
         return avgRatingA - avgRatingB;
-      } else if (newSortOrder === 'desc') {
+      } else if (order === 'desc') {
         return avgRatingB - avgRatingA;
       } else {
         return 0;
       }
     });
     setProducts(sortedProducts);
+    setIsSortDropdownOpen(false);
   };
 
   const handleEdit = (product) => {
@@ -119,63 +121,120 @@ function ProductsView({ role, baseUrl }) {
       .catch(err => console.log(err));
   };
 
+  const toggleSortDropdown = () => {
+    setIsSortDropdownOpen(!isSortDropdownOpen);
+  };
+
   return (
-    <div className="flex">
-      <div className="w-1/5 bg-red-300">
-        <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-        <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">Reset Filters</button>        <div className="mb-4">
-          <PriceFilterBar items={products} setItems={setProducts} convertedPrices={convertedPrices} priceProperty="price" />
-        </div>
-        <div className="mb-4 text-center">
-          <label>Sort Order:</label>
-          <select value={sortOrder} onChange={handleSortOrderChange} className="w-full p-2 border border-gray-400 rounded">
-            <option value="" disabled>Select an option</option>
-            <option value="asc">Ascending (by ratings)</option>
-            <option value="desc">Descending (by ratings)</option>
-          </select>
-        </div>
-        {role === 'tourist' && (
-          <div className="mb-4">
-            <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+    <div className="bg-gray-100 min-h-screen">
+      {/* Sorting and Search Bar */}
+      <div className="bg-gray-200 shadow-md p-4">
+        <div className="flex flex-wrap justify-center items-center space-x-4">
+          {/* Sorting Dropdown - Only for tourist */}
+          {role === 'tourist' && (
+            <div className="relative">
+              <button
+                id="dropdownSortButton"
+                className="inline-flex items-center px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                type="button"
+                onClick={toggleSortDropdown}
+              >
+                {sortOrder === 'asc' ? 'Ascending (by ratings)' : sortOrder === 'desc' ? 'Descending (by ratings)' : 'Sort by'}
+                <svg className="w-2 h-2 ml-2" aria-hidden="true" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1l4 4 4-4" />
+                </svg>
+              </button>
+
+              {isSortDropdownOpen && (
+                <div className="absolute z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+                  <ul className="py-2 text-sm text-gray-700">
+                    <li>
+                      <button
+                        onClick={() => handleSortOrderChange('asc')}
+                        className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+                      >
+                        Ascending (by ratings)
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => handleSortOrderChange('desc')}
+                        className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+                      >
+                        Descending (by ratings)
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Search Bar - Visible to all users */}
+          <div className="flex items-center space-x-2 w-1/2">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearch}
+              placeholder="Search products..."
+              className="w-full p-2 border border-gray-400 rounded-lg"
+            />
+            <button
+              onClick={resetFilters}
+              className="w-1/6 inline-flex items-center px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300"
+            >
+              Reset Filters
+            </button>
           </div>
-        )}
-      </div>
-      <div className="w-4/5 pl-4 pt-5">
-        <div className="mb-4 w-1/2 mx-auto">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearch}
-            placeholder="Search products..."
-            className="w-full p-2 border border-gray-400 rounded-lg"
-          />
         </div>
-        {loading ? (
-          <div className="text-center text-lg">Loading products...</div>
-        ) : (
-          <div className="flex gap-3 flex-wrap justify-center">
-            {errorMsg ? (
-              <p className="text-center text-red-400 text-lg">{errorMsg}</p>
+      </div>
+
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex">
+          {role === 'tourist' && (
+            <div className="w-1/4 pr-4">
+              <div className="bg-gray-200 p-4 rounded-lg shadow">
+                <PriceFilterBar
+                  items={products}
+                  setItems={setProducts}
+                  convertedPrices={convertedPrices}
+                  priceProperty="price"
+                />
+                <div className="mt-4">
+                  <CurrencyConverter
+                    prices={prices}
+                    setConvertedPrices={setConvertedPrices}
+                    setTargetCurrency={setTargetCurrency}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
+            {loading ? (
+              <div className="text-center text-lg">Loading products...</div>
             ) : (
-              products.length > 0 ? (
-                products.map((product, index) => (
-                  <ProductCard
+              <div className="flex gap-3 flex-wrap justify-center">
+                {errorMsg ? (
+                  <div className="text-red-500 text-lg">{errorMsg}</div>
+                ) : (
+                  products.map((product, index) => (
+                    <ProductCard
                     key={product._id}
                     fetchProducts={fetchProducts}
                     oldProduct={product}
                     onEdit={handleEdit}
-                    userId={user?.id}
+                    userId={user?._id}
                     convertedPrice={convertedPrices[index]} // Pass convertedPrice
                     targetCurrency={targetCurrency} // Pass targetCurrency
-                  
                   />
-                ))
-              ) : (
-                <p className="text-center text-lg">No products found</p>
-              )
+                  ))
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

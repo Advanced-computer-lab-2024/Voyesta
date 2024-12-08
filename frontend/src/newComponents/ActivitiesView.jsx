@@ -17,10 +17,11 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [rating, setRating] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [sortOption, setSortOption] = useState(''); // Added sort option state
+  const [sortOption, setSortOption] = useState('Sort by');
   const [prices, setPrices] = useState([]);
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   useEffect(() => {
     fetchActivities();
@@ -66,7 +67,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
     }
 
     setFilteredActivities(filtered);
-    sortActivities(sortOption, filtered); // Sort after filtering
+    sortActivities(sortOption, filtered);
   };
 
   const resetFilters = () => {
@@ -74,8 +75,8 @@ const ActivitiesView = ({ baseUrl, role }) => {
     setRating('');
     setStartDate('');
     setEndDate('');
-    setSortOption('');
-    fetchActivities();
+    setSortOption('Sort by');
+    setFilteredActivities(activities);
   };
 
   const sortActivities = (option, activitiesToSort) => {
@@ -93,118 +94,177 @@ const ActivitiesView = ({ baseUrl, role }) => {
       if (option === 'priceDesc') return b.price - a.price;
       if (option === 'ratingAsc') return avgRatingA - avgRatingB;
       if (option === 'ratingDesc') return avgRatingB - avgRatingA;
-      return 0; // Default case, no sorting
+      return 0;
     });
     setFilteredActivities(sorted);
   };
 
+  const toggleSortDropdown = () => {
+    setIsSortDropdownOpen(!isSortDropdownOpen);
+  };
+
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       {role === 'tourist' && (
-        <div className="w-1/5 p-4 bg-gray-200 shadow-md space-y-4">
+        <div className="bg-gray-200 shadow-md p-4">
+          <div className="flex flex-wrap justify-center items-center space-x-4">
+            <div className="relative">
+              <button
+                id="dropdownSortButton"
+                className="inline-flex items-center px-3 py-2 mb-3 me-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg md:mb-0 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button"
+                onClick={toggleSortDropdown}
+              >
+                {sortOption}
+                <svg className="w-2 h-2 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                </svg>
+              </button>
 
-
-
-
-          <div className="flex justify-center items-center mb-4">
-
-          <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">
-            Reset Filters
-          </button>
-          </div>
-          <div className="flex justify-center items-center mb-4">
-          <PriceFilterBar
-            items={activities}
-            setItems={setFilteredActivities}
-            convertedPrices={convertedPrices}
-            priceProperty="price"
-          />
-          </div>
-          <div className="flex justify-center items-center mb-50 ">
-          <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
-          </div>  
-          <RatingFilter setSelectedRating={setRating} />
-          <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-          
-          {/* Sorting Dropdown */}
-          <div className="mb-4">
-            <label className="block mb-2">Sort by</label>
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="w-full p-2 border rounded"
+              {isSortDropdownOpen && (
+                <div id="dropdownSort" className="absolute z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                  <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSortButton">
+                    <li>
+                      <button 
+                        onClick={() => { 
+                          setSortOption('Price: Low to High'); 
+                          sortActivities('priceAsc', filteredActivities);
+                          setIsSortDropdownOpen(false); 
+                        }} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Price: Low to High
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => { 
+                          setSortOption('Price: High to Low'); 
+                          sortActivities('priceDesc', filteredActivities);
+                          setIsSortDropdownOpen(false); 
+                        }} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Price: High to Low
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => { 
+                          setSortOption('Rating: Low to High'); 
+                          sortActivities('ratingAsc', filteredActivities);
+                          setIsSortDropdownOpen(false); 
+                        }} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Rating: Low to High
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => { 
+                          setSortOption('Rating: High to Low'); 
+                          sortActivities('ratingDesc', filteredActivities);
+                          setIsSortDropdownOpen(false); 
+                        }} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Rating: High to Low
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+            <CategoryFilter setSelectedCategory={setCategory} baseUrl={baseUrl} />
+            <RatingFilter setSelectedRating={setRating} />
+            <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+            <button
+              onClick={applyFilters}
+              className="p-2 bg-blue-900 text-white rounded"
             >
-              <option value="">Choose...</option>
-              <option value="priceAsc">Price: Low to High</option>
-              <option value="priceDesc">Price: High to Low</option>
-              <option value="ratingAsc">Rating: Low to High</option>
-              <option value="ratingDesc">Rating: High to Low</option>
-            </select>
-          </div>
-
-          <button
-            onClick={applyFilters}
-            className="form_control"
-            style={{direction: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '60px'}}
-          >
-            Apply Filters
-          </button>
-          <div className="mb-4">
-            <CurrencyConverter
-              prices={prices}
-              setConvertedPrices={setConvertedPrices}
-              setTargetCurrency={setTargetCurrency}
-            />
+              Apply Filters
+            </button>
+            <button onClick={resetFilters} className="p-2 bg-red-500 text-white rounded">
+              Reset Filters
+            </button>
           </div>
         </div>
       )}
 
-      <div className="relative text-center bg-white shadow-md rounded p-6 w-2/3 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Activities</h1>
-        {message && <div className="text-red-500 mb-4">{message}</div>}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex">
+          {role === 'tourist' && (
+            <div className="w-1/4 pr-4">
+              <div className="bg-gray-200 p-4">
+                {/* <h2 className="text-2xl font-bold mb-4 p-2 text-center">Filter and Sort</h2> */}
+                <PriceFilterBar 
+                  items={activities} 
+                  setItems={setFilteredActivities} 
+                  convertedPrices={convertedPrices} 
+                  priceProperty="price" 
+                />
+                <div className="mb-4">
+                  <CurrencyConverter 
+                    prices={prices} 
+                    setConvertedPrices={setConvertedPrices} 
+                    setTargetCurrency={setTargetCurrency} 
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
-        {(role === 'advertiser' || role === 'admin') && (
-          <>{ role === 'advertiser' &&
-            <div className="flex justify-around border-b mb-4">
-              <button
-                className={`p-2 ${activeTab === 'viewActivity' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('viewActivity')}
-              >
-                View Activity
-              </button>
-              <button
-                className={`p-2 ${activeTab === 'createActivity' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('createActivity')}
-              >
-                Create Activity
-              </button>
-            </div>}
+          <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
+            <div className="relative text-center bg-white shadow-md rounded p-6">
+              <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Activities</h1>
+              {message && <div className="text-red-500 mb-4">{message}</div>}
 
-            {activeTab === 'viewActivity' ? (
-              <ActivitiesList
-                fetchActivities={fetchActivities}
-                baseUrl={baseUrl}
-                activities={filteredActivities}
-                role={role}
-                convertedPrices={convertedPrices}
-                targetCurrency={targetCurrency}
-              />
-            ) : (
-              <CreateActivity />
-            )}
-          </>
-        )}
+              {(role === 'advertiser' || role === 'admin') && (
+                <>{ role === 'advertiser' &&
+                  <div className="flex justify-around border-b mb-4">
+                    <button
+                      className={`p-2 ${activeTab === 'viewActivity' ? 'border-b-2 border-blue-500' : ''}`}
+                      onClick={() => setActiveTab('viewActivity')}
+                    >
+                      View Activity
+                    </button>
+                    <button
+                      className={`p-2 ${activeTab === 'createActivity' ? 'border-b-2 border-blue-500' : ''}`}
+                      onClick={() => setActiveTab('createActivity')}
+                    >
+                      Create Activity
+                    </button>
+                  </div>}
 
-        {role !== 'advertiser' && (
-          <ActivitiesList
-            fetchActivities={fetchActivities}
-            baseUrl={baseUrl}
-            activities={filteredActivities}
-            role={role}
-            convertedPrices={convertedPrices}
-            targetCurrency={targetCurrency}
-          />
-        )}
+                  {activeTab === 'viewActivity' ? (
+                    <ActivitiesList
+                      fetchActivities={fetchActivities}
+                      baseUrl={baseUrl}
+                      activities={filteredActivities}
+                      role={role}
+                      convertedPrices={convertedPrices}
+                      targetCurrency={targetCurrency}
+                    />
+                  ) : (
+                    <CreateActivity />
+                  )}
+                </>
+              )}
+
+              {role !== 'advertiser' && (
+                <ActivitiesList
+                  fetchActivities={fetchActivities}
+                  baseUrl={baseUrl}
+                  activities={filteredActivities}
+                  role={role}
+                  convertedPrices={convertedPrices}
+                  targetCurrency={targetCurrency}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

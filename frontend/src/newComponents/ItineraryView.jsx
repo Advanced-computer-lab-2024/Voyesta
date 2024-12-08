@@ -19,6 +19,8 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [prices, setPrices] = useState([]);
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] = useState(false);
 
   useEffect(() => {
     fetchItineraries();
@@ -44,7 +46,7 @@ const ItineraryView = ({ baseUrl, role }) => {
   const resetFilters = () => {
     setStartDate('');
     setEndDate('');
-    setSelectedPreference('');
+    setSelectedPreference('All');
     setSortOption('');
     fetchItineraries();
   };
@@ -82,78 +84,175 @@ const ItineraryView = ({ baseUrl, role }) => {
     setFilteredItineraries(sorted);
   };
 
+  const handleSortOptionChange = (option) => {
+        setSortOption(option);
+      
+      // Sort the entire original list of itineraries with the new option
+      const sorted = [...itineraries].sort((a, b) => {
+        if (option === 'priceAsc') return a.tourPrice - b.tourPrice;
+        if (option === 'priceDesc') return b.tourPrice - a.tourPrice;
+        if (option === 'ratingAsc') return a.rating - b.rating;
+        if (option === 'ratingDesc') return b.rating - a.rating;
+        return 0; // Default case, no sorting
+      });
+
+      setFilteredItineraries(sorted);
+      setIsSortDropdownOpen(false);
+  };
+
+  const toggleSortDropdown = () => {
+    setIsSortDropdownOpen(!isSortDropdownOpen);
+  };
+
+  const togglePreferenceDropdown = () => {
+    setIsPreferenceDropdownOpen(!isPreferenceDropdownOpen);
+  };
+  
   return (
-    <div className="flex">
+    <div className="bg-gray-100 min-h-screen">
       {role === 'tourist' && (
-        <div className="w-1/5 p-4 bg-red-300">
-          <h2 className="text-lg font-bold mb-4 bg-green-200 p-2">Filter and Sort</h2>
-          <button onClick={resetFilters} className="w-3/5 p-2 bg-red-500 text-white rounded">Reset Filters</button>
-          <PriceFilterBar items={itineraries} setItems={setFilteredItineraries} convertedPrices={convertedPrices} priceProperty="tourPrice" />
-          <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
-          <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
-          
-          {/* Sorting Dropdown */}
-          <div className="mb-4">
-            <label className="block mb-2">Sort by</label>
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="w-full p-2 border"
+        <div className="bg-gray-200 shadow-md p-4">
+          <div className="flex flex-wrap justify-center items-center space-x-4">
+            <div className="relative">
+              <button
+                id="dropdownSortButton"
+                className="inline-flex items-center px-3 py-2 mb-3 me-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg md:mb-0 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button"
+                onClick={toggleSortDropdown}
+              >
+                {sortOption || 'Sort by'}
+                <svg className="w-2 h-2 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                </svg>
+              </button>
+
+              {isSortDropdownOpen && (
+                <div id="dropdownSort" className="absolute z-50 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                  <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSortButton">
+                    <li>
+                      <button 
+                        onClick={() =>  handleSortOptionChange('priceAsc')} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Price: Low to High
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => handleSortOptionChange('priceDesc')} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Price: High to Low
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => handleSortOptionChange('ratingAsc')} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Rating: Low to High
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => handleSortOptionChange('ratingDesc')} 
+                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        Rating: High to Low
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+            <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
+            <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
+            <button
+              onClick={applyFilters}
+              className="p-2 bg-blue-900 text-white rounded"
             >
-              <option value="">Sort</option>
-              <option value="priceAsc">Price: Low to High</option>
-              <option value="priceDesc">Price: High to Low</option>
-              <option value="ratingAsc">Rating: Low to High</option>
-              <option value="ratingDesc">Rating: High to Low</option>
-            </select>
-          </div>
-
-          <button
-            onClick={applyFilters}
-            className="w-full p-2 bg-blue-500 text-white rounded"
-          >
-            Apply Filters
-          </button>
-
-          <div className="mb-4">
-            <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
+              Apply Filters
+            </button>
+            <button onClick={resetFilters} className="p-2 bg-red-500 text-white rounded">
+              Reset Filters
+            </button>
           </div>
         </div>
       )}
 
-      <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Itineraries</h1>
-
-        {message && <div className="text-red-500 mb-4">{message}</div>}
-
-        {role === 'tourGuide' && (
-          <>
-            <div className="flex justify-around border-b mb-4">
-              <button
-                className={`p-2 ${activeTab === 'viewItineraries' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('viewItineraries')}
-              >
-                View Itineraries
-              </button>
-              <button
-                className={`p-2 ${activeTab === 'createItinerary' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('createItinerary')}
-              >
-                Create Itinerary
-              </button>
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex">
+          {role === 'tourist' && (
+            <div className="w-1/4 pr-4">
+              <div className="bg-gray-200 p-4">
+                {/* <h2 className="text-2xl font-bold mb-4 p-2 text-center">Filter and Sort</h2> */}
+                <PriceFilterBar 
+                  items={itineraries} 
+                  setItems={setFilteredItineraries} 
+                  convertedPrices={convertedPrices} 
+                  priceProperty="tourPrice" 
+                />
+                <div className="mb-4">
+                  <CurrencyConverter 
+                    prices={prices} 
+                    setConvertedPrices={setConvertedPrices} 
+                    setTargetCurrency={setTargetCurrency} 
+                  />
+                </div>
+              </div>
             </div>
+          )}
 
-            {activeTab === 'viewItineraries' ? (
-              <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
-            ) : (
-              <CreateItinerary />
-            )}
-          </>
-        )}
+          <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
+            <div className="relative text-center bg-white shadow-md rounded p-6">
+              <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Itineraries</h1>
+              {message && <div className="text-red-500 mb-4">{message}</div>}
 
-        {role !== 'tourGuide' && (
-          <ItinerariesList fetchItineraries={fetchItineraries} baseUrl={baseUrl} itineraries={filteredItineraries} role={role} convertedPrices={convertedPrices} targetCurrency={targetCurrency} />
-        )}
+              {(role === 'tourGuide' || role === 'admin') && (
+                <>{ role === 'tourGuide' &&
+                  <div className="flex justify-around border-b mb-4">
+                    <button
+                      className={`p-2 ${activeTab === 'viewItineraries' ? 'border-b-2 border-blue-500' : ''}`}
+                      onClick={() => setActiveTab('viewItineraries')}
+                    >
+                      View Itineraries
+                    </button>
+                    <button
+                      className={`p-2 ${activeTab === 'createItinerary' ? 'border-b-2 border-blue-500' : ''}`}
+                      onClick={() => setActiveTab('createItinerary')}
+                    >
+                      Create Itinerary
+                    </button>
+                  </div>}
+
+                  {activeTab === 'viewItineraries' ? (
+                    <ItinerariesList
+                      fetchItineraries={fetchItineraries}
+                      baseUrl={baseUrl}
+                      itineraries={filteredItineraries}
+                      role={role}
+                      convertedPrices={convertedPrices}
+                      targetCurrency={targetCurrency}
+                    />
+                  ) : (
+                    <CreateItinerary />
+                  )}
+                </>
+              )}
+
+              {role !== 'tourGuide' && (
+                <ItinerariesList
+                  fetchItineraries={fetchItineraries}
+                  baseUrl={baseUrl}
+                  itineraries={filteredItineraries}
+                  role={role}
+                  convertedPrices={convertedPrices}
+                  targetCurrency={targetCurrency}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

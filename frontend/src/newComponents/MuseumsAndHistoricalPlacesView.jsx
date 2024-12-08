@@ -14,6 +14,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [prices, setPrices] = useState([]);
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   useEffect(() => {
     fetchPlaces();
@@ -41,6 +42,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
 
   const resetFilters = () => {
     setSelectedTags('');
+    setTargetCurrency('USD');
     fetchPlaces();
   };
 
@@ -74,76 +76,89 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   };
 
   return (
-    <div className="flex">
-
+    <div className="bg-gray-100 min-h-screen">
       {role === 'tourist' && (
-        <>
-          <div className="w-1/5 p-4 bg-[#004080] text-[#f5e1b4]">
-            <h2 className="text-lg font-bold mb-4 p-2 text-[#f5e1b4]">Filter by Tags</h2>
-            <button onClick={resetFilters} className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Reset Filters</button>
+        <div className="bg-gray-200 shadow-md p-4">
+          <div className="flex flex-wrap justify-center items-center space-x-4">
+            <div className="relative">
+              <button
+                id="dropdownSortButton"
+                className="inline-flex items-center px-3 py-2 mb-3 me-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg md:mb-0 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button"
+                onClick={applyTagFilter}
+              >
+                Apply Filters
+              </button>
+            </div>
             <PreferencesFilter setSelectedPreferences={setSelectedTags} />
             <button
-              onClick={applyTagFilter}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={resetFilters}
+              className="p-2 bg-red-500 text-white rounded"
             >
-              Apply Filters
+              Reset Filters
             </button>
-            <div className="mb-4">
-              <CurrencyConverter prices={prices} setConvertedPrices={setConvertedPrices} setTargetCurrency={setTargetCurrency} />
-            </div>
+            <CurrencyConverter 
+              prices={prices} 
+              setConvertedPrices={setConvertedPrices} 
+              setTargetCurrency={setTargetCurrency} 
+            />
           </div>
-        </>
+        </div>
       )}
 
-      <div className="relative text-center bg-white shadow rounded p-3 w-2/5 mx-auto">
-        <h1 className="text-2xl text-gray-600 font-bold mb-3">Available Museums and Historical Places</h1>
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex">
 
-        {message && <div className="text-red-500 mb-4">{message}</div>}
+          <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
+            <div className="relative text-center bg-white shadow-md rounded p-6">
+              <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Museums and Historical Places</h1>
+              {message && <div className="text-red-500 mb-4">{message}</div>}
 
-        {role === 'tourismGovernor' && (
-          <>
-            <div className="flex justify-around border-b mb-4">
-              <button
-                className={`p-2 ${activeTab === 'viewPlaces' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('viewPlaces')}
-              >
-                View Places
-              </button>
-              <button
-                className={`p-2 ${activeTab === 'createPlace' ? 'border-b-2 border-blue-500' : ''}`}
-                onClick={() => setActiveTab('createPlace')}
-              >
-                Create Place
-              </button>
+              {(role === 'tourismGovernor') && (
+                <>
+                  <div className="flex justify-around border-b mb-4">
+                    <button
+                      className={`p-2 ${activeTab === 'viewPlaces' ? 'border-b-2 border-blue-500' : ''}`}
+                      onClick={() => setActiveTab('viewPlaces')}
+                    >
+                      View Places
+                    </button>
+                    <button
+                      className={`p-2 ${activeTab === 'createPlace' ? 'border-b-2 border-blue-500' : ''}`}
+                      onClick={() => setActiveTab('createPlace')}
+                    >
+                      Create Place
+                    </button>
+                  </div>
+
+                  {activeTab === 'viewPlaces' ? (
+                    <MuseumsAndHistoricalPlacesList
+                      fetchPlaces={fetchPlaces}
+                      baseUrl={baseUrl}
+                      places={filteredPlaces}
+                      role={role}
+                      convertedPrices={convertedPrices}
+                      targetCurrency={targetCurrency}
+                    />
+                  ) : (
+                    <CreateMuseumAndHistoricalPlace getAuthHeaders={() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })} />
+                  )}
+                </>
+              )}
+
+              {role !== 'tourismGovernor' && (
+                <MuseumsAndHistoricalPlacesList
+                  fetchPlaces={fetchPlaces}
+                  baseUrl={baseUrl}
+                  places={filteredPlaces}
+                  role={role}
+                  convertedPrices={convertedPrices}
+                  targetCurrency={targetCurrency}
+                />
+              )}
             </div>
-
-            {activeTab === 'viewPlaces' && (
-              <MuseumsAndHistoricalPlacesList
-                fetchPlaces={fetchPlaces}
-                baseUrl={baseUrl}
-                places={filteredPlaces}
-                role={role}
-                convertedPrices={convertedPrices}
-                targetCurrency={targetCurrency}
-              />
-            )}
-
-            {activeTab === 'createPlace' && (
-              <CreateMuseumAndHistoricalPlace getAuthHeaders={() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })} />
-            )}
-          </>
-        )}
-
-        {role !== 'tourismGovernor' && (
-          <MuseumsAndHistoricalPlacesList
-            fetchPlaces={fetchPlaces}
-            baseUrl={baseUrl}
-            places={filteredPlaces}
-            role={role}
-            convertedPrices={convertedPrices}
-            targetCurrency={targetCurrency}
-          />
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );
