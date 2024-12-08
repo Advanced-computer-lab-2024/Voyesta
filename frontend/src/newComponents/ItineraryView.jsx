@@ -6,6 +6,7 @@ import PriceFilterBar from './PriceFilterBar';
 import DateRangeFilter from './DateRangeFilter';
 import PreferencesFilter from './PreferencesFilter';
 import CurrencyConverter from './CurrencyConverter';
+import { Snackbar } from '@mui/material';
 
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
@@ -21,6 +22,7 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [targetCurrency, setTargetCurrency] = useState('USD');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchItineraries();
@@ -233,6 +235,7 @@ const ItineraryView = ({ baseUrl, role }) => {
                       role={role}
                       convertedPrices={convertedPrices}
                       targetCurrency={targetCurrency}
+                      setSuccessMessage = {setSuccessMessage}
                     />
                   ) : (
                     <CreateItinerary />
@@ -248,12 +251,14 @@ const ItineraryView = ({ baseUrl, role }) => {
                   role={role}
                   convertedPrices={convertedPrices}
                   targetCurrency={targetCurrency}
+                  setSuccessMessage = {setSuccessMessage}
                 />
               )}
             </div>
           </div>
         </div>
       </div>
+      <Snackbar open={!!successMessage} message={successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage('')} />
     </div>
   );
 };

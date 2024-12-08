@@ -6,8 +6,9 @@ import BookingPopup from './BookingPopup';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faEnvelope, faBookmark, faFlag } from '@fortawesome/free-solid-svg-icons';
+import { Snackbar } from '@mui/material';
 
-const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice, targetCurrency, transportation }) => {
+const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice, targetCurrency, transportation, setSuccessMessage }) => {
   const [shareLink, setShareLink] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState(activity);
@@ -19,6 +20,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   const [inappropriate, setInappropriate] = useState(activity.inappropriate);
   const [bookingEnabled, setBookingEnabled] = useState(activity.bookingEnabled);
   const navigate = useNavigate();
+
+  
 
   useEffect(() => {
     if (activity.tags && Array.isArray(activity.tags)) {
@@ -240,7 +243,13 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       console.log(baseUrl);
       const url = `${baseUrl}/bookEvent/${activity._id}`;
       await axios.post(url, { bookableModel: 'Activity', eventDate }, getAuthHeaders());
-      alert('Booking successful!');
+      navigator.clipboard.writeText(link)
+      .then(() => {
+        setSuccessMessage('Booking successful');
+        setTimeout(() => {
+          setSuccessMessage(''); // Clear the success message after 3 seconds
+        }, 3000);
+      })
       setShowPopup(false);
 
       // Determine the price to pass to navigate
@@ -255,8 +264,16 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   };
 
   const handleCopyLink = (link) => {
-    navigator.clipboard.writeText(link);
-    alert('Link copied to clipboard');
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        setSuccessMessage('Link copied to clipboard!');
+        setTimeout(() => {
+          setSuccessMessage(''); // Clear the success message after 3 seconds
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error('Failed to copy link: ', err);
+      });
   };
 
   const handleShareViaEmail = (link) => {
@@ -536,6 +553,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           )}
         </>
       )}
+
     </div>
   );
 };

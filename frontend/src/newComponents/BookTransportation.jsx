@@ -1,27 +1,28 @@
-// BookTransportation.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ActivityItem from './ActivityItem';
+import Snackbar from '@mui/material/Snackbar';
 
 const BookTransportation = ({ baseUrl, role }) => {
   const [activities, setActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch transportation activities from the API
     axios.get(`${baseUrl}/transportationActivities`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
     })
-      .then(response => {
-        setActivities(response.data);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the transportation activities!', error);
-      });
+    .then(response => {
+      setActivities(response.data);
+    })
+    .catch(error => {
+      console.error('There was an error fetching the transportation activities!', error);
+    });
   }, [baseUrl]);
 
   const handleSelectActivity = (activity) => {
@@ -29,9 +30,9 @@ const BookTransportation = ({ baseUrl, role }) => {
   };
 
   const handlePay = () => {
-    // Handle payment logic here
-    alert('Booking successful');
-    navigate('/tourist');
+    // Update the success message to "Booked successfully!!"
+    setSuccessMessage('Booked successfully!!');
+    navigate('/tourist/payment');
   };
 
   return (
@@ -68,6 +69,14 @@ const BookTransportation = ({ baseUrl, role }) => {
           <p>Select a transportation activity to view details and pay.</p>
         )}
       </div>
+
+      {/* Snackbar for success message */}
+      <Snackbar
+        open={!!successMessage} // Only show if there's a success message
+        message={successMessage}
+        autoHideDuration={6000} // Auto hide after 6 seconds
+        onClose={() => setSuccessMessage('')} // Clear success message when Snackbar is closed
+      />
     </div>
   );
 };

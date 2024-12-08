@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import FlightCard from './FlightCard';
 import { CircularProgress, TextField, Button, Typography, Snackbar } from '@mui/material';
+import FlightCard from "../newComponents/FlightCard";
 
 const BookFlight = ({ baseUrl }) => {
     const [origin, setOrigin] = useState('');
@@ -79,13 +79,35 @@ const BookFlight = ({ baseUrl }) => {
                 <TextField label="Destination" variant="outlined" fullWidth value={destination} onChange={(e) => setDestination(e.target.value)} />
             </div>
             <div style={{ marginBottom: '20px' }}>
-                <TextField type="date" label="Departure Date" variant="outlined" fullWidth value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} />
+                <TextField
+                    label="Departure Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={departureDate}
+                    onChange={(e) => setDepartureDate(e.target.value)}
+                    fullWidth
+                />
             </div>
             <div style={{ marginBottom: '20px' }}>
-                <TextField type="date" label="Return Date" variant="outlined" fullWidth value={returnDate} onChange={(e) => setReturnDate(e.target.value)} />
+                <TextField
+                    label="Return Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    fullWidth
+                />
             </div>
             <div style={{ marginBottom: '20px' }}>
-                <TextField type="number" label="Adults" variant="outlined" fullWidth value={adults} onChange={(e) => setAdults(e.target.value)} min="1" />
+                <TextField
+                    label="Adults"
+                    type="number"
+                    variant="outlined"
+                    value={adults}
+                    onChange={(e) => setAdults(e.target.value)}
+                    inputProps={{ min: 1 }}
+                    fullWidth
+                />
             </div>
             <Button onClick={searchFlights} variant="contained" color="primary" disabled={loading} fullWidth>
                 {loading ? <CircularProgress size={24} /> : 'Search Flights'}

@@ -7,6 +7,7 @@ import CategoryFilter from './CategoryFilter';
 import RatingFilter from './RatingFilter';
 import DateRangeFilter from './DateRangeFilter';
 import CurrencyConverter from './CurrencyConverter';
+import { Snackbar } from '@mui/material';
 
 const ActivitiesView = ({ baseUrl, role }) => {
   const [activities, setActivities] = useState([]);
@@ -22,6 +23,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchActivities();
@@ -245,6 +247,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
                       role={role}
                       convertedPrices={convertedPrices}
                       targetCurrency={targetCurrency}
+                      setSuccessMessage = {setSuccessMessage}
                     />
                   ) : (
                     <CreateActivity />
@@ -260,12 +263,15 @@ const ActivitiesView = ({ baseUrl, role }) => {
                   role={role}
                   convertedPrices={convertedPrices}
                   targetCurrency={targetCurrency}
+                  setSuccessMessage={setSuccessMessage}
                 />
               )}
             </div>
           </div>
         </div>
       </div>
+      <Snackbar open={!!successMessage} message={successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage('')} />
+    
     </div>
   );
 };
