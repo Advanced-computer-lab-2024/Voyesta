@@ -66,6 +66,12 @@ export const NavConfig: NavbarConfigs = {
       },
       {
         type: 'icon',
+        label: 'Bookmarks',
+        path: '/tourist/bookmarks',
+        icon: 'fa-bookmark'
+      },
+      {
+        type: 'icon',
         label: 'Wishlist',
         path: '/tourist/Wishlist',
         icon: 'fa-heart',

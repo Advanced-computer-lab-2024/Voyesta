@@ -22,6 +22,7 @@ import PaymentPage from "../../newComponents/PaymentPage";
 import OrdersPage from "../../newComponents/OrdersPage";
 import BookmarkedActivities from "../../newComponents/BookmarksActivties";
 import Notifications from "../../newComponents/Notifications";
+import TouristHome from "../../newComponents/TouristHome";
 
 const navLinks = [
   { path: "/tourist/", label: "Home" },
@@ -49,7 +50,7 @@ function TouristDashboard(){
     <div>
       <NavBar role ="tourist" user={currentUser} />
       <Routes>
-        <Route exact path="/" element={<div>Home</div>}/>
+        <Route exact path="/" element={<TouristHome/>}/>
         <Route path="/profile" element={<TouristProfile />}/>
         <Route path="/products" element={<ProductsView role="tourist" />}/>
         <Route path="/activities" element={
