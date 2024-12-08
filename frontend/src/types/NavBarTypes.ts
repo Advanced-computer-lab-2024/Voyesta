@@ -1,7 +1,7 @@
 // NavBarTypes.ts
 
 // Basic types for menu items
-export type NavItemType = 'link' | 'dropdown' | 'button' | 'divider' | 'icon' | 'currency';
+export type NavItemType = 'link' | 'dropdown' | 'button' | 'divider' | 'icon' ;
 
 // Base interface for all nav items
 export interface BaseNavItem {
@@ -59,13 +59,6 @@ export interface NavIcon extends BaseNavItem {
   items?: DropdownItem[];
 }
 
-export interface CurrencySelector extends BaseNavItem {
-  type: 'currency';
-  label: string;
-  icon: string;
-  defaultCurrency: string;
-  items?: string[]; // Add items for dropdown currencies
-}
 
 
 export interface ProfileMenuItem {
@@ -89,7 +82,7 @@ export interface NavConfig {
     image?: string;
   };
   centerItems?: (NavLink | NavDropdown | NavButton | NavDivider)[];
-  rightIcons?: (NavIcon | CurrencySelector)[];
+  rightIcons?: NavIcon [];
   profileMenu?: {
     items: ProfileMenuItem[];
     baseUrl: string;

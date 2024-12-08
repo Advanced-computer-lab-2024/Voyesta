@@ -111,7 +111,6 @@ import { BadgedIcon } from './nav/BadgedIcon';
 import { ProfileDropdown } from './nav/ProfileDropdown';
 import { MenuDropdown } from './nav/MenuDropdown';
 import { NavTabs } from './nav/NavTabs';
-import { CurrencyConverter } from './nav/CurrencyConverter';
 
 function NavBar({ role = 'tourist', user }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -216,24 +215,20 @@ function NavBar({ role = 'tourist', user }) {
 
         {/* Right Icons */}
         <div className="flex items-center md:order-2 space-x-6">
-        {config.rightIcons?.map((icon, index) => (
-  icon.type === 'currency' ? (
-    <CurrencyConverter key={index} />
-  ) : (
-    <BadgedIcon
-      key={index}
-      icon={icon.icon}
-      count={icon.badge ? eval(icon.badge.key) : 0}
-      onClick={() => handleIconClick(icon.path)}
-      className={`text-gray-900 dark:text-white ${
-        activeTab === icon.path?.split('/').pop() 
-          ? 'text-blue-700 dark:text-blue-500' 
-          : 'hover:text-blue-700 dark:hover:text-blue-500'
-      }`}
-      items={icon.items}
-    />
-  )
-))}
+          {config.rightIcons?.map((icon, index) => (
+            <BadgedIcon
+              key={index}
+              icon={icon.icon}
+              count={icon.badge ? eval(icon.badge.key) : 0}
+              onClick={() => handleIconClick(icon.path)}
+              className={`text-gray-900 dark:text-white ${
+                activeTab === icon.path?.split('/').pop() 
+                  ? 'text-blue-700 dark:text-blue-500' 
+                  : 'hover:text-blue-700 dark:hover:text-blue-500'
+              }`}
+              items={icon.items}
+            />
+          ))}
 
           {role !=='admin' && (<ProfileDropdown
             user={user}

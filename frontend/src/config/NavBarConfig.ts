@@ -73,13 +73,6 @@ export const NavConfig: NavbarConfigs = {
           key: 'wishlistCount'
         }
       },
-      {
-        type: 'currency',
-        label: 'Currency',
-        icon: 'fa-money-bill',
-        defaultCurrency: 'USD',
-        // Insert before the profile icon
-      },
         {
             type: 'icon',
             label: 'Logout',
