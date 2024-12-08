@@ -5,7 +5,7 @@ import BookingPopup from './BookingPopup';
 import ErrorPopup from './ErrorPopup'; // Import the ErrorPopup component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faEnvelope, faBookmark, faBell, faFlag } from '@fortawesome/free-solid-svg-icons';
-const ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPrice, targetCurrency }) => {
+const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPrice, targetCurrency }) => {
   const fallbackImage = "https://cdn.britannica.com/10/241010-049-3EB67AA2.jpg";
 
   const convertDateToInputFormat = (dateString) => {
