@@ -8,7 +8,7 @@ import ActivitiesView from '../../newComponents/ActivitiesView';
 import ItineraryView from "../../newComponents/ItineraryView";
 import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistoricalPlacesView";
 import BookingsPage from "../../newComponents/BookingPage";
-import CombinedComplaints from "../../newComponents/CombinedComplaints";
+import CombinedComplaints from "../../newComponents/Complaint";
 import TouristPurchasesView from "../../newComponents/TouristPurchaseView";
 import BookFlight from "../../newComponents/BookFlight";
 import BookHotel from "../../newComponents/BookHotel";

@@ -6,7 +6,7 @@ import AdminAccountManagementNavbar from "../../components/adminComponents/Admin
 import NavBar from "../../components/NavBar";
 import ProductsView from "../../newComponents/ProuductView";
 import ItineraryView from "../../newComponents/ItineraryView";
-import CombinedComplaints from "../../newComponents/CombinedComplaints";
+import CombinedComplaints from "../../newComponents/Complaint";
 import ProductSalesView from "../../newComponents/ProductSalesView";
 import PendingUsers from "../../newComponents/PendingUsers";
 import UserStats from "../../newComponents/UserStats";
