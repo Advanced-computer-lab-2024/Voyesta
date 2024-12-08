@@ -57,6 +57,12 @@ export const NavConfig: NavbarConfigs = {
       },
       {
         type: 'icon',
+        label: 'Bookmarks',
+        path: '/tourist/bookmarks',
+        icon: 'fa-bookmark'
+      },  
+      {
+        type: 'icon',
         label: 'Cart',
         path: '/tourist/cart',
         icon: 'fa-shopping-cart',
