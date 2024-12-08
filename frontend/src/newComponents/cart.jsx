@@ -41,10 +41,10 @@ const Cart = ({ baseUrl }) => {
       const price = item.productId.price;
       return `${name}...  ${price} x${quantity} `;
     }).join(', ');
-
+  
     const total = cartItems.reduce((acc, item) => acc + item.productId.price * item.quantity, 0);
 
-    navigate('/tourist/checkout', { state: { from : 'cart',total, details } });
+    navigate('/tourist/checkout', { state: { from : 'cart',total, details, cartItems } });
   };
 
   const handleDelete = (productId) => {

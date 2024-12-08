@@ -25,7 +25,7 @@ const CheckoutForm = ({ baseUrl }) => {
   const stripe = useStripe();
   const elements = useElements();
   const location = useLocation();
-  const { total, address: passedAddress , details  } = location.state || { total: 0, address: null , details: [] };
+  const { total, address: passedAddress , details, cartItems} = location.state || { total: 0, address: null , details: [] };
   const { bookingId } = location.state || { bookingId: '' };
   const previousPage = location.state?.from || 'unknown';
   const navigate = useNavigate();
@@ -119,16 +119,19 @@ const CheckoutForm = ({ baseUrl }) => {
           if (result.paymentIntent.status === "succeeded") {
             console.log("Payment succeeded");
             await sendPaymentReceiptEmail();
+            await createPurchasesFromCart(cartItems);
             await clearCart();
           }
         }
       } else if (paymentMethod === "wallet") {
         console.log("Payment succeeded with wallet");
         await sendPaymentReceiptEmail();
+        await createPurchasesFromCart(cartItems);
         await clearCart();
       } else if (paymentMethod === "cod") {
         console.log("Cash on delivery selected");
         await sendPaymentReceiptEmail();
+        await createPurchasesFromCart(cartItems);
         await clearCart();
       }
 
@@ -224,6 +227,19 @@ const CheckoutForm = ({ baseUrl }) => {
       console.error('Error clearing cart:', error);
     }
   };
+
+  const createPurchasesFromCart = async (cartItems) => {
+    try {
+        const response = await axios.post(`${baseUrl}/createPurchase`, { cartItems }, getAuthHeaders());
+        const data = response.data;
+        if (!data) {
+            throw new Error(data.message);
+        }
+        console.log('Purchases created successfully:', data);
+    } catch (error) {
+        console.error('Error creating purchases from cart:', error);
+    }
+};
 
   return (
     <form onSubmit={handleSubmit} className="checkout-form">
