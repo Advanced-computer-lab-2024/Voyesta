@@ -30,7 +30,6 @@ function TouristPurchasesView() {
       .then(res => {
         if (res.status === 200) {
           alert('Thank you for your rating!');
-          // Optionally, update the purchases state to reflect the new rating
         } else {
           alert('There was an error submitting your rating.');
         }
@@ -46,7 +45,6 @@ function TouristPurchasesView() {
         if (res.status === 200) {
           alert('Thank you for your review!');
           setReview('');
-          // Optionally, update the purchases state to reflect the new review
         } else {
           alert('There was an error submitting your review.');
         }
@@ -59,70 +57,86 @@ function TouristPurchasesView() {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center p-6">My Purchased Products</h2>
-      <hr className="border-t border-gray-300 my-2" />
-      {purchases.length === 0 ? (
-        <p className="text-center text-lg">No purchases found.</p>
-      ) : (
-        <div className="space-y-4">
-          {purchases.map(purchase => (
-            <div key={purchase._id} className="relative flex flex-col bg-white shadow-lg p-6 rounded-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300 w-80 h-auto mx-auto">
-              <div className="flex items-center">
-                {/* Product Image */}
-                <img 
-                  src={purchase.productId.picture} 
-                  alt={purchase.productId.name} 
-                  className="w-20 h-20 rounded-md object-cover mr-4 hover:opacity-90 transition-opacity duration-300"
-                />
-
-                {/* Product Details */}
-                <div className="flex-1">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-bold text-lg">{purchase.productId.name}</h3>
-                      <p className="text-sm text-gray-600">{purchase.productId.description}</p>
-                      <p className="text-sm text-gray-600">Price: ${purchase.productId.price}</p>
-                      <p className="text-sm text-gray-600">Quantity: {purchase.quantity}</p>
+    <div className="relative overflow-x-auto shadow-md ">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-16 py-3">
+              <span className="sr-only">Image</span>
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Product
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Qty
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Price
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {purchases.length === 0 ? (
+            <tr>
+              <td colSpan="5" className="text-center text-lg py-4">No purchases found.</td>
+            </tr>
+          ) : (
+            purchases.map(purchase => (
+              <tr key={purchase._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td className="p-4">
+                  <img 
+                    src={purchase.productId.picture} 
+                    alt={purchase.productId.name} 
+                    className="w-16 md:w-32 max-w-full max-h-full"
+                  />
+                </td>
+                <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                  {purchase.productId.name}
+                  <p className="text-sm text-gray-600">{purchase.productId.description}</p>
+                </td>
+                <td className="px-6 py-4">
+                  {purchase.quantity}
+                </td>
+                <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                  ${purchase.productId.price}
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center">
+                    <div className="mr-4">
+                      <ReactStars
+                        count={5}
+                        onChange={(newRating) => ratingChanged(newRating, purchase.productId._id)}
+                        size={24}
+                        activeColor="#ffd700"
+                        value={purchase.productId.rating || 0}
+                      />
                     </div>
+                    <form onSubmit={(e) => handleReviewSubmit(e, purchase.productId._id)} className="flex items-center">
+                      <textarea
+                        id={`review-${purchase.productId._id}`}
+                        name="review"
+                        value={selectedProduct === purchase.productId._id ? review : ''}
+                        onChange={(e) => {
+                          setSelectedProduct(purchase.productId._id);
+                          setReview(e.target.value);
+                        }}
+                        required
+                        className="border border-gray-500 rounded-md p-2 w-full h-min resize-none bg-gray-700"
+                      />
+                      <button type="submit" className="ml-2 text-blue-500 hover:text-blue-700 transition-colors duration-300">
+                        <FontAwesomeIcon icon={faPaperPlane} className="w-4 h-4" />
+                      </button>
+                    </form>
                   </div>
-
-                  {/* Rating Form */}
-                  <div className="mt-2">
-                    <label htmlFor={`rating-${purchase.productId._id}`} className="block text-sm font-medium text-gray-700">Rating:</label>
-                    <ReactStars
-                      count={5}
-                      onChange={(newRating) => ratingChanged(newRating, purchase.productId._id)}
-                      size={24}
-                      activeColor="#ffd700"
-                      value={purchase.productId.rating || 0}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Review Form */}
-              <form onSubmit={(e) => handleReviewSubmit(e, purchase.productId._id)} className="mt-4 flex items-center">
-                <label htmlFor={`review-${purchase.productId._id}`} className="block text-sm font-medium text-gray-700 mr-2">Review:</label>
-                <textarea
-                  id={`review-${purchase.productId._id}`}
-                  name="review"
-                  value={selectedProduct === purchase.productId._id ? review : ''}
-                  onChange={(e) => {
-                    setSelectedProduct(purchase.productId._id);
-                    setReview(e.target.value);
-                  }}
-                  required
-                  className="border border-gray-300 rounded-md p-2 w-full h-24 resize-none"
-                />
-                <button type="submit" className="ml-2 text-green-500 hover:text-green-700 transition-colors duration-300">
-                  <FontAwesomeIcon icon={faPaperPlane} className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
-          ))}
-        </div>
-      )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
