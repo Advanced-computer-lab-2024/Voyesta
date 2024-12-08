@@ -37,18 +37,28 @@ const Notifications = ({ baseUrl, userType, userId }) => {
   }, [baseUrl, userType, userId]);
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Notifications</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <ul className="list-disc list-inside">
-        {notifications.map((notification, index) => (
-          <li key={index} className="mb-2">
-            <p>{notification.message}</p>
-            <p className="text-sm text-gray-500">{new Date(notification.createdAt).toLocaleString()}</p>
-          </li>
-        ))}
-      </ul>
+    <section className="bg-white py-8 antialiased min-h-screen dark:bg-gray-900 md:py-16">
+    <div className="mx-auto max-w-screen-lg px-4 2xl:px-0">
+      <div className="lg:flex lg:items-center lg:justify-between lg:gap-4">
+        <h2 className="shrink-0 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Notifications</h2>
+      </div>
+      <div className="mt-6 flow-root">
+        <div className="-my-6 divide-y divide-gray-200 dark:divide-gray-800">
+          {error && <p className="text-red-500">{error}</p>}
+          {notifications.map((notification, index) => (
+            <div key={index} className="space-y-4 py-6 md:py-8">
+              <div className="grid gap-4">
+                <a href="#" className="text-xl font-semibold text-gray-900 hover:underline dark:text-white">{notification.message}</a>
+              </div>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {new Date(notification.createdAt).toLocaleString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
+  </section>
   );
 };
 
