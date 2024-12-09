@@ -66,44 +66,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Highlights Section */}
-      <section className="highlights">
-        <h2>Top Activities</h2>
-        <div className="destination-grid">
-          {activities.slice(0, 3).map((activity, index) => (
-            <div className="destination-card" key={index} style={{ backgroundColor: "white" }}>
-              <img src={activity.image} alt={activity.name} />
-              <div className="destination-info">
-                <h3>{activity.name}</h3>
-                <p>Starting at ${activity.price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Personalized Recommendations */}
-      <section className="recommendations">
-        <h2>Just For You</h2>
-        <div className="recommendation-scroll">
-          {itineraries.slice(0, 3).map((itinerary, index) => (
-            <div className="recommendation-card" key={index} style={{ backgroundColor: "white" }}>
-              <img src={itinerary.image} alt={itinerary.name} />
-              <h3>{itinerary.name}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
-      <section className="newsletter">
-        <h2>Join Our Travel Community</h2>
-        <p>Get insider tips and the best deals delivered to your inbox.</p>
-        <div className="newsletter-form">
-          <input type="email" placeholder="Your email address" />
-          <button>Subscribe</button>
-        </div>
-      </section>
+      
 
       {/* Footer */}
       <footer className="footer">
