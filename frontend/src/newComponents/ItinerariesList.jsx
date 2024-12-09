@@ -1,7 +1,7 @@
 import React from 'react';
 import ItineraryItem from './ItineraryItem';
 
-const ItinerariesList = ({ fetchItineraries, itineraries, role, baseUrl, convertedPrices, targetCurrency }) => {
+const ItinerariesList = ({ fetchItineraries, itineraries, role, baseUrl, convertedPrices, targetCurrency,setSuccessMessage  }) => {
   return (
     <div className='flex flex-col gap-1'>
       {itineraries.length > 0 ? (
@@ -14,6 +14,7 @@ const ItinerariesList = ({ fetchItineraries, itineraries, role, baseUrl, convert
             role={role}
             convertedPrice={convertedPrices[index]} // Pass convertedPrice
             targetCurrency={targetCurrency} // Pass targetCurrency
+            setSuccessMessage = {setSuccessMessage}
           />
         ))
       ) : (

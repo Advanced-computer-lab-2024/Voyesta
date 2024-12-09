@@ -4,6 +4,8 @@ import MuseumsAndHistoricalPlacesList from './MuseumsAndHistoricalPlacesList';
 import CreateMuseumAndHistoricalPlace from './CreateMuseumAndHistoricalPlace';
 import PreferencesFilter from './PreferencesFilter'; // Import the preferences component
 import CurrencyConverter from './CurrencyConverter';
+import { Snackbar } from '@mui/material';
+
 
 const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [places, setPlaces] = useState([]);
@@ -15,6 +17,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchPlaces();
@@ -139,6 +142,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
                       role={role}
                       convertedPrices={convertedPrices}
                       targetCurrency={targetCurrency}
+                      setSuccessMessage={setSuccessMessage}
                     />
                   ) : (
                     <CreateMuseumAndHistoricalPlace getAuthHeaders={() => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })} />
@@ -154,12 +158,14 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
                   role={role}
                   convertedPrices={convertedPrices}
                   targetCurrency={targetCurrency}
+                  setSuccessMessage={setSuccessMessage}
                 />
               )}
             </div>
           </div>
         </div>
       </div>
+      <Snackbar open={!!successMessage} message={successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage('')} />
     </div>
   );
 };
