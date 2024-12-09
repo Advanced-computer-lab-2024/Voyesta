@@ -104,6 +104,14 @@ const CheckOutPage = ({ baseUrl }) => {
       console.log('Duplicate address found. Cannot add new address.');
       return;
     }
+
+    // Check if any field is empty
+    for (const field in formData) {
+      if (!formData[field]) {
+        alert('Please fill in all fields');
+        return;
+      }
+    }
   
     // Check for duplicates manually
     const isDuplicate = savedAddresses.some((address) =>
