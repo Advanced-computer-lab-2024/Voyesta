@@ -31,6 +31,7 @@ function ProductsView({ role, baseUrl }) {
     axios.get('http://localhost:3000/api/user', getAuthHeaders())
       .then(res => {
         setUser(res.data.user);
+        console.log(res.data.user);
       })
       .catch(err => console.log(err));
   }, []); 
@@ -225,7 +226,7 @@ function ProductsView({ role, baseUrl }) {
                     fetchProducts={fetchProducts}
                     oldProduct={product}
                     onEdit={handleEdit}
-                    userId={user?._id}
+                    userId={user._id}
                     convertedPrice={convertedPrices[index]} // Pass convertedPrice
                     targetCurrency={targetCurrency} // Pass targetCurrency
                   />

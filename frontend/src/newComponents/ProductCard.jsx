@@ -73,6 +73,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
   };
 
   const handleArchiveToggle = () => {
+    console.log(userId);
     if (userType === 'admin' || (userType === 'seller' && product.createdBy._id === userId)) {
       const url = `http://localhost:3000/api/${userType}/${product.isArchived ? 'unarchiveProduct' : 'archiveProduct'}/${product._id}`;
       axios.patch(url, {}, getAuthHeaders())
@@ -185,10 +186,10 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
     }
 
     if (userType === 'seller') {
-      // const isEditable = product.createdBy?._id === userId && product.createdBy?.role === 'seller';
+      //  const isEditable = product.createdBy?._id === userId && product.createdBy?.role === 'seller';
       return (
         <>
-          {isEditable && (
+          {isEditable || (
             <>
               <img
                 onClick={() => setEditMode(true)}
