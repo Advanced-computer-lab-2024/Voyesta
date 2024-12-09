@@ -799,7 +799,8 @@ To get started with Voyesta, follow these steps:
         npm run dev
         
 ## 🧪 Tests
-We use Postman to manually test our APIs
+We use Postman to manually test our APIs handling errors and making sure our functions are working properly
+![Screenshot 5](screenshots/screenshot5.jpg)
 
 ## 🧑🏻‍🏫 How to use
 Make sure to follow [Installation](#-installation) and [Usage](#-usage) steps
