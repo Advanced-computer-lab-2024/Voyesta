@@ -8,11 +8,13 @@ import { assets } from '../assets/assets'; // Adjust the import path as necessar
 import ProductLabel from './ProductLabel';
 import { FaCartPlus, FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
-function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice, targetCurrency }) {
+function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, targetCurrency }) {
   const [product, setProduct] = useState(oldProduct);
   const [averageRating, setAverageRating] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [userType, setUserType] = useState('');
+  const [userId, setUserId] = useState('');
+
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const getAuthHeaders = () => {
@@ -25,7 +27,11 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/user', getAuthHeaders())
-      .then(res => setUserType(res.data.user.type))
+      .then(res => {
+        console.log(res.data.user);
+        setUserType(res.data.user.type);
+        setUserId(res.data.user.id);
+      })
       .catch(err => console.log(err));
   }, []);
 
@@ -58,7 +64,8 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
   };
 
   const handleEditSaveClick = () => {
-    const url = `http://localhost:3000/api/seller/updateProduct/${product._id}`;
+    console.log(userType);
+    const url = `http://localhost:3000/api/${userType}/updateProduct/${product._id}`;
     axios.put(url, product, getAuthHeaders())
       .then(res => {
         if (res.status === 200) {
@@ -102,6 +109,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       })
       .catch(err => console.log(err));
   };
+
   const handleAddToWishlist = () => {
     const url = `http://localhost:3000/api/tourist/addToWishlist`;
     axios.post(url, { productId: product._id }, getAuthHeaders())
@@ -193,8 +201,8 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
               <img
                 onClick={() => setEditMode(true)}
                 src={assets.editIcon}
-            className="w-6 h-6 cursor-pointer absolute top-3 right-20"
-            />
+                className="w-6 h-6 cursor-pointer absolute top-2 left-2"
+              />
 
               <button
                 onClick={handleArchiveToggle}
@@ -304,6 +312,10 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
         </div>
         
         <div className="relative flex flex-row justify-end">
+          <div className='h-8'>
+
+          </div>
+
           <img
             onClick={handleEditSaveClick}
             src={assets.submitIcon}

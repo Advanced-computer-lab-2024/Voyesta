@@ -130,12 +130,17 @@ const getProducts = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id; // Get product ID from URL params
-
-        const product = await Product.findOne({
-            _id: productId,
-            'createdBy._id': req.user.id,    // Check if the product was created by this user
-            'createdBy.role': req.user.type  // Check if the role matches (e.g., 'Seller' or 'Admin')
-        });
+        let product ;
+        if(req.user.type === 'admin') {
+            product = await Product.findById(productId);
+        } else{
+            product = await Product.findOne({
+                _id: productId,
+                'createdBy._id': req.user.id,    // Check if the product was created by this user
+                'createdBy.role': req.user.type  // Check if the role matches (e.g., 'Seller' or 'Admin')
+            });
+        }
+        
 
         if (!product) {
             return res.status(404).json({

@@ -49,7 +49,7 @@ _.delete('/deletePrefernceTag',deletePreferenceTag);
 _.get('/getProducts', authenticate, productController.getProducts);
 // _.get('/getMyProducts', productController.getMyProducts);
 _.post('/addProduct', productController.addProduct);
-_.put('/updateProduct/:id', productController.updateProduct);
+_.put('/updateProduct/:id', authenticate, productController.updateProduct);
 _.get('/searchProducts', productController.searchProductByName);
 _.get('/filterProductsByPrice', productController.filterProductsByPrice);
 _.get('/sortProductsByRatings', productController.sortProductsByRatings);

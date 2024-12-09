@@ -11,6 +11,10 @@ export default {
         '18': '4.6rem',
         '30': '7.6rem',
       },
+      colors: {
+        
+      },
+
     },
   },
   plugins: [],

@@ -225,7 +225,6 @@ function ProductsView({ role, baseUrl }) {
                     fetchProducts={fetchProducts}
                     oldProduct={product}
                     onEdit={handleEdit}
-                    userId={user?._id}
                     convertedPrice={convertedPrices[index]} // Pass convertedPrice
                     targetCurrency={targetCurrency} // Pass targetCurrency
                   />
