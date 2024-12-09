@@ -262,21 +262,21 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
   };
 
   return (
-    <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
+    <div className="bg-background flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
       {isEditing ? (
         // Edit form stays the same
         <>
           {/* Existing edit form code */}
         </>
       ) : (
-        <>
-          <div className="activity-item flex flex-col h-full">
+        <div className=''>
+          <div className="bg-cardBackground itineraryAttributeHolder flex flex-col h-full">
             {/* Image Section */}
-            <img 
+            {/* <img 
               src={itinerary.imageUrl || fallbackImage} 
               alt={itinerary.name} 
               className="w-full h-48 object-cover"
-            />
+            /> */}
   
             {/* Content Section */}
             <div className="p-4 flex flex-col space-y-3">
@@ -441,7 +441,7 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
   
      

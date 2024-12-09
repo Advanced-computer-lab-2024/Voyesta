@@ -25,7 +25,7 @@ export const BadgedIcon = ({ icon, count, onClick, className, items }) => {
     >
       <button
         onClick={onClick}
-        className="relative p-2 text-gray-500 hover:text-blue-700 transition-colors duration-200 dark:text-gray-400 dark:hover:text-blue-500"
+        className="relative p-2 text-gray-500 hover:text-background transition-colors duration-200 dark:text-white dark:hover:text-background"
       >
         <i className={`fas ${icon} text-xl`}></i>
         {count > 0 && (

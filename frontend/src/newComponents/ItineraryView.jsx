@@ -116,9 +116,9 @@ const ItineraryView = ({ baseUrl, role }) => {
   };
   
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-background min-h-screen">
       {role === 'tourist' && (
-        <div className="bg-gray-200 shadow-md p-4">
+        <div className="p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
             
             <div className='flex flex-row justify-center space-x-4'>
@@ -174,6 +174,7 @@ const ItineraryView = ({ baseUrl, role }) => {
                   </div>
                 )}
               </div>
+
               <PreferencesFilter setSelectedPreferences={setSelectedPreference} />
               <DateRangeFilter setStartDate={setStartDate} setEndDate={setEndDate} />
               <button
@@ -196,7 +197,7 @@ const ItineraryView = ({ baseUrl, role }) => {
         <div className="flex">
           {role === 'tourist' && (
             <div className="w-1/4 pr-4">
-              <div className="bg-gray-200 p-4">
+              <div className="bg-background p-4">
                 {/* <h2 className="text-2xl font-bold mb-4 p-2 text-center">Filter and Sort</h2> */}
                 <PriceFilterBar 
                   items={itineraries} 
@@ -216,8 +217,8 @@ const ItineraryView = ({ baseUrl, role }) => {
           )}
 
           <div className={`${role === 'tourist' ? 'w-3/4' : 'w-4/5'} m-auto`}>
-            <div className="relative text-center bg-white shadow-md rounded p-6">
-              <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Itineraries</h1>
+            <div className="relative text-center bg-background text-textOnCard rounded p-6">
+              <h1 className="text-2xl font-bold mb-4">Available Itineraries</h1>
               
               {message && <div className="text-red-500 mb-4">{message}</div>}
 

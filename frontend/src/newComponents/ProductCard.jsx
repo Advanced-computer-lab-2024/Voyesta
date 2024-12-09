@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-
+import "../css/Product.css";
 
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
@@ -58,7 +58,13 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
   };
 
   const handleEditSaveClick = () => {
-    const url = `http://localhost:3000/api/seller/updateProduct/${product._id}`;
+    let base = "http://localhost:3000/api/"
+    if(userType === 'seller'){
+        base += "seller/updateProduct";
+    }else{
+        base += "admin/updateProduct";
+    }
+    const url = `${base}/${product._id}`;
     axios.put(url, product, getAuthHeaders())
       .then(res => {
         if (res.status === 200) {
@@ -230,10 +236,10 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
   };
 
   return (
-    <div className='bg-white shadow-md rounded-md p-4 w-80'>
+    <div className='bg-cardBackground shadow-md rounded-md p-4 w-80'>
       {/* Display Mode */}
       <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : ''}`}>
-        <div>
+        <div className='attributeHolder'> 
           <img src={`${product.picture}`} alt={product.name} className="w-full h-40 object-cover rounded-md" />
           <h2 className="text-lg font-bold mt-2">{product.name}</h2>
           <p className="text-gray-600 mt-1">{product.description}</p>
@@ -304,6 +310,9 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
         </div>
         
         <div className="relative flex flex-row justify-end">
+          <div className='h-8'>
+
+          </div>
           <img
             onClick={handleEditSaveClick}
             src={assets.submitIcon}
@@ -311,6 +320,8 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
           />
         </div>
       </div>
+
+
     </div>
   );
 }  

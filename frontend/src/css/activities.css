@@ -4,14 +4,16 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }/* activities.css */
-.activities-grid {
+
+
+  .activities-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
   
   .activity-item {
-    background-color: #f9f9f9;
+    @apply bg-cardBackground;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -50,4 +52,12 @@
 /* Add this to your CSS file */
 .icon-blue {
   color: blue;
+}
+
+.itineraryAttributeHolder h3,span,p{
+  @apply text-textOnCard;
+}
+
+.itineraryAttributeHolder p span {
+  @apply text-white;
 }

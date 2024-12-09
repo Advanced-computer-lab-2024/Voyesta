@@ -55,7 +55,8 @@ input[type="range"].thumb--right::-webkit-slider-thumb {
 }
 
 .slider__range {
-  background: #3b99fc;
+  /* background: #3b99fc; */
+  @apply bg-navbar
 }
 
 .slider__left-value,

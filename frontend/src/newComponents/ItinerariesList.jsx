@@ -3,7 +3,7 @@ import ItineraryItem from './ItineraryItem';
 
 const ItinerariesList = ({ fetchItineraries, itineraries, role, baseUrl, convertedPrices, targetCurrency }) => {
   return (
-    <div className='flex flex-col gap-1'>
+    <div className='bg-background gap-4 text-center'>
       {itineraries.length > 0 ? (
         itineraries.map((itinerary, index) => (
           <ItineraryItem

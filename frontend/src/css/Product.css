@@ -1,0 +1,11 @@
+.attributeHolder span{
+  @apply text-textOnCard
+}
+
+.attributeHolder p{
+ @apply text-textOnCard
+}
+
+div{
+  @apply text-textOnCard
+}

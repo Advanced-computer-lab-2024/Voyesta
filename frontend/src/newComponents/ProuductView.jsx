@@ -126,9 +126,10 @@ function ProductsView({ role, baseUrl }) {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-background min-h-screen">
       {/* Sorting and Search Bar */}
-      <div className="bg-gray-200 shadow-md p-4">
+      <div className="bg-background  p-4">
+        
         <div className="flex flex-wrap justify-center items-center space-x-4">
           {/* Sorting Dropdown - Only for tourist */}
           {role === 'tourist' && (
@@ -186,6 +187,8 @@ function ProductsView({ role, baseUrl }) {
               Reset Filters
             </button>
           </div>
+
+
         </div>
       </div>
 
@@ -193,7 +196,7 @@ function ProductsView({ role, baseUrl }) {
         <div className="flex">
           {role === 'tourist' && (
             <div className="w-1/4 pr-4">
-              <div className="bg-gray-200 p-4 rounded-lg shadow">
+              <div className="bg-cardBackground p-4 rounded-lg shadow">
                 <PriceFilterBar
                   items={products}
                   setItems={setProducts}
