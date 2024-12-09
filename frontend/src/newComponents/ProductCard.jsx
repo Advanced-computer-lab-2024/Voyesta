@@ -1,12 +1,10 @@
-
-
 import React, { useState, useEffect } from 'react';
-
-
 import axios from 'axios';
 import { assets } from '../assets/assets'; // Adjust the import path as necessary
 import ProductLabel from './ProductLabel';
 import { FaCartPlus, FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import Snackbar from '@mui/material/Snackbar'; // Import Snackbar for notifications
+import CircularProgress from '@mui/material/CircularProgress';
 
 function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice, targetCurrency }) {
   const [product, setProduct] = useState(oldProduct);
@@ -14,23 +12,21 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
   const [editMode, setEditMode] = useState(false);
   const [userType, setUserType] = useState('');
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const getAuthHeaders = () => {
-    return {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
+  const getAuthHeaders = () => ({
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     }
-  };
+  });
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/user', getAuthHeaders())
       .then(res => setUserType(res.data.user.type))
       .catch(err => console.log(err));
   }, []);
-
-  console.log(userType);  
-  console.log(userId);
 
   useEffect(() => {
     if (product.ratings) {
@@ -46,7 +42,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
       setAverageRating(0);
     }
   }, [product.ratings]);
-  
+
   useEffect(() => {
     const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
     setIsWishlisted(storedWishlist.includes(product._id));
@@ -226,14 +222,12 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
         </>
       );
     }
-
-    return null;
   };
 
   return (
     <div className='bg-white shadow-md rounded-md p-4 w-80'>
-      {/* Display Mode */}
       <div className={`flex justify-between flex-col h-full ${editMode ? 'hidden' : ''}`}>
+        {/* Product Details */}
         <div>
           <img src={`${product.picture}`} alt={product.name} className="w-full h-40 object-cover rounded-md" />
           <h2 className="text-lg font-bold mt-2">{product.name}</h2>
@@ -248,74 +242,23 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, userId, convertedPrice
           </div>
           <p className="text-gray-600 mt-2">Available Quantity: {product.available_quantity}</p>
         </div>
-  
-        {/* Render editable options and actions */}
+
+        {/* Action Buttons */}
         <div className="relative flex justify-end mt-4">
-          {renderIcons()}
+          {isWishlisted ? (
+            <FaHeart onClick={handleRemoveFromWishlist} className="text-red-500 text-2xl cursor-pointer mx-2" />
+          ) : (
+            <FaRegHeart onClick={handleAddToWishlist} className="text-black text-2xl cursor-pointer mx-2" />
+          )}
+          <FaCartPlus onClick={handleAddToCart} className="text-black text-2xl cursor-pointer mx-2" />
         </div>
       </div>
-  
-      {/* Edit Mode */}
-      <div className={`flex justify-between flex-col h-full text-sm ${editMode ? '' : 'hidden'}`}>
-        <div className="edit-mode">
-          <ProductLabel
-            title="Name"
-            value={product.name}
-            setValue={setProduct}
-            onChange={(newVal) => {
-              setProduct({ ...product, name: newVal });
-            }}
-          />
-          <br />
-          <ProductLabel
-            title="Description"
-            value={product.description}
-            setValue={setProduct}
-            onChange={(newVal) => {
-              setProduct({ ...product, description: newVal });
-            }}
-          />
-          <br />
-          <ProductLabel
-            title="Price"
-            value={product.price}
-            setValue={setProduct}
-            onChange={(newVal) => {
-              setProduct({ ...product, price: newVal });
-            }}
-          />
-          <br />
-          <ProductLabel
-            title="Seller"
-            value={product.seller}
-            setValue={setProduct}
-            onChange={(newVal) => {
-              setProduct({ ...product, seller: newVal });
-            }}
-          />
-          <br />
-          <ProductLabel
-            title="Available Quantity"
-            value={product.available_quantity}
-            setValue={setProduct}
-            onChange={(newVal) => {
-              setProduct({ ...product, available_quantity: newVal });
-            }}
-          />
-        </div>
-        
-        <div className="relative flex flex-row justify-end">
-          <img
-            onClick={handleEditSaveClick}
-            src={assets.submitIcon}
-            className="w-8 h-8 cursor-pointer absolute bottom-2 right-2"
-          />
-        </div>
-      </div>
+
+      {/* Snackbar Messages */}
+      <Snackbar open={!!successMessage} message={successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage('')} />
+      <Snackbar open={!!error} message={error} autoHideDuration={6000} onClose={() => setError('')} />
     </div>
   );
-}  
+}
 
 export default ProductCard;
-
-

@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { CircularProgress, TextField, Button, Typography, Snackbar } from '@mui/material';
+import FlightCard from "../newComponents/FlightCard";
 import {
     Container,
-    TextField,
-    Button,
-    Typography,
     Grid,
     Card,
     CardContent,
     CardActions,
-    CircularProgress,
     Alert,
     Box,
 } from '@mui/material';
@@ -116,6 +114,46 @@ const BookFlight = ({ baseUrl }) => {
                 </Button>
             </Box>
 
+            <div style={{ marginBottom: '20px' }}>
+                <TextField label="Origin" variant="outlined" fullWidth value={origin} onChange={(e) => setOrigin(e.target.value)} />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+                <TextField label="Destination" variant="outlined" fullWidth value={destination} onChange={(e) => setDestination(e.target.value)} />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+                <TextField
+                    label="Departure Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={departureDate}
+                    onChange={(e) => setDepartureDate(e.target.value)}
+                    fullWidth
+                />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+                <TextField
+                    label="Return Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    fullWidth
+                />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+                <TextField
+                    label="Adults"
+                    type="number"
+                    variant="outlined"
+                    value={adults}
+                    onChange={(e) => setAdults(e.target.value)}
+                    inputProps={{ min: 1 }}
+                    fullWidth
+                />
+            </div>
+            <Button onClick={searchFlights} variant="contained" color="primary" disabled={loading} fullWidth>
+                {loading ? <CircularProgress size={24} /> : 'Search Flights'}
+            </Button>
             {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
             <Grid container spacing={3}>
