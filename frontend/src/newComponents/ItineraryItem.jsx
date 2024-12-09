@@ -174,9 +174,11 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
 
       const notificationUrl = `${baseUrl}/sendNotification`;
       const message = `Your itinerary "${itinerary.name}" has been flagged as inappropriate.`;
+      console.log(itinerary._id);
+      console.log(baseUrl);
       await axios.post(notificationUrl, { userType: 'tourGuide', itemId: itinerary._id, message }, getAuthHeaders());
       
-      console.log(baseUrl)
+      
       setInappropriate(true);
       fetchItineraries();
     } catch (error) {
@@ -241,6 +243,71 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
       console.error('Error unbookmarking itinerary:', error);
     }
   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'tourLanguage':
+        setTourLanguage(value);
+        break;
+      case 'tourPrice':
+        setTourPrice(value);
+        break;
+      case 'availableDates':
+        setAvailableDates(value);
+        break;
+      case 'activities':
+        setActivities(value);
+        break;
+      case 'durations':
+        setDurations(value);
+        break;
+      case 'accessibility':
+        setAccessibility(value);
+        break;
+      case 'pickUpLocation':
+        setPickUpLocation(value);
+        break;
+      case 'dropOffLocation':
+        setDropOffLocation(value);
+        break;
+      default:
+        break;
+    }
+  };
+  const handleSubmit = async () => {
+    const itineraryData = {
+      ...itinerary,
+      name,
+      tourLanguage,
+      tourPrice: parseFloat(tourPrice),
+      availableDates: availableDates.split(',').map(date => date.trim()),
+      activities: activities.split(',').map(activity => activity.trim()),
+      durations: durations.split(',').map(duration => duration.trim()),
+      accessibility: accessibility.split(',').map(access => access.trim()),
+      pickUpLocation: {
+        lat: parseFloat(pickUpLocation.split(',')[0].trim()),
+        lng: parseFloat(pickUpLocation.split(',')[1].trim())
+      },
+      dropOffLocation: {
+        lat: parseFloat(dropOffLocation.split(',')[0].trim()),
+        lng: parseFloat(dropOffLocation.split(',')[1].trim())
+      }
+    };
+    console.log(itineraryData);
+    try {
+      const url = `${baseUrl}/updateItinerary/${itinerary._id}`;
+      await axios.put(url, itineraryData, getAuthHeaders());
+      fetchItineraries();
+      setIsEditing(false);
+    } catch (error) {
+      console.log(error);
+    }
+    window.location.reload();
+  };
+
 
   const toggleBookmark = () => {
     if (isBookmarked) {
@@ -262,13 +329,187 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
   };
 
   return (
-    <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6">
+    <div className="activity-item flex flex-col h-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-6 ">
       {isEditing ? (
-        // Edit form stays the same
-        <>
-          {/* Existing edit form code */}
-        </>
-      ) : (
+  <>
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="name"
+        value={name}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="name"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Name
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="tourLanguage"
+        value={tourLanguage}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="tourLanguage"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Tour Language
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="tourPrice"
+        value={tourPrice}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="tourPrice"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Tour Price
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="availableDates"
+        value={availableDates}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="availableDates"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Available Dates
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="activities"
+        value={activities}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="activities"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Activities
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="durations"
+        value={durations}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="durations"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Durations
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="accessibility"
+        value={accessibility}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="accessibility"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Accessibility
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="pickUpLocation"
+        value={pickUpLocation}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="pickUpLocation"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Pick-Up Location
+      </label>
+    </div>
+
+    <div className="relative z-0 w-full mb-5 group text-left">
+      <input
+        type="text"
+        name="dropOffLocation"
+        value={dropOffLocation}
+        onChange={handleChange}
+        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        htmlFor="dropOffLocation"
+        className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        Drop-Off Location
+      </label>
+    </div>
+
+    <div className="flex justify-between mt-2 h-8 text-left">
+      <img
+        onClick={handleSubmit}
+        src={assets.submitIcon}
+        className="w-9 h-9 cursor-pointer"
+      />
+      <img
+        onClick={() => setIsEditing(false)}
+        src={assets.cancelIcon}
+        className="w-9 h-9 cursor-pointer"
+      />
+    </div>
+  </>
+) : (
+  // Display mode code here
+
         <>
           <div className="activity-item flex flex-col h-full">
             {/* Image Section */}
@@ -337,7 +578,7 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
               </p>
   
               {/* Admin/TourGuide Controls */}
-              {role === ("admin" || "tourGuide") && (
+              {role === ("admin" || "tourGuide") || (
                 <div className="flex justify-between mt-auto pt-4">
                   <div className="flex space-x-4">
                     <img
