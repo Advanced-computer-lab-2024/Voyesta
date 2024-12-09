@@ -552,7 +552,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
         </div>
       </div>
           }
-            {role === 'tourist' && !transportation && (
+            {role === 'tourist' && !transportation &&(
   <div className="flex flex-col h-full justify-between mt-4">
     <div className="flex justify-between items-center mt-auto">
       {/* Booking Button */}

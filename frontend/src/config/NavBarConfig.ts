@@ -146,7 +146,7 @@ export const NavConfig: NavbarConfigs = {
         { label: 'Login', path: '/login', icon: 'fa-sign-in-alt' },
         { label: 'Sign Up', path: '/signup', icon: 'fa-user-plus' }
       ],
-      baseUrl: '/'
+      baseUrl: 'http://localhost:5173'
     }
   },advertiser: {
     logo: {
