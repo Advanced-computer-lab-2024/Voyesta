@@ -249,12 +249,13 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       alert('Booking successful!');
       setShowPopup(false);
 
-      // Determine the price to pass to navigate
-      // const total = typeof activity.price === 'object' && activity.price !== null
-      // ? activity.price.min
-      // : activity.price;
-
-       navigate('/tourist/bookings');
+      const returnToGuide = localStorage.getItem('returnToGuide');
+      if (returnToGuide) {
+        localStorage.setItem('completedBooking', 'true');
+        navigate('/tourist/guide');
+      } else {
+        navigate('/tourist/bookings');
+      }
     } catch (error) {
       console.error('Error booking activity:', error);
     }

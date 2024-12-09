@@ -7,7 +7,7 @@ import ActivitiesView from "../newComponents/ActivitiesView";
 import ItineraryView from "../newComponents/ItineraryView";
 import MuseumsAndHistoricalPlacesView from "../newComponents/MuseumsAndHistoricalPlacesView";
 import LandingPage from "./LandingPage";
-import InteractiveVacationGuide from "../newComponents/InteractiveVacationGuide";
+import InteractiveVacationGuide from "../newComponents/InteractiveVactionGuide";
 
 const navLinks = [
     { path: "/guest/activities", label: "Activities" },
@@ -50,7 +50,7 @@ function Dashboard(){
                         <LandingPage />
                     }/>
                     
-                    <Route path="/guide" element={<InteractiveVacationGuide userType="tourist" />} />
+                    <Route path="/guide" element={<InteractiveVacationGuide userType="guest" />} />
                 </Routes>
         </>
     );

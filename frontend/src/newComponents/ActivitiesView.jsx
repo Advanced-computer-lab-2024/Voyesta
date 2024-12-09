@@ -7,7 +7,7 @@ import CategoryFilter from './CategoryFilter';
 import RatingFilter from './RatingFilter';
 import DateRangeFilter from './DateRangeFilter';
 import CurrencyConverter from './CurrencyConverter';
-
+import { useNavigate } from 'react-router-dom';
 const ActivitiesView = ({ baseUrl, role }) => {
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
@@ -22,6 +22,15 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const returnToGuide = location.state?.returnToGuide;
+    if (returnToGuide) {
+      // Add return button or auto-return after booking
+      return () => navigate('/guest/guide');
+    }
+  }, []);
+
 
   useEffect(() => {
     fetchActivities();

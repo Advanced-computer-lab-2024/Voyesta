@@ -52,7 +52,7 @@ _.get('/getActivity', activityController.getActivity);
 _.get('/getItinerary', authenticate, itineraryController.getItineraries);
 _.get("/getPlaces", authenticate, get);
 _.get('/getCategory', authenticate, getActivityCategory);
-_.get('/getTags', authenticate, getPreferenceTags);
+_.get('/getTags',authenticate, getPreferenceTags);
 
 _.patch('/tourGuideComment/:id', authenticate, TourGuideComments);
 _.patch('/tourGuideRate/:id', authenticate, rateTourGuide);
