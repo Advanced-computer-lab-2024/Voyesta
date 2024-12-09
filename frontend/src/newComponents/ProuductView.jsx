@@ -19,6 +19,9 @@ function ProductsView({ role, baseUrl }) {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const token = localStorage.getItem('token');
 
+
+
+
   const getAuthHeaders = () => {
     return {
       headers: {

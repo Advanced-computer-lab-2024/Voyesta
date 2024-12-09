@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../css/PromoCodeView.css"; // Import custom CSS for styling
+import "../css/PromoCodeView.css";
+import { FaPlus, FaTrash } from 'react-icons/fa'; // Import custom CSS for styling
 const baseUrl = "http://localhost:3000/api/admin";
 
 function PromoCodeView({ baseUrl, title }) {
@@ -103,50 +104,56 @@ function PromoCodeView({ baseUrl, title }) {
         <div className="promo-code-container">
             <h1 className="promo-code-title">{title}</h1>
             <div className="form-container">
-                <h2>{isEditing ? "Edit Promo Code" : "Add Promo Code"}</h2>
+                <h2 className="form-title">{isEditing ? "Edit Promo Code" : "Add Promo Code"}</h2>
                 <div className="input-group">
                     <input
                         type="text"
                         placeholder="Promo Code"
+                        name="code"
                         value={newPromoCode.code}
                         onChange={(e) =>
                             setNewPromoCode({ ...newPromoCode, code: e.target.value })
                         }
                         className="form-input"
                     />
-                    <input
-                        type="number"
-                        placeholder="Discount (%)"
+                   <select
+                        name="discount"
                         value={newPromoCode.discount}
                         onChange={(e) =>
                             setNewPromoCode({ ...newPromoCode, discount: e.target.value })
                         }
                         className="form-input"
-                    />
+                    >
+                        <option value={0}>Select Discount</option>
+                        <option value={10}>10%</option>
+                        <option value={20}>20%</option>
+                        <option value={30}>30%</option>
+                        <option value={40}>40%</option>
+                        <option value={50}>50%</option>
+                    </select>
                     <input
                         type="date"
-                        placeholder="Valid From"
+                        name="validFrom"
                         value={newPromoCode.validFrom || ""} // Ensure a valid empty string for date
                         onChange={(e) =>
                             setNewPromoCode({ ...newPromoCode, validFrom: e.target.value })
                         }
+                        placeholder="Valid From"
                         className="form-input"
                     />
                     <input
                         type="date"
-                        placeholder="Valid Until"
+                        name="validUntil"
                         value={newPromoCode.validUntil || ""} // Ensure a valid empty string for date
                         onChange={(e) =>
                             setNewPromoCode({ ...newPromoCode, validUntil: e.target.value })
                         }
+                        placeholder="Valid Until"
                         className="form-input"
                     />
                 </div>
-                <button
-                    className="btn add-btn"
-                    onClick={isEditing ? handleEditPromoCode : handleAddPromoCode}
-                >
-                    {isEditing ? "Update" : "Add"}
+                <button onClick={handleAddPromoCode} className="icon-btn add-btn">
+                        <FaPlus />
                 </button>
                 {isEditing && (
                     <button className="btn cancel-btn" onClick={() => setIsEditing(null)}>
@@ -154,6 +161,7 @@ function PromoCodeView({ baseUrl, title }) {
                     </button>
                 )}
             </div>
+            <div className="promo-code-table-container">
             <table className="promo-code-table">
                 <thead>
                     <tr>
@@ -175,13 +183,11 @@ function PromoCodeView({ baseUrl, title }) {
                                 <td>{new Date(promo.validUntil).toLocaleDateString()}</td>
                                 <td>{promo.status}</td>
                                 <td>
-                                    
-                                    <button
-                                        className="btn delete-btn"
-                                        onClick={() => handleDeletePromoCode(promo.code)}
-                                    >
-                                        Delete
+                                <div className="w-full text-center">     
+                                <button onClick={() => handleDeletePromoCode(promo.code)} className="icon-btn delete ">
+                                        <FaTrash />
                                     </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))
@@ -192,6 +198,7 @@ function PromoCodeView({ baseUrl, title }) {
                     )}
                 </tbody>
             </table>
+            </div>
         </div>
     );
 }

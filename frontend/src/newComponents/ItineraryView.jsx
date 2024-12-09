@@ -8,7 +8,7 @@ import PreferencesFilter from './PreferencesFilter';
 import CurrencyConverter from './CurrencyConverter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
+import { useNavigate } from 'react-router-dom';
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
   const [filteredItineraries, setFilteredItineraries] = useState([]);
@@ -24,10 +24,19 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+
+  useEffect(() => {
+    const returnToGuide = location.state?.returnToGuide;
+    if (returnToGuide) {
+      // Add return button or auto-return after booking
+      return () => navigate('/guest/guide');
+    }
+  }, []);
 
   useEffect(() => {
     fetchItineraries();

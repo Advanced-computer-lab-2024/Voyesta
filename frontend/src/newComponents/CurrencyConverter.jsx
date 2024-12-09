@@ -61,3 +61,6 @@ const CurrencyConverter = ({ prices, setConvertedPrices, setTargetCurrency }) =>
 };
 
 export default CurrencyConverter;
+
+
+// CurrencyConverter.jsx - Update to be a dropdown

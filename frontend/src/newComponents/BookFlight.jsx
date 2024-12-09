@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import {
     Container,
@@ -25,8 +25,19 @@ const BookFlight = ({ baseUrl }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [hasSearched, setHasSearched] = useState(false);
-
+    const [bookingSuccess, setBookingSuccess] = useState(false);
     const navigate = useNavigate();
+
+
+    // Add return logic
+    useEffect(() => {
+        const returnToGuide = localStorage.getItem('returnToGuide');
+        if (returnToGuide && bookingSuccess) {
+            localStorage.removeItem('returnToGuide');
+            localStorage.setItem('completedBooking', 'true');
+            navigate('/tourist/guide'); // Changed from /guest/guide
+        }
+    }, [bookingSuccess]);
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');

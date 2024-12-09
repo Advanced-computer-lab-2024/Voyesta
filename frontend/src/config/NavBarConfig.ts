@@ -95,7 +95,8 @@ export const NavConfig: NavbarConfigs = {
         { label: 'Profile', path: '/profile',  },
         { label: 'My Orders', path: '/orders',  },
         { label: 'Complaints', path: '/complaints', },
-        { label: 'Purchases', path: '/purchases',}
+        { label: 'Purchases', path: '/purchases',},
+        {label: 'Help', path: '/help',}
       ],
       baseUrl: '/tourist'
     }
@@ -107,6 +108,12 @@ export const NavConfig: NavbarConfigs = {
       image: assets.logo
     },
     centerItems: [
+      {
+        type: 'link',
+        label: 'Get Started',
+        path: '/guest/guide',
+        icon: 'fa-map-signs' // Using Font Awesome travel/guide icon
+      },
       {
         type: 'link',
         label: 'Museums',

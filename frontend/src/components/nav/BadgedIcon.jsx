@@ -1,19 +1,23 @@
 // src/components/nav/BadgedIcon.jsx
-import React, { useState } from 'react';
+import React, { useState ,useRef} from 'react';
 import { NavLink } from 'react-router-dom';
 
 export const BadgedIcon = ({ icon, count, onClick, className, items }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef(null);
 
   const handleMouseEnter = () => {
     if (items) {
+      clearTimeout(timeoutRef.current);
       setIsVisible(true);
     }
   };
 
   const handleMouseLeave = () => {
     if (items) {
-      setIsVisible(false);
+      timeoutRef.current = setTimeout(() => {
+        setIsVisible(false);
+      }, 50); 
     }
   };
 

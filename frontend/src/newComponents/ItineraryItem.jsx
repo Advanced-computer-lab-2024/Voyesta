@@ -192,7 +192,14 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
       await axios.post(url, { bookableModel: 'Itinerary', eventDate }, getAuthHeaders());
       alert('Booking successful!');
       setShowPopup(false);
-      window.location.href = '/tourist/bookings';
+      
+      const returnToGuide = localStorage.getItem('returnToGuide');
+      if (returnToGuide) {
+        localStorage.setItem('completedBooking', 'true');
+        navigate('/tourist/guide');
+      } else {
+        navigate('/tourist/bookings');
+      }
     } catch (error) {
       console.error('Error booking itinerary:', error);
       alert('Error booking itinerary.');
