@@ -103,6 +103,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, target
       .then(res => {
         if (res.status === 200) {
           alert('Product added to cart successfully!');
+          window.location.reload();
         } else {
           alert('There was an error adding the product to the cart.');
         }
@@ -121,6 +122,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, target
           // Update localStorage
           const updatedWishlist = [...JSON.parse(localStorage.getItem('wishlist') || '[]'), product._id];
           localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+          window.location.reload();
         } else {
           alert('There was an error adding the product to the wishlist.');
         }
@@ -130,7 +132,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, target
   
   const handleRemoveFromWishlist = () => {
     const url = `http://localhost:3000/api/tourist/deleteWish`;
-    axios.post(url, { productId: product._id }, getAuthHeaders())
+    axios.delete(url, { productId: product._id }, getAuthHeaders())
       .then(res => {
         if (res.status === 200) {
           setIsWishlisted(false);
@@ -139,6 +141,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, target
           // Update localStorage
           const updatedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]').filter(id => id !== product._id);
           localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+          window.location.reload();
         } else {
           alert('There was an error removing the product from the wishlist.');
         }
