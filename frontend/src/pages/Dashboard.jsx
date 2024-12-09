@@ -38,13 +38,13 @@ function Dashboard(){
             <Routes>
                 
                     <Route path="/activities" element={
-                        <ActivitiesView baseUrl="http://localhost:3000/api/tourist" role="tourist"/>
+                        <ActivitiesView baseUrl="http://localhost:3000/api/tourist" role="guest"/>
                     }/>
                     <Route path="/itineraries" element={
-                        <ItineraryView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+                        <ItineraryView baseUrl="http://localhost:3000/api/tourist" role="guest" />
                     }/>
                     <Route path="/museums" element={
-                        <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+                        <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="guest" />
                     }/>
                     <Route path="/" element={
                         <LandingPage />

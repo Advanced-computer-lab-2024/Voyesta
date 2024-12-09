@@ -105,7 +105,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {role === 'tourist' && (
+      {(role === 'tourist' || role === 'guest') && (
         <div className="bg-gray-200 shadow-md p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
             <div className="relative">
@@ -197,7 +197,6 @@ const ActivitiesView = ({ baseUrl, role }) => {
           {role === 'tourist' && (
             <div className="w-1/4 pr-4">
               <div className="bg-gray-200 p-4">
-                {/* <h2 className="text-2xl font-bold mb-4 p-2 text-center">Filter and Sort</h2> */}
                 <PriceFilterBar 
                   items={activities} 
                   setItems={setFilteredActivities} 
@@ -214,6 +213,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
               </div>
             </div>
           )}
+
 
           <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
             <div className="relative text-center bg-white shadow-md rounded p-6">
