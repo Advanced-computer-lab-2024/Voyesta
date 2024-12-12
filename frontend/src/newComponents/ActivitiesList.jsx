@@ -3,7 +3,7 @@ import ActivityItem from './ActivityItem';
 import '../css/activities.css'; // Import the CSS file for styling
 // Import the CSS file for styling
 
-const ActivitiesList = ({ activities, convertedPrices = [], targetCurrency, role, baseUrl }) => {
+const ActivitiesList = ({fetchActivities, activities, convertedPrices = [], targetCurrency, role, baseUrl }) => {
   return (
     <div className="activities-grid">
       {activities.map((activity, index) => (
@@ -11,9 +11,10 @@ const ActivitiesList = ({ activities, convertedPrices = [], targetCurrency, role
           key={activity._id}
           activity={activity}
           convertedPrice={convertedPrices[index] || activity.price} // Use activity.price as fallback
-          targetCurrency={targetCurrency}
+          targetCurrency={targetCurrency} 
           role={role}
           baseUrl={baseUrl}
+          fetchActivities={fetchActivities}
         />
       ))}
     </div>
