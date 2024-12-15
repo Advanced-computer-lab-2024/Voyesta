@@ -401,7 +401,7 @@ const PreferencesStep = ({ formData, setFormData, errors, onNext }) => {
     // const [isBookingComplete, setIsBookingComplete] = useState(false);
     const handleSelection = (type) => {
         // Set these after navigation to prevent immediate redirect
-        navigate(`/tourist/${type}`);
+        navigate(`/tourist/${type}`,{state : {fromGuide : true}});
         setTimeout(() => {
             localStorage.setItem('selectedAccommodation', type);
             localStorage.setItem('returnToGuide', 'true');
@@ -457,7 +457,7 @@ const PreferencesStep = ({ formData, setFormData, errors, onNext }) => {
     // Add to Accommodation and Activities steps
     const handleSelection = (type) => {
         // Set these after navigation to prevent immediate redirect
-        navigate(`/tourist/${type}`);
+        navigate(`/tourist/${type}`,{state : {fromGuide2 : true}});
         setTimeout(() => {
             localStorage.setItem('selectedAccommodation', type);
             localStorage.setItem('returnToGuide', 'true');

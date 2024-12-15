@@ -9,10 +9,14 @@ const HotelBookingConfirmation = () => {
 
     useEffect(() => {
         if (hotel) {
-            localStorage.setItem('completedBooking', 'true');
             setTimeout(() => {
-                navigate('/tourist/guide');
-            }, 2000); // Give user time to see confirmation
+                if (fromGuide) {
+                    localStorage.setItem('completedBooking', 'true');
+                    navigate('/tourist/guide');
+                } else {
+                    navigate('/tourist/bookings');
+                }
+            }, 2000);
         }
     }, [hotel]);
 
