@@ -135,7 +135,6 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, target
     axios.delete(url, { productId: product._id }, getAuthHeaders())
       .then(res => {
         if (res.status === 200) {
-          setIsWishlisted(false);
           alert('Product removed from wishlist successfully!');
   
           // Update localStorage
@@ -250,7 +249,7 @@ function ProductCard({ fetchProducts, oldProduct, onEdit, convertedPrice, target
           <p className="text-gray-600 mt-1">{product.description}</p>
           <div className="flex items-center mt-2">
             <span className="text-gray-600 mr-2">Price:</span>
-            <span className="font-bold">{convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${product.price.toFixed(2)} USD`}</span>
+            <span className="font-bold">{convertedPrice ? `${convertedPrice.toFixed(2)} ${targetCurrency}` : `${product.price} USD`}</span>
           </div>
           <div className="flex items-center mt-2">
             <span className="text-gray-600 mr-2">Ratings:</span>

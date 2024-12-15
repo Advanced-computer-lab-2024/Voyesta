@@ -66,7 +66,7 @@ const updatePassword = async (req, res) => {
 const deleteAccount = async (req, res) => {
     const id = req.user.id;
     try {
-        const admin = await adminModel.findByIdAndDelete({ id });  
+        const admin = await adminModel.findByIdAndDelete(id);  
         if(!admin) {
             return res.status(404).json({ message: 'User not found' });
         }

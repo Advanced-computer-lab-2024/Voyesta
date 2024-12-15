@@ -29,8 +29,8 @@ const { getActivity, flagActivityAsInappropriate } = require('../controllers/act
 // ------------- Not testedd ---------------
 _.post('/createTourismGoverner', adminController.createTourismGovernor);
 _.post('/createAdmin', adminController.createAdmin);
-_.patch('/updatePassword', adminController.updatePassword);
-_.delete('/deleteAccount', adminController.deleteAccount);
+_.patch('/updatePassword', authenticate, adminController.updatePassword);
+_.delete('/deleteAccount', authenticate, adminController.deleteAccount);
 
 
 // ----- activity category --------//

@@ -14,6 +14,8 @@ function AdminAccountManagement() {
   const [pendingDeletions, setPendingDeletions] = useState([]); // New state for pending deletion accounts
   const [showPopup, setShowPopup] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showAccountPopup, setShowAccountPopup] = useState(false);
+  const [error, setError] = useState(null);
   const baseUrl = 'http://localhost:3000/api/admin';
 
   // Load token from local storage (or wherever you store it)
@@ -85,11 +87,43 @@ function AdminAccountManagement() {
     setShowPopup(false);
   };
 
+  const deleteAccount = () => {
+    const url = `${baseUrl}/deleteAccount`;
+    axios.delete(url, getAuthHeaders())
+  }
+
+  const handleConfirmAccountDeletion = () => {
+    deleteAccount();
+    setShowAccountPopup(false);
+  }
+
+  const handleCancelAccountDeletion = () => {
+    setShowAccountPopup(false);
+  }
+
+  const showAccountDeletionPopup = () => {
+    setShowAccountPopup(true);
+  }
+
+  const handleAddAdmin = () => {
+    axios.post(`${baseUrl}/createAdmin`, { username, password }, getAuthHeaders())
+    .then(response => setMessage("Admin account created successfully."))
+    .catch(error => setMessage("Error creating Admin account. "));
+  }
+
+  const handleAddTourismGovernor = () => {
+    axios.post(`${baseUrl}/createTourismGoverner`, { username, password }, getAuthHeaders())
+    .then(response => setMessage("Tourism Governor account created successfully."))
+    .catch(error => setMessage("Error creating Tourism Governor account. "));
+  }
   return (
     <div className="max-w-full mx-auto bg-white shadow-md rounded-lg overflow-hidden relative px-40 pb-40">
       <div className="flex justify-between items-center p-4 border-b mb-10">
         <h2 className="text-4xl font-bold text-gray-900">Admin Account Management</h2>
-      </div>
+        <FontAwesomeIcon
+            icon={faTrashAlt}
+            className="cursor-pointer text-2xl text-gray-700 hover:text-red-600"
+            onClick={showAccountDeletionPopup}        />      </div>
 
       {/* Tab Navigation */}
       <div className="flex justify-around border-b mb-4">
@@ -262,6 +296,45 @@ function AdminAccountManagement() {
           </div>
         </div>
       )}
+
+      {showAccountPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md">
+            <p>Are you sure you want to delete this account?</p>
+            <div className="flex justify-end mt-4">
+              <button onClick={handleConfirmAccountDeletion} className="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+              <button onClick={handleCancelAccountDeletion} className="mr-2 px-4 py-2 bg-gray-300 rounded">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {message && (
+        <div className={`flex items-center p-4 mb-4 text-sm ${message.includes('successfully') ? 'text-green-800 border border-green-300 bg-green-50 dark:text-green-400 dark:border-green-800' : 'text-red-800 border border-red-300 bg-red-50 dark:text-red-400 dark:border-red-800'} rounded-lg`} role="alert">
+          <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+          </svg>
+          <span className="sr-only">Info</span>
+          <div>
+            <span className="font-medium">{message.includes('successfully') ? 'Success!' : 'Error!'}</span> {message}
+          </div>
+        </div>
+      )}  
+
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <p>{error}</p>
+            <button
+              onClick={closeErrorPopup}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 mt-4"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

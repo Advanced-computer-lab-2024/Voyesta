@@ -3,6 +3,7 @@ import axios from "axios";
 import PriceFilterBar from "./PriceFilterBar";
 import ProductCard from "./ProductCard";
 import CurrencyConverter from "./CurrencyConverter";
+import SellerCreateProduct from "../components/sellerComponents/SellerCreateProduct";
 
 function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
@@ -17,6 +18,7 @@ function ProductsView({ role, baseUrl }) {
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const token = localStorage.getItem('token');
 
 
@@ -128,6 +130,14 @@ function ProductsView({ role, baseUrl }) {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Sorting and Search Bar */}
@@ -188,12 +198,34 @@ function ProductsView({ role, baseUrl }) {
             >
               Reset Filters
             </button>
+            {role === 'admin' && (
+              <button onClick={openModal} className="inline-flex items-center w-36 px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                Add Product
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex">
+        {isModalOpen && (
+        <div id="popup-modal" tabIndex="-1" className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50">
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-100">
+              <button type="button" className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick={closeModal}>
+                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span className="sr-only">Close modal</span>
+              </button>
+              <div className="p-4 md:p-5 text-left">
+                <SellerCreateProduct baseUrl="http://localhost:3000/api/seller" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
           {role === 'tourist' && (
             <div className="w-1/4 pr-4">
               <div className="bg-gray-200 p-4 rounded-lg shadow">

@@ -190,7 +190,8 @@ const searchProductByName = async (req, res) => {
 
         // Find products where the name contains the search query (case-insensitive)
         const products = await Product.find({
-            name: { $regex: searchQuery, $options: 'i' } // 'i' makes it case-insensitive
+            name: { $regex: searchQuery, $options: 'i' }, // 'i' makes it case-insensitive
+            isArchived: false
         });
 
         if (products.length === 0) {
@@ -620,6 +621,16 @@ const moveWishlistToCart = async (req, res) => {
     }
   };
 
+  const getAllProducts = async (req, res) => {
+    try{
+        const products = await Product.find().select();
+        res.status(200).json({data: products});
+    } catch (error){
+        console.error('Error in getAllProducts:', error);
+        res.status(500).json({ error: error.message });
+    }
+  };
+
 module.exports = {
     addProduct,
     getProducts,
@@ -640,5 +651,6 @@ module.exports = {
     removeFromWishlist,
     moveWishlistToCart,
     getCart,
-    updateCartQuantity
+    updateCartQuantity,
+    getAllProducts,
 };

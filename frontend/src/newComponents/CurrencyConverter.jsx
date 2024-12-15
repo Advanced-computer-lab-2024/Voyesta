@@ -9,7 +9,7 @@ const CurrencyConverter = ({ prices, setConvertedPrices, setTargetCurrency }) =>
   useEffect(() => {
     const fetchCurrencies = async () => {
       try {
-        const response = await axios.get('https://v6.exchangerate-api.com/v6/c214d671b9e5b4732e3fc0ef/latest/USD');
+        const response = await axios.get('https://v6.exchangerate-api.com/v6/262e65b60f85459c7be530f9/latest/USD');
         const currencyData = response.data.conversion_rates;
         setCurrencies(Object.keys(currencyData));
       } catch (error) {

@@ -585,7 +585,7 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
               </p>
   
               {/* Admin/TourGuide Controls */}
-              {role === ("admin" || "tourGuide") || (
+              {role === ("tourGuide") && (
                 <div className="flex justify-between mt-auto pt-4">
                   <div className="flex space-x-4">
                     <img
