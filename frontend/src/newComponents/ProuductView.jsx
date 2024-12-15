@@ -95,7 +95,7 @@ function ProductsView({ role, baseUrl }) {
     setMaxPrice('');
     setSortOrder('');
     setTargetCurrency('USD');
-    fetchProducts(role === 'admin' ? 'http://localhost:3000/api/admin/getProducts' : 'http://localhost:3000/api/seller/getAllProducts');
+    fetchProducts(role === 'admin' ? 'http://localhost:3000/api/admin/getProducts' : role === 'seller' ? 'http://localhost:3000/api/seller/getAllProducts' : 'http://localhost:3000/api/tourist/getProducts');
   };
 
   const handleSortOrderChange = (order) => {
