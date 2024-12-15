@@ -15,14 +15,18 @@ const PriceFilterBar = ({
   useEffect(() => {
     if (items.length > 0) {
       const prices = convertedPrices.length > 0 ? convertedPrices : items.map((item) => item[priceProperty]);
-      const min = Math.min(...prices).toFixed(2);
-      const max = Math.max(...prices).toFixed(2);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
       setMinPrice(min);
       setMaxPrice(max);
       setMinVal(min);
       setMaxVal(max);
     }
   }, [items, convertedPrices, priceProperty]);
+
+  useEffect(() => {
+    filterItems();
+  }, [minVal, maxVal]);
 
   const handleMinChange = (e) => {
     const value = Math.min(e.target.value, maxVal - 1);
@@ -32,6 +36,14 @@ const PriceFilterBar = ({
   const handleMaxChange = (e) => {
     const value = Math.max(e.target.value, minVal + 1);
     setMaxVal(value);
+  };
+
+  const filterItems = () => {
+    const filtered = items.filter(item => {
+      const price = convertedPrices.length > 0 ? convertedPrices[items.indexOf(item)] : item[priceProperty];
+      return price >= minVal && price <= maxVal;
+    });
+    setItems(filtered);
   };
 
   return (

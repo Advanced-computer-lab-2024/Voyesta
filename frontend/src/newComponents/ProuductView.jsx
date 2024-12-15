@@ -7,6 +7,7 @@ import SellerCreateProduct from "../components/sellerComponents/SellerCreateProd
 
 function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [prices, setPrices] = useState([]);
   const [convertedPrices, setConvertedPrices] = useState([]); // New state for converted prices
   const [targetCurrency, setTargetCurrency] = useState('USD'); // New state for target currency
@@ -20,9 +21,6 @@ function ProductsView({ role, baseUrl }) {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const token = localStorage.getItem('token');
-
-
-
 
   const getAuthHeaders = () => {
     return {
@@ -39,7 +37,6 @@ function ProductsView({ role, baseUrl }) {
       })
       .catch(err => console.log(err));
   }, []); 
-  // console.log(user);
 
   useEffect(() => {
     if (role === 'admin') {
@@ -53,13 +50,12 @@ function ProductsView({ role, baseUrl }) {
     }
   }, [role]);
 
-
-
   const fetchProducts = (url) => {
     setLoading(true);
     axios.get(url, getAuthHeaders())
       .then(res => {
         setProducts(res.data.data);
+        setFilteredProducts(res.data.data);
         setPrices(res.data.data.map(product => product.price));
         setLoading(false);
       })
@@ -79,11 +75,13 @@ function ProductsView({ role, baseUrl }) {
     })
       .then(res => {
         setProducts(res.data.data);
+        setFilteredProducts(res.data.data);
         setErrorMsg("");
       })
       .catch(error => {
         if (!error.response.data.success) {
           setProducts([]);
+          setFilteredProducts([]);
           setErrorMsg("No products found!");
         }
       });
@@ -95,13 +93,12 @@ function ProductsView({ role, baseUrl }) {
     setMaxPrice('');
     setSortOrder('');
     setTargetCurrency('USD');
-    fetchProducts(role === 'admin' ? 'http://localhost:3000/api/admin/getProducts' : role === 'seller' ? 'http://localhost:3000/api/seller/getAllProducts' : 'http://localhost:3000/api/tourist/getProducts');
+    window.location.reload(); // Refresh the page
   };
 
   const handleSortOrderChange = (order) => {
     setSortOrder(order);
-    // Existing sorting logic
-    const sortedProducts = [...products].sort((a, b) => {
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
       const avgRatingA = a.ratings.length > 0 ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length : 0;
       const avgRatingB = b.ratings.length > 0 ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length : 0;
 
@@ -113,7 +110,7 @@ function ProductsView({ role, baseUrl }) {
         return 0;
       }
     });
-    setProducts(sortedProducts);
+    setFilteredProducts(sortedProducts);
     setIsSortDropdownOpen(false);
   };
 
@@ -231,7 +228,7 @@ function ProductsView({ role, baseUrl }) {
               <div className="bg-gray-200 p-4 rounded-lg shadow">
                 <PriceFilterBar
                   items={products}
-                  setItems={setProducts}
+                  setItems={setFilteredProducts}
                   convertedPrices={convertedPrices}
                   priceProperty="price"
                 />
@@ -254,7 +251,7 @@ function ProductsView({ role, baseUrl }) {
                 {errorMsg ? (
                   <div className="text-red-500 text-lg">{errorMsg}</div>
                 ) : (
-                  products.map((product, index) => (
+                  filteredProducts.map((product, index) => (
                     <ProductCard
                     key={product._id}
                     fetchProducts={fetchProducts}
