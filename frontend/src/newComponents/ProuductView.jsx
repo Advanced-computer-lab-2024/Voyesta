@@ -141,7 +141,7 @@ function ProductsView({ role, baseUrl }) {
       <div className="bg-gray-200 shadow-md p-4">
         <div className="flex flex-wrap justify-center items-center space-x-4">
           {/* Sorting Dropdown - Only for tourist */}
-          {role === 'tourist' && (
+          { (
             <div className="relative">
               <button
                 id="dropdownSortButton"
@@ -223,7 +223,7 @@ function ProductsView({ role, baseUrl }) {
           </div>
         </div>
       )}
-          {role === 'tourist' && (
+          {(
             <div className="w-1/4 pr-4">
               <div className="bg-gray-200 p-4 rounded-lg shadow">
                 <PriceFilterBar
@@ -232,6 +232,7 @@ function ProductsView({ role, baseUrl }) {
                   convertedPrices={convertedPrices}
                   priceProperty="price"
                 />
+                {role === 'tourist' && (
                 <div className="mt-4">
                   <CurrencyConverter
                     prices={prices}
@@ -239,10 +240,10 @@ function ProductsView({ role, baseUrl }) {
                     setTargetCurrency={setTargetCurrency}
                   />
                 </div>
+                )}
               </div>
             </div>
           )}
-
           <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
             {loading ? (
               <div className="text-center text-lg">Loading products...</div>
@@ -265,8 +266,8 @@ function ProductsView({ role, baseUrl }) {
               </div>
             )}
           </div>
-        </div>
       </div>
+    </div>
     </div>
   );
 }
