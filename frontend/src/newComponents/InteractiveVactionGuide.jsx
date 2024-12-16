@@ -10,6 +10,26 @@ const InteractiveVacationGuide = ({ userType }) => {
     return parseInt(localStorage.getItem('guideStep') || '0')
   });
   
+  useEffect(() => {
+    // Clear all guide data when component mounts
+    localStorage.removeItem('guideStep');
+    localStorage.removeItem('guideFormData');
+    localStorage.removeItem('selectedAccommodation');
+    localStorage.removeItem('selectedActivity');
+    localStorage.removeItem('guideInProgress');
+    localStorage.removeItem('completedBooking');
+
+    return () => {
+        // Cleanup when component unmounts
+        localStorage.removeItem('guideStep');
+        localStorage.removeItem('guideFormData');
+        localStorage.removeItem('selectedAccommodation');
+        localStorage.removeItem('selectedActivity');
+        localStorage.removeItem('guideInProgress');
+        localStorage.removeItem('completedBooking');
+    };
+}, []);
+
   const [formData, setFormData] = useState(() => {
     return JSON.parse(localStorage.getItem('guideFormData') || JSON.stringify({
       username: '',
@@ -193,6 +213,8 @@ const SignupStep = ({ formData, setFormData, errors, loading, onNext ,navigate,s
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('userType', 'tourist');
           localStorage.setItem('guideInProgress', 'true');
+          localStorage.setItem('guideStep', '1'); 
+     
           onNext();
             
           // Then navigate to tourist dashboard with a query parameter
@@ -401,11 +423,12 @@ const PreferencesStep = ({ formData, setFormData, errors, onNext }) => {
     // const [isBookingComplete, setIsBookingComplete] = useState(false);
     const handleSelection = (type) => {
         // Set these after navigation to prevent immediate redirect
-        navigate(`/tourist/${type}`);
+        // navigate(`/tourist/${type}`,{state : {fromGuide : true}});
         setTimeout(() => {
             localStorage.setItem('selectedAccommodation', type);
-            localStorage.setItem('returnToGuide', 'true');
+            // localStorage.setItem('returnToGuide', 'true');
             localStorage.setItem('guideStep', '3');
+            navigate(`/tourist/${type}`,{state : {fromGuide : true}});
         }, 100);
     };
     
@@ -457,11 +480,12 @@ const PreferencesStep = ({ formData, setFormData, errors, onNext }) => {
     // Add to Accommodation and Activities steps
     const handleSelection = (type) => {
         // Set these after navigation to prevent immediate redirect
-        navigate(`/tourist/${type}`);
+        navigate(`/tourist/${type}`,{state : {fromGuide : true}});
         setTimeout(() => {
             localStorage.setItem('selectedAccommodation', type);
-            localStorage.setItem('returnToGuide', 'true');
+            // localStorage.setItem('returnToGuide', 'true');
             localStorage.setItem('guideStep', '4');
+            navigate(`/tourist/${type}`,{state : {fromGuide : true}});
         }, 100);
     };
 

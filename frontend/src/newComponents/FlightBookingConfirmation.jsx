@@ -4,16 +4,20 @@ import { Container, Typography, Box } from '@mui/material';
 
 const FlightBookingConfirmation = () => {
     const location = useLocation();
-    const { flight } = location.state || {};
+    const { flight , fromGuide } = location.state || {};
     const navigate = useNavigate();
 
 
     useEffect(() => {
         if (flight) {
-            localStorage.setItem('completedBooking', 'true');
             setTimeout(() => {
-                navigate('/tourist/guide');
-            }, 2000); // Give user time to see confirmation
+                if (fromGuide) {
+                    localStorage.setItem('completedBooking', 'true');
+                    navigate('/tourist/guide');
+                } else {
+                    navigate('/tourist/bookings');
+                }
+            }, 2000);
         }
     }, [flight]);
 

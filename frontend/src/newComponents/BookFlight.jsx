@@ -13,7 +13,7 @@ import {
     Alert,
     Box,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 
 const BookFlight = ({ baseUrl }) => {
     const [origin, setOrigin] = useState('');
@@ -27,6 +27,8 @@ const BookFlight = ({ baseUrl }) => {
     const [hasSearched, setHasSearched] = useState(false);
     const [bookingSuccess, setBookingSuccess] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { fromGuide } = location.state || {};
 
 
     // Add return logic
@@ -69,7 +71,7 @@ const BookFlight = ({ baseUrl }) => {
     };
 
     const handleBookFlight = (flight) => {
-        navigate('/tourist/flight-booking-confirmation', { state: { flight } });
+        navigate('/tourist/flight-booking-confirmation', { state: { flight ,   fromGuide  } });
     };
 
     return (

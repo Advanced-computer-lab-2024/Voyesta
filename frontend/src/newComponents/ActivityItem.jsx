@@ -3,7 +3,7 @@ import React, { act, useEffect, useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faEnvelope, faBookmark, faFlag } from '@fortawesome/free-solid-svg-icons';
 
@@ -19,6 +19,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   const [inappropriate, setInappropriate] = useState(activity.inappropriate);
   const [bookingEnabled, setBookingEnabled] = useState(activity.bookingEnabled);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (activity.tags && Array.isArray(activity.tags)) {
@@ -254,7 +255,8 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       setShowPopup(false);
 
       const returnToGuide = localStorage.getItem('returnToGuide');
-      if (returnToGuide) {
+      const fromGuide = location.state?.fromGuide;
+      if (returnToGuide && fromGuide) {
         localStorage.setItem('completedBooking', 'true');
         navigate('/tourist/guide');
       } else {
