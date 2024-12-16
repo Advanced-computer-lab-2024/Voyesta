@@ -44,6 +44,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
     setSelectedTags('');
     setTargetCurrency('USD');
     fetchPlaces();
+    window.location.reload();
   };
 
   const applyTagFilter = () => {
@@ -77,7 +78,7 @@ const MuseumsAndHistoricalPlacesView = ({ baseUrl, role }) => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {role === 'tourist' && (
+      {role !== 'tourismGovernor' && (
         <div className="bg-gray-200 shadow-md p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
             <div className="relative">

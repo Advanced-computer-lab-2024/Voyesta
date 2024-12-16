@@ -66,6 +66,7 @@ const ItineraryView = ({ baseUrl, role }) => {
     setSelectedPreference('All');
     setSortOption('');
     fetchItineraries();
+    window.location.reload();
   };
 
   const applyFilters = () => {
@@ -127,7 +128,7 @@ const ItineraryView = ({ baseUrl, role }) => {
   
   return (
     <div className="bg-gray-100 min-h-screen">
-      {role === 'tourist' && (
+      {role !== ('tourGuide' || 'admin') && (
         <div className="bg-gray-200 shadow-md p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
             

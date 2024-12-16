@@ -79,7 +79,8 @@ const getItineraries = async (req, res) => {
         } else if (userType === 'admin') {
             itineraries = await Itinerary.find().populate('activities tags');
         } else {
-            return res.status(400).json({ error: 'Invalid user type' });
+            itineraries = await Itinerary.find({ bookingActive: true })
+            .populate('activities tags');
         }
         res.status(200).json(itineraries);
     } catch (error) {

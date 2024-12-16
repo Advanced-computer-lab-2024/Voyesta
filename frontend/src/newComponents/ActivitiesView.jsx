@@ -86,6 +86,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
     setEndDate('');
     setSortOption('Sort by');
     setFilteredActivities(activities);
+    window.location.reload();
   };
 
   const sortActivities = (option, activitiesToSort) => {
