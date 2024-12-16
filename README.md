@@ -7,7 +7,7 @@ Voyesta is a comprehensive platform designed to enhance the travel experience by
 2. [🧱 Build Status](#-build-status)
 3. [🎨 Code Style](#-code-style)
 4. [📸 Screenshots](#-screenshots)
-5. [⚒️ Tech and Framework used](#%EF%B8%8F-tech-and-framework-used)
+5. [⚒️ Tech and Framework used](#️-tech-and-framework-used)
 6. [🔥 Features](#-features)
 7. [📚 API Reference](#-api-reference)
 8. [💻 Code Examples](#-code-examples)
@@ -19,6 +19,7 @@ Voyesta is a comprehensive platform designed to enhance the travel experience by
 14. [📜 License](#-license)
 
 ## 🚀 Motivation
+
 It also includes features: 
 - Like promo codes
 - User authentication
@@ -45,7 +46,19 @@ This project uses the *StandardJS* code style for consistency and readability.
 ![Screenshot 1](screenshots/screenshot1.jpg)
 ![Screenshot 2](screenshots/screenshot2.jpg)
 ![Screenshot 3](screenshots/screenshot3.jpg)
-![Screenshot 3](screenshots/screenshot4.jpg)
+![Screenshot 4](screenshots/screenshot4.jpg)
+![Screenshot 5](screenshots/screenshot21.jpg)
+![Screenshot 6](screenshots/screenshot22.jpg)
+![Screenshot 7](screenshots/screenshot23.jpg)
+![Screenshot 8](screenshots/screenshot24.jpg)
+![Screenshot 9](screenshots/screenshot25.jpg)
+![Screenshot 10](screenshots/screenshot26.jpg)
+![Screenshot 11](screenshots/screenshot27.jpg)
+![Screenshot 12](screenshots/screenshot28.jpg)
+![Screenshot 13](screenshots/screenshot29.jpg)
+![Screenshot 14](screenshots/screenshot30.jpg)
+![Screenshot 15](screenshots/screenshot31.jpg)
+![Screenshot 16](screenshots/screenshot32.jpg)
 ## ⚒️ Tech/Framework used
 
 - [NodeJs](https://nodejs.org/en/)
@@ -801,6 +814,20 @@ To get started with Voyesta, follow these steps:
 ## 🧪 Tests
 We use Postman to manually test our APIs handling errors and making sure our functions are working properly
 ![Screenshot 5](screenshots/screenshot5.jpg)
+![Screenshot 6](screenshots/screenshot6.jpg)
+![Screenshot 7](screenshots/screenshot7.jpg)
+![Screenshot 8](screenshots/screenshot8.jpg)
+![Screenshot 9](screenshots/screenshot9.jpg)
+![Screenshot 10](screenshots/screenshot10.jpg)
+![Screenshot 11](screenshots/screenshot11.jpg)
+![Screenshot 12](screenshots/screenshot12.jpg)
+![Screenshot 13](screenshots/screenshot13.jpg)
+![Screenshot 14](screenshots/screenshot14.jpg)
+![Screenshot 15](screenshots/screenshot15.jpg)
+![Screenshot 16](screenshots/screenshot16.jpg)
+![Screenshot 17](screenshots/screenshot17.jpg)
+![Screenshot 18](screenshots/screenshot18.jpg)
+![Screenshot 19](screenshots/screenshot19.jpg)
 
 ## 🧑🏻‍🏫 How to use
 Make sure to follow [Installation](#-installation) and [Usage](#-usage) steps
