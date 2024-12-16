@@ -6,6 +6,8 @@ import MuseumsAndHistoricalPlacesView from "../../newComponents/MuseumsAndHistor
 import CreateTag from "../../newComponents/CreateTag";
 import ProfileManagement from "../../newComponents/ProfileManagement";
 import ChangePassword from "../../newComponents/ChangePassword";
+import TouristHome from "../../newComponents/TouristHome";
+
 
 
 const navLinks = [
@@ -25,7 +27,7 @@ function TourismGovernorDashboard(){
     <NavBar role='tourismGovernor' user={currentUser} />
             
       <Routes>
-        <Route exact path="/" element={<div>Tourism Governor Home</div>}/>
+        <Route exact path="/" element={<TouristHome/>}/>
         <Route path="/places-of-interest" element={
           // <CreatePlacesOfInterest
           //   baseUrl="http://localhost:3000/api/tourismGoverner"

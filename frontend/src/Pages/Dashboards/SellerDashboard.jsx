@@ -11,6 +11,8 @@ import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import Notifications from "../../newComponents/Notifications";
+import TouristHome from "../../newComponents/TouristHome";
+
 
 const navLinks = [
   { path: "/seller/", label: "Home" },
@@ -99,7 +101,7 @@ function SellerDashboard() {
           <NavBar role='seller' user={currentUser} />
 
           <Routes>
-            <Route exact path="/" element={<div>Home</div>} />
+            <Route exact path="/" element={<div><TouristHome/></div>} />
             <Route path="/create-product" element={
               <SellerCreateProduct
                 baseUrl="http://localhost:3000/api/seller"

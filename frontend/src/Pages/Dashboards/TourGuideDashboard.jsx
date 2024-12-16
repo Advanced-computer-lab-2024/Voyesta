@@ -11,6 +11,8 @@ import AdditionalInfoForm from "../LoginSignup/AdditionalInfoForm";
 import TermsAndConditions from "../LoginSignup/TermsAndConditions";
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import Notifications from "../../newComponents/Notifications";
+import TouristHome from "../../newComponents/TouristHome";
+
 
 const navLinks = [
   { path: "/tourGuide/", label: "Home" },
@@ -31,6 +33,7 @@ function TourGuideDashboard() {
   const [isTermsAccepted, setTermsAccepted] = useState(false);
   const Location = useLocation();
   const currentUser = Location.state?.user || "tourist";
+  
 
   const getAuthHeader = () => {
     return {
@@ -96,7 +99,7 @@ function TourGuideDashboard() {
         <NavBar role='tourguide'  user={currentUser}/>
         
         <Routes>
-          <Route exact path="/" element={<div>Welcome to the Tour Guide Dashboard</div>} />
+          <Route exact path="/" element={<TouristHome/>} />
           <Route path="/profile" element={
             // <ProfileView />
             <ProfileManagement userType="tourGuide" baseUrl="http://localhost:3000/api/tourGuide" />

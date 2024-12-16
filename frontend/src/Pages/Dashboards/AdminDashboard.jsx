@@ -14,6 +14,7 @@ import PromoCodeView from "../../newComponents/PromoCodeView"; // New component 
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import ActivityView from '../../newComponents/ActivitiesView';
 import Notifications from "../../newComponents/Notifications";
+import TouristHome from "../../newComponents/TouristHome";
 
 const navLinks = [
   { path: "/admin/activity-category", label: "Activity Category" },
@@ -39,7 +40,7 @@ function AdminDashboard() {
     <div>
       <NavBar role='admin' user={currentUser} />
       <Routes>
-        <Route exact path="/" element={<div>Home</div>} />
+        <Route exact path="/" element={<div><TouristHome/></div>} />
         <Route
           path="/activity-category"
           element={
