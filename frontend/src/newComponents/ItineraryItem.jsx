@@ -5,9 +5,11 @@ import BookingPopup from './BookingPopup';
 import ErrorPopup from './ErrorPopup'; // Import the ErrorPopup component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faEnvelope, faBookmark, faBell, faFlag } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate , useLocation } from 'react-router-dom';
 const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, convertedPrice, targetCurrency }) => {
   const fallbackImage = "https://cdn.britannica.com/10/241010-049-3EB67AA2.jpg";
-
+  const navigate = useNavigate();
+  const location = useLocation();
   const convertDateToInputFormat = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -194,7 +196,8 @@ const   ItineraryItem = ({ itinerary, baseUrl, fetchItineraries, role, converted
       setShowPopup(false);
       
       const returnToGuide = localStorage.getItem('returnToGuide');
-      if (returnToGuide) {
+      const fromGuide = location.state?.fromGuide;
+      if (returnToGuide && fromGuide) {
         localStorage.setItem('completedBooking', 'true');
         navigate('/tourist/guide');
       } else {

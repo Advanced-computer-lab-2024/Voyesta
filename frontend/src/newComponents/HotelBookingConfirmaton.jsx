@@ -4,7 +4,7 @@ import { Container, Typography, Box } from '@mui/material';
 
 const HotelBookingConfirmation = () => {
     const location = useLocation();
-    const { hotel } = location.state || {};
+    const { hotel , fromGuide } = location.state || {};
     const navigate = useNavigate();
 
     useEffect(() => {

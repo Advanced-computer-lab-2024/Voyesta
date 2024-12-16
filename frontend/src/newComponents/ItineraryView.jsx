@@ -8,7 +8,7 @@ import PreferencesFilter from './PreferencesFilter';
 import CurrencyConverter from './CurrencyConverter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation } from 'react-router-dom';
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
   const [filteredItineraries, setFilteredItineraries] = useState([]);
@@ -25,6 +25,7 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
