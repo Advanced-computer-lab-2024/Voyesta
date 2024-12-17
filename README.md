@@ -830,7 +830,59 @@ We use Postman to manually test our APIs handling errors and making sure our fun
 ![Screenshot 19](screenshots/screenshot19.jpg)
 
 ## 🧑🏻‍🏫 How to use
-Make sure to follow [Installation](#-installation) and [Usage](#-usage) steps
+<details>
+  <summary>As a Tourist</summary>
+  <ol>
+    <li>You will find the option to login or signup to the website on the first page.</li>
+    <li>After logging in, you will find a navbar at the top with options to view different products, events, and access your profile.</li>
+    <li>You will also find an interactive guide that guides you to different options on the website.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>As an Admin</summary>
+  <ol>
+    <li>Log in with your admin credentials.</li>
+    <li>Access the admin dashboard from the navbar.</li>
+    <li>Manage user accounts, monitor platform activity, and update content as needed all through the navbar.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>As a Seller</summary>
+  <ol>
+    <li>Log in with your seller credentials.</li>
+    <li>Access the seller dashboard from the navbar.</li>
+    <li>List your products, manage your inventory, and track sales.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>As an Advertiser</summary>
+  <ol>
+    <li>Log in with your advertiser credentials.</li>
+    <li>Access the advertiser dashboard from the navbar.</li>
+    <li>Create and manage your activities, track sales, and optimize your campaigns.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>As a Tour Guide</summary>
+  <ol>
+    <li>Log in with your tour guide credentials.</li>
+    <li>Access the tour guide dashboard from the navbar.</li>
+    <li>List your itineraries, manage bookings, and interact with tourists.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>As a Tourism Governor</summary>
+  <ol>
+    <li>Log in with your tourism governor credentials.</li>
+    <li>Access the tourism governor dashboard from the navbar.</li>
+    <li>Monitor tourism activities, manage tourism places, and promote tourism in your region.</li>
+  </ol>
+</details>
 
 ## Usage
 Once the servers are running, you can access the application at http://localhost:5173 for the frontend and http://localhost:3000/api for the backend API.
