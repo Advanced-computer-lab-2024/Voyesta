@@ -3,9 +3,11 @@ import axios from "axios";
 import PriceFilterBar from "./PriceFilterBar";
 import ProductCard from "./ProductCard";
 import CurrencyConverter from "./CurrencyConverter";
+import SellerCreateProduct from "../components/sellerComponents/SellerCreateProduct";
 
 function ProductsView({ role, baseUrl }) {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [prices, setPrices] = useState([]);
   const [convertedPrices, setConvertedPrices] = useState([]); // New state for converted prices
   const [targetCurrency, setTargetCurrency] = useState('USD'); // New state for target currency
@@ -17,6 +19,7 @@ function ProductsView({ role, baseUrl }) {
   const [sortOrder, setSortOrder] = useState("");
   const [user, setUser] = useState(null);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const token = localStorage.getItem('token');
 
   const getAuthHeaders = () => {
@@ -34,7 +37,6 @@ function ProductsView({ role, baseUrl }) {
       })
       .catch(err => console.log(err));
   }, []); 
-  // console.log(user);
 
   useEffect(() => {
     if (role === 'admin') {
@@ -48,13 +50,12 @@ function ProductsView({ role, baseUrl }) {
     }
   }, [role]);
 
-
-
   const fetchProducts = (url) => {
     setLoading(true);
     axios.get(url, getAuthHeaders())
       .then(res => {
         setProducts(res.data.data);
+        setFilteredProducts(res.data.data);
         setPrices(res.data.data.map(product => product.price));
         setLoading(false);
       })
@@ -74,11 +75,13 @@ function ProductsView({ role, baseUrl }) {
     })
       .then(res => {
         setProducts(res.data.data);
+        setFilteredProducts(res.data.data);
         setErrorMsg("");
       })
       .catch(error => {
         if (!error.response.data.success) {
           setProducts([]);
+          setFilteredProducts([]);
           setErrorMsg("No products found!");
         }
       });
@@ -90,13 +93,12 @@ function ProductsView({ role, baseUrl }) {
     setMaxPrice('');
     setSortOrder('');
     setTargetCurrency('USD');
-    fetchProducts(role === 'admin' ? 'http://localhost:3000/api/admin/getProducts' : 'http://localhost:3000/api/seller/getAllProducts');
+    window.location.reload(); // Refresh the page
   };
 
   const handleSortOrderChange = (order) => {
     setSortOrder(order);
-    // Existing sorting logic
-    const sortedProducts = [...products].sort((a, b) => {
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
       const avgRatingA = a.ratings.length > 0 ? a.ratings.reduce((acc, curr) => acc + curr.rating, 0) / a.ratings.length : 0;
       const avgRatingB = b.ratings.length > 0 ? b.ratings.reduce((acc, curr) => acc + curr.rating, 0) / b.ratings.length : 0;
 
@@ -108,7 +110,7 @@ function ProductsView({ role, baseUrl }) {
         return 0;
       }
     });
-    setProducts(sortedProducts);
+    setFilteredProducts(sortedProducts);
     setIsSortDropdownOpen(false);
   };
 
@@ -125,13 +127,21 @@ function ProductsView({ role, baseUrl }) {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Sorting and Search Bar */}
       <div className="bg-gray-200 shadow-md p-4">
         <div className="flex flex-wrap justify-center items-center space-x-4">
           {/* Sorting Dropdown - Only for tourist */}
-          {role === 'tourist' && (
+          { (
             <div className="relative">
               <button
                 id="dropdownSortButton"
@@ -185,21 +195,44 @@ function ProductsView({ role, baseUrl }) {
             >
               Reset Filters
             </button>
+            {role === 'admin' && (
+              <button onClick={openModal} className="inline-flex items-center w-36 px-3 py-2 mb-3 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                Add Product
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex">
-          {role === 'tourist' && (
+        {isModalOpen && (
+        <div id="popup-modal" tabIndex="-1" className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50">
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-100">
+              <button type="button" className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick={closeModal}>
+                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span className="sr-only">Close modal</span>
+              </button>
+              <div className="p-4 md:p-5 text-left">
+                <SellerCreateProduct baseUrl="http://localhost:3000/api/seller" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+          {(
             <div className="w-1/4 pr-4">
               <div className="bg-gray-200 p-4 rounded-lg shadow">
                 <PriceFilterBar
                   items={products}
-                  setItems={setProducts}
+                  setItems={setFilteredProducts}
                   convertedPrices={convertedPrices}
                   priceProperty="price"
                 />
+                {role === 'tourist' && (
                 <div className="mt-4">
                   <CurrencyConverter
                     prices={prices}
@@ -207,10 +240,10 @@ function ProductsView({ role, baseUrl }) {
                     setTargetCurrency={setTargetCurrency}
                   />
                 </div>
+                )}
               </div>
             </div>
           )}
-
           <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
             {loading ? (
               <div className="text-center text-lg">Loading products...</div>
@@ -219,13 +252,12 @@ function ProductsView({ role, baseUrl }) {
                 {errorMsg ? (
                   <div className="text-red-500 text-lg">{errorMsg}</div>
                 ) : (
-                  products.map((product, index) => (
+                  filteredProducts.map((product, index) => (
                     <ProductCard
                     key={product._id}
                     fetchProducts={fetchProducts}
                     oldProduct={product}
                     onEdit={handleEdit}
-                    userId={user?._id}
                     convertedPrice={convertedPrices[index]} // Pass convertedPrice
                     targetCurrency={targetCurrency} // Pass targetCurrency
                   />
@@ -234,8 +266,8 @@ function ProductsView({ role, baseUrl }) {
               </div>
             )}
           </div>
-        </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const getExchangeRates = async (baseCurrency) => {
   try {
-    const response = await axios.get(`https://v6.exchangerate-api.com/v6/c214d671b9e5b4732e3fc0ef/latest/${baseCurrency}`);
+    const response = await axios.get(`https://v6.exchangerate-api.com/v6/262e65b60f85459c7be530f9/latest/${baseCurrency}`);
     return response.data.conversion_rates;
   } catch (error) {
     throw new Error('Error fetching exchange rates');

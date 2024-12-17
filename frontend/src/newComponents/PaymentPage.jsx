@@ -185,10 +185,12 @@ const CheckoutForm = ({ baseUrl }) => {
         } else {
           if (result.paymentIntent.status === "succeeded") {
             console.log("Payment succeeded");
+            sendPaymentReceiptEmail();
           }
         }
       } else if (paymentMethod === "wallet") {
         console.log("Payment succeeded with wallet");
+        sendPaymentReceiptEmail();
       } 
 
       const res = await axios.patch(url, {}, getAuthHeaders());

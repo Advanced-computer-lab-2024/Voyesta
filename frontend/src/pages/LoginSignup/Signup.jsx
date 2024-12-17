@@ -104,6 +104,7 @@ function Signup() {
                 type="text"
                 id="username"
                 name="username"
+                placeholder='username'
                 value={user.username}
                 onChange={handleInputChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -118,6 +119,7 @@ function Signup() {
                 type="email"
                 id="email"
                 name="email"
+                placeholder='email'
                 value={user.email}
                 onChange={handleInputChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -131,6 +133,7 @@ function Signup() {
                 type="password"
                 id="password"
                 name="password"
+                placeholder='password'
                 value={user.password}
                 onChange={handleInputChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -171,6 +174,11 @@ function Signup() {
                 Log In
               </p>
             </div>
+            <div className="flex justify-center text-sm text-gray-500">
+              <a href="" onClick={() => navigate('/')} className="text-blue-500 hover:underline">
+                  Back to Home
+              </a>
+              </div>
           </form>
         </div>
       )}

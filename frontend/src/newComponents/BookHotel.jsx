@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import axios from 'axios';
 import {
     Container,
@@ -13,7 +13,7 @@ import {
     Alert,
     Box,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation } from 'react-router-dom';
 
 const BookHotel = ({ baseUrl }) => {
     const [cityCode, setCityCode] = useState('');
@@ -24,8 +24,24 @@ const BookHotel = ({ baseUrl }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [hasSearched, setHasSearched] = useState(false);
-
+    const [bookingSuccess, setBookingSuccess] = useState(false);
     const navigate = useNavigate(); // Initialize navigation hook
+    const location = useLocation();
+    const { fromGuide } = location.state || {};
+
+    // Add return logic
+    useEffect(() => {
+        if (bookingSuccess) {
+            const returnToGuide = localStorage.getItem('returnToGuide');
+            if (returnToGuide) {
+                localStorage.removeItem('returnToGuide');
+                localStorage.setItem('completedBooking', 'true');
+                navigate('/tourist/guide');
+            }
+        }
+    }, [bookingSuccess]);
+    
+
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
@@ -57,7 +73,7 @@ const BookHotel = ({ baseUrl }) => {
 
     const handleBookHotel = (hotel) => {
         // Redirect to the confirmation page with hotel details
-        navigate('/tourist/hotel-booking-confirmation', { state: { hotel } });
+        navigate('/tourist/hotel-booking-confirmation', { state: { hotel , fromGuide } });
     };
 
     return (

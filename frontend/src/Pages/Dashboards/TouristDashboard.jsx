@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route , useLocation } from "react-router-dom";
+import React , {useState,useEffect} from "react";
+import { Routes, Route , useLocation, useNavigate } from "react-router-dom";
 import TouristProfile from '../../components/touristComponents/TouristProfile'
 import NavBar from "../../components/NavBar";
 
@@ -24,7 +24,8 @@ import BookmarkedActivities from "../../newComponents/BookmarksActivties";
 import Notifications from "../../newComponents/Notifications";
 import TouristHome from "../../newComponents/TouristHome";
 import FlightBookingConfirmation from "../../newComponents/FlightBookingConfirmation";
-
+import VacationGuide from "../../newComponents/VacGuide";
+import InteractiveVacationGuide from "../../newComponents/InteractiveVactionGuide";
 const navLinks = [
   { path: "/tourist/", label: "Home" },
   { path: "/tourist/profile", label: "Profile" },
@@ -46,6 +47,17 @@ const navLinks = [
 function TouristDashboard(){
   const Location = useLocation();
   const currentUser = Location.state?.user || "tourist";
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const guideInProgress = localStorage.getItem('guideInProgress');
+    if (guideInProgress) {
+      navigate('/tourist/guide');
+    }
+  }, []);
+
+
+
 
   return(
     <div>
@@ -87,6 +99,8 @@ function TouristDashboard(){
         <Route path="/payment" element={<PaymentPage baseUrl="http://localhost:3000/api/tourist" />} />
         <Route path= "/orders" element={<OrdersPage baseUrl="http://localhost:3000/api/tourist" />}/>
         <Route path="/notifications" element={<Notifications baseUrl="http://localhost:3000/api/tourist" userType="tourist" />} />
+        <Route path="/help" element={<VacationGuide userType="tourist" />} />
+        <Route path="/guide" element={<InteractiveVacationGuide userType="tourist" />} />
       </Routes>       
     </div>
   );

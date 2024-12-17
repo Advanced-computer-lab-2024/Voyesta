@@ -7,8 +7,12 @@ import CategoryFilter from './CategoryFilter';
 import RatingFilter from './RatingFilter';
 import DateRangeFilter from './DateRangeFilter';
 import CurrencyConverter from './CurrencyConverter';
+<<<<<<< HEAD
 import { Snackbar } from '@mui/material';
 
+=======
+import { useNavigate } from 'react-router-dom';
+>>>>>>> 6469cc2305d262f78037f8e83186459bbeffad9e
 const ActivitiesView = ({ baseUrl, role }) => {
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
@@ -23,7 +27,19 @@ const ActivitiesView = ({ baseUrl, role }) => {
   const [convertedPrices, setConvertedPrices] = useState([]);
   const [targetCurrency, setTargetCurrency] = useState('USD');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+<<<<<<< HEAD
   const [successMessage, setSuccessMessage] = useState('');
+=======
+  const navigate = useNavigate();
+  useEffect(() => {
+    const returnToGuide = location.state?.returnToGuide;
+    if (returnToGuide) {
+      // Add return button or auto-return after booking
+      return () => navigate('/guest/guide');
+    }
+  }, []);
+
+>>>>>>> 6469cc2305d262f78037f8e83186459bbeffad9e
 
   useEffect(() => {
     fetchActivities();
@@ -79,6 +95,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
     setEndDate('');
     setSortOption('Sort by');
     setFilteredActivities(activities);
+    window.location.reload();
   };
 
   const sortActivities = (option, activitiesToSort) => {
@@ -107,7 +124,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {role === 'tourist' && (
+      {(role === 'tourist' || role === 'guest') && (
         <div className="bg-gray-200 shadow-md p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
             <div className="relative">
@@ -199,7 +216,6 @@ const ActivitiesView = ({ baseUrl, role }) => {
           {role === 'tourist' && (
             <div className="w-1/4 pr-4">
               <div className="bg-gray-200 p-4">
-                {/* <h2 className="text-2xl font-bold mb-4 p-2 text-center">Filter and Sort</h2> */}
                 <PriceFilterBar 
                   items={activities} 
                   setItems={setFilteredActivities} 
@@ -217,12 +233,13 @@ const ActivitiesView = ({ baseUrl, role }) => {
             </div>
           )}
 
+
           <div className={`${role === 'tourist' ? 'w-3/4' : 'w-full'}`}>
             <div className="relative text-center bg-white shadow-md rounded p-6">
               <h1 className="text-2xl text-gray-600 font-bold mb-4">Available Activities</h1>
               {message && <div className="text-red-500 mb-4">{message}</div>}
 
-              {(role === 'advertiser' || role === 'admin') && (
+              {(role === 'advertiser') && (
                 <>{ role === 'advertiser' &&
                   <div className="flex justify-around border-b mb-4">
                     <button
@@ -254,8 +271,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
                   )}
                 </>
               )}
-
-              {role !== 'advertiser' && (
+              {(role !== 'advertiser')&& (
                 <ActivitiesList
                   fetchActivities={fetchActivities}
                   baseUrl={baseUrl}
@@ -266,6 +282,7 @@ const ActivitiesView = ({ baseUrl, role }) => {
                   setSuccessMessage={setSuccessMessage}
                 />
               )}
+              
             </div>
           </div>
         </div>

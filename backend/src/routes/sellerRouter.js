@@ -9,7 +9,8 @@ const {
     getProductSales,
     archiveProduct,
     unarchiveProduct,
-    searchProductByName
+    searchProductByName,
+    getAllProducts,
 } = require('../controllers/productController');
 const { changePassword, setStatusToDeleted } = require('../controllers/accountController');
 const cloudinaryController = require('../controllers/cloudinaryController');
@@ -25,7 +26,7 @@ _.delete("/delete", authenticate, deleteSeller);
 
 //------------------Products--------------------
 _.post('/createProduct', authenticate ,addProduct);
-_.get('/getAllProducts', getProducts);
+_.get('/getAllProducts', authenticate, getAllProducts);
 _.get('/getMyProducts', authenticate ,getProducts);
 _.get('/getProductsSales', authenticate , getProductSales);
 _.put('/updateProduct/:id', authenticate , updateProduct);

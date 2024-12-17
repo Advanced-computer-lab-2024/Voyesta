@@ -7,7 +7,7 @@ import ActivitiesView from "../newComponents/ActivitiesView";
 import ItineraryView from "../newComponents/ItineraryView";
 import MuseumsAndHistoricalPlacesView from "../newComponents/MuseumsAndHistoricalPlacesView";
 import LandingPage from "./LandingPage";
-
+import InteractiveVacationGuide from "../newComponents/InteractiveVactionGuide";
 
 const navLinks = [
     { path: "/guest/activities", label: "Activities" },
@@ -38,17 +38,19 @@ function Dashboard(){
             <Routes>
                 
                     <Route path="/activities" element={
-                        <ActivitiesView baseUrl="http://localhost:3000/api/tourist" role="tourist"/>
+                        <ActivitiesView baseUrl="http://localhost:3000/api/tourist" role="guest"/>
                     }/>
                     <Route path="/itineraries" element={
-                        <ItineraryView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+                        <ItineraryView baseUrl="http://localhost:3000/api/tourist" role="guest" />
                     }/>
                     <Route path="/museums" element={
-                        <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="tourist" />
+                        <MuseumsAndHistoricalPlacesView baseUrl="http://localhost:3000/api/tourist" role="guest" />
                     }/>
                     <Route path="/" element={
                         <LandingPage />
                     }/>
+                    
+                    <Route path="/guide" element={<InteractiveVacationGuide userType="guest" />} />
                 </Routes>
         </>
     );

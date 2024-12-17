@@ -161,6 +161,11 @@ function Login() {
             Forgot Password?
           </a>
         </div>
+        <div className="flex justify-center text-sm text-gray-500">
+            <a href="" onClick={() => navigate('/')} className="text-blue-500 hover:underline">
+          Back to Home
+            </a>
+        </div>
       </form>
     </div>
   );

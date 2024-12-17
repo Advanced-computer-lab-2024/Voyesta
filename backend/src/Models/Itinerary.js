@@ -74,7 +74,7 @@ const itinerarySchema = new Schema({
     bookingActive: {
         type: Boolean,
         required: true,
-        default: false,
+        default: true,
     },
     inappropriate: {
         type: Boolean,

@@ -130,12 +130,17 @@ const getProducts = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id; // Get product ID from URL params
-
-        const product = await Product.findOne({
-            _id: productId,
-            'createdBy._id': req.user.id,    // Check if the product was created by this user
-            'createdBy.role': req.user.type  // Check if the role matches (e.g., 'Seller' or 'Admin')
-        });
+        let product ;
+        if(req.user.type === 'admin') {
+            product = await Product.findById(productId);
+        } else{
+            product = await Product.findOne({
+                _id: productId,
+                'createdBy._id': req.user.id,    // Check if the product was created by this user
+                'createdBy.role': req.user.type  // Check if the role matches (e.g., 'Seller' or 'Admin')
+            });
+        }
+        
 
         if (!product) {
             return res.status(404).json({
@@ -185,7 +190,8 @@ const searchProductByName = async (req, res) => {
 
         // Find products where the name contains the search query (case-insensitive)
         const products = await Product.find({
-            name: { $regex: searchQuery, $options: 'i' } // 'i' makes it case-insensitive
+            name: { $regex: searchQuery, $options: 'i' }, // 'i' makes it case-insensitive
+            isArchived: false
         });
 
         if (products.length === 0) {
@@ -615,6 +621,16 @@ const moveWishlistToCart = async (req, res) => {
     }
   };
 
+  const getAllProducts = async (req, res) => {
+    try{
+        const products = await Product.find().select();
+        res.status(200).json({data: products});
+    } catch (error){
+        console.error('Error in getAllProducts:', error);
+        res.status(500).json({ error: error.message });
+    }
+  };
+
 module.exports = {
     addProduct,
     getProducts,
@@ -635,5 +651,6 @@ module.exports = {
     removeFromWishlist,
     moveWishlistToCart,
     getCart,
-    updateCartQuantity
+    updateCartQuantity,
+    getAllProducts,
 };

@@ -29,8 +29,8 @@ const { getActivity, flagActivityAsInappropriate } = require('../controllers/act
 // ------------- Not testedd ---------------
 _.post('/createTourismGoverner', adminController.createTourismGovernor);
 _.post('/createAdmin', adminController.createAdmin);
-_.patch('/updatePassword', adminController.updatePassword);
-_.delete('/deleteAccount', adminController.deleteAccount);
+_.patch('/updatePassword', authenticate, adminController.updatePassword);
+_.delete('/deleteAccount', authenticate, adminController.deleteAccount);
 
 
 // ----- activity category --------//
@@ -49,7 +49,7 @@ _.delete('/deletePrefernceTag',deletePreferenceTag);
 _.get('/getProducts', authenticate, productController.getProducts);
 // _.get('/getMyProducts', productController.getMyProducts);
 _.post('/addProduct', productController.addProduct);
-_.put('/updateProduct/:id', productController.updateProduct);
+_.put('/updateProduct/:id', authenticate, productController.updateProduct);
 _.get('/searchProducts', productController.searchProductByName);
 _.get('/filterProductsByPrice', productController.filterProductsByPrice);
 _.get('/sortProductsByRatings', productController.sortProductsByRatings);

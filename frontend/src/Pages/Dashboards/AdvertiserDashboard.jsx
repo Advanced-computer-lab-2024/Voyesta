@@ -9,6 +9,8 @@ import AdditionalInfoForm from '../LoginSignup/AdditionalInfoForm';
 import TermsAndConditions from '../LoginSignup/TermsAndConditions';
 import RevenueSalesView from '../../newComponents/RevenueSalesView';
 import Notifications from '../../newComponents/Notifications';
+import TouristHome from "../../newComponents/TouristHome";
+
 
 const navLinks = [
   { path: "/advertiser/", label: "Home" },
@@ -93,7 +95,7 @@ function AdvertiserDashboard() {
           <NavBar role= 'advertiser' user={currentUser} />
 
           <Routes>
-            <Route exact path="/" element={<div>Home</div>} />
+            <Route exact path="/" element={<TouristHome/>} />
             <Route path="/profile" element={
               <ProfileManagement
                 userType="advertiser"

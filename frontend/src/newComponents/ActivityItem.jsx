@@ -1,9 +1,9 @@
 // ActivityItem.jsx
-import React, { useEffect, useState } from 'react';
+import React, { act, useEffect, useState } from 'react';
 import axios from 'axios';
 import { assets } from '../assets/assets';
 import BookingPopup from './BookingPopup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faEnvelope, faBookmark, faFlag } from '@fortawesome/free-solid-svg-icons';
 import { Snackbar } from '@mui/material';
@@ -20,6 +20,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   const [inappropriate, setInappropriate] = useState(activity.inappropriate);
   const [bookingEnabled, setBookingEnabled] = useState(activity.bookingEnabled);
   const navigate = useNavigate();
+  const location = useLocation();
 
   
 
@@ -112,7 +113,11 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
   };
 
   const flagAsInappropriate = async () => {
+
     try {
+      if(activity.inappropriate){
+        return;
+      }
       const url = `${baseUrl}/flagActivityAsInappropriate/${activity._id}`;
       await axios.patch(url, {}, getAuthHeaders());
 
@@ -121,7 +126,7 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       await axios.post(notificationUrl, { userType: 'advertiser', itemId: activity._id, message }, getAuthHeaders());
 
       setInappropriate(true);
-      //fetchActivities();
+      fetchActivities();
     } catch (error) {
       console.log(error);
     }
@@ -258,12 +263,14 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
       })
       setShowPopup(false);
 
-      // Determine the price to pass to navigate
-      // const total = typeof activity.price === 'object' && activity.price !== null
-      // ? activity.price.min
-      // : activity.price;
-
-       navigate('/tourist/bookings');
+      const returnToGuide = localStorage.getItem('returnToGuide');
+      const fromGuide = location.state?.fromGuide;
+      if (returnToGuide && fromGuide) {
+        localStorage.setItem('completedBooking', 'true');
+        navigate('/tourist/guide');
+      } else {
+        navigate('/tourist/bookings');
+      }
     } catch (error) {
       console.error('Error booking activity:', error);
     }
@@ -564,69 +571,69 @@ const ActivityItem = ({ fetchActivities, activity, role, baseUrl, convertedPrice
           className="cursor-pointer hover:text-red-500 transition duration-300 ease-in-out"
         >
           <div className="text-blue-600 bg-gray-200 rounded-full p-2 cursor-pointer hover:bg-gray-300 transition duration-300 ease-in-out">
-            <FontAwesomeIcon icon={faFlag} style={{ cursor: 'pointer', color: activity.inappropriate ? 'red' : 'gray' }} />
+            <FontAwesomeIcon icon={faFlag} style={{ cursor:'pointer', color: activity.inappropriate ? 'red' : 'gray' }} />
           </div>
         </div>
       </div>
           }
             {role === 'tourist' && !transportation && (
-  <div className="flex flex-col h-full justify-between mt-4">
-    <div className="flex justify-between items-center mt-auto">
-      {/* Booking Button */}
-      <button 
-        onClick={() => setShowPopup(true)} 
-        className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg py-2 px-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out"
-      >
-        Book Activity
-      </button>
-  
-      {/* Share and Email Icons */}
-      <div className="flex space-x-4">
-        {/* Share Link */}
-        <div 
-          onClick={() => {
-            const link = generateShareLink(activity._id);
-            handleCopyLink(link);
-          }} 
-          className="cursor-pointer hover:text-blue-700 transition duration-300 ease-in-out"
-        >
-          <FontAwesomeIcon icon={faShareAlt} className="text-blue-600 text-xl" />
-        </div>
-        <div 
-          onClick={toggleBookmark} 
-          className="cursor-pointer hover:text-yellow-400 transition duration-300 ease-in-out"
-        >
-          <FontAwesomeIcon
-          icon={faBookmark}
-          className="text-xl"
-          style={{ color: isBookmarked ? 'gold' : 'gray' }}
-        />
-        </div>
-        
-        {/* Email Link */}
-        <div 
-          onClick={() => {
-            const link = generateShareLink(activity._id);
-            handleShareViaEmail(link);
-          }} 
-          className="cursor-pointer hover:text-blue-700 transition duration-300 ease-in-out"
-        >
-          <FontAwesomeIcon icon={faEnvelope} className="text-blue-600 text-xl" />
-        </div>
-      </div>
-    </div>
-  
-    {/* Booking Popup */}
-    {showPopup && (
-      <BookingPopup
-        item={activity}
-        itemType="activity"
-        onClose={() => setShowPopup(false)}
-        onBook={handleBooking}
-      />
-    )}
-  </div>
-  )}
+              <div className="flex flex-col h-full justify-between mt-4">
+                <div className="flex justify-between items-center mt-auto">
+                  {/* Booking Button */}
+                  <button 
+                    onClick={() => setShowPopup(true)} 
+                    className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg py-2 px-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out"
+                  >
+                    Book Activity
+                  </button>
+              
+                  {/* Share and Email Icons */}
+                  <div className="flex space-x-4">
+                    {/* Share Link */}
+                    <div 
+                      onClick={() => {
+                        const link = generateShareLink(activity._id);
+                        handleCopyLink(link);
+                      }} 
+                      className="cursor-pointer hover:text-blue-700 transition duration-300 ease-in-out"
+                    >
+                      <FontAwesomeIcon icon={faShareAlt} className="text-blue-600 text-xl" />
+                    </div>
+                    <div 
+                      onClick={toggleBookmark} 
+                      className="cursor-pointer hover:text-yellow-400 transition duration-300 ease-in-out"
+                    >
+                      <FontAwesomeIcon
+                      icon={faBookmark}
+                      className="text-xl"
+                      style={{ color: isBookmarked ? 'gold' : 'gray' }}
+                    />
+                    </div>
+                    
+                    {/* Email Link */}
+                    <div 
+                      onClick={() => {
+                        const link = generateShareLink(activity._id);
+                        handleShareViaEmail(link);
+                      }} 
+                      className="cursor-pointer hover:text-blue-700 transition duration-300 ease-in-out"
+                    >
+                      <FontAwesomeIcon icon={faEnvelope} className="text-blue-600 text-xl" />
+                    </div>
+                  </div>
+                </div>
+              
+                {/* Booking Popup */}
+                {showPopup && (
+                  <BookingPopup
+                    item={activity}
+                    itemType="activity"
+                    onClose={() => setShowPopup(false)}
+                    onBook={handleBooking}
+                  />
+                )}
+              </div>
+              )}
   
           </div>
   

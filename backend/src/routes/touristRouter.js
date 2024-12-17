@@ -52,7 +52,7 @@ _.get('/getActivity', activityController.getActivity);
 _.get('/getItinerary', authenticate, itineraryController.getItineraries);
 _.get("/getPlaces", authenticate, get);
 _.get('/getCategory', authenticate, getActivityCategory);
-_.get('/getTags', authenticate, getPreferenceTags);
+_.get('/getTags',authenticate, getPreferenceTags);
 
 _.patch('/tourGuideComment/:id', authenticate, TourGuideComments);
 _.patch('/tourGuideRate/:id', authenticate, rateTourGuide);
@@ -100,7 +100,7 @@ _.post('/addToCart', authenticate, productController.addCart);
 _.delete('/removefromCart', authenticate, productController.removeCart);
 _.post('/AddToWishList',authenticate,productController.addToWishlist);
 _.get('/ViewList',authenticate,productController.getWishlist);
-_.post('/deleteWish',authenticate,productController.removeFromWishlist);
+_.delete('/deleteWish',authenticate,productController.removeFromWishlist);
 _.post('/moveToCart', authenticate, productController.moveWishlistToCart);
 _.get('/getCart', authenticate, productController.getCart);
 _.post('/updateQuantity', authenticate, productController.updateCartQuantity);

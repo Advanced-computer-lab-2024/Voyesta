@@ -1,10 +1,24 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React , {useEffect} from 'react';
+import { useLocation ,  useNavigate} from 'react-router-dom';
 import { Container, Typography, Box } from '@mui/material';
 
 const HotelBookingConfirmation = () => {
     const location = useLocation();
-    const { hotel } = location.state || {};
+    const { hotel , fromGuide } = location.state || {};
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (hotel) {
+            setTimeout(() => {
+                if (fromGuide) {
+                    localStorage.setItem('completedBooking', 'true');
+                    navigate('/tourist/guide');
+                } else {
+                    navigate('/tourist/bookings');
+                }
+            }, 2000);
+        }
+    }, [hotel]);
 
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>

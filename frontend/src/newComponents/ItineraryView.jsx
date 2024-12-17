@@ -9,7 +9,7 @@ import CurrencyConverter from './CurrencyConverter';
 import { Snackbar } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
+import { useNavigate , useLocation } from 'react-router-dom';
 const ItineraryView = ({ baseUrl, role }) => {
   const [itineraries, setItineraries] = useState([]);
   const [filteredItineraries, setFilteredItineraries] = useState([]);
@@ -26,10 +26,20 @@ const ItineraryView = ({ baseUrl, role }) => {
   const [isPreferenceDropdownOpen, setIsPreferenceDropdownOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const location = useLocation();
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+
+  useEffect(() => {
+    const returnToGuide = location.state?.returnToGuide;
+    if (returnToGuide) {
+      // Add return button or auto-return after booking
+      return () => navigate('/guest/guide');
+    }
+  }, []);
 
   useEffect(() => {
     fetchItineraries();
@@ -58,6 +68,7 @@ const ItineraryView = ({ baseUrl, role }) => {
     setSelectedPreference('All');
     setSortOption('');
     fetchItineraries();
+    window.location.reload();
   };
 
   const applyFilters = () => {
@@ -119,7 +130,7 @@ const ItineraryView = ({ baseUrl, role }) => {
   
   return (
     <div className="bg-gray-100 min-h-screen">
-      {role === 'tourist' && (
+      {role !== ('tourGuide' || 'admin') && (
         <div className="bg-gray-200 shadow-md p-4">
           <div className="flex flex-wrap justify-center items-center space-x-4">
             

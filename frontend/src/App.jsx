@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import './css/index.css'
-import 'flowbite/dist/flowbite.css';
+// import 'flowbite/dist/flowbite.css';
 
 // Importing the login & signup components
 import Signup from './Pages/LoginSignup/Signup';

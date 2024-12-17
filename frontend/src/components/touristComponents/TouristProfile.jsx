@@ -26,7 +26,7 @@ function TouristProfile() {
   const baseUrl = "http://localhost:3000/api/tourist/get"; // Adjust based on your backend
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
   // Load token from local storage (or wherever you store it)
   useEffect(() => {
     const fetchData = async () => {
@@ -169,6 +169,18 @@ function TouristProfile() {
       setError(error.response?.data?.message || "Error requesting account deletion.");
     }
   };
+  
+  const handleRedeemPointsToCash = async () => {
+    try {
+      const response = await axios.patch("http://localhost:3000/api/tourist/redeemPoints", {pointsToRedeem}, getAuthHeaders());
+      setMessage(response.data.message);
+      fetchProfile(); // Refetch profile to update wallet and points
+    } catch (error) {
+      console.error('Error redeeming points to cash:', error);
+      setError(error.response?.data?.message || "Error redeeming points to cash.");
+    }
+  };
+
 
   const closeErrorPopup = () => {
     setError(null);
@@ -270,6 +282,26 @@ function TouristProfile() {
                 <span>Points: {profile.currentPoints}</span>
               </div>
             </div>
+            <div className="mt-4">
+            <label htmlFor="pointsToRedeem" className="block text-sm font-medium text-gray-700">
+              Points to Redeem
+            </label>
+            <input
+              type="number"
+              id="pointsToRedeem"
+              name="pointsToRedeem"
+              value={pointsToRedeem}
+              onChange={(e) => setPointsToRedeem(e.target.value)}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter points to redeem"
+            />
+          </div>
+          <button
+            onClick={handleRedeemPointsToCash}
+            className="mt-4 bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-700"
+          >
+            Redeem to Cash
+          </button>
             {profile.addresses && profile.addresses.length > 0 && (
               <div className="mt-4 mb-14">
                 <h3 className="text-xl font-bold text-gray-900">Addresses</h3>

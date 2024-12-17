@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { CircularProgress, TextField, Button, Typography, Snackbar } from '@mui/material';
 import FlightCard from "../newComponents/FlightCard";
@@ -11,7 +11,7 @@ import {
     Alert,
     Box,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 
 const BookFlight = ({ baseUrl }) => {
     const [origin, setOrigin] = useState('');
@@ -23,8 +23,21 @@ const BookFlight = ({ baseUrl }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [hasSearched, setHasSearched] = useState(false);
-
+    const [bookingSuccess, setBookingSuccess] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { fromGuide } = location.state || {};
+
+
+    // Add return logic
+    useEffect(() => {
+        const returnToGuide = localStorage.getItem('returnToGuide');
+        if (returnToGuide && bookingSuccess) {
+            localStorage.removeItem('returnToGuide');
+            localStorage.setItem('completedBooking', 'true');
+            navigate('/tourist/guide'); // Changed from /guest/guide
+        }
+    }, [bookingSuccess]);
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
@@ -56,7 +69,7 @@ const BookFlight = ({ baseUrl }) => {
     };
 
     const handleBookFlight = (flight) => {
-        navigate('/tourist/flight-booking-confirmation', { state: { flight } });
+        navigate('/tourist/flight-booking-confirmation', { state: { flight ,   fromGuide  } });
     };
 
     return (
